@@ -73,6 +73,8 @@ interface
   /// @class AnimationScript
   /// @method IndexOfAnimation
   /// @csn indexOfAnimation:%s
+  ///
+  /// @doc_details
   function AnimationIndex(temp: AnimationScript; name: String): Longint;
   
   /// The name of the animation within the animation template at the specified index.
@@ -83,6 +85,8 @@ interface
   /// @class AnimationScript
   /// @method NameOfAnimation
   /// @csn nameOfAnimation:%s
+  ///
+  /// @doc_details
   function AnimationName(temp: AnimationScript; idx: Longint): String;
   
   
@@ -109,6 +113,8 @@ interface
   /// are assigned the filename as a default.
   ///
   /// @lib
+  ///
+  /// @doc_details
   function HasAnimationScript(name: String): Boolean;
   
   /// Returns the `AnimationScript` that has been loaded with the specified ``name``,
@@ -154,6 +160,8 @@ interface
   /// @class Animation
   /// @constructor
   /// @csn initAsName:%s from:%s withSound:%s
+  ///
+  /// @doc_details
   function CreateAnimation(identifier: String;  frames: AnimationScript; withSound: Boolean): Animation;
   
   /// Creates an animation from an `AnimationScript`. If ``withSound`` is ``true``, this may
@@ -165,6 +173,8 @@ interface
   /// @class Animation
   /// @constructor
   /// @csn initAtIndex:%s from:%s withSound:%s
+  ///
+  /// @doc_details
   function CreateAnimation(identifier: Longint;  frames: AnimationScript; withSound: Boolean): Animation; overload;
   
   /// Creates an animation from an `AnimationScript`. This may play a sound effect
@@ -176,6 +186,8 @@ interface
   /// @class Animation
   /// @constructor
   /// @csn initAtIndex:%s from:%s
+  ///
+  /// @doc_details
   function CreateAnimation(identifier: Longint;  frames: AnimationScript): Animation; overload;
   
   /// Disposes of the resources used in the animation.
@@ -212,6 +224,8 @@ interface
   /// @class Animation
   /// @overload AssignAnimation AssignAnimationNamedWithSound
   /// @csn assignAnimationNamed:%s from:%s withSound:%s
+  ///
+  /// @doc_details
   procedure AssignAnimation(anim: Animation; name: String; frames: AnimationScript; withSound: Boolean); overload;
   
   /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
@@ -223,6 +237,8 @@ interface
   /// @class Animation
   /// @method AssignAnimation
   /// @csn assignAnimation:%s from:%s
+  ///
+  /// @doc_details
   procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript); overload;
   
   /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
@@ -235,6 +251,8 @@ interface
   /// @class Animation
   /// @overload AssignAnimation AssignAnimationWithSound
   /// @csn assignAnimation:%s from:%s withSound:%s
+  ///
+  /// @doc_details
   procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript; withSound: Boolean); overload;
   
   
@@ -275,6 +293,8 @@ interface
   /// @overload DrawBitmap DrawBitmapOnto
   /// @self 2
   /// @csn drawOnto:%s bitmap:%s x:%s y:%s
+  ///
+  /// @doc_details
   procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: Longint); overload;
   
   /// Uses the animation information to draw a bitmap at the specified
@@ -286,6 +306,8 @@ interface
   /// @class Animation
   /// @overload DrawBitmap DrawBitmapAtPtOnto
   /// @csn drawOnto:%s using:%s pt:%s
+  ///
+  /// @doc_details
   procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
   
   /// Uses the animation information to draw a bitmap to the screen at the specified
@@ -297,6 +319,8 @@ interface
   /// @class Animation
   /// @method DrawBitmapOnScreen
   /// @csn drawBitmap:%s onScreenAtX:%s y:%s
+  ///
+  /// @doc_details
   procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: Longint); overload;
   
   /// Uses the animation information to draw a bitmap to the screen at the specified
@@ -308,6 +332,8 @@ interface
   /// @class Animation
   /// @overload DrawBitmapOnScreen DrawBitmapAtPtOnScreen
   /// @csn drawBitmap:%s onScreenAtPt:%s
+  ///
+  /// @doc_details
   procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
   
   
@@ -338,6 +364,8 @@ interface
   /// @class Animation
   /// @overload Update UpdatePct
   /// @csn updatePct:%s
+  ///
+  /// @doc_details
   procedure UpdateAnimation(anim: Animation; pct: Single); overload;
   
   /// Updates the animation a certain percentage and possibly moving to a new
@@ -350,15 +378,17 @@ interface
   /// @class Animation
   /// @overload Update UpdatePctAndSound
   /// @csn updatePct:%s withSound:%s
+  ///
+  /// @doc_details
   procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
   
   /// Restarts the animation. This may play a sound effect if the first frame
   /// triggers a sound.
   /// 
-  /// @lib ResetAnimation
+  /// @lib RestartAnimation
   /// 
   /// @class Animation
-  /// @method Reset
+  /// @method Restart
   procedure RestartAnimation(anim: Animation); overload;
   
   /// Restarts the animation. This may play a sound effect if the first frame
@@ -370,6 +400,8 @@ interface
   /// @class Animation
   /// @overload Reset ResetWithSound
   /// @csn resetWithSound:%s
+  ///
+  /// @doc_details
   procedure RestartAnimation(anim: Animation; withSound: Boolean); overload;
   
   
@@ -393,6 +425,8 @@ interface
   ///
   /// @class Animation
   /// @getter CurrentCell
+  ///
+  /// @doc_details
   function AnimationCurrentCell(anim: Animation): Longint;
   
   /// Returns true if the animation entered a new frame on its last update.
@@ -402,6 +436,8 @@ interface
   /// 
   /// @class Animation
   /// @getter EnteredFrame
+  ///
+  /// @doc_details
   function AnimationEnteredFrame(anim: Animation): Boolean;
   
   /// Returns the amount of time spent in the current frame. When this exceeds
@@ -411,6 +447,8 @@ interface
   /// 
   /// @class Animation
   /// @getter FrameTime
+  ///
+  /// @doc_details
   function AnimationFrameTime(anim: Animation): Single;
   
   

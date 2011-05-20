@@ -69,6 +69,8 @@ class SGPasParser():
             'updatesArrayParam': self.process_numbers_attribute,
             'doc_group': self.process_id_attribute,
             'doc_types': self.process_idlist_attribute,
+            'doc_idx': self.process_number_attribute,                       # Allows items to be ordered in the documentation
+            'doc_details': self.process_true_attribute,                     # Moves documentation to a details file
         }
         self._block_header_processors = {
             'type': self.process_block_types,

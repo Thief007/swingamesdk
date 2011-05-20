@@ -25,7 +25,7 @@ class SGMethod(SGMetaDataContainer):
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
             'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 
-            'fixed_result_size', 'length', 'calls', 'sn'])
+            'fixed_result_size', 'length', 'calls', 'sn', 'doc_idx', 'doc_details'])
         self.name = name
         self.uname = name
         self.sn = None
@@ -52,6 +52,8 @@ class SGMethod(SGMetaDataContainer):
         self.called_by = list()
         self.self_pos = 1
         self.fixed_result_size = -1
+        self.doc_idx = 9
+        self.doc_details = False
         
         self.local_vars = list()    # to remove - now in lang_data
         self.was_function = False
@@ -257,6 +259,14 @@ class SGMethod(SGMetaDataContainer):
         lambda self,value: self.set_tag('length', value), 
         None, 'The property to get the length of the returned array...')
     
+    doc_idx = property(lambda self: self['doc_idx'].other, 
+        lambda self,value: self.set_tag('doc_idx', value), 
+        None, 'The order that this should appear in the documentation/processing.')
+    
+    doc_details = property(lambda self: self['doc_details'].other, 
+        lambda self,value: self.set_tag('doc_details', value), 
+        None, 'The documentation should appear in a details file.')
+    
     @property
     def signature(self):
         return (self.name, tuple([(p.modifier + ' ' if p.modifier != None else '') + str(p.data_type) for p in self.params]))
@@ -380,6 +390,9 @@ class SGMethod(SGMetaDataContainer):
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
         other.doc = self.doc
+        other.doc_idx = self.doc_idx
+        other.doc_details = self.doc_details
+        
         #dont copy sn... unless other is static
         if other.sn == None and other.is_static:
             other.sn = self.sn
