@@ -163,7 +163,7 @@ doMacCompile()
     echo "  ... Creating game for $1"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${TMP_DIR}/${1}/${GAME_NAME} `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o "${TMP_DIR}/${1}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -241,7 +241,7 @@ doLinuxCompile()
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
