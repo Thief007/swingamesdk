@@ -72,6 +72,53 @@ class APIDocWriter(object):
 <title>%(title)s</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 %(css)s
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+    function toggleMethodDetails(method_uname)
+    {
+        sel = "#body" + method_uname;
+        if ($(sel).is(':visible'))
+        {
+            $(sel).hide(500);
+            $("#toggle" + method_uname)[0].innerHTML = "show details";
+        }
+        else
+        {
+            $(sel).show(500);
+            $("#toggle" + method_uname)[0].innerHTML = "hide details";
+        }
+    }
+    
+    function toggleAlternateDetails(method_uname)
+    {
+        sel = ".alt" + method_uname;
+        if ($(sel).is(':visible'))
+        {
+            $(sel).hide(500);
+            $("#alt" + method_uname)[0].innerHTML = "show other version";
+        }
+        else
+        {
+            $(sel).show(500);
+            $("#alt" + method_uname)[0].innerHTML = "hide other versions";
+        }
+    }
+    
+    function toggleShownMethods()
+    {
+        sel = ".details"
+        if ($(sel).is(':visible'))
+        {
+            $(sel).hide(500);
+            $("#toggleShownMethods")[0].innerHTML = "show all methods";
+        }
+        else
+        {
+            $(sel).show(500);
+            $("#toggleShownMethods")[0].innerHTML = "show main methods";
+        }
+    }
+</script>
 </head>
 <body>
 %(topnav)s
@@ -87,6 +134,9 @@ class APIDocWriter(object):
 <div id="footer">
 Generated %(datetime)s for svn version %(svnversion)s
 </div>
+<script>
+    $(".details").hide();
+</script>
 </body>
 </html>
 
@@ -151,10 +201,11 @@ Generated %(datetime)s for svn version %(svnversion)s
         toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
         tmp = []
         last = ''
-        for title, uname in sorted(self.toc, key=lambda entry: entry[0]):
+        for title, uname, detail in sorted(self.toc, key=lambda entry: entry[0]):
             if title != last:
                 last = title
-                tmp.append('<li><a href="#%s" title="%s">%s</a></li>' % (uname, uname, title))
+                css_class = ' class="details"' if detail else ''
+                tmp.append('<li%s><a href="#%s" title="%s">%s</a></li>' % (css_class, uname, uname, title))
         return toc % {'toc': '\n'.join(tmp) }
 
     def format_desc(self):
@@ -278,7 +329,7 @@ class IdentifierCollector(object):
         
         # modify method to also keep the doc_url for us
         if method.doc_details:
-            method.tags['doc_url'] = method.in_file.name + '-full.html#' + method.uname
+            method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname +'?details'
         else:
             method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname
     
@@ -349,6 +400,7 @@ class UnitPresenter(object):
         self.doc = None
         self.details_docs = dict()                          # Dictionary of details files
         self.idcollection = idcollection
+        self.last_method = None 
         parser_runner.visit_all_units(self.file_visitor)
 
     def lead_trim(self, text):
@@ -366,110 +418,125 @@ class UnitPresenter(object):
         format_text = self.idcollection.format_text
         
         # Determine where to output the html for this method...
-        if method.doc_details:
-            out_doc = self.doc_details
-            loops = 1
-        else:
-            out_doc = self.doc
-            loops = 2
+        out_doc = self.doc
         
-        while loops > 0:
-            # Keep the toc entry (name and unique ID for hyperlinks)
-            out_doc.toc.append( (method.name, method.uname) )
-        
-            # Build up the parameters with formatted modifier terms if used
-            tmp = []
-            for p in method.params:
-                if p.modifier:
-                    tmp.append("<span class='pmod'>%s</span> %s" % (p.modifier, p.name))
-                else:
-                    tmp.append(p.name)
-            param_txt = ', '.join(tmp)
-        
-            # Create the method signature
-            if method.return_type != None:
-                sig = '%s(%s) : %s' % (method.name, param_txt, link_type(str(method.return_type)))
+        # Keep the toc entry (name and unique ID for hyperlinks)
+        out_doc.toc.append( (method.name, method.uname, method.doc_details) )
+    
+        # Build up the parameters with formatted modifier terms if used
+        tmp = []
+        for p in method.params:
+            if p.modifier:
+                tmp.append("<span class='pmod'>%s</span> %s" % (p.modifier, p.name))
             else:
-                sig = '%s(%s)' % (method.name, param_txt)
+                tmp.append(p.name)
+        param_txt = ', '.join(tmp)
         
-            # Print the headings    
-            tmp = '<div class="method" id="%(uname)s">\n<h3>%(name)s</h3>\n' + \
-                  '<p class="sig">%(sig)s</p>\n' + \
-                  '%(desc)s\n'
-            desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
-            out_doc.append(tmp % {'uname': method.uname, # unique id's for overloads
-                                   'name': method.name, 
-                                   'desc': desc, 
-                                   'sig': sig })
+        #Wrap detail methods
+        if method.doc_details:
+            out_doc.append('<div class="details">')
         
-            # If parameters and/or return type details
-            if len(method.params) > 0 or method.return_type:
-                # START LIST    
-                out_doc.append('<dl class="fields">')
-                # PARAMETERS
-                if len(method.params) > 0:
-                    out_doc.append('<dt>Parameters:</dt>\n<dd>\n<dl>')
-                    for p in method.params:
-                        tmp = '<dt><span class="pname">%(pname)s</span> : <span class="ptype">%(ptype)s</span></dt>\n%(pdesc)s'
-                        if len(self.lead_trim(p.doc).strip()) > 0:
-                            pdesc = '<dd>%s</dd>' % format_text(self.lead_trim(p.doc))
-                        else:
-                            pdesc = ''
-                        out_doc.append(tmp % {'pname': p.name, 
-                                               'ptype': link_type(p.data_type.name), 
-                                               'pdesc': pdesc })
-                    out_doc.append('</dl>\n</dd>')
-                # RETURN TYPE DETAILS    
-                if method.return_type:
-                    tmp = '<dt>Returns:</dt>\n' + \
-                          '<dd><span class="rtype">%(rtype)s</span> : %(rdesc)s</dd>'
-                    out_doc.append(tmp % {'rtype': link_type(method.return_type.name), 
-                                           'rdesc': format_text(self.lead_trim(method.returns)) })
-                # SIGNATURES - by language (Andrew)
-                if len(method.lang_data) > 0:
-                    out_doc.append('<dt>Signatures by Language:</dt>')
-                    lang_keys = method.lang_data.keys()
-                    lang_keys.sort()
-                    lang_map = {'c': 'C/C++', 'pas': 'Pascal'}
-                    for key in lang_keys:
-                      if key == 'c':
-                        bits = [ bit + ';' for bit in method.alias(key).signature.split(';')[:-1]]
-                      else:
-                        bits = [method.alias(key).signature]
-                      for bit in bits:
-                        out_doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
-                # END LIST
-                out_doc.append('</dl>')
+        if self.last_method != method.name:
+            out_doc.append('<div>')
+            self.last_method = method.name
+            new_group = True
+        else:
+            out_doc.append('<div class="alt%s" style="display:none">' % method.name)
+            new_group = False
+        
+        # Create the method signature
+        if method.return_type != None:
+            sig = '%s(%s) : %s' % (method.name, param_txt, link_type(str(method.return_type)))
+        else:
+            sig = '%s(%s)' % (method.name, param_txt)
+        
+        # Print the headings    
+        tmp = '<div class="method" id="%(uname)s">\n<h3>%(name)s</h3>\n' + \
+              '<p class="sig">%(sig)s</p>\n' + \
+              '%(desc)s\n'
+        desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
+        out_doc.append(tmp % {'uname': method.uname, # unique id's for overloads
+                               'name': method.name, 
+                               'desc': desc, 
+                               'sig': sig })
+        
+        # Create a details div
+        out_doc.append('<div class="method-details" id="body%s" style="display:none">\n' % method.uname)
+        
+        # If parameters and/or return type details
+        if len(method.params) > 0 or method.return_type:
+            # START LIST    
+            out_doc.append('<dl class="fields">')
+            # PARAMETERS
+            if len(method.params) > 0:
+                out_doc.append('<dt>Parameters:</dt>\n<dd>\n<dl>')
+                for p in method.params:
+                    tmp = '<dt><span class="pname">%(pname)s</span> : <span class="ptype">%(ptype)s</span></dt>\n%(pdesc)s'
+                    if len(self.lead_trim(p.doc).strip()) > 0:
+                        pdesc = '<dd>%s</dd>' % format_text(self.lead_trim(p.doc))
+                    else:
+                        pdesc = ''
+                    out_doc.append(tmp % {'pname': p.name, 
+                                           'ptype': link_type(p.data_type.name), 
+                                           'pdesc': pdesc })
+                out_doc.append('</dl>\n</dd>')
+            # RETURN TYPE DETAILS    
+            if method.return_type:
+                tmp = '<dt>Returns:</dt>\n' + \
+                      '<dd><span class="rtype">%(rtype)s</span> : %(rdesc)s</dd>'
+                out_doc.append(tmp % {'rtype': link_type(method.return_type.name), 
+                                       'rdesc': format_text(self.lead_trim(method.returns)) })
+            # SIGNATURES - by language (Andrew)
+            if len(method.lang_data) > 0:
+                out_doc.append('<dt>Signatures by Language:</dt>')
+                lang_keys = method.lang_data.keys()
+                lang_keys.sort()
+                lang_map = {'c': 'C/C++', 'pas': 'Pascal'}
+                for key in lang_keys:
+                  if key == 'c':
+                    bits = [ bit + ';' for bit in method.alias(key).signature.split(';')[:-1]]
+                  else:
+                    bits = [method.alias(key).signature]
+                  for bit in bits:
+                    out_doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
+            # END LIST
+            out_doc.append('</dl>')
+        
+        # url = source_url(method.meta_comment_line_details),
+        # out_doc.append(
+        # '<p><a href="url" target="new" href="%s">Source URL</a></p>' % 
+        # 
+        # )
+        
+        #TODO: fix "side effects" comments into normal text
+        #TODO: add @see details to 
+        info = []
+        # link to pascal source file
+        info.append('<li><a target="new" href="%s">source code</a></li>' % source_url(method.meta_comment_line_details))
+        # tags / document group details?
+        if method.doc_group:
+            info.append('<li>tags: %s</li>' % method.doc_group) 
+        # library unique name for this method
+        if method.uname != method.name:
+            info.append('<li>lib name: <span class="code">%s</span></li>' % method.uname )
             
-            # url = source_url(method.meta_comment_line_details),
-            # out_doc.append(
-            # '<p><a href="url" target="new" href="%s">Source URL</a></p>' % 
-            # 
-            # )
+        # TODO: method of class details? show it...
+        # <li>in_class: %(in_class)s</li>
+        # <li>method_called: %(method_called)s</li>
+        
+        # Meta-details 
+        out_doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
+        out_doc.append("\n</div>\n")# End method body
+        out_doc.append('<a class="details-link" id="toggle%s" href="javascript:toggleMethodDetails(\'%s\')">show details</a>\n' % (method.uname, method.uname))
+        
+        if new_group and self.module.number_of_methods_named(method.name) > 1:
+            out_doc.append('<a class="details-link" id="alt%s" href="javascript:toggleAlternateDetails(\'%s\')">show other versions</a>\n' % (method.name, method.name))
+        
+        out_doc.append("\n</div>\n")
+        out_doc.append("\n</div>\n") # Alternate/Main        
             
-            #TODO: fix "side effects" comments into normal text
-            #TODO: add @see details to 
-            info = []
-            # link to pascal source file
-            info.append('<li><a target="new" href="%s">source code</a></li>' % source_url(method.meta_comment_line_details))
-            # tags / document group details?
-            if method.doc_group:
-                info.append('<li>tags: %s</li>' % method.doc_group) 
-            # library unique name for this method
-            if method.uname != method.name:
-                info.append('<li>lib name: <span class="code">%s</span></li>' % method.uname )
-                
-            # TODO: method of class details? show it...
-            # <li>in_class: %(in_class)s</li>
-            # <li>method_called: %(method_called)s</li>
-            
-            # Meta-details 
-            out_doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
-            out_doc.append("\n</div>\n")   
-            
-            out_doc = self.doc_details #HACK: get it to write to both files if self.doc
-            loops -= 1
-        #end while
+        if method.doc_details:
+            out_doc.append('\n</div>\n')
     
     def file_visitor(self, the_file, other):
         # Don't do some files...
@@ -478,22 +545,19 @@ class UnitPresenter(object):
         
         # Create a new document to write to
         self.doc = APIDocWriter()
-        self.doc.title = the_file.name + " (main)"
+        self.doc.title = the_file.name
         self.doc.desc = self.idcollection.format_text(the_file.members[0].doc)
         
-        self.doc_details = APIDocWriter()
-        self.doc_details.title = the_file.name + " (complete)"
-        self.doc_details.desc = self.idcollection.format_text(the_file.members[0].doc)
+        self.doc.append('<a class="details-link" id="toggleShownMethods" href="javascript:toggleShownMethods()">show all methods</a>\n')
         
         # Here we go...
         print '>> %s ... ' % (the_file.name)
         for m in the_file.members:
+            self.module = m
             if m.is_module: 
                 m.visit_methods(self.method_visitor, None)
                 
         self.doc.savetofile(the_file.name + '.html')
-        self.doc_details.savetofile(the_file.name + '-full.html')
-
 
 
 #==============================================================================
@@ -559,7 +623,7 @@ h3 { border-bottom: 1px solid #955 }
 .methods li, #types li { list-style-type: none; }
 #types li { display: inline; width: 20em; float: left }
 '''
-    doc.toc = [('Methods','Methods'),('Types','Types')]
+    doc.toc = [('Methods','Methods',False),('Types','Types',False)]
     doc.h2('Methods','Methods')
         
     ## Methods 
@@ -641,7 +705,7 @@ def create_types_doc(idcollection):
     for key in keys:
         obj = ids['types'][key]
         # keep a TOC entry
-        doc.toc.append((key, key))
+        doc.toc.append((key, key, False))
         # Print the headings    
         tmp = '<div class="type" id="%(name)s">\n<h3>%(name)s</h3>\n%(desc)s\n'
         desc = '' if obj.doc.strip() == '' else '<p>%s</p>' % format_text(obj.doc)

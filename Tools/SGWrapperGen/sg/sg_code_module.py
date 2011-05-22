@@ -113,6 +113,14 @@ class SGCodeModule(SGMetaDataContainer):
         logger.error('  CODE MODUL: Error finding method %s in class %s', name, self.name)
         assert False
     
+    def number_of_methods_named(self, name):
+        result = 0
+        for method in self.methods.values():
+            if method.name == name:
+                result += 1
+                
+        return result
+    
     def set_tag(self, title, other = None):
         if title == 'class':
             self.module_kind = 'class'

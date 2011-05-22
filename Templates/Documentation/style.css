@@ -18,6 +18,8 @@ body {
   background-position: right bottom;
 }
 
+.details-link { font-size: 0.5em }
+
 #toc, #toc ul, #toc li {border: none; padding: 0; margin: 0; }
 #toc { background: #fafafa; width: 10em; float: right; border: None}
 #toc ul, #toc li { list-style-type: none; font-size: 8pt;}
