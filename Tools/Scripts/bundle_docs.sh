@@ -19,6 +19,9 @@ source "${APP_PATH}/inc/os_check.sh"
 source "${APP_PATH}/inc/base_template_dirs.sh"
 source "${APP_PATH}/inc/copy_without_svn.sh"
 
+# Remove old generated file...
+find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
+
 echo "--------------------------------------------------"
 echo "          Creating Source Template"
 echo "                for OS: $OS"
@@ -53,5 +56,15 @@ echo " Copying Generated..."
 copyWithoutSVN ${DOC_GENERATED_DIR} ${DOC_DIST_DIR}
 echo " Copying Template..."
 copyWithoutSVN ${DOC_TEMPLATE_DIR} ${DOC_DIST_DIR}
+
+#
+# Step 6: Create zip file
+#
+echo " Preparing Zip File"
+if [ -f "${DIST_DIR}/SwinGame Documentation.zip" ]; then
+    rm "${DIST_DIR}/SwinGame Documentation.zip"
+fi
+cd "${DOC_DIST_DIR}"
+zip -q "${DIST_DIR}/SwinGame Documentation.zip" * 
 
 echo "Done.."

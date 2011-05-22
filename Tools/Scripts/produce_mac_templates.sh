@@ -93,13 +93,6 @@ for arg in "${MAC_DMG_LIST[@]}"; do
     rm -rf "${DMG_BASE_DIR}"
 done
 
-echo "  ... Creating documentation"
-if [ -f "${DIST_DIR}/SwinGame Documentation.zip" ]; then;
-    rm "${DIST_DIR}/SwinGame Documentation.zip"
-fi
-cd "${DIST_DIR}"
-zip "${DIST_DIR}/SwinGame Documentation.zip" *
-
 rm -rf ${PKG_TMP_DIR}
 rm -rf ${DMG_TMP_DIR}
 

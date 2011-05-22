@@ -27,10 +27,10 @@ from lang_pas import create_pas_code_for_file
 def get_svn_version():
     try:
         lines = subprocess.Popen("svn info",shell=True, stdout=subprocess.PIPE).stdout.readlines()
-        print "svn info: ", lines[4]
         result = lines[4].split()[1].strip() # eg. "Revision: 12345"
+        print " Documenting svn Revision", result
     except:
-        print
+        print "Except..."
         result = "1284" # rough guess...
     return result
 
@@ -304,7 +304,7 @@ class IdentifierCollector(object):
 
     def _file_visitor(self, the_file, other):
         if the_file.name in ['SGSDK']: return
-        print '>> %s ... ' % (the_file.name)
+        print '  ... %s' % (the_file.name)
         # Keep the filename for the index 
         self.ids['files'][the_file.name] = the_file 
         
@@ -551,7 +551,7 @@ class UnitPresenter(object):
         self.doc.append('<a class="details-link" id="toggleShownMethods" href="javascript:toggleShownMethods()">show all methods</a>\n')
         
         # Here we go...
-        print '>> %s ... ' % (the_file.name)
+        print '  ... %s ' % (the_file.name)
         for m in the_file.members:
             self.module = m
             if m.is_module: 
@@ -566,7 +566,7 @@ class UnitPresenter(object):
 class IndexPresenter(object):
 
     def __init__(self, idcollection):
-        print "Creating index.html ...",
+        print " Creating index.html ...",
         doc = APIDocWriter()
         doc.title = "SwinGame API Documentation Index"
         # Describe the indentifier and types pages
@@ -592,7 +592,7 @@ class IndexPresenter(object):
         doc.extend(links)
         doc.append('</dl>')
         doc.savetofile('index.html')
-        print 'Done.'       
+        print ' done.'       
 
 
 
@@ -605,7 +605,7 @@ def create_identifiers_doc(idcollection):
     link_type = idcollection.link_type
     format_text = idcollection.format_text
     # Create the identifiers.html document body content ...
-    print 'Creating identifiers.html ...',
+    print ' Creating identifiers.html ...',
     doc = APIDocWriter()
     doc.title = 'Identifiers'
     doc.css = '''
@@ -682,7 +682,7 @@ h3 { border-bottom: 1px solid #955 }
     doc.append('</ul>')
     
     doc.savetofile('identifiers.html')
-    print 'Done.'
+    print ' done.'
 
 
 #==============================================================================
@@ -694,7 +694,7 @@ def create_types_doc(idcollection):
     link_type = idcollection.link_type
     format_text = idcollection.format_text
     # Create the single types files with all the types 
-    print 'Creating Types.html ...'
+    print ' Creating Types.html ...',
     doc = APIDocWriter()
     doc.title = 'Types'
     doc.desc = 'DESCRIPTION'
@@ -799,7 +799,7 @@ def create_types_doc(idcollection):
         doc.append('</div>')
     
     doc.savetofile('Types.html')
-    print 'Done.'
+    print ' done.'
 
 
 
@@ -812,7 +812,7 @@ def main():
   
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     # Parse all files ready for use...
-    print 'Parsing all pas units...'
+    print ' Parsing all pas units...'
     parser_runner.parse_all_units()
     # Extract method/type details and create identifiers/Types pages
     idc = IdentifierCollector()
