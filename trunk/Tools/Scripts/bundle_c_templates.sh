@@ -93,6 +93,7 @@ fi
 
 echo "--------------------------------------------------"
 echo "  ... Creating C library code"
+
 CreateCCode
 
 DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${C_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
