@@ -95,6 +95,7 @@ _type_switcher = {
         'shape':            'SGShape *',
         
         'single':           'float *',
+        'longint':          'int *',
         
         'triangle':     'SGTriangle *',
         'matrix2d':     'SGMatrix2D *',

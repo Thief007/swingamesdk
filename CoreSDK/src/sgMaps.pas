@@ -4,18 +4,17 @@ unit sgMaps;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 interface
   uses
-    sgTypes;
+    sgTypes, sgVectorShapes;
+  
   type
     Direction = (mdNorthWest, mdNorth, mdNorthEast, mdWest, mdEast, mdSouthWest, mdSouth, mdSouthEast);
-
     
     {BitmapCell = Record
       Cell:         Longint;
       Bmap:         Bitmap;
     end;}
-
-      type
-      BitmapCellKind = record
+    
+    BitmapCellKind = record
       Cell:         Longint;
       Bmap:         Bitmap;
       KindIdx:      Longint;    
@@ -729,7 +728,7 @@ interface
 
   implementation
   uses
-    sgText, sgGraphics, sgTrace, sgResources, sgVectorShapes,
+    sgText, sgGraphics, sgTrace, sgResources,
     sgCamera, sgGeometry, sgImages, sgInput, sgPhysics,
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
       stringhash, sgSharedUtils, sgNamedIndexCollection, sgShared;
