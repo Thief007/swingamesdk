@@ -23,7 +23,7 @@ if [ "a${answer}a" == "aya" ] ; then
     ./bundle_cs_templates.sh
     ./bundle_objc_templates.sh
     ./bundle_pas_templates.sh
-    ./bundle_documentation.sh
+    ./bundle_docs.sh
     
     echo
     echo

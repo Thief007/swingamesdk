@@ -136,15 +136,6 @@ interface
   /// @csn collisionWithRect:%s
   function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
   
-  /// Returns true if the sprite and the shape have collided.
-  /// 
-  /// @lib SpriteShapeCollision
-  /// @sn sprite:%s collisionWithShape:%s
-  ///
-  /// @class Sprite
-  /// @method ShapeCollision
-  function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
-  
   
   
 //---------------------------------------------------------------------------
@@ -565,7 +556,7 @@ implementation
 
   uses
     SysUtils, sgTrace,
-    sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages, sgVectorShapes;
+    sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
 
 
   //---------------------------------------------------------------------------
@@ -639,22 +630,6 @@ implementation
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Longint): Boolean; overload;
   begin
     result := BitmapRectCollision(bmp, x, y, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
-  end;
-
-  function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload;
-  begin
-    result := false;
-    if s = nil then exit;
-    
-    if not ShapeRectangleIntersect(shp, SpriteCollisionRectangle(s)) then 
-      exit;
-    
-    //  Check pixel level details
-    if SpriteCollisionKind(s) = AABBCollisions then 
-      result := true
-    else
-      //TODO: add pixel level shape collisions
-      result := true; //CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);    
   end;
   
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: Longint): Boolean; overload;

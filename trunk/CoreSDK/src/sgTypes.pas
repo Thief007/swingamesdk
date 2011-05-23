@@ -322,63 +322,6 @@ interface
       cell: Longint;
     end;
     
-    /// The ShapeKind is used to configure the drawing method for a
-    /// shape. Each of these options provides an alternate way of 
-    /// rendering based upon the shapes points.
-    ///
-    /// @enum ShapeKind
-    ShapeKind= (
-        pkPoint,
-        pkCircle,
-        // pkEllipse,
-        pkLine,
-        pkTriangle,
-        pkLineList,
-        pkLineStrip,
-        // pkPolygon,
-        pkTriangleStrip,
-        pkTriangleFan,
-        pkTriangleList
-      );
-    
-    /// @class ShapePrototype
-    /// @pointer_wrapper
-    /// @field pointer: pointer
-    ShapePrototype = ^ShapePrototypeData;
-    
-    /// @class Shape
-    /// @pointer_wrapper
-    /// @field pointer: pointer
-    Shape = ^ShapeData;
-    
-    /// The ShapeDrawingFn is a function pointer that points to a procedure
-    /// that is capable of drawing a Shape. This is used when the shape
-    /// is drawn be DrawShape and FillShape.
-    ///
-    /// @type ShapeDrawingFn
-    ShapeDrawingFn = procedure(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
-    
-    /// @struct ShapePrototypeData
-    /// @via_pointer
-    ShapePrototypeData = packed record
-      points: Point2DArray;
-      kind: ShapeKind;
-      shapeCount: Longint;            //the number of shapes using the prototype
-      drawWith: ShapeDrawingFn;
-    end;
-    
-    /// @struct ShapeData
-    /// @via_pointer
-    ShapeData = packed record
-      pt: Point2D;
-      prototype: ShapePrototype;
-      color: Color;
-      scale: Point2D;
-      angle: single;
-      ptBuffer: Point2DArray;
-      subShapes: array of Shape;
-    end;
-    
     /// Use this with the resource path functions to get the path to a
     /// given resource. Using these functions ensures that your resource
     /// paths are correct across different platforms

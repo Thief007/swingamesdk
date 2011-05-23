@@ -22,6 +22,64 @@ interface
 uses
   sgTypes;
   
+  type
+    /// The ShapeKind is used to configure the drawing method for a
+    /// shape. Each of these options provides an alternate way of 
+    /// rendering based upon the shapes points.
+    ///
+    /// @enum ShapeKind
+    ShapeKind= (
+        pkPoint,
+        pkCircle,
+        // pkEllipse,
+        pkLine,
+        pkTriangle,
+        pkLineList,
+        pkLineStrip,
+        // pkPolygon,
+        pkTriangleStrip,
+        pkTriangleFan,
+        pkTriangleList
+      );
+    
+    /// @class ShapePrototype
+    /// @pointer_wrapper
+    /// @field pointer: pointer
+    ShapePrototype = ^ShapePrototypeData;
+    
+    /// @class Shape
+    /// @pointer_wrapper
+    /// @field pointer: pointer
+    Shape = ^ShapeData;
+    
+    /// The ShapeDrawingFn is a function pointer that points to a procedure
+    /// that is capable of drawing a Shape. This is used when the shape
+    /// is drawn be DrawShape and FillShape.
+    ///
+    /// @type ShapeDrawingFn
+    ShapeDrawingFn = procedure(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
+    
+    /// @struct ShapePrototypeData
+    /// @via_pointer
+    ShapePrototypeData = packed record
+      points: Point2DArray;
+      kind: ShapeKind;
+      shapeCount: Longint;            //the number of shapes using the prototype
+      drawWith: ShapeDrawingFn;
+    end;
+    
+    /// @struct ShapeData
+    /// @via_pointer
+    ShapeData = packed record
+      pt: Point2D;
+      prototype: ShapePrototype;
+      color: Color;
+      scale: Point2D;
+      angle: single;
+      ptBuffer: Point2DArray;
+      subShapes: array of Shape;
+    end;
+  
   /// Returns the number of lines in a given shape
   ///
   /// @lib
@@ -788,12 +846,21 @@ uses
       procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
 
 
+  /// Returns true if the sprite and the shape have collided.
+  /// 
+  /// @lib SpriteShapeCollision
+  /// @sn sprite:%s collisionWithShape:%s
+  ///
+  /// @class Sprite
+  /// @method ShapeCollision
+  function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
+
 
 
 
 
 implementation
-uses  SysUtils, sgGeometry, sgShared, sgPhysics, sgGraphics, sgCamera;
+uses  SysUtils, sgGeometry, sgShared, sgPhysics, sgGraphics, sgCamera, sgSprites;
 
 function PointOnLineList(const pt:point2d; const s:Shape):Boolean;
 var
@@ -2233,6 +2300,21 @@ begin
   DrawShapeOnScreen(s, true);
 end;
 
+function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload;
+begin
+  result := false;
+  if s = nil then exit;
+  
+  if not ShapeRectangleIntersect(shp, SpriteCollisionRectangle(s)) then 
+    exit;
+  
+  //  Check pixel level details
+  if SpriteCollisionKind(s) = AABBCollisions then 
+    result := true
+  else
+    //TODO: add pixel level shape collisions
+    result := true; //CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);    
+end;
 
 
 end.

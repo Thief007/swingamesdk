@@ -147,6 +147,7 @@ _type_switcher = {
         'map':                  'Map %s',
         
         'string':       'ref string %s',
+        'longint':      'ref int %s',
         'single':       'ref float %s',
         'rectangle':    'ref Rectangle %s',
         
@@ -464,6 +465,7 @@ _adapter_type_switcher = {
         
         'string':               'StringBuilder %s',
         
+        'longint':              'ref int %s',
         'single':               'ref float %s',
         'byte':                 'ref byte %s',
         
@@ -488,6 +490,7 @@ _adapter_type_switcher = {
         'shape':                'ref IntPtr %s',
         
         'single':               'ref float %s',
+        'longint':              'ref int %s',
         
         'string':               '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
         

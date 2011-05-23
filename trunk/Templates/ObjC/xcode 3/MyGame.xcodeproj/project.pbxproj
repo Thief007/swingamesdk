@@ -62,8 +62,6 @@
 		94FA07B81325CFA20066F30C /* SGRectangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA076F1325CFA20066F30C /* SGRectangle.m */; };
 		94FA07B91325CFA20066F30C /* SGResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07711325CFA20066F30C /* SGResources.m */; };
 		94FA07BA1325CFA20066F30C /* SGSDK.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07721325CFA20066F30C /* SGSDK.c */; };
-		94FA07BB1325CFA20066F30C /* SGShape.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07751325CFA20066F30C /* SGShape.m */; };
-		94FA07BC1325CFA20066F30C /* SGShapePrototype.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07771325CFA20066F30C /* SGShapePrototype.m */; };
 		94FA07BD1325CFA20066F30C /* SGSoundEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07791325CFA20066F30C /* SGSoundEffect.m */; };
 		94FA07BE1325CFA20066F30C /* SGSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA077B1325CFA20066F30C /* SGSprite.m */; };
 		94FA07BF1325CFA20066F30C /* SGSprites.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA077D1325CFA20066F30C /* SGSprites.m */; };
@@ -102,7 +100,7 @@
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8D1107320486CEB800E47090 /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* TestObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestObjC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9424D9EF101EC2AB00E5B4BA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = lib/SDL.framework; sourceTree = "<group>"; };
 		9424D9F0101EC2AB00E5B4BA /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_gfx.framework; path = lib/SDL_gfx.framework; sourceTree = "<group>"; };
 		9424D9F1101EC2AB00E5B4BA /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = lib/SDL_image.framework; sourceTree = "<group>"; };
@@ -187,10 +185,6 @@
 		94FA07711325CFA20066F30C /* SGResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGResources.m; path = lib/SGResources.m; sourceTree = "<group>"; };
 		94FA07721325CFA20066F30C /* SGSDK.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SGSDK.c; path = lib/SGSDK.c; sourceTree = "<group>"; };
 		94FA07731325CFA20066F30C /* SGSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSDK.h; path = lib/SGSDK.h; sourceTree = "<group>"; };
-		94FA07741325CFA20066F30C /* SGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShape.h; path = lib/SGShape.h; sourceTree = "<group>"; };
-		94FA07751325CFA20066F30C /* SGShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShape.m; path = lib/SGShape.m; sourceTree = "<group>"; };
-		94FA07761325CFA20066F30C /* SGShapePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapePrototype.h; path = lib/SGShapePrototype.h; sourceTree = "<group>"; };
-		94FA07771325CFA20066F30C /* SGShapePrototype.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapePrototype.m; path = lib/SGShapePrototype.m; sourceTree = "<group>"; };
 		94FA07781325CFA20066F30C /* SGSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSoundEffect.h; path = lib/SGSoundEffect.h; sourceTree = "<group>"; };
 		94FA07791325CFA20066F30C /* SGSoundEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSoundEffect.m; path = lib/SGSoundEffect.m; sourceTree = "<group>"; };
 		94FA077A1325CFA20066F30C /* SGSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSprite.h; path = lib/SGSprite.h; sourceTree = "<group>"; };
@@ -329,10 +323,6 @@
 				94FA07711325CFA20066F30C /* SGResources.m */,
 				94FA07721325CFA20066F30C /* SGSDK.c */,
 				94FA07731325CFA20066F30C /* SGSDK.h */,
-				94FA07741325CFA20066F30C /* SGShape.h */,
-				94FA07751325CFA20066F30C /* SGShape.m */,
-				94FA07761325CFA20066F30C /* SGShapePrototype.h */,
-				94FA07771325CFA20066F30C /* SGShapePrototype.m */,
 				94FA07781325CFA20066F30C /* SGSoundEffect.h */,
 				94FA07791325CFA20066F30C /* SGSoundEffect.m */,
 				94FA077A1325CFA20066F30C /* SGSprite.h */,
@@ -369,7 +359,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1107320486CEB800E47090 /* MyGame.app */,
+				8D1107320486CEB800E47090 /* TestObjC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -413,9 +403,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D1107260486CEB800E47090 /* MyGame */ = {
+		8D1107260486CEB800E47090 /* TestObjC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MyGame" */;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "TestObjC" */;
 			buildPhases = (
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -426,10 +416,10 @@
 			);
 			dependencies = (
 			);
-			name = MyGame;
+			name = TestObjC;
 			productInstallPath = "$(HOME)/Applications";
 			productName = MyGame;
-			productReference = 8D1107320486CEB800E47090 /* MyGame.app */;
+			productReference = 8D1107320486CEB800E47090 /* TestObjC.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -437,14 +427,14 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MyGame" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TestObjC" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* MyGame */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D1107260486CEB800E47090 /* MyGame */,
+				8D1107260486CEB800E47090 /* TestObjC */,
 			);
 		};
 /* End PBXProject section */
@@ -510,8 +500,6 @@
 				94FA07B81325CFA20066F30C /* SGRectangle.m in Sources */,
 				94FA07B91325CFA20066F30C /* SGResources.m in Sources */,
 				94FA07BA1325CFA20066F30C /* SGSDK.c in Sources */,
-				94FA07BB1325CFA20066F30C /* SGShape.m in Sources */,
-				94FA07BC1325CFA20066F30C /* SGShapePrototype.m in Sources */,
 				94FA07BD1325CFA20066F30C /* SGSoundEffect.m in Sources */,
 				94FA07BE1325CFA20066F30C /* SGSprite.m in Sources */,
 				94FA07BF1325CFA20066F30C /* SGSprites.m in Sources */,
@@ -599,7 +587,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MyGame" */ = {
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "TestObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
@@ -608,7 +596,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MyGame" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "TestObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
