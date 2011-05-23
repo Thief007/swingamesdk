@@ -565,7 +565,7 @@ implementation
 
   uses
     SysUtils, sgTrace,
-    sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
+    sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages, sgVectorShapes;
 
 
   //---------------------------------------------------------------------------

@@ -84,7 +84,7 @@
 // Update the %(name)s objects in the NSArray arr from the array pointed to by firstPtr.
 // This is used to restore data to objects after calling a SwinGame method.
 //
-+ (void) update%(name)ssIn:(NSArray *)arr fromDataIn:(%(name_lower)s *)firstPtr
++ (void) update%(name)ssIn:(NSArray *)arr fromDataIn:(%(name_lower)s *)firstPtr size:(int)sz
 {
     int i;
     SG%(name)s *current;

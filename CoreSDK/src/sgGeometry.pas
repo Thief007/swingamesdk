@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2011-05-23: Andrew : Removed "Shape" code, placed in sgVectorShapes.
 // - 2010-01-13: Aaron  : Added PointAdd which adds 2 pointers together.
 //                        Added PointInShape which checks if a Point is in a shape.
 // - 2009-12-21: Andrew : Moved Sprite and Bitmap rectangle function to sgSprites and sgImages
@@ -77,6 +78,8 @@ interface
   ///
   /// @lib CircleFromXY
   /// @sn circleAtX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 0
   function CircleAt(x, y: Single; radius: Longint): Circle; overload;
   
   
@@ -208,6 +211,12 @@ interface
   /// @sn triangle:%s intersectsRectangle:%s
   function TriangleRectangleIntersect(const tri: Triangle; const rect: Rectangle): Boolean;
   
+  /// Returns true if any of the lines in the array intersect with the Rectangle `r`.
+  /// 
+  /// @lib
+  /// @sn lines:%s intersectsRectangle:%s
+  function LinesRectIntersect(const lines: LinesArray; const r: Rectangle): Boolean;
+  
   /// Returns true if any of the triangles intersects with the rectangle.
   /// 
   /// @lib
@@ -236,12 +245,16 @@ interface
   /// 
   /// @lib PointXYLineDistance
   /// @sn pointX:%s y:%s distanceTo:%s
+  /// 
+  /// @doc_idx 0
   function PointLineDistance(x, y: Single; const line: LineSegment): Single; overload;
   
   /// Returns the closest point on the line from the x,y point.
   ///
   /// @lib ClosestPointOnLineXY
   /// @sn pointFromX:%s y:%s closestToLine:%s
+  /// 
+  /// @doc_idx 0
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
   
   /// Returns the point on the line that is closest to the indicated point.
@@ -325,6 +338,8 @@ interface
   ///
   /// @lib LinesFromRect
   /// @fixed_result_size 4
+  /// 
+  /// @doc_idx 0
   function LinesFrom(const rect: Rectangle): LinesArray; overload;
   
   /// Returns an array containing the three lines from the triangle.
@@ -336,7 +351,9 @@ interface
   /// Returns a line segment from x1,y1 to x2,y2.
   /// 
   /// @lib
-  /// @sn lineFromX1:%s y1:%s x2:%s y2:%s
+  /// @sn lineFromX1:%s y1:%s toX2:%s y2:%s
+  ///
+  /// @doc_idx 0
   function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
   
   /// Returns a line from pt1 to pt2.
@@ -344,34 +361,6 @@ interface
   /// @lib LineFromPointToPoint
   /// @sn lineFrom:%s to:%s
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
-  
-  /// Returns the number of lines in a given shape
-  ///
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter LineCount
-  function ShapeLineCount(s: Shape): Longint;
-  
-  /// Returns an array of lines from a given shape. These are the lines that represent
-  /// the shape.
-  /// 
-  /// @lib LinesFromShape
-  ///
-  /// @class Shape
-  /// @getter Lines
-  /// @length ShapeLineCount
-  function LinesFrom(s: shape): LinesArray; overload;
-  
-  /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the it was moving with the velocity specified.
-  /// 
-  /// @lib
-  /// @sn shape:%s vectorOutOfRect:%s givenHeading:%s
-  /// 
-  /// @class Shape
-  /// @method VectorOutOfRect
-  /// @csn vectorOutOfRect:%s givenHeading:%s
-  function ShapeVectorOutOfRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
   
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
@@ -390,6 +379,8 @@ interface
   /// Returns a line from the origin to the end of the mv vector.
   ///
   /// @lib
+  ///
+  /// @doc_idx 0
   function LineFromVector(const mv: Vector): LineSegment; overload;
   
   /// Returns the mid point of the line segment.
@@ -402,6 +393,8 @@ interface
   ///
   /// @lib
   /// @sn rectangleFromX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
   function RectangleFrom(x, y: Single; w, h: Longint): Rectangle; overload;
   
   /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
@@ -451,12 +444,14 @@ interface
   ///
   /// @lib FixRect
   /// @sn fixRectangleX:%s y:%s width:%s height:%s
-  procedure FixRectangle(var x, y: Single; width,height: Longint);
+  procedure FixRectangle(var x, y: Single; var width, height: Longint);
   
   /// Returns a triangle from the points passed in.
   /// 
   /// @lib
   /// @sn triangleFromAx:%s ay:%s bx:%s by:%s cx:%s cy:%s
+  ///
+  /// @doc_idx 0
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
   
   /// Returns a triangle made up of the three points passed in.
@@ -464,491 +459,6 @@ interface
   /// @lib TriangleFromPoints
   /// @sn trangleFromPtA:%s ptB:%s ptC:%s
   function TriangleFrom(const a, b, c: Point2D): Triangle; overload;
-  
-  
-  
-//----------------------------------------------------------------------------
-// ShapePrototype creating functions
-//----------------------------------------------------------------------------
-  
-  /// Create a shape prototype for a given point.
-  ///
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initPointPrototypeAt:%s
-  function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
-  
-  /// Create a shape prototype of a circle with a given radius ``r``.
-  ///
-  /// @lib
-  /// @sn circlePrototypeFromPt:%s radius:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initCirclePrototypeAt:%s withRadius:%s
-  function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
-  
-  // /// Create a shape prototype of an ellipse with a given width and height.
-  // ///
-  // /// @lib
-  // /// @class ShapePrototype
-  // /// @constructor
-  // /// @csn initEllipsePrototypeAt:%s width:%s height:%s
-  // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
-  
-  /// Create a shape prototype for a line from ``startPt`` to ``endPt``.
-  ///
-  /// @lib
-  /// @sn linePrototypeFromPt:%s toPt:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initLinePrototypeFrom:%s to:%s
-  function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
-  
-  /// Create a shape prototype for a triangle made of points ``pt1``, ``pt2``, and ``pt3``.
-  ///
-  /// @lib
-  /// @sn trianglePrototypeFromPt1:%s pt2:%s pt3:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initTrianglePrototype:%s point2:%s point3:%s
-  function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
-  
-  /// Create a LineList prototype from the passed in points. There must be an
-  /// even number of points, where each pair represents a line.
-  ///
-  /// @lib
-  /// @sn lineListPrototypeFrom:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initLineListPrototype:%s
-  function LineListPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  /// Creates a LineStrip prototype where the points in the array represent the 
-  /// points on the line. The last point of the line does not join back to the starting
-  /// point.
-  ///
-  /// @lib
-  /// @sn lineStripPrototypeFrom:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initLineStripPrototype:%s
-  function LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  // /// Creates a Polygon from the passed in points, the polygon is made up of
-  // /// the points in the array and the last point does join back to the start
-  // /// point.
-  // ///
-  // /// @lib
-  // function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  /// Creates a triangle strip from the passed in points. The passed in array
-  /// must contain at least three points.
-  ///
-  /// @lib
-  /// @sn triangleStripPrototypeFrom:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initTriangleStripPrototype:%s
-  function TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  /// Creates a triangle fan from the passed in points. The fan is constructed from
-  /// the first point combined with all other point pairs. The array must contain
-  /// at least three points.
-  ///
-  /// @lib
-  /// @sn triangleFanPrototypeFrom:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initTriangleFanPrototype:%s
-  function TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  /// Creates a triangle list from the passed in points. The list is a set of 
-  /// triangles. The number of points must be divisible by three.
-  ///
-  /// @lib
-  /// @sn triangleListPrototypeFrom:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initTriangleListPrototype:%s
-  function TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  
-  /// Creates a shape prototype from the data in the points array. The kind
-  /// indicates the type of shape prototype to create.
-  ///
-  /// @lib
-  /// @sn prototypeFrom:%s kind:%s
-  ///
-  /// @class ShapePrototype
-  /// @constructor
-  /// @csn initShapePropertyFrom:%s withKind:%s
-  function PrototypeFrom(const points: Point2DArray; kind:ShapeKind): ShapePrototype;
-  
-  /// Free the resources used by a ShapePrototype.
-  ///
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @dispose
-  procedure FreePrototype(var p: ShapePrototype);
-  
-  
-  
-//----------------------------------------------------------------------------
-// ShapePrototype functions and procedures
-//----------------------------------------------------------------------------
-  
-  /// Returns the minimum number of points required for the given shape kind.
-  /// 
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @method MinimumPointsForKind
-  /// @static
-  function MinimumPointsForKind(k: ShapeKind): Longint;
-  
-  /// Returns the number of points allocated to this shape prototype.
-  ///
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @getter PointCount
-  function PrototypePointCount(p: ShapePrototype): Longint;
-  
-  /// Change the prototype's points to the passed in points. The number of points must
-  /// be sufficient for the kind of shape being changed.
-  ///
-  /// @lib
-  /// @sn prototype:%s setPointsTo:%s
-  ///
-  /// @class ShapePrototype
-  /// @setter Points
-  /// @length PrototypePointCount
-  procedure PrototypeSetPoints(p: ShapePrototype; const points: Point2DArray);
-  
-  /// The prototype point locations.
-  ///
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @getter Points
-  /// @length PrototypePointCount
-  function PrototypePoints(p: ShapePrototype): Point2DArray;
-  
-  /// Changes the prototype kind. This effects how shapes of this prototype
-  /// are drawn to the screen, and the number of points required.
-  /// 
-  /// @lib
-  /// @sn prototype:%s setKindTo:%s 
-  ///
-  /// @class ShapePrototype
-  /// @setter Kind
-  procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
-  
-  /// The prototype kind.   This effects how shapes of this prototype
-  /// are drawn to the screen, and the number of points required.
-  ///
-  /// @lib
-  ///
-  /// @class ShapePrototype
-  /// @getter Kind
-  function PrototypeKind(p: ShapePrototype): ShapeKind;
-  
-  
-  
-//----------------------------------------------------------------------------
-// Shape Code
-//----------------------------------------------------------------------------
-  
-  /// Create a shape from a given prototype at a set location in the game.
-  ///
-  /// @lib
-  /// @sn prototype:%s createShapeAtPt:%s
-  ///
-  /// @class Shape
-  /// @constructor
-  /// @csn initShapeWithPrototype:%s atPoint:%s
-  function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
-  
-  /// Free the resources used by a Shape.
-  ///
-  /// @lib
-  /// @class Shape
-  /// @dispose
-  procedure FreeShape(var s: Shape);
-  
-  /// Recalculate the points of the shape. This will be required when a Shape's
-  /// prototype is changed.
-  ///
-  /// @lib
-  /// @class Shape
-  /// @method UpdatePoints
-  procedure UpdateShapePoints(s: Shape);
-  
-  /// Returns the number of points on this shape.
-  ///
-  /// @lib
-  /// @class Shape
-  /// @getter PointCount
-  function ShapePointCount(s: Shape): Longint;
-  
-  /// Returns all of the points for a shape, based on its kind, angle 
-  /// and scale.
-  ///
-  /// @lib
-  /// @class Shape
-  /// @getter Points
-  /// @length ShapePointCount
-  function ShapePoints(s: Shape): Point2DArray;
-  
-  /// Change the angle of a Shape.
-  ///
-  /// @lib
-  /// @sn shape:%s setAngleTo:%s
-  ///
-  /// @class Shape
-  /// @setter Angle
-  procedure ShapeSetAngle(s: Shape; angle: Single);
-  
-  /// Return the angle of a Shape.
-  ///
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter Angle
-  function ShapeAngle(s: Shape): Single;
-  
-  /// Change the scale of a Shape.
-  ///
-  /// @lib
-  /// @sn shape:%s setScaleTo:%s
-  ///
-  /// @class Shape
-  /// @setter Scale
-  procedure ShapeSetScale(s: Shape; const scale: Point2D);
-  
-  /// Return the scale of a Shape.
-  ///
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter Scale
-  function ShapeScale(s: Shape): Point2D;
-  
-  /// Add a shape as a sub shape to a given parent shape.
-  ///
-  /// @lib
-  /// @sn shape:%s addSubShape:%s
-  ///
-  /// @class Shape
-  /// @method AddSubShape
-  /// @csn addSubShape:%s
-  procedure ShapeAddSubShape(parent, child: Shape);
-  
-  /// Gets the color of the shape s.
-  ///
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter Color
-  function ShapeColor(s: Shape): Color;
-  
-  /// Sets the color of the shape s.
-  ///
-  /// @lib
-  /// @sn shape:%s setColorTo:%s
-  ///
-  /// @class Shape
-  /// @setter Color
-  procedure ShapeSetColor(s: Shape; c: Color);
-  
-  /// Sets the shape's prototype.
-  /// 
-  /// @lib
-  /// @sn shape:%s setPrototypeTo:%s
-  ///
-  /// @class Shape
-  /// @setter ShapePrototype
-  procedure ShapeSetPrototype(s: Shape; p: ShapePrototype);
-  
-  /// Returns the shape's ShapePrototype.
-  /// 
-  /// @lib
-  /// @sn shapeShapePrototype:%s
-  /// 
-  /// @class Shape
-  /// @getter ShapePrototype
-  function ShapeShapePrototype(s: Shape): ShapePrototype;
-  
-  /// Returns true if the shape and rectangle intersect
-  /// 
-  /// @lib
-  /// @sn shape:%s intersectsRectangle:%s
-  ///
-  /// @class Shape
-  /// @method IntersectsRectangle
-  function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean;
-  
-  /// Returns an axis aligned bounded box for the shape.
-  /// 
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter AABB
-  function ShapeAABB(s: Shape): Rectangle;
-  
-  /// Returns the kind of the shape.
-  ///
-  /// @lib
-  ///
-  /// @class Shape
-  /// @getter ShapeKind
-  function ShapeShapeKind(s: Shape): ShapeKind;
-  
-  /// Returns the number of triangles in the Shape.
-  ///
-  /// @lib
-  /// 
-  /// @class Shape
-  /// @getter TriangleCount
-  function ShapeTriangleCount(s: Shape): Longint;
-  
-  /// Returns the number of triangles in the Shape.
-  ///
-  /// @lib
-  /// @sn shapeTriangleCount:%s kind:%s
-  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): Longint;
-  
-  /// Returns the triangles for a triangle strip, list, or fan.
-  ///
-  /// @lib
-  /// @sn shapeTriangles:%s
-  /// @length ShapeTriangleCount
-  ///
-  /// @class Shape
-  /// @method AsTriangles
-  /// @csn triangles
-  function ShapeTriangles(s: Shape): TriangleArray; overload;
-  
-  /// Returns the triangles for a triangle strip, list, or fan.
-  ///
-  /// @lib ShapeTrianglesForKind
-  /// @sn shapeTriangles:%s forKind:%s
-  /// @length ShapeKindTriangleCount
-  ///
-  /// @class Shape
-  /// @overload AsTriangles AsTrianglesForKind
-  /// @csn trianglesForKind:%s
-  function ShapeTriangles(s: Shape; kind: ShapeKind): TriangleArray;
-  
-  /// Returns the triangles for a triangle strip, list, or fan with an offset.
-  ///
-  /// @lib ShapeTrianglesOffset
-  /// @sn shapeTriangles:%s forKind:%s offset:%s
-  /// @length ShapeKindTriangleCount
-  ///
-  /// @class Shape
-  /// @overload AsTriangles AsTrianglesOffset
-  /// @csn trianglesForKind:%s offset:%s
-  function ShapeTriangles(s: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
-  
-  /// Returns the number of lines in a given shape and kind.
-  ///
-  /// @lib
-  /// @sn shapeLineCount:%s kind:%s
-  function ShapeKindLineCount(s: Shape; kind: ShapeKind): Longint;
-  
-  /// Returns the lines for a triangle list or strip.
-  ///
-  /// @lib
-  /// @sn shapeLines:%s
-  /// @length ShapeLineCount
-  ///
-  /// @class Shape
-  /// @method AsLines
-  function ShapeLines(s: Shape): LinesArray; overload;
-  
-  /// Returns the lines for a triangle list or strip.
-  ///
-  /// @lib ShapeKindLines
-  /// @sn shapeLines:%s forKind:%s
-  /// @length ShapeKindLineCount
-  ///
-  /// @class Shape
-  /// @overload AsLines AsLinesForKind
-  /// @csn linesForKind:%s
-  function ShapeLines(s: Shape; kind: ShapeKind): LinesArray; overload;
-  
-  /// Returns the lines for a triangle list or strip with offset.
-  ///
-  /// @lib ShapeLinesWithOffset
-  /// @sn shapeLines:%s forKind:%s withOffset:%s
-  /// @length ShapeLineCount
-  ///
-  /// @class Shape
-  /// @overload AsLines AsLinesOffset
-  /// @csn linesForKind:%s offset:%s
-  function ShapeLines(s: Shape; kind: ShapeKind; const offset:Point2D): LinesArray; overload;
-  
-  /// Returns the triangle from the shapes details.
-  /// 
-  /// @lib
-  /// 
-  /// @class Shape
-  /// @method AsTriangle
-  function ShapeTriangle(s: Shape): Triangle;
-  
-  /// Returns the triangle from the shapes details with offset.
-  /// 
-  /// @lib ShapeTriangleWithOffset
-  /// @sn shape:%s asTriangleOffset:%s
-  /// 
-  /// @class Shape
-  /// @overload AsTriangle AsTriangleOffset
-  function ShapeTriangle(s: Shape; const offset:Point2D): Triangle;
-  
-  /// Returns the line from the shapes details.
-  /// 
-  /// @lib
-  /// 
-  /// @class Shape
-  /// @method AsLine
-  function ShapeLine(s: Shape): LineSegment;
-  
-  /// Returns the line from the shapes details with offset.
-  /// 
-  /// @lib ShapeLineOffset
-  /// @sn shape:%s asLineOffset:%s
-  /// 
-  /// @class Shape
-  /// @overload AsLine AsLineOffset
-  function ShapeLine(s: Shape; const offset:Point2D): LineSegment;
-  
-  /// Returns the circle from the shapes details.
-  /// 
-  /// @lib
-  /// 
-  /// @class Shape
-  /// @method AsCircle
-  function ShapeCircle(s: Shape): Circle;
-  
-  /// Returns the circle from the shapes details with offset.
-  /// 
-  /// @lib ShapeCircleOffset
-  /// @sn circleShape:%s offset:%s
-  /// 
-  /// @class Shape
-  /// @overload AsCircle AsCircleOffset
-  function ShapeCircle(s: Shape; const offset:Point2D): Circle;
   
   
   
@@ -1166,6 +676,8 @@ interface
   ///
   /// @class Point2D
   /// @method InRect
+  /// 
+  /// @doc_idx 0
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
   
   /// Returns true if the point (ptX, ptY) is within the rectangle.
@@ -1197,15 +709,15 @@ interface
   /// @class Point2D
   /// @method OnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
-
-  /// Returns True if point 'pt' is in the shape.
+  
+  /// Returns True of `pt` is at the same point as `pt2`.
   ///
   /// @lib
-  /// @sn point:%s inShape:%s
+  /// @sn point:%s atSamePointAs:%s
   ///
   /// @class Point2D
-  /// @method InShape
-  function PointInShape(const pt: Point2d; s:Shape):Boolean;
+  /// @method OnPoint
+  function PointOnPoint(const pt1,pt2: Point2d): Boolean;
   
   
   
@@ -1550,7 +1062,15 @@ interface
   /// @csn vectorOverLines:%s givenHeading:%s resultingMaxIdx:%s
   function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   
-  
+  /// Returns a vector that can be used to move a group of lines back over other lines. This is
+  /// used internally to determine vectors that can be used to move a rectangle back out of another rectangle
+  /// and similar operations.
+  ///
+  /// @lib
+  /// @sn vectorFromLines:%s overLones:%s givenHeading:%s resultingMaxIdx:%s
+  ///
+  /// @doc_details
+  function VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   
 //---------------------------------------------------------------------------
 // Points functions and procedures
@@ -1604,6 +1124,8 @@ interface
   /// 
   /// @class Vector
   /// @method AngleTo
+  /// 
+  /// @doc_idx 0
   function CalculateAngle(const v1, v2: Vector): Single; overload;
   
   /// Calculates the angle between two points.
@@ -1693,6 +1215,8 @@ interface
   /// @static
   /// @method TranslationMatrix
   /// @csn translationMatrixDx:%s dy:%s
+  /// 
+  /// @doc_idx 0
   function TranslationMatrix(dx, dy: Single): Matrix2D; overload;
   
   /// Returns a translation matric used to translate 2d points by the
@@ -1715,6 +1239,8 @@ interface
   /// @class Matrix2D
   /// @static
   /// @method ScaleMatrix
+  /// 
+  /// @doc_idx 0
   function ScaleMatrix(scale: Single): Matrix2D; overload;
   
   /// Create a scale matrix that scales x and y to
@@ -1866,7 +1392,7 @@ implementation
   //
   // maxIds     The index of the line that is the furthest colliding line back from the points.
   //
-  function _VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
+  function VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   var
     ray, vOut: Vector;
     i, j, k: Longint;
@@ -1912,7 +1438,7 @@ implementation
     end;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', '_VectorOverLinesFromLines(const pts: Point2DArray', '');
+      TraceEnter('sgGeometry', 'VectorOverLinesFromLines(const pts: Point2DArray', '');
     {$ENDIF}
     
     // Cast ray searching back from pts... looking for the impact point
@@ -1961,7 +1487,7 @@ implementation
     result.y := Ceiling(vOut.y);
 
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', '_VectorOverLinesFromLines(const pts: Point2DArray', '');
+      TraceExit('sgGeometry', 'VectorOverLinesFromLines(const pts: Point2DArray', '');
     {$ENDIF}
   end;
 
@@ -3365,128 +2891,6 @@ implementation
     end
   end;
 
-  function PointOnLineList(const pt:point2d; const s:Shape):Boolean;
-  var
-  pts : Point2dArray;
-  i :Longint;
-  begin
-    pts := ShapePoints(s);
-    result:=False;
-    for i := 0 to Length(pts) div 2 - 1 do
-    begin
-      if PointOnLine(pt, Linefrom(pts[i * 2], pts[i * 2 + 1])) then
-      begin
-        result:=True;
-        exit;
-      end
-    end;
-  end;
-
-  function PointOnLineStrip(const pt:point2d; const s:Shape):Boolean;
-  var
-  pts : Point2dArray;
-  i :Longint;
-  begin
-    pts := ShapePoints(s);
-    result:=False;
-    
-    for i := 0 to Length(pts) - 2 do
-    begin
-      if PointOnLine(pt,Linefrom(pts[i], pts[i+ 1])) then
-      begin
-        result:=True;
-        exit;
-      end;
-    end;
-  end;
-
-  function PointInTriangleList(const pt:point2d; const s:shape):Boolean;
-  var
-  pts : Point2dArray;
-  i :Longint;
-  begin
-    pts := ShapePoints(s);
-    result:=False;
-    for i := 0 to Length(pts) div 3 - 1 do
-    begin
-      if PointInTriangle(pt, TriangleFrom(
-          pts[i * 3].x, pts[i * 3].y,
-          pts[i * 3 + 1].x, pts[i * 3 + 1].y,
-          pts[i * 3 + 2].x, pts[i * 3 + 2].y)) then
-      begin
-        result:=True;
-        exit;
-      end
-    end;
-  end;
-
-  function PointInTriangleFan(const pt:point2d; const s:shape):Boolean;
-  var
-  pts : Point2dArray;
-  i :Longint;
-  begin
-    pts := ShapePoints(s);
-    result:=False;
-     for i := 0 to Length(pts) - 3 do
-    begin
-      if PointInTriangle(pt, TriangleFrom(
-          pts[0].x,pts[0].y,
-          pts[i + 1].x, pts[i + 1].y,
-          pts[i + 2].x, pts[i + 2].y)) then
-      begin
-        result:=True;
-        exit;
-      end
-    end;
-  end;
-
-  function PointInTriangleStrip(const pt:point2d; const s:shape):Boolean;
-  var
-  pts : Point2dArray;
-  i :Longint;
-  begin
-    pts := ShapePoints(s);
-    result:=False;
-    for i := 0 to Length(pts) - 3 do
-    begin
-      if PointInTriangle(pt, TriangleFrom(
-        pts[i].x,pts[i].y,
-        pts[i + 1].x, pts[i + 1].y,
-        pts[i + 2].x, pts[i + 2].y)) then
-      begin
-        result:=True;
-        exit;
-      end
-    end;
-  end;
-
-  function PointInShape(const pt: Point2d; s:Shape):Boolean;
-  var
-  k : ShapeKind;
-  pts : Point2dArray;
-  begin
-    k := PrototypeKind(s^.prototype);
-    pts := ShapePoints(s);
-    
-    case k of
-      pkPoint: result := PointOnPoint(pt, s^.pt);
-      pkCircle: result := PointInCircle(pt, CircleAt(s^.pt,round(PointPointDistance(pts[0], pts[1]))));
-      // pkEllipse: result := 2;
-      pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
-      pkTriangle: result := PointInTriangle(pt,TriangleFrom(pts[0],pts[1],pts[2]));
-      pkLineList: result := PointOnLineList(pt,s);
-      pkLineStrip: result := PointOnLineStrip(pt,s);
-      //pkPolygon: result := 3;
-      pkTriangleStrip: result := PointInTriangleStrip(pt,s);
-      pkTriangleFan: result := PointInTriangleFan(pt,s);
-      pkTriangleList: result := PointInTriangleList(pt,s);
-      else
-        begin
-          RaiseException('Shape not Recognized when checking if point is in shape.');
-          exit;
-        end;
-    end;
-  end;
   
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
   begin
@@ -3532,62 +2936,7 @@ implementation
       TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
     {$ENDIF}
   end;
-
-  function LinesFromShapeAsTriangleStrip(s: shape): LinesArray; overload;
-  var
-    pts:Point2DArray;
-    i:Longint;
-  begin
-    pts:= ShapePoints(s);
-
-    //WriteLn('ShapeLineCount: ', ShapeLineCount(s));
-    SetLength(result, ShapeLineCount(s));
-    if Length(result) <= 0 then exit;
-    
-    for i := 0 to Length(pts) - 3 do
-    begin
-      result[i * 2]     := LineFrom(pts[i], pts[i + 1]);
-      result[i * 2 + 1] := LineFrom(pts[i], pts[i + 2]);
-      //WriteLn('  Line ', LineToString(result[i*2]));
-      //WriteLn('  Line ', LineToString(result[i*2 + 1]));
-    end;
-
-    result[high(result)] := LineFrom(pts[High(pts) - 1], pts[High(pts)]);
-    //WriteLn('  Line ', LineToString(result[High(result)]));
-  end;
-  
-  function LinesFrom(s: shape): LinesArray; overload;
-  var
-  k: ShapeKind;
-  pts: Point2DArray;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
-    {$ENDIF}
-    k := PrototypeKind(s^.prototype);
-    pts := ShapePoints(s);
-    
-    case k of
-      pkCircle: SetLength(result, 0);
-      //pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
-      pkTriangle: result := LinesFrom(TriangleFrom(pts[0],pts[1],pts[2]));
-      //pkLineList: result := PointOnLineList(pt,s);
-      //pkLineStrip: result := PointOnLineStrip(pt,s);
-      pkTriangleStrip: result := LinesFromShapeAsTriangleStrip(s);
-      //pkTriangleFan: result := PointInTriangleFan(pt,s);
-      //pkTriangleList: result := PointInTriangleList(pt,s);
-      else
-        begin
-          RaiseException('LinesFrom not implemented with this kind of shape.');
-          exit;
-        end;
-    end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
-    {$ENDIF}
-  end;
-  
+ 
   function LinesFrom(const rect: Rectangle): LinesArray; overload;
   begin
     {$IFDEF TRACE}
@@ -3974,78 +3323,7 @@ implementation
       TraceExit('sgGeometry', 'LineMidPoint(const line: LineSegment): Point2D', '');
     {$ENDIF}
   end;
-  
-  function ShapeAABB(s: Shape): Rectangle;
-  var
-    pts : Point2DArray;
-    minPt, maxPt: Point2D;
-    i, max: Longint;
-    r, l, t, b, temp: Single;
-    subRect: Rectangle;
-    kind: ShapeKind;
-  begin
-    pts :=    ShapePoints(s);
-    result := RectangleFrom(0,0,0,0);
-    kind :=   ShapeShapeKind(s);
-    if (Longint(kind) = -1) or (Length(pts) < MinimumPointsForKind(kind)) then exit;
-    
-    minPt := pts[0];
-    maxPt := minPt;
-    
-    if kind = pkPoint then 
-      //do nothing as the point is the maximum
-    else if kind = pkCircle then
-    begin
-      temp := PointPointDistance(pts[0], pts[1]);
-      minPt.x := minPt.x - temp;
-      minPt.y := minPt.y - temp;
-      maxPt.x := maxPt.x + temp;
-      maxPt.y := maxPt.y + temp;
-    end
-    else
-    begin
-      
-      case kind of
-        pkLine: max := 1;         // line from 0 to 1
-        pkTriangle: max := 2;     // triangle 0,1,2
-        pkLineList: max := High(pts) - (Length(pts) mod 2); // even numbers
-        pkLineStrip: max := High(pts); // all points in strip
-        pkTriangleList: max := High(pts) - (Length(pts) mod 3); //groups of 3
-        pkTriangleStrip: max := High(pts);
-        pkTriangleFan: max := High(pts);
-      else max := High(pts);
-      end;
-      
-      for i := low(pts) + 1 to max do
-      begin
-        if pts[i].x < minPt.x then minPt.x := pts[i].x
-        else if pts[i].x > maxPt.x then  maxPt.x := pts[i].x;
-      
-        if pts[i].y < minPt.y then minPt.y := pts[i].y
-        else if pts[i].Y > maxPt.y then maxPt.y := pts[i].y;
-      end;
-    end;
-    
-    for i := Low(s^.subShapes) to High(s^.subShapes) do
-    begin
-      subRect := ShapeAABB(s^.subShapes[i]);
-      
-      r := RectangleRight(subRect);
-      l := RectangleLeft(subRect);
-      t := RectangleTop(subRect);
-      b := RectangleBottom(subRect);
-      
-      if l < minPt.x then minPt.x := l;
-      if r > maxPt.x then maxPt.x := r;
-      
-      if t < minPt.y then minPt.y := t;
-      if b > maxPt.y then maxPt.y := b;
-    end;
-    
-    result := RectangleFrom(minPt, maxPt);
-    //DrawRectangle(colorYellow, result);
-  end;
-  
+
   function TriangleAABB(const tri: Triangle): Rectangle;
   var
     minPt, maxPt: Point2D;
@@ -4053,19 +3331,19 @@ implementation
   begin
     minPt := tri[0];
     maxPt := tri[0];
-    
+
     for i := 1 to 2 do
     begin
       if minPt.x > tri[i].x then minPt.x := tri[i].x
       else if maxPt.x < tri[i].x then maxPt.x := tri[i].x;
-      
+
       if minPt.y > tri[i].y then minPt.y := tri[i].y
       else if maxPt.y < tri[i].y then maxPt.y := tri[i].y;
     end;
-    
+
     result := RectangleFrom(minPt, maxPt);
   end;
-  
+ 
   function TrianglesRectangleIntersect(const tri: TriangleArray; const rect: Rectangle): Boolean;
   var
     i: Longint;
@@ -4180,199 +3458,6 @@ implementation
     {$ENDIF}
   end;
   
-  function ShapeCircle(s: Shape): Circle;
-  begin
-    result := ShapeCircle(s, PointAt(0,0));
-  end;
-  
-  function ShapeCircle(s: Shape; const offset: Point2D): Circle;
-  var
-    pts: Point2DArray;
-  begin
-    pts := ShapePoints(s);
-    if length(pts) < 2 then begin result := CircleAt(0,0,0); exit; end;
-      
-    result := CircleAt(PointAdd(pts[0], offset), Round(PointPointDistance(pts[0], pts[1])));
-  end;
-  
-  function ShapeLine(s: Shape): LineSegment;
-  begin
-    result := ShapeLine(s, PointAt(0,0));
-  end;
-  
-  function ShapeLine(s: Shape; const offset: Point2D): LineSegment;
-  var
-    pts: Point2DArray;
-  begin
-    pts := ShapePoints(s);
-    if length(pts) < 2 then begin result := LineFrom(0,0,0,0); exit; end;
-      
-    result := LineFrom(PointAdd(pts[0], offset), PointAdd(pts[1], offset));
-  end;
-  
-  function ShapeTriangle(s: Shape): Triangle;
-  begin
-    result := ShapeTriangle(s, PointAt(0,0));
-  end;
-  
-  function ShapeTriangle(s: Shape; const offset: Point2D): Triangle;
-  var
-    pts: Point2DArray;
-  begin
-    pts := ShapePoints(s);
-    if length(pts) < 3 then begin result := TriangleFrom(0,0,0,0,0,0); exit; end;
-      
-    result := TriangleFrom( PointAdd(pts[0], offset), 
-                            PointAdd(pts[1], offset), 
-                            PointAdd(pts[2], offset));
-  end;
-  
-  function ShapeTriangleCount(s: Shape): Longint;
-  begin
-    result := ShapeKindTriangleCount(s, ShapeShapeKind(s));
-  end;
-  
-  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): Longint;
-  var
-    pts: Longint;
-  begin
-    result := 0;
-
-    pts := ShapePointCount(s);
-
-    case kind of
-      pkCircle: result := 0;
-      pkLine: result := 0;
-      pkTriangle: result := 1;
-      pkLineList: result := 0;
-      pkLineStrip: result := 0;
-      //pkPolygon: result := 3;
-      pkTriangleStrip, pkTriangleFan: result := pts - 2;
-      pkTriangleList: result := pts div 3;
-      else
-        begin
-          RaiseException('Shape not Recognized when getting line out of shape.');
-          exit;
-        end;
-    end;
-  end;
-  
-  function ShapeLineCount(s: Shape): Longint;
-  begin
-    if assigned(s) then
-      result := ShapeKindLineCount(s, ShapeShapeKind(s))
-    else
-      result := 0;
-  end;
-  
-  function ShapeKindLineCount(s: Shape; kind: ShapeKind): Longint;
-  var
-    pts: Longint;
-  begin
-    result := 0;
-    
-    pts := ShapePointCount(s);
-    
-    case kind of
-      pkCircle: result := 0;
-      pkLine: result := 1;
-      pkTriangle: result := 3;
-      pkLineList: result := pts div 2;
-      pkLineStrip: result := pts - 1;
-      //pkPolygon: result := 3;
-      pkTriangleStrip, pkTriangleFan: 
-      begin
-        result := 2 * pts - 3;
-        if result < 0 then result := 0;
-      end;
-      pkTriangleList: result := (pts div 3) * 3;
-      else
-        begin
-          RaiseException('Shape not Recognized when getting line out of shape.');
-          exit;
-        end;
-    end;
-  end;
-  
-  function ShapeLines(s: Shape): LinesArray;
-  begin
-    if assigned(s) then
-      result := ShapeLines(s, ShapeShapeKind(s), PointAt(0,0))
-    else
-      result := nil;
-  end;
-  
-  function ShapeLines(s: Shape; kind: ShapeKind): LinesArray;
-  begin
-    result := ShapeLines(s, kind, PointAt(0,0));
-  end;
-  
-  function ShapeLines(s: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
-  var
-    pts,pts1: Point2DArray;
-    i: Longint;
-  begin
-    pts := ShapePoints(s);
-    SetLength(pts1, length(pts));
-    
-    if length(pts) < 2 then begin SetLength(result, 0); exit; end;
-    if not ((kind = pkLineList) or (kind = pkLineStrip)) then exit;
-    
-    if kind = pkLineList then SetLength(result, Length(pts) div 2)
-    else SetLength(result, Length(pts) - 1);
-    
-    for i := 0 to high(pts1) do pts1[i] := PointAdd(pts[i], offset);
-    
-    for i := 0 to High(result) do
-    begin
-      if kind = pkLineList then
-        result[i] := LineFrom(pts1[i * 2], pts1[i * 2 + 1])
-      else // strip
-        result[i] := LineFrom(pts1[i], pts1[i + 1]);
-    end;
-  end;
-  
-  function ShapeTriangles(s: Shape): TriangleArray; overload;
-  begin
-    if assigned(s) then
-      result := ShapeTriangles(s, ShapeShapeKind(s))
-    else
-      result := nil;
-  end;
-  
-  function ShapeTriangles(s: Shape; kind: ShapeKind): TriangleArray;
-  begin
-    result := ShapeTriangles(s, kind, PointAt(0,0));
-  end;
-  
-  function ShapeTriangles(s: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
-  var
-    pts, pts1: Point2DArray;
-    i: Longint;
-  begin
-    SetLength(result, 0);
-    if not ((kind = pkTriangleStrip) or (kind = pkTriangleFan) or (kind = pkTriangleList) or (kind = pkTriangle)) then exit;
-    pts := ShapePoints(s);
-    if length(pts) < 3 then begin exit; end;
-    
-    if kind = pkTriangleList then SetLength(result, Length(pts) div 3)
-    else if kind = pkTriangle then SetLength(result, 1)
-    else SetLength(result, Length(pts) - 2);
-    
-    SetLength(pts1, Length(pts));
-    for i := 0 to high(pts) do pts1[i] := PointAdd(pts[i], offset);
-    
-    for i := 0 to High(result) do
-    begin
-      case kind of
-        pkTriangle:     result[i] := TriangleFrom(pts1[i],     pts1[i + 1],     pts1[i + 2]);
-        pkTriangleList: result[i] := TriangleFrom(pts1[i * 3], pts1[i * 3 + 1], pts1[i * 3 + 2]);
-        pkTriangleStrip:result[i] := TriangleFrom(pts1[i],     pts1[i + 1],     pts1[i + 2]);
-        pkTriangleFan:  result[i] := TriangleFrom(pts1[0],     pts1[i + 1],     pts1[i + 2]);
-      end;
-    end;
-  end;
-  
   function LinesIntersect(const lines, lines1: LinesArray): Boolean;
   var
     i: Longint;
@@ -4393,45 +3478,7 @@ implementation
   function LinesRectIntersect(const lines: LinesArray; const r: Rectangle): Boolean;
   begin
     result := LinesIntersect(lines, LinesFrom(r));
-  end;
-  
-  function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean; overload;
-  var
-    kind: ShapeKind;
-    i: Longint;
-  begin
-    result := false;
-    
-    if not assigned(s) then exit;
-    if not RectanglesIntersect(rect, ShapeAABB(s)) then exit;
-    
-    kind := ShapeShapeKind(s);
-    
-    case kind of
-      pkPoint:      result := true;
-      pkCircle:     result := CircleRectCollision(ShapeCircle(s), rect);
-      pkLine:       result := RectLineCollision(rect, ShapeLine(s));
-      pkTriangle:   result := TriangleRectangleIntersect(ShapeTriangle(s), rect);
-      pkLineList, pkLineStrip:  
-                    result := LinesRectIntersect(ShapeLines(s, kind), rect);
-      pkTriangleStrip, pkTriangleFan, pkTriangleList:
-                    result := TrianglesRectangleIntersect(ShapeTriangles(s, kind), rect);
-    end;
-    
-    if not result then
-    begin
-      //Check sub shapes
-      for i := 0 to High(s^.subShapes) do
-      begin
-        // if we have an intersection then return true
-        if ShapeRectangleIntersect(s^.subShapes[i], rect) then
-        begin
-          result := true;
-          exit;
-        end;
-      end;
-    end;
-  end;
+  end;  
   
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
   var
@@ -4868,16 +3915,7 @@ implementation
       TraceExit('sgGeometry', 'VectorOutOfCircleFromCircle(const src, bounds: Circle', '');
     {$ENDIF}
   end;
-
-  function ShapeVectorOutOfRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
-  var
-  maxIdx :Longint;
-  begin
-   result := _VectorOverLinesFromLines(LinesFrom(bounds),LinesFrom(s), velocity, maxIdx);
-  end;
-    
   
-
   function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   var
     maxIDx: Longint;
@@ -4886,7 +3924,7 @@ implementation
       TraceEnter('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
     {$ENDIF}
     
-    result := _VectorOverLinesFromLines(LinesFrom(src), LinesFrom(bounds), velocity, maxIdx);
+    result := VectorOverLinesFromLines(LinesFrom(src), LinesFrom(bounds), velocity, maxIdx);
     //result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, maxIdx);
     
     {$IFDEF TRACE}
@@ -5202,616 +4240,12 @@ implementation
     {$ENDIF}
   end;
   
-  //=============================================================================
-  
-  function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PointPrototypeFrom(const pt: Point2D): ShapePrototype', '');
-    {$ENDIF}
-    
-    New(result);
-    
-    SetLength(result^.points, 1);
-    result^.points[0] := pt;
-    result^.kind := pkPoint;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PointPrototypeFrom(const pt: Point2D): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'CirclePrototypeFrom(const pt: Point2D', '');
-    {$ENDIF}
-    
-    New(result);
-    
-    SetLength(result^.points, 2);
-    result^.points[0] := pt;
-    result^.points[1] := PointAt(r, r);
-    result^.kind := pkCircle;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'CirclePrototypeFrom(const pt: Point2D', '');
-    {$ENDIF}
-  end;
-  
-  // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
-  // begin
-  //   New(result);
-  //   
-  //   SetLength(result^.points, 2);
-  //   result^.points[0] := pt;
-  //   result^.points[1] := PointAt(w, h);
-  //   result^.kind := pkEllipse;
-  // end;
-  
-  function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype', '');
-    {$ENDIF}
-    
-    New(result);
-    
-    SetLength(result^.points, 2);
-    result^.points[0] := startPt;
-    result^.points[1] := endPt;
-    result^.kind := pkLine;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype', '');
-    {$ENDIF}
-    
-    New(result);
-    
-    SetLength(result^.points, 3);
-    result^.points[0] := pt1;
-    result^.points[1] := pt2;
-    result^.points[2] := pt3;
-    result^.kind := pkTriangle;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function LineListPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'LineListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkLineList);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'LineListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkLineStrip);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  // function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  // begin
-  //   {$IFDEF TRACE}
-  //     TraceEnter('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-  //   {$ENDIF}
-  //   
-  //   result := PrototypeFrom(points, pkPolygon);
-  //   
-  //   {$IFDEF TRACE}
-  //     TraceExit('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-  //   {$ENDIF}
-  // end;
-  
-  function TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkTriangleStrip);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkTriangleFan);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkTriangleList);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function PrototypeFrom(const points: Point2DArray; kind:ShapeKind): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypeFrom(const points: Point2DArray', '');
-    {$ENDIF}
-    
-    if Length(points) < MinimumPointsForKind(kind) then
-    begin
-      RaiseException('Insufficient points assigned to shape given its kind. Min is ' 
-        + IntToStr(MinimumPointsForKind(kind))
-        + ' was supplied ' 
-        + IntToStr(Length(points)));
-      exit;
-    end;
-    
-    New(result);
-    
-    PrototypeSetKind(result, kind);
-    PrototypeSetPoints(result, points);
-    result^.shapeCount := 0;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypeFrom(const points: Point2DArray', '');
-    {$ENDIF}
-  end;
-  
-  procedure FreePrototype(var p: ShapePrototype);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'FreePrototype(var p: ShapePrototype)', '');
-    {$ENDIF}
-    
-    if not Assigned(p) then exit;
-    if p^.shapeCount > 0 then begin RaiseWarning('Freeing prototype while it is still used by ' + IntToStr(p^.shapeCount) + ' shapes.'); end;
-    
-    SetLength(p^.points, 0);
-    Dispose(p);
-    CallFreeNotifier(p);
-    p := nil;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'FreePrototype(var p: ShapePrototype)', '');
-    {$ENDIF}
-  end;
-  
-  //=============================================================================
-  
-  function MinimumPointsForKind(k: ShapeKind): Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): Longint', '');
-    {$ENDIF}
-    
-    case k of
-      pkPoint: result := 1;
-      pkCircle: result := 2;
-      // pkEllipse: result := 2;
-      pkLine: result := 2;
-      pkTriangle: result := 3;
-      pkLineList: result := 2;
-      pkLineStrip: result := 2;
-      // pkPolygon: result := 3;
-      pkTriangleStrip: result := 3;
-      pkTriangleFan: result := 3;
-      pkTriangleList: result := 3;
-    end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): Longint', '');
-    {$ENDIF}
-  end;
-  
-  function PrototypePointCount(p: ShapePrototype): Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypePointCount(p: ShapePrototype): Longint', '');
-    {$ENDIF}
-    
-    if not assigned(p) then result := 0
-    else result := Length(p^.points);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypePointCount(p: ShapePrototype): Longint', '');
-    {$ENDIF}
-  end;
-  
-  procedure PrototypeSetPoints(p: ShapePrototype; const points: Point2DArray);
-  var
-    i: Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypeSetPoints(p: ShapePrototype', '');
-    {$ENDIF}
-    
-    if not assigned(p) then exit;
-    
-    if Length(points) < MinimumPointsForKind(p^.kind) then
-    begin
-      RaiseException('Insufficient points assigned to shape given its kind. Min is ' 
-        + IntToStr(MinimumPointsForKind(p^.kind)) 
-        + ' was supplied ' 
-        + IntToStr(Length(points)));
-      exit;
-    end;
-    
-    SetLength(p^.points, Length(points));
-    
-    for i := 0 to High(points) do
-    begin
-      p^.points[i] := points[i];
-    end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypeSetPoints(p: ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function PrototypePoints(p: ShapePrototype): Point2DArray;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypePoints(p: ShapePrototype): Point2DArray', '');
-    {$ENDIF}
-    
-    if not assigned(p) then SetLength(result,0)
-    else result := p^.points;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypePoints(p: ShapePrototype): Point2DArray', '');
-    {$ENDIF}
-  end;
-  
-  procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypeSetKind(p: ShapePrototype', '');
-    {$ENDIF}
-    
-    if not assigned(p) then
-    begin
-      RaiseException('No shape prototype supplied to set kind.');
-      exit;
-    end;
-    
-    p^.kind := kind;
-    case kind of
-      pkPoint: p^.drawWith := @DrawShapeAsPoint;
-      pkCircle: p^.drawWith := @DrawShapeAsCircle;
-      // pkEllipse: p^.drawWith := @DrawShapeAsEllipse;
-      pkLine: p^.drawWith := @DrawShapeAsLine;
-      pkTriangle: p^.drawWith := @DrawShapeAsTriangle;
-      pkLineList: p^.drawWith := @DrawShapeAsLineList;
-      pkLineStrip: p^.drawWith := @DrawShapeAsLineStrip;
-      // pkPolygon: p^.drawWith := @DrawShapeAsPolygon;
-      pkTriangleStrip: p^.drawWith := @DrawShapeAsTriangleStrip;
-      pkTriangleFan: p^.drawWith := @DrawShapeAsTriangleFan;
-      pkTriangleList: p^.drawWith := @DrawShapeAsTriangleList;
-      else p^.drawWith := nil; 
-    end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypeSetKind(p: ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  function PrototypeKind(p: ShapePrototype): ShapeKind;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypeKind(p: ShapePrototype): ShapeKind', '');
-    {$ENDIF}
-    
-    if not assigned(p) then result := ShapeKind(-1)
-    else result := p^.kind;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypeKind(p: ShapePrototype): ShapeKind', '');
-    {$ENDIF}
-  end;
-  
-  //=============================================================================
-  
-  function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeAtPoint(p: ShapePrototype', '');
-    {$ENDIF}
-    
-    New(result);
-    result^.prototype := p;
-    result^.pt := pt;
-    result^.angle := 0.0;
-    result^.scale := PointAt(1,1);
-    result^.color := ColorWhite;
-    SetLength(result^.subShapes, 0);
-    
-    if Assigned(p) then p^.shapeCount += 1;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeAtPoint(p: ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  procedure FreeShape(var s: Shape);
-  var
-    i: Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'FreeShape(var s: Shape)', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then exit;
-    if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
-    
-    for i := 0 to High(s^.subShapes) do
-    begin
-      FreeShape(s^.subShapes[i])
-    end;
-    SetLength(s^.subShapes, 0);
-    
-    Dispose(s);
-    CallFreeNotifier(s);
-    s := nil;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'FreeShape(var s: Shape)', '');
-    {$ENDIF}
-  end;
-  
-  procedure UpdateSubShapePoints(s: Shape; const parentM: Matrix2D);
-  var
-    m: Matrix2D;
-    i: Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'UpdateSubShapePoints(s: Shape', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin exit; end;
-    
-    // Copy the points from the prototype
-    s^.ptBuffer := Copy(s^.prototype^.points, 0, Length(s^.prototype^.points));
-    
-    // Scale, angle and translate based on this shape's position * parent's matrix
-    //m := ScaleMatrix(s.scale) * RotationMatrix(s.angle) * TranslationMatrix(s.pt);
-    m := ScaleRotateTranslateMatrix(s^.scale, s^.angle, s^.pt) * parentM;
-    ApplyMatrix(m, s^.ptBuffer);
-    
-    for i := 0 to High(s^.subShapes) do
-    begin
-      UpdateSubShapePoints(s^.subShapes[i], m);
-    end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'UpdateSubShapePoints(s: Shape', '');
-    {$ENDIF}
-  end;
-  
-  procedure UpdateShapePoints(s: Shape);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'UpdateShapePoints(s: Shape)', '');
-    {$ENDIF}
-    
-    UpdateSubShapePoints(s, IdentityMatrix());
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'UpdateShapePoints(s: Shape)', '');
-    {$ENDIF}
-  end;
-  
-  function ShapePoints(s: Shape): Point2DArray;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapePoints(s: Shape): Point2DArray', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin SetLength(result, 0); exit; end;
-    if not Assigned(s^.ptBuffer) then
-    begin
-      UpdateShapePoints(s);
-    end;
-    result := s^.ptBuffer;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapePoints(s: Shape): Point2DArray', '');
-    {$ENDIF}
-  end;
-  
-  function ShapePointCount(s: Shape): Longint;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapePointCount(s: Shape): Longint', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin result := 0; exit; end;
-    result := PrototypePointCount(s^.prototype);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapePointCount(s: Shape): Longint', '');
-    {$ENDIF}
-  end;
-  
-  procedure ShapeSetAngle(s: Shape; angle: Single);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeSetAngle(s: Shape', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin exit; end;
-    s^.angle := angle;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeSetAngle(s: Shape', '');
-    {$ENDIF}
-  end;
-  
-  function ShapeAngle(s: Shape): Single;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeAngle(s: Shape): Single', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin result := 0; exit; end;
-    result := s^.angle;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeAngle(s: Shape): Single', '');
-    {$ENDIF}
-  end;
-  
-  procedure ShapeSetScale(s: Shape; const scale: Point2D);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeSetScale(s: Shape', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin exit; end;
-    s^.scale := scale;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeSetScale(s: Shape', '');
-    {$ENDIF}
-  end;
-  
-  function ShapeScale(s: Shape): Point2D;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeScale(s: Shape): Point2D', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin result := PointAt(0,0); exit; end;
-    result := s^.scale;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeScale(s: Shape): Point2D', '');
-    {$ENDIF}
-  end;
-  
-  function ShapeShapePrototype(s: Shape): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeShapePrototype(s: Shape): ShapePrototype', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin result := nil; exit; end;
-    result := s^.prototype;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeShapePrototype(s: Shape): ShapePrototype', '');
-    {$ENDIF}
-  end;
-  
-  procedure ShapeSetPrototype(s: Shape; p: ShapePrototype);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeSetPrototype(s: Shape', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then exit;
-    if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
-    
-    s^.prototype := p;
-    
-    if Assigned(s^.prototype) then s^.prototype^.shapeCount += 1;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeSetPrototype(s: Shape', '');
-    {$ENDIF}
-  end;
-  
-  procedure ShapeAddSubShape(parent, child: Shape);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeAddSubShape(parent, child: Shape)', '');
-    {$ENDIF}
-    
-    if not Assigned(parent) then exit;
-    if not Assigned(child) then exit;
-      
-    SetLength(parent^.subShapes, Length(parent^.subShapes) + 1);
-    parent^.subShapes[High(parent^.subShapes)] := child;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeAddSubShape(parent, child: Shape)', '');
-    {$ENDIF}
-  end;
-  
-  function ShapeColor(s: Shape): Color;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeColor(s: Shape): Color', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin result := ColorBlack; exit; end;
-    result := s^.color;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeColor(s: Shape): Color', '');
-    {$ENDIF}
-  end;
-  
-  procedure ShapeSetColor(s: Shape; c: Color);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapeSetColor(s: Shape', '');
-    {$ENDIF}
-    
-    if not Assigned(s) then begin exit; end;
-    
-    s^.color := c;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapeSetColor(s: Shape', '');
-    {$ENDIF}
-  end;
-  
-  function ShapeShapeKind(s: Shape): ShapeKind;
-  begin
-    if not assigned(s) then begin result := ShapeKind(-1); exit; end;
-      
-    result := PrototypeKind(ShapeShapePrototype(s));
-  end;
-  
   procedure FixRectangle(var rect: Rectangle);
   begin
     FixRectangle(rect.x, rect.y, rect.width, rect.height);
   end;
   
-  procedure FixRectangle(var x, y: Single; width,height: Longint);
+  procedure FixRectangle(var x, y: Single; var width, height: Longint);
   begin
     if width < 0 then
     begin
