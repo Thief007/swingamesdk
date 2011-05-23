@@ -332,10 +332,10 @@ local_variable_switcher = {
     # For example: apply_matrix(m, points) converts the NSArray for points into
     # point data and passes this to Pascal which applys the matrix to all points.
     # The resulting points then need to be moved back into the NSArray.
-    'process-param': 
-    {
-        'point2darray':     '\n    [SGPoint2D updatePoint2DsIn:%(param)s fromDataIn:%(var)s];',
-    },
+    # 'process-param': 
+    # {
+    #     'point2darray':     '\n    [SGPoint2D updatePoint2DsIn:%(param)s fromDataIn:%(var)s];',
+    # },
     
     # -------------------------------
     # Parameter post-call processing for out parameters
@@ -347,9 +347,9 @@ local_variable_switcher = {
         'string':           '\n    *%(param)s = [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
         
         #Passed through arrays
-        'triangle':         '\n    *%(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
-        'matrix2d':         '\n    *%(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
-        'point2darray':     '\n    *%(param)s = [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
+        # 'triangle':         '\n    *%(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
+        # 'matrix2d':         '\n    *%(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
+        'point2darray':     '\n    [SGPoint2D updatePoint2DsIn:%(param)s fromDataIn:%(var)s size:[%(param)s count]];',
         
         #out structs
         'point2d':          '\n    *%(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',

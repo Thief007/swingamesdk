@@ -729,7 +729,7 @@ interface
 
   implementation
   uses
-    sgText, sgGraphics, sgTrace, sgResources,
+    sgText, sgGraphics, sgTrace, sgResources, sgVectorShapes,
     sgCamera, sgGeometry, sgImages, sgInput, sgPhysics,
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
       stringhash, sgSharedUtils, sgNamedIndexCollection, sgShared;
