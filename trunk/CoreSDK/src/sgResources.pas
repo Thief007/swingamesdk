@@ -204,7 +204,12 @@ implementation
     uses SysUtils, StrUtils, Classes, // system
              stringhash, sgSharedUtils,          // libsrc
              SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-             {$ifdef WINDOWS} Windows, {$endif}
+             {$ifdef WINDOWS} Windows, 
+			 {$else}
+				{$ifndef DARWIN}
+				unix, BaseUnix,
+				{$endif}
+			 {$endif}
              sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers, sgUtils,
              sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps; // Swingame
 
@@ -818,9 +823,9 @@ implementation
                 exit;
             end;
             
-            path := StrAlloc(1024);
+            path := StrAlloc(4096);
             
-            CFStringGetCString(cfStringRef, path, 1024, 1536); // 1536 = 0x0600
+            CFStringGetCString(cfStringRef, path, 4096, 1536); // 1536 = 0x0600
             
             cwd := String(path) + '/Contents/MacOS';
             
@@ -838,19 +843,21 @@ implementation
                 len: cint;
                 path: PChar;
             begin
-                path := StrAlloc(1024);
-                // Read symbolic link /proc/self/exe
-                
-                len = fpReadLink("/proc/self/exe", path, sizeof(path));
+                path := StrAlloc(4096);
+
+                // Read symbolic link /proc/self/exe                
+                len := fpReadLink('/proc/self/exe', path, 4096);
+
                 if len = -1 then
                 begin
                     SetAppPath(GetCurrentDir(), False);
                     exit;
                 end;
                 
-                path[len] = '\0';
+                path[len] := #0;
                 
                 SetAppPath(path, True);
+				StrDispose(path);
             end;
         {$else}
             //
@@ -865,8 +872,6 @@ implementation
                     SetAppPath(path, true)
                 else
                     SetAppPath(GetCurrentDir(), False);
-					
-				WriteLn(path);
                 StrDispose(path);
             end;
         {$endif}
@@ -884,7 +889,8 @@ implementation
         InitialiseSwinGame();
         
         _Bundles := TStringHash.Create(False, 1024);
-        
+        _GuessAppPath();
+exit;
         try
             
             if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)

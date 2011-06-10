@@ -63,7 +63,7 @@ begin
     ClearSurface(img, RandomColor());
     DrawBitmap(img, 50, 50);
     
-    for i := 0 to 9 do DrawText('Hello World', ColorBlack, 'Arial', i + 10, 10 + i * 10, 10 + i *  10);
+    for i := 0 to 9 do DrawText('Hello World', ColorBlack, 'arial', i + 10, 10 + i * 10, 10 + i *  10);
     
     DrawFramerate(0,0);
     
