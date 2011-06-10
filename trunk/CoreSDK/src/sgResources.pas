@@ -889,8 +889,7 @@ implementation
         InitialiseSwinGame();
         
         _Bundles := TStringHash.Create(False, 1024);
-        _GuessAppPath();
-exit;
+        
         try
             
             if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
