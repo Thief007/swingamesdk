@@ -640,7 +640,7 @@ implementation
     result := LoadFontNamed(FontNameFor(fontName, size), fontName, size);
   end;
   
-  procedure FreeFont(var fontToFree: Font);
+  procedure _DoFreeFont(var fontToFree: Font);
   begin
     if Assigned(fontToFree) then
     begin
@@ -651,9 +651,10 @@ implementation
         {$IFDEF TRACE}
             Trace('Resources', 'IN', 'FreeFont', 'Before calling close font');
         {$ENDIF}
-
-        TTF_CloseFont(fontToFree);
+        
         CallFreeNotifier(fontToFree);
+        TTF_CloseFont(fontToFree^.fptr);
+        Dispose(fontToFree);
         fontToFree := nil;
         {$IFDEF TRACE}
             Trace('Resources', 'IN', 'FreeFont', 'At end of free font');
@@ -663,6 +664,12 @@ implementation
         exit;
       end;
     end;
+  end;
+  
+  procedure FreeFont(var fontToFree: Font);
+  begin
+    if Assigned(fontToFree) then ReleaseFont(fontToFree^.name);
+    fontToFree := nil;
   end;
 
 //----------------------------------------------------------------------------
@@ -694,13 +701,23 @@ implementation
         end;
       end;
       
-      result := TTF_OpenFont(PChar(filename), size);
-      
+      New(result);
       if result = nil then
       begin
+        RaiseException('LoadFont to allocate space.');
+        exit;
+      end;
+      
+      result^.fptr := TTF_OpenFont(PChar(filename), size);
+      if result^.fptr = nil then
+      begin
+        Dispose(result);
         RaiseException('LoadFont failed: ' + TTF_GetError());
         exit;
       end;
+
+      result^.name := name;
+      
     end;
   begin
     
@@ -748,13 +765,13 @@ implementation
     fnt: Font;
   begin
     fnt := FontNamed(name);
-    if (assigned(fnt)) then
+    if Assigned(fnt) then
     begin
       _Fonts.remove(name).free();
-      FreeFont(fnt);
+      _DoFreeFont(fnt);
     end;
   end;
-
+  
   procedure ReleaseAllFonts();
   begin
     ReleaseAll(_Fonts, @ReleaseFont);
@@ -767,14 +784,14 @@ implementation
   procedure FontSetStyle(font: Font; value: FontStyle);
   begin
     if not Assigned(font) then begin RaiseWarning('No font supplied to FontSetStyle'); exit; end;
-    TTF_SetFontStyle(font, Longint(value));
+    TTF_SetFontStyle(font^.fptr, Longint(value));
   end;
   
   function FontFontStyle(font: Font): FontStyle;
   begin
     result := NormalFont;
     if not Assigned(font) then begin RaiseWarning('No font supplied to FontFontStyle'); exit; end;
-    result := FontStyle(TTF_GetFontStyle(font));
+    result := FontStyle(TTF_GetFontStyle(font^.fptr));
   end;
 
   function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
@@ -807,7 +824,7 @@ implementation
     if (Length(str) = 0) or (font = nil) then exit;
 
     // This is the surface that everything is printed to.
-    lineSkip  := TTF_FontLineSkip( font );
+    lineSkip  := TTF_FontLineSkip( font^.fptr );
     width    := rc^.w;
     height    := 10;
     SetLength(lines, 1);
@@ -838,7 +855,7 @@ implementation
 
       w := 0;
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeText(font, PChar(subStr), w, height);
+      if Length(subStr) > 0 then TTF_SizeText(font^.fptr, PChar(subStr), w, height);
       
       if w > width then width := w;
     end;
@@ -858,8 +875,8 @@ implementation
       // The rendered text:
       if length(lines[i]) = 0 then continue;
       
-      temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
-      //temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
+      temp := TTF_RenderText_Blended(font^.fptr, PChar(lines[i]), colorFG);
+      //temp := TTF_RenderUNICODE_Blended(font^.fptr, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
       if IsSet(flags, AlignLeft) or
@@ -874,14 +891,14 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeText(font, PChar(lines[i]), w, h);
+        TTF_SizeText(font^.fptr, PChar(lines[i]), w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
       begin
         // Get w and h from the size of the text...
         w := 0; h := 0;
-        TTF_SizeText(font, PChar(lines[i]), w, h);
+        TTF_SizeText(font^.fptr, PChar(lines[i]), w, h);
         rect := NewSDLRect(rc^.w - w, i * lineSkip, 0, 0);
       end
       else begin RaiseWarning('Invalid font alignment'); exit; end;
@@ -926,7 +943,7 @@ implementation
     if (Length(str) = 0) or (font = nil) then exit;
 
     // This is the surface that everything is printed to.
-    lineSkip  := TTF_FontLineSkip( font );
+    lineSkip  := TTF_FontLineSkip( font^.fptr );
     width    := rc^.w;
     height    := 10;
     SetLength(lines, 1);
@@ -958,7 +975,7 @@ implementation
       w := 0;
       
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeUNICODE(font, PUint16(subStr), w, height);
+      if Length(subStr) > 0 then TTF_SizeUNICODE(font^.fptr, PUint16(subStr), w, height);
         
       //Keep widest rendered text size
       if w > width then width := w;
@@ -976,8 +993,8 @@ implementation
     begin
       if length(lines[i]) = 0 then continue;
       // The rendered text:
-      //temp := TTF_RenderText_Blended(font, PUint16(lines[i]), colorFG);
-      temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
+      //temp := TTF_RenderText_Blended(font^.fptr, PUint16(lines[i]), colorFG);
+      temp := TTF_RenderUNICODE_Blended(font^.fptr, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
       if IsSet(flags, AlignLeft) or
@@ -992,7 +1009,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, PUint16(lines[i]), w, h);
+        TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
@@ -1000,7 +1017,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, PUint16(lines[i]), w, h);
+        TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
       else begin RaiseWarning('Invalid font alignment'); exit; end;
@@ -1272,7 +1289,7 @@ implementation
     try
       y := 0;
       if length(theText) = 0 then result := 0 
-      else TTF_SizeText(theFont, PChar(theText), result, y);
+      else TTF_SizeText(theFont^.fptr, PChar(theText), result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -1287,7 +1304,7 @@ implementation
     try
       y := 0; 
       if length(theText) = 0 then result := 0
-      else TTF_SizeUNICODE(theFont, PUInt16(theText), result, y);
+      else TTF_SizeUNICODE(theFont^.fptr, PUInt16(theText), result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -1308,7 +1325,7 @@ implementation
     if not Assigned(theFont) then begin RaiseWarning('No font supplied to TextHeight'); exit; end;
     try
       w := 0;
-      TTF_SizeText(theFont, PChar(theText), w, result);
+      TTF_SizeText(theFont^.fptr, PChar(theText), w, result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;
@@ -1323,7 +1340,7 @@ implementation
     if not Assigned(theFont) then begin RaiseWarning('No font supplied to TextHeight'); exit; end;
     try
       w := 0;
-      TTF_SizeUNICODE(theFont, PUInt16(theText), w, result);
+      TTF_SizeUNICODE(theFont^.fptr, PUInt16(theText), w, result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;

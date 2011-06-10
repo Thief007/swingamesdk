@@ -53,8 +53,8 @@ ssh mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/versi
 
 
 LINUX_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
+LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "C GPP,${GPP_C_DIST_DIR}")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
-#LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "Source,${SOURCE_DIST_DIR},SwinGame")

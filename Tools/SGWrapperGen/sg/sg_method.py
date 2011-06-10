@@ -83,6 +83,7 @@ class SGMethod(SGMetaDataContainer):
         result = dict()
         result['doc']           = doc_transform(alias.doc) if doc_transform != None else alias.doc
         result['name']          = alias.name
+        result['name_lower']    = wrapper_helper.lower_name(alias.name)
         result['camel_name']    = alias.name.lower()[0] + alias.name[1:]
         result['uname']         = alias.uname
         result['uname_lower']   = wrapper_helper.lower_name(alias.uname)
@@ -756,7 +757,7 @@ class SGMethod(SGMetaDataContainer):
             
     def has_const_params(self):
         for param in self.params:
-            if param.modifier == 'const': return True
+            if (param.modifier == 'const' and not param.is_array): return True
         return False
     
     def has_out_params(self):

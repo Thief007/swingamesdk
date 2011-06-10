@@ -24,6 +24,7 @@ find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
 # Step 4: Set up array of files to copy
 #
 COPY_LIST=( "Command line gcc,${GCC_C_TEMPLATE_DIR},${GCC_C_DIST_DIR}" )
+COPY_LIST=( "${COPY_LIST[@]}" "Command line g++,${GPP_C_TEMPLATE_DIR},${GPP_C_DIST_DIR}")
 
 if [ "$OS" = "$MAC" ]; then
     COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_C_TEMPLATE_DIR},${XCODE_C_DIST_DIR}")

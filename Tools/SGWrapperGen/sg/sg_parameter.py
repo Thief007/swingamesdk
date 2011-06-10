@@ -46,10 +46,10 @@ class SGParameter(SGMetaDataContainer):
     #     """marks this as an array parameter"""
     #     self.set_tag('array')
     # 
-    # def is_array(self):
-    #     """returns True if the parameter is an array parameter"""
-    #     #print self.tags.keys()
-    #     return 'array' in self.tags.keys()
+    def is_array(self):
+        """returns True if the parameter is an array parameter"""
+        #print self.tags.keys()
+        return self.data_type.is_array
     
     def __str__(self):
         return '%s%s %s'% ( 
