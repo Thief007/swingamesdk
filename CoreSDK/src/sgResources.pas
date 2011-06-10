@@ -291,7 +291,7 @@ implementation
         
         procedure rbLoadBitmap();
         var
-            bmp: Bitmap;
+            bmp: sgTypes.Bitmap;
         begin
             bmp := LoadBitmapNamed(current.name, current.path);
             
@@ -683,11 +683,11 @@ implementation
         procedure InnerProcessEvents();
         begin
             ProcessEvents();
-            if (KeyDown(vk_LSUPER) or KeyDown(vk_LCTRL)) and KeyTyped(vk_p) then
+            if (KeyDown(sgTypes.vk_LSUPER) or KeyDown(sgTypes.vk_LCTRL)) and KeyTyped(sgTypes.vk_p) then
             begin
                 isPaused := not isPaused;
             end;
-            if WindowCloseRequested() or KeyDown(vk_Escape) then isSkip := true;
+            if WindowCloseRequested() or KeyDown(sgTypes.vk_Escape) then isSkip := true;
         end;
     begin
         
@@ -861,10 +861,12 @@ implementation
                 path: PChar;
             begin
                 path := StrAlloc(4096);
-                if GetModuleName(nil, path, 4096) <> 0 then
+                if GetModuleFileName(0, path, 4096) <> 0 then
                     SetAppPath(path, true)
                 else
                     SetAppPath(GetCurrentDir(), False);
+					
+				WriteLn(path);
                 StrDispose(path);
             end;
         {$endif}
@@ -886,11 +888,7 @@ implementation
         try
             
             if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
-            {$ifdef DARWIN}
-                else _GuessAppPath()
-            {$else}
-                else SetAppPath(GetCurrentDir(), False)
-            {$endif}
+            else _GuessAppPath()
             
         except
         end;
