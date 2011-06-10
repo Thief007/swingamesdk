@@ -189,22 +189,6 @@ interface
     /// @sameas Array [0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
     
-    /// The CollisionSide enumeration is used to indicate the side a collision
-    /// has occurred on.
-    ///
-    /// @enum CollisionSide
-    CollisionSide = (
-      Top,
-      Bottom,
-      Left,
-      Right,
-      TopLeft,
-      TopRight,
-      BottomLeft,
-      BottomRight,
-      None
-    );
-
     /// The color type is used within the SwinGameAPI to store color values.
     /// The color values are represented as 32bit RGBA values where R stores the
     /// color's red component, G stores the green component, B stores the blue
@@ -216,8 +200,8 @@ interface
     /// @field data: Longword
     Color = Longword;
     
-    /// @struct AnimationFrame
-    /// @via_pointer
+    /// @class AnimationFrame
+    /// @pointer_wrapper
     AnimationFrame = ^AnimationFrameData;
     
     /// @struct AnimationFrameData
@@ -322,6 +306,22 @@ interface
       cell: Longint;
     end;
     
+    /// The CollisionSide enumeration is used to indicate the side a collision
+    /// has occurred on.
+    ///
+    /// @enum CollisionSide
+    CollisionSide = (
+      Top,
+      Bottom,
+      Left,
+      Right,
+      TopLeft,
+      TopRight,
+      BottomLeft,
+      BottomRight,
+      None
+    );
+    
     /// Use this with the resource path functions to get the path to a
     /// given resource. Using these functions ensures that your resource
     /// paths are correct across different platforms
@@ -361,7 +361,7 @@ interface
       values:           SingleArray;              // Values associated with this sprite
       valueIds:         NamedIndexCollection;         // The name <-> ids mappings for values
       
-      animationData:    Animation;          // The data used to animate this sprite
+      animationInfo:    Animation;          // The data used to animate this sprite
       animationScript:  AnimationScript;  // The template for this sprite's animations
       
       position:         Point2D;                      // The game location of the sprite
@@ -407,7 +407,15 @@ interface
     /// @pointer_wrapper
     /// @field pointer: ^TimerData
     Timer = ^TimerData;
-
+    
+    
+    /// @struct FontData
+    /// @via_pointer
+    FontData = packed record
+        fptr: PTTF_Font;
+        name: String;
+    end;
+    
     /// Fonts are used to render text to bitmaps and to the screen.
     /// Fonts must be loaded using the CreateFont routine. Also see the
     /// DrawText and DrawTextLines routines.
@@ -415,7 +423,7 @@ interface
     /// @class Font
     /// @pointer_wrapper
     /// @field pointer: pointer
-    Font = PTTF_Font;
+    Font = ^FontData;
 
     /// Use font styles to set the style of a font. Setting the style is time
     /// consuming, so create alternative font variables for each different

@@ -1789,7 +1789,7 @@ implementation
     
     // Setup animation detials
     result^.animationScript     := ani;
-    result^.animationData         := nil;
+    result^.animationInfo         := nil;
     
     // Setup collision details
     result^.collisionKind         := PixelCollisions;
@@ -1924,7 +1924,7 @@ implementation
       FreeNamedIndexCollection(s^.valueIds);
       
       // Free pointers
-      FreeAnimation(s^.animationData);
+      FreeAnimation(s^.animationInfo);
       
       // Nil pointers to resources managed by sgResources
       s^.animationScript := nil;
@@ -1976,7 +1976,7 @@ implementation
   begin
     if s = nil then exit;
     
-    RestartAnimation(s^.animationData, withSound);
+    RestartAnimation(s^.animationInfo, withSound);
   end;
   
   procedure SpriteStartAnimation(s: Sprite; named: String);
@@ -1999,10 +1999,10 @@ implementation
     if not assigned(s) then exit;
     if not assigned(s^.animationScript) then exit;
     
-    if assigned(s^.animationData) then
-      AssignAnimation(s^.animationData, idx, s^.animationScript, withSound)
+    if assigned(s^.animationInfo) then
+      AssignAnimation(s^.animationInfo, idx, s^.animationScript, withSound)
     else
-      s^.animationData := CreateAnimation(idx, s^.animationScript, withSound);
+      s^.animationInfo := CreateAnimation(idx, s^.animationScript, withSound);
   end;
   
   procedure UpdateSpriteAnimation(s: Sprite); overload;
@@ -2023,7 +2023,7 @@ implementation
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   begin
     if not assigned(s) then exit;
-    UpdateAnimation(s^.animationData, pct, withSound);
+    UpdateAnimation(s^.animationInfo, pct, withSound);
   end;
 
   procedure UpdateSprite(s: Sprite); overload;
@@ -2179,12 +2179,12 @@ implementation
     if (not Assigned(s)) then
       result := RectangleFrom(0,0,0,0)
     else
-      result := BitmapRectangleOfCell(s^.layers[0], AnimationCurrentCell(s^.animationData));
+      result := BitmapRectangleOfCell(s^.layers[0], AnimationCurrentCell(s^.animationInfo));
   end;
   
   function SpriteScreenRectangle(s: Sprite): Rectangle;
   begin
-    if (not Assigned(s)) or (not Assigned(s^.animationData)) then
+    if (not Assigned(s)) or (not Assigned(s^.animationInfo)) then
       result := RectangleFrom(0,0,0,0)
     else
       result := ToScreen(SpriteLayerRectangle(s, 0));
@@ -2609,13 +2609,13 @@ implementation
   function SpriteCurrentCell(s: Sprite): Longint;
   begin
     if not assigned(s) then result := -1
-    else result := AnimationCurrentCell(s^.animationData);
+    else result := AnimationCurrentCell(s^.animationInfo);
   end;
   
   function SpriteAnimationHasEnded(s: Sprite): Boolean;
   begin
     if not assigned(s) then result := false
-    else result := AnimationEnded(s^.animationData);
+    else result := AnimationEnded(s^.animationInfo);
   end;
   
 //---------------------------------------------------------------------------

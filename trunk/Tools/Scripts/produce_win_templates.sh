@@ -35,6 +35,7 @@ echo "--------------------------------------------------"
 
 
 WIN_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
+WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "C GPP,${GPP_C_DIST_DIR}")
 WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
 WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR},Project Template")
 

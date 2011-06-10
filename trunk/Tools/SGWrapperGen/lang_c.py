@@ -115,6 +115,7 @@ def _do_c_parameter_processing(method):
     '''Add result parameters and arguments for functions that returned strings (converted as C cannot return arrays) and 
        add parameters and arguments for any additional length data passed for arrays (as C does not know length of arrays)'''
     method_data = method.lang_data['c']
+    cpp_method_data = method.lang_data['cpp']
     
     # was_function indicates that this function was converted to a procedure
     # we need to do the same thing for the c version...
@@ -136,6 +137,11 @@ def _do_c_parameter_processing(method):
         method_data.params        = param_list
         method_data.args          = arg_list
         method_data.return_type   = None
+        
+        cpp_method_data.params        = param_list
+        cpp_method_data.args          = arg_list
+        cpp_method_data.return_type   = None
+        
     
     if method.method_called.has_length_params:
         # add length parameters to this method
@@ -150,11 +156,61 @@ def _do_c_parameter_processing(method):
         
         method_data.params    = param_list
         method_data.args      = arg_list
+        
+        cpp_method_data.params    = param_list
+        cpp_method_data.args      = arg_list
     
+
+def _do_cpp_create_method_code(the_method):
+    '''Add the signature and code for the passed in function or procedure.'''
+    logger.info('VISITING  : Method %s', the_method.name)
+    
+    method_data = the_method.lang_data['cpp']
+    
+    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, lang_key='cpp')
+    
+    # Create signature
+    method_data.signature   = '%(return_type)s %(name_lower)s(%(params)s);' % details
+    
+    if method_data.is_function:
+        details['the_call']     = arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, method_data.return_type)
+        method_data.code        = c_lib.module_cpp_function_txt % details
+    else:
+        method_data.code        = c_lib.module_cpp_method_txt % details
+        
+    if method_data.has_const_params():
+        # Create a version with const parameters passed by value - this avoids having to create const pointers to data in the C SwinGame
+        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, lang_key='c')
+        
+        # details['uname'] = details['uname'] + '_byval'
+        # details['uname_lower'] = details['uname_lower'] + '_byval'
+        # details['name'] = details['uname']
+        # 
+        bval_sig = '%(return_type)s %(name_lower)s(%(params)s);' % details;
+        method_data.signature   += '\n' + bval_sig;
+        
+        if method_data.is_function:
+            details['the_call']  = const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, method_data.return_type)
+            method_data.code    += (c_lib.module_cpp_function_txt % details)
+        else:
+            method_data.code    += (c_lib.module_cpp_method_txt % details)
+        
+        # Also write to header
+        # other['header writer'].write('%(return_type)s' % details % details['uname_lower'])
+        # other['header writer'].write('(%(params)s);' % details) 
+        # other['header writer'].writeln('')
+    
+    
+    # print method_data.signature
+    # print method_data.code
+    # print '-----'
 
 def _do_c_create_method_code(the_method):
     '''Add the signature and code for the passed in function or procedure.'''
     logger.info('VISITING  : Method %s', the_method.name)
+    
+    if the_method.uname != the_method.name:
+        _do_cpp_create_method_code(the_method)
     
     method_data = the_method.lang_data['c']
     
@@ -259,12 +315,20 @@ def _do_create_type_code(member):
 def write_c_signature(method, other):
     writer = other['writer']
     
+    if len(method.lang_data['cpp'].signature) > 0:
+        writer.writeln('#ifdef __cplusplus')
+        writer.writeln(method.lang_data['cpp'].signature)
+        writer.writeln('#endif')
+    
     writer.writeln(method.lang_data['c'].signature)
     
     return other
 
 def write_c_code(method, other):
     writer = other['writer']
+    
+    if len(method.lang_data['cpp'].signature) > 0:
+        writer.writeln(method.lang_data['cpp'].code)
     
     writer.write(method.lang_data['c'].code)
     
@@ -281,6 +345,7 @@ def write_c_header_for(the_file, out_path):
     # Write the imports
     if the_file.name == 'SGSDK':
         writer.writeln(c_lib.lib_import_header_txt % {'name': 'Types'})
+        writer.writeln('#ifdef __cplusplus\nextern "C" {\n#endif\n')
     else:
         for a_file in the_file.uses:
             if a_file.name != None:
@@ -289,15 +354,31 @@ def write_c_header_for(the_file, out_path):
     
     other = { 'writer': writer }
     
+    seen_types = list()
+    need_types = dict()
+    
     #visit types
     for member in the_file.members:
-        if member.is_class or member.is_struct or member.is_enum or member.is_type:
+        seen_types.append(member.lower_name)
+        
+        if member.is_class:
+            if member.lower_name + "_data" not in seen_types:
+                # print "not seen", member.lower_name + "_data"
+                need_types[member.lower_name + "_data"] = member
+            else:
+                write_c_signature(member, other)
+        if member.is_struct or member.is_enum or member.is_type:
             write_c_signature(member, other)
+            if member.lower_name in need_types.keys():
+                write_c_signature(need_types[member.lower_name], other)
     
     #visit methods
     for member in the_file.members:
         if member.is_module or member.is_library:
             the_file.members[0].visit_methods(write_c_signature, other)
+    
+    if the_file.name == 'SGSDK':
+        writer.writeln('#ifdef __cplusplus\n}\n#endif\n')
     
     writer.writeln(c_lib.module_header_footer_txt)
     writer.close()
@@ -320,7 +401,7 @@ def write_c_body_for(the_file, out_path):
     
     other = { 'writer': writer }
     
-    #visit_methods
+    # Visit_methods
     for member in the_file.members:
         if member.is_module:
             the_file.members[0].visit_methods(write_c_code, other)
@@ -341,12 +422,14 @@ def create_c_code_for_file(the_file, other):
         if member.is_class or member.is_struct or member.is_enum or member.is_type:
             # Setup the language data
             member.lang_data['c'] = LangBasicData(member)
+            member.lang_data['cpp'] = LangBasicData(member)
             
             _do_create_type_code(member)
         elif member.is_module or member.is_library:
             for key, method in member.methods.items():
                 # Setup the language data
                 method.lang_data['c'] = LangMethodData(method)
+                method.lang_data['cpp'] = LangMethodData(method)
                 
                 if the_file.name == 'SGSDK':
                     _do_create_adapter_code(method)
@@ -368,7 +451,7 @@ def write_c_code_files(the_file, other, out_path=_out_path):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.ERROR,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     parser_runner.parse_all_units()
     parser_runner.visit_all_units(create_c_code_for_file)

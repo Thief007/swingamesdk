@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		944473EF0FF7608B002B4FFA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473D10FF76043002B4FFA /* main.c */; };
+		9452094A138B968600D78492 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94520949138B968600D78492 /* libpng.framework */; };
+		94520950138B96A300D78492 /* libpng.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94520949138B968600D78492 /* libpng.framework */; };
 		94774235101EA6E600AB691F /* Colors.c in Sources */ = {isa = PBXBuildFile; fileRef = 94774233101EA6E600AB691F /* Colors.c */; };
 		94B87A3D1006F0D40020CC77 /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1D1006F0D40020CC77 /* Audio.c */; };
 		94B87A3E1006F0D40020CC77 /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1F1006F0D40020CC77 /* Camera.c */; };
@@ -46,6 +48,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				94520950138B96A300D78492 /* libpng.framework in Copy Frameworks */,
 				94B87A7F1006F0E90020CC77 /* SDL.framework in Copy Frameworks */,
 				94B87A801006F0E90020CC77 /* SDL_gfx.framework in Copy Frameworks */,
 				94B87A811006F0E90020CC77 /* SDL_image.framework in Copy Frameworks */,
@@ -71,6 +74,7 @@
 		944473D10FF76043002B4FFA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		944473E10FF76057002B4FFA /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		944473E40FF76057002B4FFA /* MyGame-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyGame-Info.plist"; sourceTree = "<group>"; };
+		94520949138B968600D78492 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libpng.framework; sourceTree = "<group>"; };
 		94774233101EA6E600AB691F /* Colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Colors.c; sourceTree = "<group>"; };
 		94774234101EA6E600AB691F /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
 		9477423E101EA74300AB691F /* Swinburne.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Swinburne.jpg; path = Resources/images/Swinburne.jpg; sourceTree = SOURCE_ROOT; };
@@ -140,6 +144,7 @@
 				94B87A4B1006F0D40020CC77 /* SGSDK.framework in Frameworks */,
 				94E963E7138A1D860016765E /* Cocoa.framework in Frameworks */,
 				94E963E9138A1D860016765E /* Foundation.framework in Frameworks */,
+				9452094A138B968600D78492 /* libpng.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +252,7 @@
 		94B87A1C1006F0D40020CC77 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				94520949138B968600D78492 /* libpng.framework */,
 				94E963E6138A1D860016765E /* Cocoa.framework */,
 				94E963E8138A1D860016765E /* Foundation.framework */,
 				94E963D5138A1CAF0016765E /* Animations.c */,
@@ -336,7 +342,7 @@
 /* Begin PBXProject section */
 		944473930FF76022002B4FFA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 944473960FF76022002B4FFA /* Build configuration list for PBXProject "HelloWorld" */;
+			buildConfigurationList = 944473960FF76022002B4FFA /* Build configuration list for PBXProject "Test" */;
 			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 0;
 			mainGroup = 944473910FF76022002B4FFA;
@@ -465,7 +471,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		944473960FF76022002B4FFA /* Build configuration list for PBXProject "HelloWorld" */ = {
+		944473960FF76022002B4FFA /* Build configuration list for PBXProject "Test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				944473940FF76022002B4FFA /* Debug */,

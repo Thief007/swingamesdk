@@ -35,18 +35,21 @@ ssh acain@mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}
 
 # Windows Files
 DEPLOY_LIST=( "SwinGame ${SG_VERSION} C GCC.zip" )
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C CodeBlocks.zip" )
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.zip" )
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C# Template Installer.vsi" )
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} VB Template Installer.vsi" )
-# 
-# # Mac Files
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GCC.dmg")
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C XCode.dmg")
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} ObjC GCC.dmg")
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} ObjC XCode.dmg")
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} Mono C#.dmg")
-# DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GPP.zip")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C CodeBlocks.zip" )
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.zip" )
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C# Template Installer.vsi" )
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} VB Template Installer.vsi" )
+
+# Mac Files
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GCC.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GPP.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C XCode.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} ObjC GCC.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} ObjC XCode.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} Mono C#.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.dmg")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} XCode Templates.pkg")
 
 # Documentation
 DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame Documentation.zip")

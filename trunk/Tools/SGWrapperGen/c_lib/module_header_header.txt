@@ -6,8 +6,8 @@
 * Wrapping %(pascal_name)s.pas
 */
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #ifndef %(pascal_name)s
 #define %(pascal_name)s
+
+#include <stdbool.h>
+#include <stdint.h>

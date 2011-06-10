@@ -84,7 +84,7 @@ _type_dictionary_creation_data = [
             'return':   '#2#',
         }
     },
-    # resource types
+    # resource types 
     {
         'identifiers': [
             ('soundeffect',     'sound_effect'),
@@ -106,7 +106,7 @@ _type_dictionary_creation_data = [
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
-            None:       'void *',
+            None:       '#2#_data *',
             'var':      '#2# *',
             'return':   '#2#',
         }
@@ -128,6 +128,7 @@ _type_dictionary_creation_data = [
         'identifiers': [
             ('pointer',         'void *'),
             ('freenotifier',    'free_notifier '),
+            ('animationframe',  'animation_frame'),
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -264,13 +265,14 @@ _type_dictionary_creation_data = [
             ('point2d[0..2]',                           'point2d %s[3]'),
             ('single[0..2][0..2]',                      'float %s[3][3]'),
             
+            ('pttf_font',                               'void *'),
             ('pmix_chunk',                              'void *'),
             ('pmix_music',                              'void *'),
             ('psdl_surface',                            'void *'),
             ('shapedrawingfn',                          'void *'),
             
             ('namedindexcollection',                    'named_index_collection ',),
-            ('animationframe',                          'animation_frame '),
+            # ('animationframe',                          'animation_frame '),
         ],
         '_type_switcher': {},
         '_adapter_type_switcher': {

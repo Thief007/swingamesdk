@@ -71,6 +71,7 @@ class SGPasParser():
             'doc_types': self.process_idlist_attribute,
             'doc_idx': self.process_number_attribute,                       # Allows items to be ordered in the documentation
             'doc_details': self.process_true_attribute,                     # Moves documentation to a details file
+            # 'output_skip': self.process_true_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,

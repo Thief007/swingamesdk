@@ -321,7 +321,7 @@ implementation
     if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
     if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
     
-    sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, NewSDLRect(area));
+    sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont^.fptr, NewSDLRect(area));
   end;
   
   procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
