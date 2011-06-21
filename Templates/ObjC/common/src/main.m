@@ -2,10 +2,8 @@
 #import <Foundation/Foundation.h>
 #import "SwinGame.h"
 
-int main(int argc, const char* argv[])
+int main()
 {
-    [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding]];
-    
     [SGAudio openAudio];
     [SGGraphics openGraphicsWindow:@"Hello World" 
                              width:800
