@@ -230,10 +230,6 @@ doWindowsCompile()
     # SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
     # SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
 
-    echo "  ... Creating Resources"
-    windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res
-    if [ $? != 0 ]; then DoExitCompile; fi
-    
     ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}.exe" ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     

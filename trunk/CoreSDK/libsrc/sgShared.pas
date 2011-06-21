@@ -26,6 +26,11 @@
 //=============================================================================
 
 {$I sgTrace.inc}
+{$IFNDEF SWINGAME_LIB}
+    {$IFDEF WINDOWS}
+        {$r swingame.rc}
+    {$ENDIF}
+{$ENDIF}
 
 unit sgShared;
   

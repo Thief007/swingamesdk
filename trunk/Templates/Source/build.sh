@@ -25,7 +25,7 @@ cd "$APP_PATH"
 #
 # Step 3: Setup options
 #
-EXTRA_OPTS="-O3 -Sewn -vwn"
+EXTRA_OPTS="-O3 -Sewn -vwn -dSWINGAME_LIB"
 VERSION=3.0
 CLEAN="N"
 INSTALL="N"
@@ -63,7 +63,7 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  EXTRA_OPTS="-vwn -gw -uTRACE"
+    d)  EXTRA_OPTS="-vwn -gw -dTRACE -dSWINGAME_LIB"
         DEBUG="Y" ;;
     i)  INSTALL="Y";;
     [?]) print >&2 "Usage: $0 [-c] [-d] [-i] [-h] [version]"
@@ -356,8 +356,6 @@ then
         DisplayHeader
         
         PrepareTmp
-				
-				
         
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi

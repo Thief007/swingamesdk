@@ -54,8 +54,6 @@ echo   Saving output to %OUT_DIR%
 echo --------------------------------------------------
 echo   ... Creating %GAME_NAME%
    
-windres %SRC_DIR%\SwinGame.rc %SRC_DIR%\GameLauncher.res >> %LOG_FILE%
-if errorlevel 1 ( goto :FAILURE )
 fpc %SG_INC% -Mobjfpc -g -vw -Sh -FE%OUT_DIR% -FU%TMP_DIR% -Fu%LIB_DIR% -Fi%SRC_DIR% -o"%GAME_NAME%.exe" %SRC_DIR%/GameMain.pas >> %LOG_FILE%
 if errorlevel 1 ( goto :FAILURE )
 
