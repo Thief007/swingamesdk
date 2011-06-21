@@ -259,6 +259,8 @@ doWindowsCompile()
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
+    windres "${LIB_DIR}/swingame.rc" "${TMP_DIR}/swingame_res_rc.o"
+    
     #Assemble all of the .s files
     echo "  ... Creating game"
     
