@@ -1,5 +1,4 @@
 program GameMain;
-{$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
   sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
 

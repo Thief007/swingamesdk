@@ -68,6 +68,7 @@ CopyDists()
             cp -p -f "${SOURCE_DIST_DIR}/bin"/*.dll "${to}/lib"
             #Copy SDL frameworks
             cp -p -f "${SOURCE_DIST_DIR}/lib"/*.dll "${to}/lib"
+            cp -p -f "${SOURCE_DIST_DIR}/lib"/*.rc "${to}/lib"
         fi
         echo ""
     done
