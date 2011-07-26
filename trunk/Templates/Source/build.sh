@@ -307,10 +307,11 @@ then
         
         #Compile i386 version of library
         FPC_BIN=`which ppc386`
-        doMacCompile "i386" ""
+        doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
         
         FPC_BIN=`which ppcppc`
-        doMacCompile "ppc" "-ldylib1.10.5.o"
+        doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+        #"-ldylib1.10.5.o"
         
         #FPC_BIN=`which ppcx64`
         #doMacCompile "x86_64"

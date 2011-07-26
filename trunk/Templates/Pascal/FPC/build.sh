@@ -131,7 +131,7 @@ doMacCompile()
     
     FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" -o"${TMP_DIR}/${1}/${GAME_NAME}" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
     
     if [ $? != 0 ]; then DoExitCompile; fi
 }
@@ -230,6 +230,10 @@ doWindowsCompile()
     # SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
     # SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
 
+    echo "  ... Creating Resources"
+    windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res
+    if [ $? != 0 ]; then DoExitCompile; fi
+    
     ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}.exe" ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     
@@ -291,6 +295,8 @@ then
     if [ "$OS" = "$MAC" ]; then
         HAS_PPC=false
         HAS_i386=false
+        HAS_LEOPARD_SDK=false
+        OS_VER=`sw_vers -productVersion`
         
         if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
             HAS_PPC=true
@@ -300,13 +306,31 @@ then
             HAS_i386=true
         fi
         
-        if [[ $HAS_i386 = true && $HAS_PPC = true ]]; then
+        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.5' ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
             echo "  ... Building Universal Binary"
-            FPC_BIN=`which ppc386`
-            doMacCompile "i386"
+            echo "  ... Building Universal Binary"
             
-            FPC_BIN=`which ppcppc`
-            doMacCompile "ppc"
+            if [ $OS_VER = '10.5' ]; then
+                FPC_BIN=`which ppc386`
+                doMacCompile "i386" ""
+                
+                FPC_BIN=`which ppcppc`
+                doMacCompile "ppc" ""
+            else
+                FPC_BIN=`which ppc386`
+                doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+                
+                FPC_BIN=`which ppcppc`
+                doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+            fi
             
             doLipo "i386" "ppc"
         else
