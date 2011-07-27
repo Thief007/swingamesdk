@@ -337,7 +337,7 @@ implementation
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const pt: Point2D); overload;
   begin
-    StartReadingTextWithText(text, textColor, maxLength, theFont, Round(pt.x), Round(pt.y));
+    StartReadingTextWithText(text, textColor, maxLength, theFont, RoundInt(pt.x), RoundInt(pt.y));
   end;
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
@@ -407,7 +407,7 @@ implementation
   
   procedure MoveMouse(const point : Point2d);overload;
   begin
-    SDL_WarpMouse(Round(point.x), Round(point.y));
+    SDL_WarpMouse(RoundUShort(point.x), RoundUShort(point.y));
     MouseMovement();
   end;
   

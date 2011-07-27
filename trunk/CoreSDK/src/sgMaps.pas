@@ -955,7 +955,7 @@ interface
       row:=MyStrToInt(ExtractDelimited(1, data, [',']), false);
       col:=MyStrToInt(ExtractDelimited(2, data, [',']), false);
       name:=ExtractDelimited(3, data, [',']);
-      val:=StrToFloat(ExtractDelimited(4, data, [',']));
+      val:=StrToSingle(ExtractDelimited(4, data, [',']));
       tempValues[high(tempValues)].row := row;
       tempValues[high(tempValues)].col := col;
       tempValues[high(tempValues)].name := name;
@@ -1001,10 +1001,10 @@ interface
         'h':  if length(id)=2 then
                 result^.MapHeight := MyStrToInt(data, false) 
               else if LowerCase(id)[3] = 'c' then result^.mapHighlightcolor:= RGBAColor(
-                StrToInt(ExtractDelimited(1, data, [','])),
-                StrToInt(ExtractDelimited(2, data, [','])),
-                StrToInt(ExtractDelimited(3, data, [','])),
-                StrToInt(ExtractDelimited(4, data, [','])));
+                StrToUByte(ExtractDelimited(1, data, [','])),
+                StrToUByte(ExtractDelimited(2, data, [','])),
+                StrToUByte(ExtractDelimited(3, data, [','])),
+                StrToUByte(ExtractDelimited(4, data, [','])));
 
         // number of layers        
         'l':  result^.MapLayer  := MyStrToInt(data, false);
@@ -1189,14 +1189,14 @@ interface
     // # of columns * tilewidth - stagger X for even rows.
     width := Round ( (colCount * map^.TileWidth) - ( ( (startRow+1) mod 2)* (map^.TileStagger.X)));
     // # of row ^ tileheight - number of rows * staggerY  -- in conjunction with if rowcount = 20...
-    height := Round(((rowCount) * map^.TileHeight) - ((rowCount)*(map^.TileStagger.Y)));
+    height := RoundInt(((rowCount) * map^.TileHeight) - ((rowCount)*(map^.TileStagger.Y)));
     
    // writeln('width: ',width, ' ','height: ',height);
     if not assigned(TileAt(map, startRow, startCol)) then exit;
     pt := PointAdd(TileAt(map, startRow, startCol)^.position, offset);
     pt := PointAdd(pt, InvertVector(CameraPos()));
     //the last row doesnt clip at 20 because the camera has not reached the next row.
-    if rowcount = map^.MapHeight then height-=round(map^.TileStagger.Y);
+    if rowcount = map^.MapHeight then height-=RoundInt(map^.TileStagger.Y);
     //apply stagger x only on the first column and even values.
     if (startCol = 0) and  not(startRow Mod 2=0) then pt.X += map^.TileStagger.X;
     //apply stagger to top of the map only.
@@ -1750,40 +1750,40 @@ interface
     with map^ do
     begin
       startPoint := RectangleFrom(
-        round( ((s^.position.x - s^.velocity.x) / TileWidth) - 1) * TileWidth,
-        round( ((s^.position.y - s^.velocity.y) / tileheight) - 1) * tileheight,
-        (round( SpriteWidth(s) / TileWidth) + 2) * TileWidth,
-        (round( SpriteHeight(s) / tileheight) + 2) * tileheight
+        RoundInt( ((s^.position.x - s^.velocity.x) / TileWidth) - 1) * TileWidth,
+        RoundInt( ((s^.position.y - s^.velocity.y) / tileheight) - 1) * tileheight,
+        (RoundInt( SpriteWidth(s) / TileWidth) + 2) * TileWidth,
+        (RoundInt( SpriteHeight(s) / tileheight) + 2) * tileheight
       );
       endPoint := RectangleFrom(
-        round(((s^.position.x + SpriteWidth(s)) / TileWidth) - 1) * TileWidth,
-        round(((s^.position.y + SpriteHeight(s)) / tileheight) - 1) * tileheight,
-        (round(SpriteWidth(s) / TileWidth) + 2) * TileWidth,
-        (round(SpriteHeight(s) / tileheight) + 2) * tileheight
+        RoundInt(((s^.position.x + SpriteWidth(s)) / TileWidth) - 1) * TileWidth,
+        RoundInt(((s^.position.y + SpriteHeight(s)) / tileheight) - 1) * tileheight,
+        (RoundInt(SpriteWidth(s) / TileWidth) + 2) * TileWidth,
+        (RoundInt(SpriteHeight(s) / tileheight) + 2) * tileheight
       );
     end; // with
 
     //Encompassing Rectangle
     if startPoint.x < endPoint.x then
     begin
-      startX := round(startPoint.x);
-      endX := round(endPoint.x + endPoint.width);
+      startX := RoundInt(startPoint.x);
+      endX := RoundInt(endPoint.x + endPoint.width);
     end
     else
     begin
-      startX := round(endPoint.x);
-      endX := round(startPoint.x + startPoint.width);
+      startX := RoundInt(endPoint.x);
+      endX := RoundInt(startPoint.x + startPoint.width);
     end;
 
     if startPoint.y < endPoint.y then
     begin
-      startY := round(startPoint.y);
-      endY := round(endPoint.y + endPoint.height);
+      startY := RoundInt(startPoint.y);
+      endY := RoundInt(endPoint.y + endPoint.height);
     end
     else
     begin
-      startY := round(endPoint.y);
-      endY := round(startPoint.y + startPoint.height);
+      startY := RoundInt(endPoint.y);
+      endY := RoundInt(startPoint.y + startPoint.height);
     end;
     
     // -1 of width and height so as not to project into next tiles (200/50 = 4... the 5th tile, we want 199/50 = 3... the 4th tile)
@@ -2832,6 +2832,13 @@ interface
     InitialiseSwinGame();
     _Maps := TStringHash.Create(False, 1024);
   end;
+  
+  finalization
+  begin
+    ReleaseAllMaps();
+    FreeAndNil(_Maps);
+  end;
+  
 end.
 
 

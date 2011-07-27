@@ -135,6 +135,14 @@ interface
     procedure ReleaseAllAnimationScripts();
     
     
+    /// Returns the name of the Animation Script.
+    ///
+    /// @lib
+    ///
+    /// @class AnimationScript
+    /// @getter Name
+    function AnimationScriptName(script: AnimationScript): String;
+    
     
 //----------------------------------------------------------------------------
 // Creating an Animation
@@ -707,6 +715,8 @@ var
         result^.frames      := frames;      // The frames of this animation.
         
         SetLength(result^.animations, Length(ids));
+        SetLength(result^.animObjs, 0);
+        result^.nextAnimIdx := 0;
         InitNamedIndexCollection(result^.animationIds);     //Setup the name <-> id mappings
         
         for j := 0 to High(ids) do                          //Add in the animation starting indexes
@@ -850,6 +860,12 @@ begin
     result := LoadAnimationScriptNamed(filename, filename);
 end;
 
+function AnimationScriptName(script: AnimationScript): String;
+begin
+    result := '';
+    if Assigned(script) then result := script^.name;
+end;
+
 procedure FreeAnimationScript(var framesToFree: AnimationScript);
 begin
     if Assigned(framesToFree) then
@@ -924,6 +940,12 @@ var
 begin
     FreeNamedIndexCollection(frm^.animationIds);
     
+    for i := 0 to frm^.nextAnimIdx - 1 do
+    begin
+        //WriteLn('Freeing ', HexStr(frm^.animObjs[i]));
+        FreeAnimation(frm^.animObjs[i]);
+    end;
+    
     for i := 0 to High(frm^.frames) do
     begin
         Dispose(frm^.frames[i]);
@@ -987,21 +1009,54 @@ begin
         result := nil;
 end;
 
+procedure _AddAnimation(script: AnimationScript; ani: Animation);
+begin
+    if Length(script^.animObjs) <= script^.nextAnimIdx then
+      SetLength(script^.animObjs, script^.nextAnimIdx + 1);
+    
+    script^.animObjs[script^.nextAnimIdx] := ani;
+    ani^.script := script;
+    script^.nextAnimIdx += 1;
+end;
+
+procedure _RemoveAnimation(script: AnimationScript; ani: Animation);
+var
+    i: Integer;
+begin
+    for i := Low(script^.animObjs) to script^.nextAnimIdx - 1 do
+    begin
+        if script^.animObjs[i] = ani then
+        begin
+            script^.nextAnimIdx -= 1;                                           // Move back one (will point to high first time...)
+            script^.animObjs[i] := script^.animObjs[script^.nextAnimIdx];    // Copy back old last place
+            script^.animObjs[script^.nextAnimIdx] := nil;                    // Just to make sure...
+            exit;
+        end;
+    end;
+    RaiseWarning('Could not remove animation! ' + HexStr(ani) + AnimationScriptName(script));
+end;
+
 procedure FreeAnimation(var ani: Animation);
+var
+    toFree: Animation;
 begin
     if assigned(ani) then
     begin
-        dispose(ani);
+        toFree := ani;
+        _RemoveAnimation(ani^.script, ani);
+        Dispose(toFree); //ani may have been overridden by last call...
         ani := nil;
     end;
 end;
 
-function CreateAnimation(identifier: Longint;    frames: AnimationScript; withSound: Boolean): Animation; overload;
+function CreateAnimation(identifier: Longint; frames: AnimationScript; withSound: Boolean): Animation; overload;
 begin
     result := nil;
     if frames = nil then exit;
     
     new(result);
+    _AddAnimation(frames, result);
+    
     AssignAnimation(result, identifier, frames, withSound)
 end;
 
@@ -1010,12 +1065,15 @@ begin
     result := CreateAnimation(identifier, frames, True);
 end;
 
-function CreateAnimation(identifier: String;    frames: AnimationScript; withSound: Boolean): Animation; overload;
+function CreateAnimation(identifier: String; frames: AnimationScript; withSound: Boolean): Animation; overload;
+var
+    idx: Integer;
 begin
     result := nil;
     if frames = nil then exit;
         
-    result := CreateAnimation(IndexOf(frames^.animationIds, identifier), frames, withSound);
+    idx := IndexOf(frames^.animationIds, identifier);
+    result := CreateAnimation(idx, frames, withSound);
 end;
 
 function CreateAnimation(identifier: String;    frames: AnimationScript): Animation; overload;
@@ -1254,5 +1312,12 @@ begin
         TraceExit('sgAnimations', 'Initialise');
     {$ENDIF}
 end;
+
+finalization
+begin
+  ReleaseAllAnimationScripts();
+  FreeAndNil(_Animations);
+end;
+
 //=============================================================================
 end.

@@ -19,7 +19,7 @@ interface
     protected
       function compareObjects(obj2: TComparable): integer; virtual; abstract;
     public
-      function  hashCode: integer; virtual; abstract;
+      function  hashCode: Int64; virtual; abstract;
       function compareTo(obj2: TComparable): integer;
     end;
 
@@ -40,7 +40,7 @@ interface
       fValue: integer;
     public
       property value: integer read fValue write fValue;
-      function hashCode: integer; override;
+      function hashCode: Int64; override;
       constructor create(val: integer);
       function asDouble: double; override;
     end;
@@ -48,11 +48,11 @@ interface
     TDouble = class(TNumeric)
     protected
       fValue: Double;
-      fHashCode: integer;
+      fHashCode: Int64;
       procedure setValue(value: double);
     public
       property value: double read fValue write setValue;
-      function hashCode: integer; override;
+      function hashCode: Int64; override;
       constructor create(val: double);
       function asDouble: double; override;
     end;
@@ -60,13 +60,13 @@ interface
     TString = class(TComparable)
     protected
       fValue: string;
-      fHashCode : integer;
+      fHashCode : Int64;
 
       procedure setValue(value: string);
       function compareObjects(obj2: TComparable): integer; override;
     public
       property value: string read fValue write setvalue;
-      function hashCode: integer; override;
+      function hashCode: Int64; override;
       constructor create(val: string);
     end;
 
@@ -125,7 +125,7 @@ implementation
 //  TInteger
 //---------------------------------------------------------------------------
 
-  function TInteger.hashCode: integer;
+  function TInteger.hashCode: Int64;
   begin
     // make sure hash is never 0 so that it's different for nulls
     // - I don't even know why :)
@@ -151,15 +151,20 @@ implementation
 //---------------------------------------------------------------------------
 
   procedure TDouble.setValue(value: double);
+  var
+    max: Int64;
   begin
     fValue := value;
+    
+    max := High(Int64);
+    
     // calculate hash code and store it
-    while (value * 10) < maxint do value := value * 10;
-    while value > maxInt do value := value / 10;
+    while (value * 10) < max do value := value * 10;
+    while value > max do value := value / 10;
     fHashCode := round(value);
   end;
 
-  function TDouble.hashCode: integer;
+  function TDouble.hashCode: Int64;
   begin
     result := fHashCode;
   end;
@@ -207,7 +212,7 @@ implementation
     fHashCode := h;
   end;
 
-  function TString.hashCode: integer;
+  function TString.hashCode: Int64;
   begin
     result := fHashCode;
   end;

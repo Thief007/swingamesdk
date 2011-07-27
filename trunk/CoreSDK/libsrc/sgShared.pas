@@ -113,6 +113,13 @@ interface
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
   function GetPixel32(surface: PSDL_Surface; x, y: Longint): Color;
   
+  function RoundUByte(val: Double): UInt8;
+  function RoundInt(val: Double): LongInt;
+  function RoundUShort(val: Double): UInt16;
+  function RoundShort(val: Double): SInt16;
+  function StrToSingle(val: String): Single;
+  function StrToUByte(val: String): UInt8;
+  
   /// Called when ANY resource is freed to inform other languages to remove from
   /// their caches.
   procedure CallFreeNotifier(p: Pointer);
@@ -492,6 +499,36 @@ function iif(pred: Boolean; trueVal, falseVal: Single): Single; overload;
 begin
   if pred then result := trueVal
   else result := falseVal;
+end;
+
+function RoundUByte(val: Double): UInt8;
+begin
+  result := UInt8(Round(val));
+end;
+
+function RoundInt(val: Double): LongInt;
+begin
+  result := LongInt(Round(val));
+end;
+
+function RoundUShort(val: Double): UInt16;
+begin
+  result := UInt16(Round(val));
+end;
+
+function RoundShort(val: Double): SInt16;
+begin
+  result := SInt16(Round(val));
+end;
+
+function StrToSingle(val: String): Single;
+begin
+  result := Single(StrToFloat(val));
+end;
+
+function StrToUByte(val: String): UInt8;
+begin
+  result := UInt8(StrToInt(val));
 end;
 
 //=============================================================================

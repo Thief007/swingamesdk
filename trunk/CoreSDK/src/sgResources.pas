@@ -798,8 +798,10 @@ implementation
     begin
         cwd := GetCurrentDir();
         
-        if DirectoryExists(path + '/Resources') then
-            SetAppPath(path + '/Resources', False)
+        if DirectoryExists(cwd + '/Resources') then
+            SetAppPath(cwd + '/Resources', False)
+        else if DirectoryExists(cwd + '../Resources') then
+            SetAppPath(cwd + '../Resources', False)
         else
         begin
             mainBundle := CFBundleGetMainBundle();
@@ -902,5 +904,10 @@ implementation
             TraceExit('sgResources', 'initialization');
         {$ENDIF}
     end;
-
+    
+    finalization
+    begin
+      FreeAndNil(_Bundles);
+    end;
+    
 end.

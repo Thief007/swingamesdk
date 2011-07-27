@@ -578,10 +578,10 @@ implementation
     top1 := y;
     bottom1 := y + part.height - 1;
     
-    left2 := Round(rect.x);
-    right2 := Round(rect.x) + rect.width - 1;
-    top2 := Round(rect.y);
-    bottom2 := Round(rect.y) + rect.height - 1;
+    left2 := RoundInt(rect.x);
+    right2 := RoundInt(rect.x) + rect.width - 1;
+    top2 := RoundInt(rect.y);
+    bottom2 := RoundInt(rect.y) + rect.height - 1;
     
     if bottom1 > bottom2 then overBottom := bottom2
     else overBottom := bottom1;
@@ -597,11 +597,11 @@ implementation
     
     for i := overTop to overBottom do
     begin
-      yPixel1 := i - top1 + Round(part.y);
+      yPixel1 := i - top1 + RoundInt(part.y);
       
       for j := overLeft to overRight do
       begin
-        xPixel1 := j - left1 + Round(part.x);
+        xPixel1 := j - left1 + RoundInt(part.x);
         
         if PixelDrawnAtPoint(bmp, xPixel1, yPixel1) then
         begin
@@ -624,7 +624,7 @@ implementation
   
   function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
   begin
-    result := BitmapPartRectCollision(bmp, Round(pt.x), Round(pt.y), part, rect);
+    result := BitmapPartRectCollision(bmp, RoundInt(pt.x), RoundInt(pt.y), part, rect);
   end;
   
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Longint): Boolean; overload;
@@ -655,7 +655,7 @@ implementation
     if SpriteCollisionKind(s) = AABBCollisions then 
       result := true
     else
-      result := CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);
+      result := CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), RoundInt(s^.position.x), RoundInt(s^.position.y), rect);
   end;
   
   /// Performs a collision detection within two bitmaps at the given x, y
@@ -686,8 +686,8 @@ implementation
            ): Boolean; overload;
   begin
     result := CollisionWithinBitmapImages(
-      bmp1, Round(x1), Round(y1), w1, h1, Round(offsetX1), Round(offsetY1),
-      bmp2, Round(x2), Round(y2), w2, h2, Round(offsetX2), Round(offsetY2));
+      bmp1, RoundInt(x1), RoundInt(y1), w1, h1, RoundInt(offsetX1), RoundInt(offsetY1),
+      bmp2, RoundInt(x2), RoundInt(y2), w2, h2, RoundInt(offsetX2), RoundInt(offsetY2));
   end;
   
   // offset... are the part 
@@ -780,8 +780,8 @@ implementation
     part2 := SpriteCurrentCellRectangle(s2);
     
     result := CollisionWithinBitmapImages(
-                s1^.collisionBitmap, Round(s1^.position.x), Round(s1^.position.y), part1.width, part1.height, Round(part1.x), Round(part1.y), 
-                s2^.collisionBitmap, Round(s2^.position.x), Round(s2^.position.y), part2.width, part2.height, Round(part2.x), Round(part2.y));
+                s1^.collisionBitmap, RoundInt(s1^.position.x), RoundInt(s1^.position.y), part1.width, part1.height, RoundInt(part1.x), RoundInt(part1.y), 
+                s2^.collisionBitmap, RoundInt(s2^.position.x), RoundInt(s2^.position.y), part2.width, part2.height, RoundInt(part2.x), RoundInt(part2.y));
   end;
 
   function BitmapCollision(bmp1: Bitmap; x1, y1: Longint; bmp2: Bitmap; x2, y2: Longint): Boolean; overload;
@@ -792,14 +792,14 @@ implementation
 
   function BitmapCollision(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   begin
-    result := BitmapCollision(bmp1, Round(pt1.x), Round(pt1.y), 
-                              bmp2, Round(pt2.x), Round(pt2.y));
+    result := BitmapCollision(bmp1, RoundInt(pt1.x), RoundInt(pt1.y), 
+                              bmp2, RoundInt(pt2.x), RoundInt(pt2.y));
   end;
   
   function BitmapCollision(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
   begin
-    result := BitmapCollision(bmp1, Round(pt1.x), Round(pt1.y), 
-                              bmp2, Round(pt2.x), Round(pt2.y));
+    result := BitmapCollision(bmp1, RoundInt(pt1.x), RoundInt(pt1.y), 
+                              bmp2, RoundInt(pt2.x), RoundInt(pt2.y));
   end;
   
   function SpriteCollision(s1, s2: Sprite): Boolean;
@@ -913,7 +913,7 @@ implementation
   
   function BitmapPointCollision(bmp: Bitmap; x, y: Longint; ptX, ptY: Single): Boolean; overload;
   begin
-    result := PixelDrawnAtPoint(bmp, Round(ptX - x), Round(ptY - y));
+    result := PixelDrawnAtPoint(bmp, RoundInt(ptX - x), RoundInt(ptY - y));
   end;
   
   function BitmapPointCollision(bmp: Bitmap; x, y: Longint; bbox: Boolean; const pt: Point2D): Boolean; overload;
@@ -1070,7 +1070,7 @@ implementation
     colVec := UnitVector(VectorFromPoints(c.center, spriteCenter));
     normal := VectorNormal(colVec);
     
-    hitPt := AddVectors(c.center, VectorMultiply(colVec, c.radius + 1.42));
+    hitPt := AddVectors(c.center, VectorMultiply(colVec, Single(c.radius + 1.42)));
     hitLine := LineFromVector(AddVectors(hitPt, VectorMultiply(normal, 100)), VectorMultiply(normal, -200));
     
     // DrawSprite(s);
@@ -1194,15 +1194,15 @@ implementation
     r2 := BitmapRectangleOfCell(bmp2, cell2);
     
     result := 
-      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
-                                  bmp2, x2, y2, r2.width, r2.height, Round(r2.x), Round(r2.y));
+      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, RoundInt(r1.x), RoundInt(r1.y),
+                                  bmp2, x2, y2, r2.width, r2.height, RoundInt(r2.x), RoundInt(r2.y));
   end;
   
   function CellCollision( bmp1: Bitmap; cell1: Longint; const pt1: Point2D; 
                           bmp2: Bitmap; cell2: Longint; const pt2: Point2D): Boolean;
   begin
-    result := CellCollision(bmp1, cell1, Round(pt1.x), Round(pt1.y),
-                            bmp2, cell2, Round(pt2.x), Round(pt2.y));
+    result := CellCollision(bmp1, cell1, RoundInt(pt1.x), RoundInt(pt1.y),
+                            bmp2, cell2, RoundInt(pt2.x), RoundInt(pt2.y));
   end;
   
   function CellBitmapCollision(bmp1: Bitmap; cell, x1, y1: Longint; 
@@ -1215,8 +1215,8 @@ implementation
   function CellBitmapCollision(bmp1: Bitmap; cell: Longint; const pt1: Point2D; 
                               bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   begin
-    result := CellBitmapCollision( bmp1, cell, Round(pt1.x), Round(pt1.y),
-                                  bmp2, Round(pt2.x), Round(pt2.y));
+    result := CellBitmapCollision( bmp1, cell, RoundInt(pt1.x), RoundInt(pt1.y),
+                                  bmp2, RoundInt(pt2.x), RoundInt(pt2.y));
   end;
   
   function CellBitmapCollision(bmp1: Bitmap; cell: Longint; x1, y1: Longint;
@@ -1233,15 +1233,15 @@ implementation
     r1 := BitmapRectangleOfCell(bmp1, cell);
     
     result := 
-      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
-                                  bmp2, x2, y2, part.width, part.height, Round(part.x), Round(part.y));
+      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, RoundInt(r1.x), RoundInt(r1.y),
+                                  bmp2, x2, y2, part.width, part.height, RoundInt(part.x), RoundInt(part.y));
   end;
   
   function CellBitmapCollision(bmp1: Bitmap; cell: Longint; const pt1: Point2D;
                               bmp2: Bitmap; const pt2:Point2D; const part: Rectangle): Boolean; overload;
   begin
-    result := CellBitmapCollision( bmp1, cell, Round(pt1.x), Round(pt1.y),
-                                  bmp2, Round(pt2.x), Round(pt2.y), part);
+    result := CellBitmapCollision( bmp1, cell, RoundInt(pt1.x), RoundInt(pt1.y),
+                                  bmp2, RoundInt(pt2.x), RoundInt(pt2.y), part);
   end;
   
   function CellRectCollision(bmp: Bitmap; cell, x, y: Longint; const rect: Rectangle): Boolean; overload;
@@ -1255,7 +1255,7 @@ implementation
   
   function CellRectCollision(bmp: Bitmap; cell: Longint; const pt: Point2D; const rect: Rectangle): Boolean; overload;
   begin
-    result := CellRectCollision(bmp, cell, Round(pt.x), Round(pt.y), rect);
+    result := CellRectCollision(bmp, cell, RoundInt(pt.x), RoundInt(pt.y), rect);
   end;
 end.
 

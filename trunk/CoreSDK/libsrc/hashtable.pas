@@ -22,7 +22,7 @@ interface
       function compareObjects(object2: TComparable): integer; override;
     public
       next: THashEntry;
-      function  hashCode: integer; override;
+      function  hashCode: Int64; override;
       function getKey: TComparable;
       function getValue: TObject;
       procedure setValue(avalue: TObject);
@@ -232,7 +232,7 @@ implementation
     result := compare(fkey, THashEntry(object2).key);
   end;
 
-  function  THashEntry.hashCode: integer;
+  function  THashEntry.hashCode: Int64;
   begin
     // for our purposes the hash code of the key is good enough
     result := key.hashCode;
@@ -268,7 +268,7 @@ implementation
 
   function THashTable.hashToIndex(key: TComparable): integer;
   begin
-    result := abs(key.hashCode) mod fCapacity;
+    result := Integer(abs(key.hashCode) mod fCapacity);
   end;
 
   procedure THashTable.rehash;
@@ -290,7 +290,7 @@ implementation
     oldTable := fTable;
     fTable := newTable;
     fCapacity := newCapacity;
-    fThreshHold := round(newCapacity * fLoadFactor);
+    fThreshHold := Integer(round(newCapacity * fLoadFactor));
 
     try
       for i := 0 to oldCapacity - 1 do begin
@@ -470,7 +470,7 @@ implementation
       fEntryFactory := entryfactory;
     fTable := getNewEntryTable(initialCapacity);
     fCapacity := initialcapacity;
-    fThreshHold := round(fCapacity * fLoadFactor);
+    fThreshHold := Integer(round(fCapacity * fLoadFactor));
     fCount := 0;
     fModCount := 0;
   end;

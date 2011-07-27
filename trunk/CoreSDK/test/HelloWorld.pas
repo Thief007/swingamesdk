@@ -26,7 +26,7 @@ var
 begin
   OpenAudio();
   
-  LoadResourceBundle('splash.txt');
+  //LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
   LoadAnimationScript('test.txt');
   

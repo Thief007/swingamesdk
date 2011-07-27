@@ -800,9 +800,9 @@ implementation
       
       BitmapSetCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
       
-      SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(StrToInt(ExtractDelimited(8, data, [','])),
-                                                             StrToInt(ExtractDelimited(9, data, [','])),
-                                                             StrToInt(ExtractDelimited(10, data, [',']))));
+      SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(Byte(StrToInt(ExtractDelimited(8, data, [',']))),
+                                                             Byte(StrToInt(ExtractDelimited(9, data, [',']))),
+                                                             Byte(StrToInt(ExtractDelimited(10, data, [','])))));
         
       if ((CountDelimiter(data,',') = 11) AND (LowerCase(Trim(ExtractDelimited(11, data, [',']))) = 't')) then 
         colliIndex := High(bmpArray);
@@ -1205,6 +1205,14 @@ implementation
       TraceExit('sgCharacters', 'Initialise');
     {$ENDIF}
   end;
+
+  finalization
+  begin
+    ReleaseAllCharacters();
+    FreeAndNil(_Characters);
+  end;
+
+
 
 end.
   

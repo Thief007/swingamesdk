@@ -237,7 +237,7 @@ implementation
     if _fpsData.avg = 0 then
       result := 60
     else
-      result := Round(1000 / _fpsData.avg);
+      result := RoundInt(1000 / _fpsData.avg);
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'GetFramerate');
     {$ENDIF}
@@ -303,7 +303,7 @@ implementation
       sum := 0;
       for i := Low(values) to High(values) do
         sum := sum + values[i];
-      result := sum / Length(values);
+      result := Single(sum / Length(values));
       
       //Inc position index, and wrap-around to start if needed
       pos := pos + 1;
@@ -343,7 +343,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'Rnd');
     {$ENDIF}
-    result := System.Random();
+    result := Single(System.Random());
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'Rnd');
     {$ENDIF}
