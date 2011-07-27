@@ -1084,12 +1084,12 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawText(dest, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawText(dest, theText, textColor, theFont, RoundInt(pt.x), RoundInt(pt.y));
   end;
 
   procedure DrawUnicode(dest: Bitmap; theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawUnicode(dest, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawUnicode(dest, theText, textColor, theFont, RoundInt(pt.x), RoundInt(pt.y));
   end;
   
   
@@ -1125,7 +1125,7 @@ implementation
   
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(dest, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+    DrawTextLines(dest, theText, textColor, backColor, theFont, align, RoundInt(withinRect.x), RoundInt(withinRect.y), withinRect.width, withinRect.height);
   end;
   
   
@@ -1146,17 +1146,17 @@ implementation
   
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(screen, theText, textColor, backColor, FontNamed(name), align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+    DrawTextLines(screen, theText, textColor, backColor, FontNamed(name), align, RoundInt(withinRect.x), RoundInt(withinRect.y), withinRect.width, withinRect.height);
   end;
   
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; size: Longint; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(screen, theText, textColor, backColor, LoadFontNamed(FontNameFor(name, size), name, size), align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+    DrawTextLines(screen, theText, textColor, backColor, LoadFontNamed(FontNameFor(name, size), name, size), align, RoundInt(withinRect.x), RoundInt(withinRect.y), withinRect.width, withinRect.height);
   end;
   
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(screen, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+    DrawTextLines(screen, theText, textColor, backColor, theFont, align, RoundInt(withinRect.x), RoundInt(withinRect.y), withinRect.width, withinRect.height);
   end;
   
   procedure DrawTextLines(theText: String; textColor, backColor: Color; name: String; align: FontAlignment; x, y:Single; w, h: Longint); overload;
@@ -1218,7 +1218,7 @@ implementation
   
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawText(screen, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawText(screen, theText, textColor, theFont, RoundInt(pt.x), RoundInt(pt.y));
   end;
   
   
@@ -1229,7 +1229,7 @@ implementation
   
   procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawUnicode(screen, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawUnicode(screen, theText, textColor, theFont, RoundInt(pt.x), RoundInt(pt.y));
   end;
   
   
@@ -1392,7 +1392,7 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
-    stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
+    stringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGFXColor(textColor));
   end;
   
   function TextAlignmentFrom(str: String): FontAlignment;
@@ -1428,6 +1428,9 @@ implementation
 
   finalization
   begin
+    ReleaseAllFonts();
+    FreeAndNil(_Fonts);
+    
     TTF_Quit();
   end;
 

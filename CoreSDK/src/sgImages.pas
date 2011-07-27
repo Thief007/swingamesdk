@@ -1358,7 +1358,7 @@ end;
 procedure SetOpacity(bmp: Bitmap; pct: Single);
 begin
   if not assigned(bmp) then exit;
-  SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, Round(pct * 255));
+  SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, RoundUByte(pct * 255));
 end;
 
 procedure MakeTransparent(bmp: Bitmap);
@@ -1378,7 +1378,7 @@ begin
   result := nil;
   if not assigned(src) then exit;
   
-  deg := Round(degRot) mod 360;
+  deg := RoundInt(degRot) mod 360;
   
   name := Format('%s|%d|%.2f', [BitmapName(src), deg, scale]);
   
@@ -1407,7 +1407,7 @@ begin
     height  := surface^.h;
     
     if degRot = 0 then
-      BitmapSetCellDetails(result, Round(src^.cellW * scale), Round(src^.cellH * scale), src^.cellCount, src^.cellRows, src^.cellCount)
+      BitmapSetCellDetails(result, RoundInt(src^.cellW * scale), RoundInt(src^.cellH * scale), src^.cellCount, src^.cellRows, src^.cellCount)
     else
       // Cell details are gone
       BitmapSetCellDetails(result, width, height, 1, 1, 1);
@@ -1475,7 +1475,7 @@ end;
 
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : Longint); overload;
 begin
-  DrawBitmapPart(dest, src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  DrawBitmapPart(dest, src, RoundInt(source.x), RoundInt(source.y), source.width, source.height, x, y);
 end;
 
 procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
@@ -1500,42 +1500,42 @@ end;
 
 procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position: Point2D); overload;
 begin
-  DrawBitmap(dest, src, Round(position.x), Round(position.y));
+  DrawBitmap(dest, src, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
 begin
-  DrawBitmapPart(dest, src, source, Round(position.x), Round(position.y));
+  DrawBitmapPart(dest, src, source, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
 begin
-  DrawBitmap(src, Round(position.x), Round(position.y));
+  DrawBitmap(src, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
 begin
-  DrawBitmapPart(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  DrawBitmapPart(src, RoundInt(source.x), RoundInt(source.y), source.width, source.height, x, y);
 end;
 
 procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
 begin
-  DrawBitmapPart(src, source, Round(position.x), Round(position.y));
+  DrawBitmapPart(src, source, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : Longint); overload;
 begin
-  DrawBitmapPartOnScreen(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  DrawBitmapPartOnScreen(src, RoundInt(source.x), RoundInt(source.y), source.width, source.height, x, y);
 end;
 
 procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
 begin
-  DrawBitmapPartOnScreen(src, source, Round(position.x), Round(position.y));
+  DrawBitmapPartOnScreen(src, source, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
 begin
-  DrawBitmapOnScreen(src, Round(position.x), Round(position.y))
+  DrawBitmapOnScreen(src, RoundInt(position.x), RoundInt(position.y))
 end;
 
 procedure DrawBitmap(name: String; x, y : Single); overload;
@@ -1570,12 +1570,12 @@ end;
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; x, y: Single); overload;
 begin
   //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
-  DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), Round(x), Round(y));
+  DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), RoundInt(x), RoundInt(y));
 end;
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; const position: Point2D); overload;
 begin
-  DrawCell(dest, src, cell, Round(position.x), Round(position.y));
+  DrawCell(dest, src, cell, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawCell(src: Bitmap; cell: Longint; x, y: Single); overload;
@@ -1585,7 +1585,7 @@ end;
 
 procedure DrawCell(src: Bitmap; cell: Longint; const position: Point2D); overload;
 begin
-  DrawCell(src, cell, Round(position.x), Round(position.y));
+  DrawCell(src, cell, RoundInt(position.x), RoundInt(position.y));
 end;
 
 procedure DrawCellOnScreen(src: Bitmap; cell: Longint; x, y: Single); overload;
@@ -1791,9 +1791,9 @@ begin
   result.center := pt;
   
   if BitmapWidth(bmp) > BitmapHeight(bmp) then
-    result.radius := Ceiling(BitmapWidth(bmp) / 2)
+    result.radius := RoundInt(BitmapWidth(bmp) / 2.0)
   else
-    result.radius := Ceiling(BitmapHeight(bmp) / 2);
+    result.radius := RoundInt(BitmapHeight(bmp) / 2.0);
   
   {$IFDEF TRACE}
     TraceExit('sgImages', 'BitmapCircle', '');
@@ -1815,9 +1815,9 @@ begin
   result.center := pt;
   
   if BitmapCellWidth(bmp) > BitmapCellHeight(bmp) then
-    result.radius := Ceiling(BitmapCellWidth(bmp) / 2)
+    result.radius := RoundInt(BitmapCellWidth(bmp) / 2.0)
   else
-    result.radius := Ceiling(BitmapCellHeight(bmp) / 2);
+    result.radius := RoundInt(BitmapCellHeight(bmp) / 2.0);
   
   {$IFDEF TRACE}
     TraceExit('sgImages', 'BitmapCellCircle', '');
@@ -1872,6 +1872,13 @@ end;
       TraceExit('sgImages', 'initialization');
     {$ENDIF}
   end;
+  
+  finalization
+  begin
+    ReleaseAllBitmaps();
+    FreeAndNil(_Images);
+  end;
+  
 
 //=============================================================================
 end.

@@ -2831,4 +2831,11 @@ implementation
     
     _Sprites := TStringHash.Create(False, 16384);
   end;
+  
+  finalization
+  begin
+    ReleaseAllSprites();
+    FreeAndNil(_Sprites);
+  end;
+  
 end.

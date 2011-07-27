@@ -201,7 +201,8 @@ doMacCompile()
     
     #FIX: -no_order_inits for SnowLeopard
     #FIX: -no_order_data for SnowLeopard can be removed with future versions of the compiler
-    /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` /usr/lib/dylib1.o -framework Cocoa
+
     
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
     
@@ -307,10 +308,10 @@ then
         
         #Compile i386 version of library
         FPC_BIN=`which ppc386`
-        doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+        doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
         
         FPC_BIN=`which ppcppc`
-        doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+        doMacCompile "ppc" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
         #"-ldylib1.10.5.o"
         
         #FPC_BIN=`which ppcx64`

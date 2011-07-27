@@ -326,7 +326,7 @@ begin
     if started and (not paused) then
     begin
       paused := true;
-      pausedTicks := SDL_GetTicks() - startTicks;
+      pausedTicks := Longword(SDL_GetTicks() - startTicks);
     end;
   end;
   {$IFDEF TRACE}
@@ -345,7 +345,7 @@ begin
     if paused then
     begin
       paused := false;
-      startTicks := SDL_GetTicks() - pausedTicks;
+      startTicks := Longword(SDL_GetTicks() - pausedTicks);
       pausedTicks := 0;
     end;
   end;
@@ -367,7 +367,7 @@ begin
     if started then
     begin
       if paused then result := pausedTicks
-      else result := SDL_GetTicks() - startTicks;
+      else result := Longword(SDL_GetTicks() - startTicks);
       exit;
     end;
   end;
@@ -392,5 +392,12 @@ end;
       TraceExit('sgTimers', 'Initialise');
     {$ENDIF}
   end;
+  
+  finalization
+  begin
+    ReleaseAllTimers();
+    FreeAndNil(_Timers);
+  end;
+  
 
 end.

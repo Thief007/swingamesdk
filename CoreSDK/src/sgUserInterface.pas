@@ -1509,7 +1509,7 @@ var
     case aligned of
       AlignCenter:
       begin
-        imgPt.x := imgPt.x + (area.Width - BitmapWidth(bmp)) / 2;
+        imgPt.x := imgPt.x + (area.Width - BitmapWidth(bmp)) / 2.0;
       end;
       AlignLeft:
       begin
@@ -1537,36 +1537,36 @@ var
       pct := 0
     else 
     begin
-      pct := tempList^.startingAt / largestStartIdx;
+      pct := Single(tempList^.startingAt / largestStartIdx);
     end;
     
     if tempList^.verticalScroll then
     begin
       if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
-                              Round(scrollArea.x),
-                              Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
+                              RoundInt(scrollArea.x),
+                              RoundInt(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
                               tempList^.scrollSize,
                               tempList^.scrollSize
                               )
       else
         DrawBitmapOnScreen(tempList^.ScrollButton,
-                            Round(scrollArea.x),
-                            Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)));
+                            RoundInt(scrollArea.x),
+                            RoundInt(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)));
     end
     else
     begin
       if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
-                              Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-                              Round(scrollArea.y),
+                              RoundInt(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+                              RoundInt(scrollArea.y),
                               tempList^.scrollSize,
                               tempList^.scrollSize
                               )
       else
         DrawBitmapOnScreen(tempList^.ScrollButton,
-                            Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-                            Round(scrollArea.y));
+                            RoundInt(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+                            RoundInt(scrollArea.y));
     end;
   end;
 begin
@@ -1642,7 +1642,7 @@ begin
     begin
       // Determine the location of the list item's bitmap
       imagePt   := RectangleTopLeft(itemArea);    
-      imagePt.y := imagePt.y + (itemArea.height - BitmapHeight(tempList^.items[itemidx].image)) / 2;
+      imagePt.y := imagePt.y + (itemArea.height - BitmapHeight(tempList^.items[itemidx].image)) / 2.0;
       
       _ResizeItemArea(itemTextArea, imagePt, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
     end;
@@ -1898,7 +1898,7 @@ procedure HandlePanelInput(pnl: Panel);
     else
       pct := (mouse.x - lst^.scrollArea.x) / lst^.scrollArea.width;
     
-    lst^.startingAt := Round(pct * largestStartIdx / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
+    lst^.startingAt := RoundInt(pct * largestStartIdx / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
     exit;
   end;
   
@@ -2786,8 +2786,8 @@ begin
  placeCount := lst^.rows * lst^.columns;
  result     := itemCount - placeCount;
  
- // Round
- result := Ceiling(result / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
+ // Round - 1.0 converts this to doubles...
+ result := Ceiling(1.0 * result / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
 end;
 
 //---------------------------------------------------------------------------------------
@@ -3312,8 +3312,8 @@ function StringToKind(s: String): GUIElementKind;
     
     // Format is 
     // x, y, w, h, kind, id
-    regX := StrToFloat(Trim(ExtractDelimited(1, d, [','])));
-    regY := StrToFloat(Trim(ExtractDelimited(2, d, [','])));
+    regX := Single(StrToFloat(Trim(ExtractDelimited(1, d, [',']))));
+    regY := Single(StrToFloat(Trim(ExtractDelimited(2, d, [',']))));
     regW := StrToInt(Trim(ExtractDelimited(3, d, [','])));
     regH := StrToInt(Trim(ExtractDelimited(4, d, [','])));
     
@@ -4359,6 +4359,12 @@ end;
     {$IFDEF TRACE}
       TraceExit('sgUserInterface', 'Initialise');
     {$ENDIF}
+  end;
+
+  finalization
+  begin
+    ReleaseAllPanels();
+    FreeAndNil(GUIC.panelIds);
   end;
 
 end.

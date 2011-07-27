@@ -761,7 +761,7 @@ implementation
         else if value > 1 then value := 1;
 
         //SDL music volume is 0 - 128
-        newVol := Trunc(value * 128);
+        newVol := RoundInt(value * 128);
         Mix_VolumeMusic(newVol);
         
         {$IFDEF TRACE}
@@ -775,7 +775,7 @@ implementation
             TraceEnter('sgAudio', 'MusicVolume', '');
         {$ENDIF}
         
-     result := Mix_VolumeMusic(-1) / 128;
+     result := Mix_VolumeMusic(-1) / 128.0;
      
      {$IFDEF TRACE}
          TraceExit('sgAudio', 'MusicVolume', FloatToStr(result));
@@ -1156,7 +1156,7 @@ implementation
         i := Mix_PlayChannel( -1, effect^.effect, loops);
         if i <> -1 then
         begin
-            Mix_Volume(i, Trunc(vol * 128));
+            Mix_Volume(i, RoundInt(vol * 128.0));
             soundChannels[i] := effect;
         end;
         
@@ -1576,5 +1576,12 @@ implementation
             TraceExit('sgAudio', 'Initialise');
         {$ENDIF}
     end;
-
+    
+    finalization
+    begin
+        ReleaseAllMusic();
+        ReleaseAllSoundEffects();
+        FreeAndNil(_SoundEffects);
+        FreeAndNil(_Music);
+    end;
 end.

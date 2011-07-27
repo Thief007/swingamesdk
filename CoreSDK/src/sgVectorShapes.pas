@@ -967,7 +967,7 @@ begin
   
   case k of
     pkPoint: result := PointOnPoint(pt, s^.pt);
-    pkCircle: result := PointInCircle(pt, CircleAt(s^.pt,round(PointPointDistance(pts[0], pts[1]))));
+    pkCircle: result := PointInCircle(pt, CircleAt(s^.pt,RoundInt(PointPointDistance(pts[0], pts[1]))));
     // pkEllipse: result := 2;
     pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
     pkTriangle: result := PointInTriangle(pt,TriangleFrom(pts[0],pts[1],pts[2]));
@@ -1123,7 +1123,7 @@ begin
   pts := ShapePoints(s);
   if length(pts) < 2 then begin result := CircleAt(0,0,0); exit; end;
     
-  result := CircleAt(PointAdd(pts[0], offset), Round(PointPointDistance(pts[0], pts[1])));
+  result := CircleAt(PointAdd(pts[0], offset), RoundInt(PointPointDistance(pts[0], pts[1])));
 end;
 
 function ShapeLine(s: Shape): LineSegment;

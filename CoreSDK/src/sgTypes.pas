@@ -225,6 +225,9 @@ interface
       animationIds: NamedIndexCollection;     // The names and ids of the animations. This links to animations.
       animations:   LongintArray;             // The starting index of the animations in this template.
       frames:       Array of AnimationFrame;  // The frames of the animations within this template.
+      
+      animObjs:     Array of Pointer;         // The animations created from this script
+      nextAnimIdx:  LongInt;                  // The index of the last animObjs
     end;
     
     /// An Animation Template stores a number of animations. Each animation is
@@ -247,6 +250,7 @@ interface
       lastFrame:    AnimationFrame;   // The last frame used, so last image can be drawn
       frameTime:    Single;           // How long have we spent in this frame?
       enteredFrame: Boolean;          // Did we just enter this frame? (can be used for sound playing)
+      script:       AnimationScript;  // Which script was it created from?
       //hasEnded:     Boolean;          // Has the animation stopped?
     end;
     

@@ -95,7 +95,6 @@ uses
     
     MAX_LINES := MAX_LINES_DEFAULT;
     MAX_LOGS := MAX_LOGS_DEFAULT;
-    TRACE_UNITS := TStringHash.Create(False, 32);
     
     if FileExists('Trace.cfg') then
     begin
@@ -238,6 +237,7 @@ uses
   
   initialization
   begin
+    TRACE_UNITS := TStringHash.Create(False, 32);
     ConfigureTrace();
     
     try
@@ -257,6 +257,7 @@ uses
   finalization
   begin
     try
+      FreeAndNil(TRACE_UNITS);
       Close(output);
     except
     end;

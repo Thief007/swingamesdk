@@ -372,7 +372,7 @@ implementation
       textWidth := _textSurface^.w;
       
       if textWidth > _area.w then
-        srect.x := textWidth - _area.w
+        srect.x := SInt16(textWidth - _area.w)
       else
         srect.x := 0;
       srect.y := 0;

@@ -168,6 +168,7 @@ _type_dictionary_creation_data = [
             ('trianglearray',   'triangle_array '),
             ('bitmaparray',     'bitmap *'),
             ('singlearray',     'float *'),
+            ('pointer[0..n - 1]',   'void *'),
         ],
         '_type_switcher': {
             None:       '#2#',

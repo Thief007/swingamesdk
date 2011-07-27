@@ -163,7 +163,7 @@ doMacCompile()
     echo "  ... Creating game for $1"
     FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o "${TMP_DIR}/${1}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 $2 -o "${TMP_DIR}/${1}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -319,8 +319,7 @@ then
 
     
     if [ "$OS" = "$MAC" ]; then
-        HAS_PPC=false
-        HAS_i386=false
+        OS_VER=`sw_vers -productVersion`
         
         if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
             HAS_PPC=true
@@ -330,10 +329,24 @@ then
             HAS_i386=true
         fi
         
-        if [[ $HAS_i386 = true && $HAS_PPC = true ]]; then
+        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.5' ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
             echo "  ... Building Universal Binary"
-            doMacCompile "i386"
-            doMacCompile "ppc"
+            
+            if [ $OS_VER = '10.5' ]; then
+                doMacCompile "i386" ""
+                doMacCompile "ppc" ""
+            else
+                doMacCompile "i386" "-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+                doMacCompile "ppc" "-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+            fi
             
             doLipo "i386" "ppc"
         else
