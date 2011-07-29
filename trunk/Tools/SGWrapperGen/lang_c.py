@@ -106,6 +106,10 @@ def const_strip_arg_visitor(arg_str, the_arg, for_param_or_type):
     else:
         return arg_str
 
+def doc_transform(the_docs):
+    docLines = the_docs.splitlines(True)
+    return ''.join([line if line == docLines[0] else '// ' + line for line in docLines])
+
 
 # ===============================================================================
 # = Processing Functions - process methods and types from the code object model =
@@ -167,7 +171,7 @@ def _do_cpp_create_method_code(the_method):
     
     method_data = the_method.lang_data['cpp']
     
-    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, lang_key='cpp')
+    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, lang_key='cpp')
     
     # Create signature
     method_data.signature   = '%(return_type)s %(name_lower)s(%(params)s);' % details
@@ -180,7 +184,7 @@ def _do_cpp_create_method_code(the_method):
         
     if method_data.has_const_params():
         # Create a version with const parameters passed by value - this avoids having to create const pointers to data in the C SwinGame
-        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, lang_key='c')
+        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, doc_transform, lang_key='c')
         
         # details['uname'] = details['uname'] + '_byval'
         # details['uname_lower'] = details['uname_lower'] + '_byval'
@@ -214,7 +218,7 @@ def _do_c_create_method_code(the_method):
     
     method_data = the_method.lang_data['c']
     
-    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, lang_key='c')
+    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, lang_key='c')
     
     # Create signature
     method_data.signature   = '%(return_type)s %(uname_lower)s(%(params)s);' % details
@@ -227,7 +231,7 @@ def _do_c_create_method_code(the_method):
     
     if method_data.has_const_params():
         # Create a version with const parameters passed by value - this avoids having to create const pointers to data in the C SwinGame
-        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, lang_key='c')
+        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, doc_transform, lang_key='c')
         
         details['uname'] = details['uname'] + '_byval'
         details['uname_lower'] = details['uname_lower'] + '_byval'
@@ -255,7 +259,7 @@ def _do_create_adapter_code(the_method):
     
     method_data = the_method.lang_data['c']
     
-    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, lang_key='c')
+    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, lang_key='c')
     
     # Create signature
     method_data.signature = '%(return_type)s %(uname)s(%(params)s);' % details
@@ -312,13 +316,20 @@ def _do_create_type_code(member):
 # = Save C code to files =
 # ========================
 
-def write_c_signature(method, other):
+def write_cpp_signature(method, other):
+    '''
+    Output the C++ signatures after the C signatures
+    '''
     writer = other['writer']
     
     if len(method.lang_data['cpp'].signature) > 0:
-        writer.writeln('#ifdef __cplusplus')
         writer.writeln(method.lang_data['cpp'].signature)
-        writer.writeln('#endif')
+    
+    return other
+
+
+def write_c_signature(method, other):
+    writer = other['writer']
     
     writer.writeln(method.lang_data['c'].signature)
     
@@ -375,10 +386,21 @@ def write_c_header_for(the_file, out_path):
     #visit methods
     for member in the_file.members:
         if member.is_module or member.is_library:
-            the_file.members[0].visit_methods(write_c_signature, other)
+            member.visit_methods(write_c_signature, other)
     
     if the_file.name == 'SGSDK':
         writer.writeln('#ifdef __cplusplus\n}\n#endif\n')
+    else:
+        # Output C++ signatures
+        writer.writeln('')
+        writer.writeln('#ifdef __cplusplus')
+        writer.writeln('// C++ overloaded functions')
+        for member in the_file.members:
+            if member.is_module or member.is_library:
+                member.visit_methods(write_cpp_signature, other)
+        writer.writeln('')
+        writer.writeln('#endif')
+        writer.writeln('')
     
     writer.writeln(c_lib.module_header_footer_txt)
     writer.close()

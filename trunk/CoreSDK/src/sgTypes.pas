@@ -200,8 +200,8 @@ interface
     /// @field data: Longword
     Color = Longword;
     
-    /// @class AnimationFrame
-    /// @pointer_wrapper
+    /// @struct AnimationFrame
+    /// @via_pointer
     AnimationFrame = ^AnimationFrameData;
     
     /// @struct AnimationFrameData

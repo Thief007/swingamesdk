@@ -366,183 +366,262 @@ interface
   
   /// Draw a circle onto a destination (filled or outline).
   /// 
-  /// @lib DrawOrFillPtCircleOnto
+  /// @lib DrawOrFillCircleOnto
   /// @sn drawOnto:%s color:%s filled:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto a destination.
   /// 
-  /// @lib DrawOrFillPtCircleOnto(dest, clr, False, xc, yc, radius)
-  /// @uname DrawPtCircleOnto
+  /// @lib DrawOrFillCircleOnto(dest, clr, False, xc, yc, radius)
+  /// @uname DrawCircleOnto
   /// @sn drawOnto:%s color:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle onto a destination.
   /// 
-  /// @lib DrawOrFillPtCircleOnto(dest, clr, True, xc, yc, radius)
-  /// @uname FillPtCircleOnto
+  /// @lib DrawOrFillCircleOnto(dest, clr, True, xc, yc, radius)
+  /// @uname FillCircleOnto
   /// @sn fillOnto:%s color:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto a destination (filled or outline).
   /// 
-  /// @lib DrawOrFillPtCircleAtPointOnto
+  /// @lib DrawOrFillCircleAtPointOnto
   /// @sn drawOnto:%s color:%s filled:%s circle:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto a bitmap.
   /// 
-  /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, False, point, radius)
+  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, False, point, radius)
   /// @uname DrawCircleAtPointOnto
   /// @sn drawOnto:%s color:%s circle:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   
   /// Fill a circle onto a destination bitmap.
   /// 
-  /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, True, point, radius)
+  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, True, point, radius)
   /// @uname FillCircleAtPointOnto
   /// @sn fillOnto:%s color:%s circle:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto a bitmap (filled or outline).
   /// 
-  /// @lib DrawOrFillCircleOnto
+  /// @lib DrawOrFillCircleStructOnto
   /// @sn drawOnto:%s color:%s filled:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
   
   /// Draw a circle onto a bitmap.
   /// 
-  /// @lib DrawOrFillCircleOnto(dest, clr, False, c)
-  /// @uname DrawCircleOnto
+  /// @lib DrawOrFillCircleStructOnto(dest, clr, False, c)
+  /// @uname DrawCircleStructOnto
   /// @sn drawOnto:%s color:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
   
   /// Fill a circle onto a destination.
   /// 
-  /// @lib DrawOrFillCircleOnto(dest, clr, True, c)
-  /// @uname FillCircleOnto
+  /// @lib DrawOrFillCircleStructOnto(dest, clr, True, c)
+  /// @uname FillCircleStructOnto
   /// @sn fillOnto:%s color:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
   
   /// Draw a circle in the game (filled or outline).
   /// 
-  /// @lib DrawOrFillPtCircle
+  /// @lib DrawOrFillCircle
   /// @sn draw:%s filled:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle in the game.
   /// 
-  /// @lib DrawOrFillPtCircle(clr, False, xc, yc, radius)
-  /// @uname DrawPtCircle
+  /// @lib DrawOrFillCircle(clr, False, xc, yc, radius)
+  /// @uname DrawCircle
   /// @sn draw:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 1
   procedure DrawCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle in the game.
   /// 
-  /// @lib DrawOrFillPtCircle(clr, True, xc, yc, radius)
-  /// @uname FillPtCircle
+  /// @lib DrawOrFillCircle(clr, True, xc, yc, radius)
+  /// @uname FillCircle
   /// @sn fill:%s circleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 1
   procedure FillCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle in the game (filled or outline).
   /// 
-  /// @lib DrawOrFillPtCircleAtPoint
-  /// @sn draw:%s filled:%s circle:%s radius:%s
+  /// @lib DrawOrFillCircleAtPoint
+  /// @sn draw:%s filled:%s circleAt:%s radius:%s
+  ///
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   
   /// Draw circle in the game.
   /// 
-  /// @lib DrawOrFillPtCircleAtPoint(clr, False, position, radius)
-  /// @uname DrawPtCircleAtPoint
-  /// @sn draw:%s circle:%s radius:%s
+  /// @lib DrawOrFillCircleAtPoint(clr, False, position, radius)
+  /// @uname DrawCircleAtPoint
+  /// @sn draw:%s circleAt:%s radius:%s
+  ///
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Fill a circle in the game.
   /// 
-  /// @lib DrawOrFillPtCircleAtPoint(clr, True, position, radius)
-  /// @uname FillPtCircleAtPoint
+  /// @lib DrawOrFillCircleAtPoint(clr, True, position, radius)
+  /// @uname FillCircleAtPoint
   /// @sn fill:%s circle:%s radius:%s
+  ///
+  /// @doc_idx 2
+  /// @doc_details
   procedure FillCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle in the game (filled or outline).
   /// 
-  /// @lib DrawOrFillCircle
+  /// @lib DrawOrFillCircleStruct
   /// @sn draw:%s filled:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(clr: Color; filled: Boolean; const c: Circle); overload;
   
   /// Draw a circle in the game.
   /// 
-  /// @lib DrawOrFillCircle(clr, False, c)
-  /// @uname DrawCircle
+  /// @lib DrawOrFillCircleStruct(clr, False, c)
+  /// @uname DrawCircleStruct
   /// @sn draw:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircle(clr: Color; const c: Circle); overload;
   
   /// Fill a circle in the game.
   /// 
-  /// @lib DrawOrFillCircle(clr, True, c)
-  /// @uname FillCircle
+  /// @lib DrawOrFillCircleStruct(clr, True, c)
+  /// @uname FillCircleStruct
   /// @sn fill:%s circle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircle(clr: Color; const c: Circle); overload;
   
   /// Draw a circle on the screen (filled or outline).
   /// 
-  /// @lib DrawOrFillPtCircleOnScreen
+  /// @lib DrawOrFillCircleOnScreen
   /// @sn draw:%s filled:%s circleOnScreenX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle on the screen.
   /// 
-  /// @lib DrawOrFillPtCircleOnScreen(clr, False, xc, yc, radius)
-  /// @uname DrawCirclePtOnScreen
+  /// @lib DrawOrFillCircleOnScreen(clr, False, xc, yc, radius)
+  /// @uname DrawCircleOnScreen
   /// @sn draw:%s circleOnScreenX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle on the screen.
   /// 
-  /// @lib DrawOrFillPtCircleOnScreen(clr, True, xc, yc, radius)
-  /// @uname FillCirclePtOnScreen
+  /// @lib DrawOrFillCircleOnScreen(clr, True, xc, yc, radius)
+  /// @uname FillCircleOnScreen
   /// @sn fill:%s circleOnScreenX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto the screen (filled or outline).
   /// 
   /// Draw a circle onto the screen
   /// @lib DrawOrFillCircleAtPointOnScreen
-  /// @sn draw:%s filled:%s circleOnScreen:%s radius:%s
+  /// @sn draw:%s filled:%s circleOnScreenAt:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto the screen.
   /// 
   /// @lib DrawOrFillCircleAtPointOnScreen(clr, False, position, radius)
   /// @uname DrawCircleAtPointOnScreen
-  /// @sn draw:%s circleOnScreen:%s radius:%s
+  /// @sn draw:%s circleOnScreenAt:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Fills a circle onto the screen.
   /// 
   /// @lib DrawOrFillCircleAtPointOnScreen(clr, True, position, radius)
   /// @uname FillCircleAtPointOnScreen
-  /// @sn fill:%s circleOnScreen:%s radius:%s
+  /// @sn fill:%s circleOnScreenAt:%s radius:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle on the screen (filled or outline)
   /// 
-  /// @lib DrawOrFillCircleOnScreen
+  /// @lib DrawOrFillCircleStructOnScreen
   /// @sn draw:%s filled:%s circleOnScreen:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const c: Circle); overload;
   
   /// Draw the circel onto the screen.
   /// 
-  /// @lib DrawOrFillCircleOnScreen(clr, False, c)
-  /// @uname DrawCircleOnScreen
+  /// @lib DrawOrFillCircleStructOnScreen(clr, False, c)
+  /// @uname DrawCircleStructOnScreen
   /// @sn draw:%s circleOnScreen:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawCircleOnScreen(clr: Color; const c: Circle); overload;
   
   /// Fill the circle onto the screen.
   /// 
-  /// @lib DrawOrFillCircleOnScreen(clr, True, c)
-  /// @uname FillCircleOnScreen
+  /// @lib DrawOrFillCircleStructOnScreen(clr, True, c)
+  /// @uname FillCircleStructOnScreen
   /// @sn fill:%s circleOnScreen:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillCircleOnScreen(clr: Color; const c: Circle); overload;
   
   
@@ -553,98 +632,141 @@ interface
   
   /// Draw the triangle onto the destination (filled or outline).
   /// 
-  /// @lib DrawOrFillTriangleOnto
+  /// @lib DrawOrFillTriangleStructOnto
   /// @sn drawOnto:%s color:%s filled:%s triangle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawTriangle(dest: Bitmap; clr: Color; filled: Boolean; const tri: Triangle); overload;
   
   /// Draw the triangle onto the destination.
   /// 
-  /// @lib DrawOrFillTriangleOnto(dest, clr, False, tri)
-  /// @uname DrawTriangleOnto
+  /// @lib DrawOrFillTriangleStructOnto(dest, clr, False, tri)
+  /// @uname DrawTriangleStructOnto
   /// @sn drawOnto:%s color:%s triangle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   
   /// Fill the triangle onto the destination.
   ///
-  /// @lib DrawOrFillTriangleOnto(dest, clr, True, tri)
-  /// @uname FillTriangleOnto
+  /// @lib DrawOrFillTriangleStructOnto(dest, clr, True, tri)
+  /// @uname FillTriangleStructOnto
   /// @sn fillOnto:%s color:%s triangle:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   
   /// Draw the triangle onto the destination.
   /// 
-  /// @lib DrawTriangleFromPointsOnto
+  /// @lib DrawTriangleOnto
   /// @sn drawOnto:%s color:%s triangleX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// Fill the triangle onto the destination.
   ///
-  /// @lib FillTriangleFromPointsOnto
+  /// @lib FillTriangleOnto
   /// @sn fillOnto:%s color:%s triangleX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 9
+  /// @doc_details
   procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// Draw a triangle in the game.
   ///
-  /// @lib DrawOrFillTriangle
+  /// @lib DrawOrFillTriangleStruct
   /// @sn draw:%s filled:%s triangle:%s
+  ///
+  /// @doc_idx 3
+  /// @doc_details
   procedure DrawTriangle(clr: Color; filled: Boolean; const tri: Triangle); overload;
   
   /// Draw a triangle in the game.
   ///
-  /// @lib DrawOrFillTriangle(clr, False, tri)
-  /// @uname DrawTriangle
+  /// @lib DrawOrFillTriangleStruct(clr, False, tri)
+  /// @uname DrawTriangleStruct
   /// @sn draw:%s triangle:%s
+  ///
+  /// @doc_idx 3
+  /// @doc_details
   procedure DrawTriangle(clr: Color; const tri: Triangle); overload;
   
   /// Fill a triangle in the game.
   /// 
-  /// @lib DrawOrFillTriangle(clr, True, tri)
-  /// @uname FillTriangle
+  /// @lib DrawOrFillTriangleStruct(clr, True, tri)
+  /// @uname FillTriangleStruct
   /// @sn fill:%s triangle:%s
+  ///
+  /// @doc_idx 3
+  /// @doc_details
   procedure FillTriangle(clr: Color; const tri: Triangle); overload;
   
   /// Draw a triangle in the game.
   ///
-  /// @lib DrawTriangleFromPoints
+  /// @lib DrawTriangle
   /// @sn draw:%s triangleX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 1
   procedure DrawTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// Fill a triangle in the game.
   ///
-  /// @lib FillTriangleFromPoints
+  /// @lib FillTriangle
   /// @sn fill:%s triangleX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 1
   procedure FillTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// Draw a triangle (filled or outline) onto the screen.
   /// 
-  /// @lib DrawOrFillTriangleOnScreen
+  /// @lib DrawOrFillTriangleStructOnScreen
   /// @sn draw:%s filled:%s triangleOnScreen:%s
+  ///
+  /// @doc_idx 7
+  /// @doc_details
   procedure DrawTriangleOnScreen(clr: Color; filled: Boolean; const tri: Triangle); overload;
   
   /// Draw a triangle onto the screen.
   ///
-  /// @lib DrawOrFillTriangleOnScreen(clr, False, tri)
-  /// @uname DrawTriangleOnScreen
+  /// @lib DrawOrFillTriangleStructOnScreen(clr, False, tri)
+  /// @uname DrawTriangleStructOnScreen
   /// @sn draw:%s triangleOnScreen:%s
+  ///
+  /// @doc_idx 7
+  /// @doc_details
   procedure DrawTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   
   /// Fills a triangle on the screen.
   /// 
-  /// @lib DrawOrFillTriangleOnScreen(clr, True, tri)
-  /// @uname FillTriangleOnScreen
+  /// @lib DrawOrFillTriangleStructOnScreen(clr, True, tri)
+  /// @uname FillTriangleStructOnScreen
   /// @sn fill:%s triangleOnScreen:%s
+  ///
+  /// @doc_idx 7
+  /// @doc_details
   procedure FillTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   
   /// Draws the outline of a triangle on the screen.
   /// 
-  /// @lib DrawTriangleFromPointsOnScreen
+  /// @lib DrawTriangleOnScreen
   /// @sn draw:%s triangleOnScreenX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 7
+  /// @doc_details
   procedure DrawTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// Fills a triangle on the screen.
   /// 
-  /// @lib FillTriangleFromPointsOnScreen
+  /// @lib FillTriangleOnScreen
   /// @sn fill:%s triangleOnScreenX1:%s y1:%s x2:%s y2:%s x3:%s y3:%s
+  ///
+  /// @doc_idx 7
+  /// @doc_details
   procedure FillTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   
@@ -719,16 +841,20 @@ interface
 // Rectangle drawing
 //---------------------------------------------------------------------------
   
-  /// Draw a rectangle onto a destination.
+  /// Draw a rectangle onto a destination bitmap.
   /// 
   /// @lib DrawOrFillRectangleOnto
   /// @sn drawOnto:%s color:%s filled:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle onto a destination (filled or outline).
   /// 
-  /// @lib DrawOrFillRectangleRectOnto
+  /// @lib DrawOrFillRectangleStructOnto
   /// @sn drawOnto:%s color:%s filled:%s rectangle:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; const source: Rectangle); overload;
   
   /// Draw a rectangle onto a destination.
@@ -736,13 +862,17 @@ interface
   /// @lib DrawOrFillRectangleOnto(dest, clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnto
   /// @sn drawOnto:%s color:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height: Longint); overload;
   
   /// Draw a rectangle onto a destination.
   /// 
-  /// @lib DrawOrFillRectangleRectOnto(dest, clr, False, source)
-  /// @uname DrawRectangleRectOnto
+  /// @lib DrawOrFillRectangleStructOnto(dest, clr, False, source)
+  /// @uname DrawRectangleStructOnto
   /// @sn drawOnto:%s color:%s rectangle:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   
   /// Fill a rectangle onto a destination.
@@ -750,25 +880,33 @@ interface
   /// @lib DrawOrFillRectangleOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnto
   /// @sn fillOnto:%s color:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_details
   procedure FillRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Fill a rectangle onto a destination.
   /// 
-  /// @lib DrawOrFillRectangleRectOnto(dest, clr, True, source)
-  /// @uname FillRectangleRectOnto
+  /// @lib DrawOrFillRectangleStructOnto(dest, clr, True, source)
+  /// @uname FillRectangleStructOnto
   /// @sn fillOnto:%s color:%s rectangle:%s
+  ///
+  /// @doc_details
   procedure FillRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   
   /// Draw a rectangle in the game (filled or outline).
   ///
   /// @lib DrawOrFillRectangle
   /// @sn draw:%s filled:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw a rectangle in the game (filled or outline).
   /// 
-  /// @lib DrawOrFillRectangleRect
+  /// @lib DrawOrFillRectangleStruct
   /// @sn draw:%s filled:%s rectangle:%s
+  ///
+  /// @doc_details
   procedure DrawRectangle(clr: Color; filled: Boolean; const source: Rectangle); overload;
   
   /// Draw a rectangle in the game.
@@ -782,8 +920,8 @@ interface
   
   /// Draw rectangle in the game.
   ///
-  /// @lib DrawOrFillRectangleRect(clr, False, source)
-  /// @uname DrawRectangleRect
+  /// @lib DrawOrFillRectangleStruct(clr, False, source)
+  /// @uname DrawRectangleStruct
   /// @sn draw:%s rectangle:%s
   ///
   /// @doc_idx 1
@@ -800,8 +938,8 @@ interface
   
   /// Fill a rectangle in the game.
   ///
-  /// @lib DrawOrFillRectangleRect(clr, True, source)
-  /// @uname FillRectangleRect
+  /// @lib DrawOrFillRectangleStruct(clr, True, source)
+  /// @uname FillRectangleStruct
   /// @sn fill:%s rectangle:%s
   ///
   /// @doc_idx 1
@@ -811,6 +949,9 @@ interface
   ///
   /// @lib DrawOrFillRectangleOnScreen
   /// @sn draw:%s filled:%s rectangleOnScreenX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle on the screen.
@@ -819,7 +960,8 @@ interface
   /// @uname DrawRectangleOnScreen
   /// @sn draw:%s rectangleOnScreenX:%s y:%s width:%s height:%s
   ///
-  /// @doc_idx 0
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Fill a rectangle on the screen.
@@ -828,31 +970,37 @@ interface
   /// @uname FillRectangleOnScreen
   /// @sn fill:%s rectangleOnScreenX:%s y:%s width:%s height:%s
   ///
-  /// @doc_idx 0
+  /// @doc_idx 2
+  /// @doc_details
   procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle on the screen (fill or outline).
   ///
-  /// @lib DrawOrFillRectangleRectOnScreen
+  /// @lib DrawOrFillRectangleStructOnScreen
   /// @sn draw:%s filled:%s rectangleOnScreen:%s
+  ///
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; const source : Rectangle); overload;
   
   /// Draw a rectangle on the screen.
   ///
-  /// @lib DrawOrFillRectangleRectOnScreen(clr, False, source)
-  /// @uname DrawRectangleRectOnScreen
+  /// @lib DrawOrFillRectangleStructOnScreen(clr, False, source)
+  /// @uname DrawRectangleStructOnScreen
   /// @sn draw:%s rectangleOnScreen:%s
   ///
-  /// @doc_idx 1
+  /// @doc_idx 2
+  /// @doc_details
   procedure DrawRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   /// Fill a rectangle on the screen.
   /// 
-  /// @lib DrawOrFillRectangleRectOnScreen(clr, True, source)
-  /// @uname FillRectangleRectOnScreen
+  /// @lib DrawOrFillRectangleStructOnScreen(clr, True, source)
+  /// @uname FillRectangleStructOnScreen
   /// @sn fill:%s rectangleOnScreen:%s
   ///
-  /// @doc_idx 1
+  /// @doc_idx 2
+  /// @doc_details
   procedure FillRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   

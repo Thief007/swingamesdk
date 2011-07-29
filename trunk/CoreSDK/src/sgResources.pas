@@ -728,8 +728,11 @@ implementation
                     if isSkip then break;
                 end;
                 
-                startAni := CreateAnimation('splash', AnimationScriptNamed('Startup'));
-                
+                {$IFDEF TRACE}
+                    startAni := CreateAnimation('splash-debug', AnimationScriptNamed('Startup'));
+                {$ELSE}
+                    startAni := CreateAnimation('splash', AnimationScriptNamed('Startup'));
+                {$ENDIF}
                 while not AnimationEnded(startAni) do
                 begin
                     DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
@@ -903,7 +906,7 @@ implementation
         {$IFDEF TRACE}
             TraceExit('sgResources', 'initialization');
         {$ENDIF}
-    end;
+	    end;
     
     finalization
     begin
