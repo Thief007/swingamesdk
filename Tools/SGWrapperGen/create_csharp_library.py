@@ -1298,6 +1298,7 @@ def write_cs_type_for(member, other):
     if member.is_class:
         #convert to resource pointer
         if member.is_pointer_wrapper:
+            # print member, member.fields
             assert len(member.fields) == 1
             write_sg_class(member, other)
         else:
