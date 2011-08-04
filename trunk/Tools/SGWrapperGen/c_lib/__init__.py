@@ -23,6 +23,7 @@ _data_switcher = {
 _type_switcher = {
     None :      dict(),
     'const':    dict(),
+    'const-cpp':    dict(),
     'var':      dict(),
     'out':      dict(),
     'return':   dict(),
@@ -31,6 +32,7 @@ _type_switcher = {
 _adapter_type_switcher = {
     None:       dict(),
     'const':    dict(),
+    'const-cpp':    dict(),
     'var':      dict(),
     'out':      dict(),
     'result':   dict(),
@@ -173,6 +175,7 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2#',
             'const':    'const #2#',
+            'const-cpp':    'const #2#',
             'var':      '#2#',
             'return':   '#2#',
         },
@@ -189,6 +192,7 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2#',
             'const':    '#2#',
+            'const-cpp':    '#2#',
             'var':      '#2#',
             'return':   '#2#',
         },
@@ -211,6 +215,7 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2# ', #used for _byval methods
             'const':    'const #2# *', #const parameters in Pascal are passed by reference
+            'const-cpp':    'const #2# &', 
             'var':      '#2# *',
             'out':      '#2# *',
             'return':   '#2#',

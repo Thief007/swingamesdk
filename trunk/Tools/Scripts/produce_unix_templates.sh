@@ -34,24 +34,6 @@ echo "--------------------------------------------------"
 echo "          Producing Linux Distribution Files"
 echo "--------------------------------------------------"
 
-
-#
-# Create version dir on mercury
-#
-
-MERCURY_BASE_INST_DIR="/home/acad/acain/www/htdocs/media/SwinGame"
-MERCURY_INST_DIR="${MERCURY_BASE_INST_DIR}/SwinGame $SG_VERSION"
-MERCURY_INST_DIR_NO_SPACE=`echo ${MERCURY_INST_DIR} | awk '{gsub(/[ \t]/,"\\\\ ");print}'`
-
-echo " - Creating destination on server"
-ssh mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
-
-echo " - Saving version name on server"
-ssh mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
-
-
-
-
 LINUX_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "C GPP,${GPP_C_DIST_DIR}")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
@@ -93,9 +75,6 @@ for arg in "${LINUX_DMG_LIST[@]}"; do
     cd "${TAR_ROOT}"
     tar -cf "${to}" *
     gzip -f -q "${to}"
-    
-    echo "      Copying to server"
-    scp "${to}.gz" mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
     
     rm -rf "${TAR_BASE_DIR}"
 done

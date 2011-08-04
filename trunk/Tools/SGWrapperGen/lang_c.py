@@ -36,6 +36,14 @@ def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame code (code facing the user)'''
     return lang_helper.std_type_visitor(c_lib._type_switcher, the_type, modifier)
 
+def cpp_type_visitor(the_type, modifier = None):
+    '''switch types for the c SwinGame code (code facing the user)'''
+    if modifier == 'const':
+        modifier = 'const-cpp'
+    
+    return lang_helper.std_type_visitor(c_lib._type_switcher, the_type, modifier)
+
+
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (code that links to the DLL)'''
     return lang_helper.std_type_visitor(c_lib._adapter_type_switcher, the_type, modifier, dict_name = '_adapter_type_switcher')
@@ -53,6 +61,10 @@ def c_code_for_adapter_type(the_type, var_name):
 
 def param_visitor(the_param, last):
     return '%s%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ', ' if not last else '')
+
+def cpp_param_visitor(the_param, last):
+    return '%s%s%s' % (cpp_type_visitor(the_param.data_type, the_param.modifier), the_param.name, ', ' if not last else '')
+
 
 def const_strip_param_visitor(the_param, last):
     ''' Called for each parameter in the function/procedure being mapped. 
@@ -171,7 +183,7 @@ def _do_cpp_create_method_code(the_method):
     
     method_data = the_method.lang_data['cpp']
     
-    details = the_method.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, lang_key='cpp')
+    details = the_method.to_keyed_dict(cpp_param_visitor, cpp_type_visitor, const_strip_arg_visitor, doc_transform, lang_key='cpp')
     
     # Create signature
     method_data.signature   = '%(return_type)s %(name_lower)s(%(params)s);' % details
@@ -182,32 +194,32 @@ def _do_cpp_create_method_code(the_method):
     else:
         method_data.code        = c_lib.module_cpp_method_txt % details
         
-    if method_data.has_const_params():
-        # Create a version with const parameters passed by value - this avoids having to create const pointers to data in the C SwinGame
-        details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, doc_transform, lang_key='c')
-        
-        # details['uname'] = details['uname'] + '_byval'
-        # details['uname_lower'] = details['uname_lower'] + '_byval'
-        # details['name'] = details['uname']
-        # 
-        bval_sig = '%(return_type)s %(name_lower)s(%(params)s);' % details;
-        method_data.signature   += '\n' + bval_sig;
-        
-        if method_data.is_function:
-            details['the_call']  = const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, method_data.return_type)
-            method_data.code    += (c_lib.module_cpp_function_txt % details)
-        else:
-            method_data.code    += (c_lib.module_cpp_method_txt % details)
-        
-        # Also write to header
-        # other['header writer'].write('%(return_type)s' % details % details['uname_lower'])
-        # other['header writer'].write('(%(params)s);' % details) 
-        # other['header writer'].writeln('')
-    
-    
-    # print method_data.signature
-    # print method_data.code
-    # print '-----'
+    # if method_data.has_const_params():
+    #     # Create a version with const parameters passed by value - this avoids having to create const pointers to data in the C SwinGame
+    #     details = the_method.to_keyed_dict(const_strip_param_visitor, type_visitor, const_strip_arg_visitor, doc_transform, lang_key='c')
+    #     
+    #     # details['uname'] = details['uname'] + '_byval'
+    #     # details['uname_lower'] = details['uname_lower'] + '_byval'
+    #     # details['name'] = details['uname']
+    #     # 
+    #     bval_sig = '%(return_type)s %(name_lower)s(%(params)s);' % details;
+    #     method_data.signature   += '\n' + bval_sig;
+    #     
+    #     if method_data.is_function:
+    #         details['the_call']  = const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, method_data.return_type)
+    #         method_data.code    += (c_lib.module_cpp_function_txt % details)
+    #     else:
+    #         method_data.code    += (c_lib.module_cpp_method_txt % details)
+    #     
+    #     # Also write to header
+    #     # other['header writer'].write('%(return_type)s' % details % details['uname_lower'])
+    #     # other['header writer'].write('(%(params)s);' % details) 
+    #     # other['header writer'].writeln('')
+    # 
+    # 
+    # # print method_data.signature
+    # # print method_data.code
+    # # print '-----'
 
 def _do_c_create_method_code(the_method):
     '''Add the signature and code for the passed in function or procedure.'''
@@ -239,6 +251,8 @@ def _do_c_create_method_code(the_method):
         
         bval_sig = '%(return_type)s %(uname_lower)s(%(params)s);' % details;
         method_data.signature   += '\n' + bval_sig;
+        
+        #print method_data.signature
         
         if method_data.is_function:
             details['the_call']  = const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, method_data.return_type)

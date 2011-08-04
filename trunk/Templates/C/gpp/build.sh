@@ -135,6 +135,13 @@ doBasicMacCompile()
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
     done
     
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$` ; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .c
+        out_file="${TMP_DIR}/${name}.o"
+        doCompile "${file}" "${name}" "${out_file}" "-arch i386"
+    done
+    
     #Assemble all of the .s files
     echo "  ... Creating game"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
@@ -155,6 +162,13 @@ doMacCompile()
     for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        out_file="${TMP_DIR}/${1}/${name}.o"
+        doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
+    done
+    
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$` ; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         out_file="${TMP_DIR}/${1}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
@@ -238,6 +252,12 @@ doLinuxCompile()
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$`; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
+        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
+    done
+    
     #Assemble all of the .s files
     echo "  ... Creating game"
     
@@ -256,6 +276,12 @@ doWindowsCompile()
     for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
+    done
+    
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$`; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     

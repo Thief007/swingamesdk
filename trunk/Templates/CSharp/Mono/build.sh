@@ -16,8 +16,14 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+GAME_NAME=${APP_PATH##*/}
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
+
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 BIN_DIR="${APP_PATH}/bin"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
@@ -33,7 +39,6 @@ else
     GMCS_BIN=`which gmcs`
 fi
 
-GAME_NAME=${APP_PATH##*/}
 ICON=SwinGame
 
 CLEAN="N"
@@ -43,7 +48,7 @@ Usage()
     echo "Usage: [-c] [-h] [-d] [name]"
     echo 
     echo "Compiles your game into an executable application."
-    echo "Output is located in $OUT_DIR."
+    echo "Output is located in $FULL_OUT_DIR."
     echo
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
@@ -76,8 +81,10 @@ fi
 if [ "a${DEBUG}a" != "aa" ]; then
     CS_FLAGS="-debug -define:DEBUG"
     OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
 else
     OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -88,7 +95,7 @@ fi
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ] 
     then
         echo "  ... Removing old application"
@@ -165,12 +172,12 @@ doLinuxPackage()
 {
     echo "  ... Copying SwinGame Library"
     cp -R -p "${LIB_DIR}/SwinGame.dll" "${OUT_DIR}/"
-    RESOURCE_DIR="${OUT_DIR}/Resources"
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${OUT_PATH}/Resources
+    RESOURCE_DIR=${FULL_OUT_DIR}/Resources
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
@@ -180,11 +187,11 @@ copyWithoutSVN()
 {
     FROM_DIR=$1
     TO_DIR=$2
-    
+
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
+    find . -mindepth 1 -type d ! -path \*.svn\* -exec sh -c "if [ ! -d '${TO_DIR}/{}' ]; then mkdir -p '${TO_DIR}/{}'; fi" \;
     # Copy files and links
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }

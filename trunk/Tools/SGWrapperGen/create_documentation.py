@@ -446,9 +446,9 @@ class UnitPresenter(object):
         
         # Create the method signature
         if method.return_type != None:
-            sig = '%s(%s) : %s' % (method.name, param_txt, link_type(str(method.return_type)))
+            sig = '%s (%s) : %s' % (method.spaced_name(), param_txt, link_type(str(method.return_type)))
         else:
-            sig = '%s(%s)' % (method.name, param_txt)
+            sig = '%s (%s)' % (method.spaced_name(), param_txt)
         
         # Print the headings    
         tmp = '<div class="method" id="%(uname)s">\n<h3>%(name)s</h3>\n' + \
@@ -491,14 +491,15 @@ class UnitPresenter(object):
                 out_doc.append('<dt>Signatures by Language:</dt>')
                 lang_keys = method.lang_data.keys()
                 lang_keys.sort()
-                lang_map = {'c': 'C/C++', 'pas': 'Pascal'}
+                lang_map = {'c': 'C/C++', 'cpp': 'C++', 'pas': 'Pascal'}
                 for key in lang_keys:
                   if key == 'c':
                     bits = [ bit + ';' for bit in method.alias(key).signature.split(';')[:-1]]
                   else:
                     bits = [method.alias(key).signature]
                   for bit in bits:
-                    out_doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
+                    if not len(bit.strip()) == 0:
+                      out_doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
             # END LIST
             out_doc.append('</dl>')
         

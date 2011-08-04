@@ -163,6 +163,10 @@ class SGMethod(SGMetaDataContainer):
         lambda self,name: self.set_tag('name', name), 
         None, 'The name of the method.')
     
+    def spaced_name(self):
+        import wrapper_helper
+        return wrapper_helper.spaced_name(self.name)
+    
     sn = property(lambda self: self['sn'].other, 
         lambda self,name: self.set_tag('sn', name), 
         None, 'The special name of the method - for objective c')
@@ -757,7 +761,11 @@ class SGMethod(SGMetaDataContainer):
             
     def has_const_params(self):
         for param in self.params:
-            if (param.modifier == 'const' and not param.is_array): return True
+            # print param.modifier, param.is_array(), ', ', 
+            if (param.modifier == 'const' and not param.is_array()): 
+                # print
+                return True
+        # print
         return False
     
     def has_out_params(self):
