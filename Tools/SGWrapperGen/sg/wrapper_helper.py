@@ -395,3 +395,29 @@ def lower_name(string):
             result += c
             last_was_us = False
     return result
+
+def spaced_name(string):
+    if string == None: return None
+    string = string.replace('2D', '2d')
+    result = ''
+    last_was_us = False
+    last_was_lc = False
+    
+    for i,c in enumerate(string):
+        if c.islower():
+            result += c
+            last_was_us = False
+            last_was_lc = True
+        elif c in ['_','-']:
+            last_was_us = True
+            result += ' '
+        elif c.isupper():
+            if (not last_was_us) and last_was_lc and (i > 0):
+                result += ' '
+            result += c
+            last_was_us = False
+            last_was_lc = False
+        else:
+            result += c
+            last_was_us = False
+    return result

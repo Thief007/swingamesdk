@@ -51,6 +51,14 @@ DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} Mono C#.dmg")
 DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.dmg")
 DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} XCode Templates.pkg")
 
+# UNX Files
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GCC.tar.gz")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} C GPP.tar.gz")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} Mono C#.tar.gz")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} FPC.tar.gz")
+DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame ${SG_VERSION} Source.tar.gz")
+
+
 # Documentation
 DEPLOY_LIST=( "${DEPLOY_LIST[@]}" "SwinGame Documentation.zip")
 
@@ -63,7 +71,7 @@ for arg in "${DEPLOY_LIST[@]}"; do
     echo "  ... ${to}"
     
     if [ ! -f "${to}" ] ; then
-      echo 'Unable to find ${to}'
+      echo "Unable to find ${to}"
       exit -1
     fi
     

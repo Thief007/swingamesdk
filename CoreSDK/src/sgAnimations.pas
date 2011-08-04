@@ -313,6 +313,7 @@ interface
     ///
     /// @class Animation
     /// @overload DrawBitmap DrawBitmapAtPtOnto
+    /// @self 2
     /// @csn drawOnto:%s using:%s pt:%s
     ///
     /// @doc_details

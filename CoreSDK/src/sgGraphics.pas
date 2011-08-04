@@ -1154,7 +1154,7 @@ interface
   /// Draw an ellipse in the game (filled or outline).
   ///
   /// @lib DrawOrFillEllipse
-  /// @sn draw:%s filled:%s x:%s y:%s width:%s height:%s
+  /// @sn draw:%s filled:%s ellipseX:%s y:%s width:%s height:%s
   procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw an ellipse in the game (filled or outline).
@@ -1167,7 +1167,7 @@ interface
   ///
   /// @lib DrawOrFillEllipse(clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipse
-  /// @sn draw:%s x:%s y:%s width:%s height:%s
+  /// @sn drawEllipse:%s x:%s y:%s width:%s height:%s
   procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw an ellipse in the game.
@@ -1181,7 +1181,7 @@ interface
   ///
   /// @lib DrawOrFillEllipse(clr, True, xPos, yPos, width, height)
   /// @uname FillEllipse
-  /// @sn fill:%s x:%s y:%s width:%s height:%s
+  /// @sn fill:%s ellipseX:%s y:%s width:%s height:%s
   procedure FillEllipse(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Fill a ellipse in the game.
