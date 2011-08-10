@@ -290,7 +290,11 @@ doWindowsCompile()
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+	#need to add -Wl,-subsystem,windows to hide console, but then all
+	# terminal output will be hidden... should default to a debug build
+	# and then include this in the release build
+	
+    ${GCC_BIN} -L${LIB_DIR} -static-libgcc -lsgsdk -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
