@@ -225,7 +225,7 @@ def _do_c_create_method_code(the_method):
     '''Add the signature and code for the passed in function or procedure.'''
     logger.info('VISITING  : Method %s', the_method.name)
     
-    if the_method.uname != the_method.name:
+    if (the_method.uname != the_method.name) or the_method.has_const_params():
         _do_cpp_create_method_code(the_method)
     
     method_data = the_method.lang_data['c']
