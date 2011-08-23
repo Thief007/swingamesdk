@@ -285,7 +285,21 @@ interface
   ///
   /// @lib PointAt
   /// @sn pointAtX:%s y:%s
+  ///
+  /// @class Point2D
+  /// @constructor
+  /// @csn initAtX:%s y:%s
   function PointAt(x, y: Single): Point2D; overload;
+  
+  /// Create a Point2D that points at the X,Y location passed in.
+  ///
+  /// @lib RandomScreenPoint
+  /// @sn randomScreenPoint
+  /// 
+  /// @class Point2D
+  /// @constructor
+  /// @csn init
+  function RandomScreenPoint(): Point2D;
   
   /// Create a Point2D that points at the point from the startPoint at the end of the offset vector.
   ///
@@ -1375,7 +1389,7 @@ implementation
 
   uses
     Classes, SysUtils, Math,  // system
-    sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared, sgTrace;     // SwinGame
+    sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared, sgTrace, sgUtils;     // SwinGame
 
   const
     DEG_TO_RAD = 0.0174532925199432957692369076848861271344287188854172545609;
@@ -2985,7 +2999,12 @@ implementation
       TraceExit('sgGeometry', 'PointAt(x, y: Single): Point2D', '');
     {$ENDIF}
   end;
-
+  
+  function RandomScreenPoint(): Point2D;
+  begin
+    result := PointAt(Rnd() * ScreenWidth(), Rnd() * ScreenHeight());
+  end;
+  
   function PointToString(const pt: Point2D): String;
   begin
     result := 'Pt @' + FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
