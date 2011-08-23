@@ -1270,7 +1270,10 @@ begin
   if assigned(tmp) then
     result := Bitmap(tResourceContainer(tmp).Resource)
   else 
+  begin
+    RaiseWarning('Unable to find bitmap named: ' + name);
     result := nil;
+  end;
 end;
 
 procedure ReleaseBitmap(name: String);
