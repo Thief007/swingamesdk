@@ -915,6 +915,13 @@ def method_visitor(the_method, other, as_accessor_name = None):
         writer.writeln((_method_wrapper % details).replace('%s', details['name']) )
         writer.writeln('')
     else:
+        # Write out a standard method...
+        
+        # But dont write constructors in structs
+        if the_method.is_constructor and the_method.in_class.is_struct:
+            print the_method
+            return other
+        
         details = the_method.to_keyed_dict(other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
         
         if len(the_method.local_vars) > 0:
