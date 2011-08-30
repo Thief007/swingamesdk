@@ -427,7 +427,7 @@ implementation
             
             if not FileExists(result) then
             begin
-                RaiseException('Unable to locate resource at ' + result);
+                RaiseWarning('Unable to locate resource at ' + result);
                 result := '';
                 exit;
             end;

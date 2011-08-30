@@ -1049,6 +1049,12 @@ implementation
     end;
     
     chr := DoLoadCharacter(filename, name);
+    if not assigned(chr) then
+    begin
+        result := nil;
+        exit;
+    end;
+
     result := chr;
     
     {$IFDEF TRACE}

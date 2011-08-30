@@ -2672,6 +2672,12 @@ interface
     end;
     
     mp := DoLoadMap(filename, name);
+    if not assigned(mp) then
+    begin
+        result := nil;
+        exit;
+    end;
+    
     obj := tResourceContainer.Create(mp);
     
     if not _Maps.setValue(name, obj) then

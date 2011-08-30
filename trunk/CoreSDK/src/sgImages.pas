@@ -1096,7 +1096,7 @@ begin
     
     if not FileExists(filename) then
     begin
-      RaiseException('Unable to locate bitmap ' + filename);
+      RaiseWarning('Unable to locate bitmap ' + filename);
       exit;
     end;
   end;
@@ -1106,7 +1106,7 @@ begin
   
   if loadedImage = nil then
   begin
-    RaiseException('Error loading image: ' + filename + ': ' + SDL_GetError());
+    RaiseWarning('Error loading image: ' + filename + ': ' + SDL_GetError());
     exit;
   end;
   
