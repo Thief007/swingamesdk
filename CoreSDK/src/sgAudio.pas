@@ -858,6 +858,12 @@ implementation
         end;
         
         snd := DoLoadSoundEffect(filename, name);
+        if not assigned(snd) then
+        begin
+            result := nil;
+            exit;
+        end;
+        
         obj := tResourceContainer.Create(snd);
         
         if not _SoundEffects.setValue(name, obj) then
@@ -1024,6 +1030,12 @@ implementation
         end;
         
         mus := DoLoadMusic(filename, name);
+        if not assigned(mus) then
+        begin
+            result := nil;
+            exit;
+        end;
+        
         obj := tResourceContainer.Create(mus);
         
         if not _Music.setValue(name, obj) then

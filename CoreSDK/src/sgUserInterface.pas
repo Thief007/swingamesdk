@@ -3426,8 +3426,6 @@ var
     end;
   end;
   
-  
-  
   procedure SetupListPlaceholders();
   var
     tempListPtr: GUIList;
@@ -3473,7 +3471,8 @@ begin
     pathToFile := PathToResource(filename, PanelResource);
     if not FileExists(pathToFile) then
     begin
-      RaiseException('Unable to locate panel ' + filename);
+      RaiseWarning('Unable to locate panel ' + filename);
+      result := nil;
       exit;
     end;
   end;
@@ -3705,6 +3704,12 @@ begin
   end;
   
   pnl := DoLoadPanel(filename, name);
+  if not assigned(pnl) then
+  begin
+    result := nil;
+    exit;
+  end;
+
   obj := tResourceContainer.Create(pnl);
   
   if not GUIC.panelIds.setValue(name, obj) then

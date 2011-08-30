@@ -3,7 +3,7 @@ program HelloWorld;
 uses
   sgTypes, sgAudio, sgText, sgGraphics, sgResources,
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgAnimations,
-  sgSprites, sgTimers;
+  sgSprites, sgTimers, sgUserInterface;
 
 procedure TestLineDraw();
 var
@@ -28,6 +28,11 @@ begin
   
   //LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
+  LoadSoundEffectNamed('blah', 'blah');
+  LoadMusicNamed('blah', 'blah');
+  LoadBitmapNamed('blah', 'blah');
+  LoadAnimationScriptNamed('blah', 'blah');
+  LoadPanel('blah');
   LoadAnimationScript('test.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);

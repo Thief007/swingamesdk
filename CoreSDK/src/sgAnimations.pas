@@ -823,6 +823,12 @@ begin
     {$ENDIF}
     
     path := FilenameToResource(name, AnimationResource);
+    if not FileExists(path) then
+    begin
+        result := nil;
+        exit;
+    end;
+    
     lineNo := 0;
     maxId := -1;
     SetLength(rows, 0);
@@ -890,6 +896,12 @@ begin
     end;
     
     frm := DoLoadAnimationScript(filename, name);
+    if not assigned(frm) then
+    begin
+        result := nil;
+        exit;
+    end;
+    
     obj := tResourceContainer.Create(frm);
     
     if not _Animations.setValue(name, obj) then
