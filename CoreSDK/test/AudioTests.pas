@@ -1,6 +1,6 @@
 program AudioTests;
 uses
-  sgTypes, sgAudio, sgText, sgGraphics, sgResources;
+  sgTypes, sgAudio, sgText, sgGraphics, sgResources, sgUtils;
 
 procedure Main();
 var
@@ -26,12 +26,21 @@ begin
   WriteLn(HexStr(snd), ' = Loaded ', SoundEffectName(snd), ' for file ', SoundEffectFilename(snd));
   WriteLn(HexStr(snd2), ' = Loaded ', SoundEffectName(snd2), ' for file ', SoundEffectFilename(snd2));
   WriteLn(HexStr(snd3), ' = Loaded ', SoundEffectName(snd3), ' for file ', SoundEffectFilename(snd3));
-  
+    
+  PlaySoundEffect('shock');
+  if not SoundEffectPlaying('shock') then WriteLn('ERROR- sound should be playing');
+  if not SoundEffectPlaying(SoundEffectNamed('shock')) then WriteLn('ERROR- sound should be playing v2');
+  StopSoundEffect('shock');
+  if SoundEffectPlaying('shock') then WriteLn('ERROR- sound should be stopped');
+  if SoundEffectPlaying(SoundEffectNamed('shock')) then WriteLn('ERROR- sound should have stopped v2');
+  Delay(500);
+      
   FadeMusicIn(mus, 500);
   Delay(1000);
   
   PlaySoundEffect(snd);
   Delay(200);
+  
   
   PlaySoundEffect(snd2);
   Delay(1000);

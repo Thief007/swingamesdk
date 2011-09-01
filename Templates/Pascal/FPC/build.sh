@@ -296,6 +296,7 @@ then
         HAS_PPC=false
         HAS_i386=false
         HAS_LEOPARD_SDK=false
+        HAS_LION=false
         OS_VER=`sw_vers -productVersion`
         
         if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
@@ -312,6 +313,10 @@ then
         
         if [ $OS_VER = '10.5' ]; then
             HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.7' ]; then
+            HAS_LION=true
         fi
         
         if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
@@ -334,6 +339,9 @@ then
             
             doLipo "i386" "ppc"
         else
+            if [[ $HAS_LION ]]; then
+                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            fi
             doBasicMacCompile
         fi
         
