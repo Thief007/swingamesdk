@@ -257,6 +257,8 @@ interface
     ///
     /// @class SoundEffect
     /// @method Play
+    ///
+    /// @doc_idx 1
     procedure PlaySoundEffect(effect: SoundEffect); overload;
         
     /// This version of PlaySoundEffect allows you to indicate the number of times
@@ -278,6 +280,8 @@ interface
     /// @class SoundEffect
     /// @overload Play PlayWithLoops
     /// @csn playLooped:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(effect: SoundEffect; loops: Longint); overload;
                 
     /// This version of PlaySoundEffect allows you to control the volume of the 
@@ -297,6 +301,8 @@ interface
     /// @class SoundEffect
     /// @overload Play PlayWithVolume
     /// @csn playVolume:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(effect: SoundEffect; vol: Single); overload;
     
     /// This version of PlaySoundEffect allows you to control both the number
@@ -314,6 +320,8 @@ interface
     /// @class SoundEffect
     /// @overload Play PlayWithLoopsAndVolume
     /// @csn playLooped:%s vol:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(effect: SoundEffect; loops: Longint; vol: Single); overload;
     
     /// This version of PlaySoundEffect allows you to control both the number
@@ -326,6 +334,8 @@ interface
     ///
     /// @lib PlaySoundEffectNamedWithLoopAndVolume
     /// @sn playSoundEffectNamed:%s looped:%s atVolume:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(name: String; loops: Longint; vol: Single); overload;
     
     /// This version of PlaySoundEffect allows you to indicate the number of times
@@ -342,6 +352,8 @@ interface
     /// @lib PlaySoundEffectNamedWithLoopAndVolume(name, loops, 1.0)
     /// @uname PlaySoundEffectNamedWithLoop
     /// @sn playSoundEffectNamed:%s looped:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(name: String; loops: Longint); overload;
     
     /// There are several versions of PlaySoundEffect that can be used to control
@@ -370,6 +382,8 @@ interface
     /// @lib PlaySoundEffectNamedWithLoopAndVolume(name, 1, vol)
     /// @uname PlaySoundEffectNamedWithVolume
     /// @sn playSoundEffectNamed:%s atVolume:%s
+    ///
+    /// @doc_details
     procedure PlaySoundEffect(name: String; vol: Single); overload;
     
     
@@ -611,6 +625,15 @@ interface
     /// @class SoundEffect
     /// @method IsPlaying
     function SoundEffectPlaying(effect: SoundEffect): Boolean; overload;
+    
+    /// This function can be used to check if a sound effect is currently 
+    /// playing. 
+    ///
+    /// @param name The name of the sound effect to check.
+    /// @returns true if the effect `SoundEffect` is playing.
+    ///
+    /// @lib SoundEffectNamedPlaying
+    function SoundEffectPlaying(name: String): Boolean; overload;
     
     /// Returns the name that SwinGame uses to refer to this sound effect. This
     /// name can be used to fetch and release this sound effect resource.
