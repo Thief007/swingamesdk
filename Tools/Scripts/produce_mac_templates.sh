@@ -74,7 +74,7 @@ DoCopy "${COPY_LIST}"
 
 # Step 3: Create packages
 echo "  ... Creating packages"
-/Developer/usr/bin/packagemaker --doc "${APP_PATH}/pkgdocs/SwinGame.pmdoc" --version "${SG_VERSION}" --out "${XCODE_PKG_NAME}" 2>> /dev/null
+/Developer/usr/bin/packagemaker --doc "${APP_PATH}/pkgdocs/SwinGame.pmdoc" --version "${SG_VERSION}" --out "${XCODE_PKG_NAME}"
 
 
 echo "  ... Creating DMGs"
@@ -90,7 +90,7 @@ for arg in "${MAC_DMG_LIST[@]}"; do
     
     mkdir -p "${DMG_BASE_DIR}"
     cp -r "${from}/" "${DMG_BASE_DIR}"
-    hdiutil create -quiet -ov -srcfolder "${create_from}" "${to}"
+    hdiutil create -quiet -ov -fs HFS+ -volname "${name}" - -srcfolder "${create_from}" "${to}"
     rm -rf "${DMG_BASE_DIR}"
 done
 

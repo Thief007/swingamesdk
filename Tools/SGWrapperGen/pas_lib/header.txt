@@ -28,7 +28,12 @@ library %(name)s;
       ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
     else
       ErrorMessage := 'Unknown error from ' + fromMethod;
-      
+    
+    try
+        WriteLn(ErrorMessage);
+    except
+    end;
+    
     {$IFDEF TRACE}
       Trace('SGSDK.dll', 'Error', fromMethod, ErrorMessage);
     {$ENDIF}
