@@ -28,6 +28,9 @@ class HFileWrapper():
         return self.c_lines[self.line_no]
     
     def _skip_standard_library(self):
+        """
+        Detect preprocessor includes of standard libraries and skip them...
+        """
         current_file = self.in_filename.strip()
         cl = self.current_line()
         while len(cl.strip()) == 0 or cl[0] != '#' or cl.split(' ')[2].strip() != current_file:
@@ -35,22 +38,25 @@ class HFileWrapper():
             cl = self.current_line()
 
     def _test_and_skip_c_files(self):
+        """
+        Check for any c code, and skip (only want headers...)
+        """
         current_file = self.in_filename.strip()
         # print current_file[-2] == "c", current_file, current_file[-2]
         return current_file[-2] == "c"
     
-    '''
-    Process all lines that start with a #... format is:
-    
-    # lineno filename flags
-    
-    Flags are 
-        1 = start of a new file
-        2 = returning from a file
-        3 = system header
-        4 = extern c header
-    '''
     def _test_and_process_line_info(self):
+        '''
+        Process all lines that start with a #... format is:
+        
+        # lineno filename flags
+        
+        Flags are 
+            1 = start of a new file
+            2 = returning from a file
+            3 = system header
+            4 = extern c header
+        '''
         line = self.current_line()
         if line[0] == "#": 
             parts = line.split(' ')
@@ -67,10 +73,10 @@ class HFileWrapper():
             return True
         return False
     
-    '''
-    Checks for inline functions. These written to a separate output file, and skipped from the standard input.
-    '''
     def _test_and_skip_inline(self):
+        '''
+        Checks for inline functions. These written to a separate output file, and skipped from the standard input.
+        '''
         if "__inline" in self.current_line():
             # Read to the end of the function...
             open_brace = 0;
@@ -86,10 +92,11 @@ class HFileWrapper():
             
             return True
         return False;
-    '''
-    Skips empty lines, lines with meta information ( # ... ), and standard libraries (based on skip_standard_libs)
-    '''
+        
     def _skip_empty_lines(self):
+        '''
+        Skips empty lines, lines with meta information ( # ... ), and standard libraries (based on skip_standard_libs)
+        '''
         while not self.end_of_input() and (
                 len(self.current_line().strip()) == 0 or 
                 self._test_and_process_line_info() or 
@@ -98,6 +105,9 @@ class HFileWrapper():
             self.line_no += 1
     
     def process_file(self, filename, outfile, inlinefile, hidden_types = []):
+        """
+        
+        """
         self.filename = filename
         self.line_no = 0
         self.unk_enum_count = 0
@@ -114,7 +124,7 @@ class HFileWrapper():
             
         self.close()
         
-        subprocess.call("h2pas -d -e -pr -p -C %s" % outfile, shell=True)
+        subprocess.call("h2pas -e -d -pr -p %s" % outfile, shell=True)
         
         pp_name = outfile.replace(".h", ".pp")
         
