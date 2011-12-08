@@ -14,9 +14,10 @@ import os
 import re
 import subprocess
 
-class HFileWrapper():
+class HFileWrapper(object):
     
-    def __init__(self):
+    def __init__(self, path):
+        self.path = path    # The path to the headers
         self.filename = ""
         self.line_no = 0
         self.in_filename = "unknown"
@@ -36,6 +37,23 @@ class HFileWrapper():
         while len(cl.strip()) == 0 or cl[0] != '#' or cl.split(' ')[2].strip() != current_file:
             self.line_no += 1
             cl = self.current_line()
+            
+    def _export_defines_from(self, filename):
+        '''
+        The preprocessor will have stripped the #defines...
+        This code attempts to add these back in...
+        '''
+        fullname = self.path + filename.replace('"', '')
+        if os.path.exists(fullname):
+            # print "Opening ", fullname
+            hfile = open(fullname)
+            lines = hfile.readlines()
+            hfile.close()
+            
+            for line in lines:
+                if re.search("#define", line):
+                    self.define_file.write(line)
+                    # print line
 
     def _test_and_skip_c_files(self):
         """
@@ -69,6 +87,10 @@ class HFileWrapper():
             
             self.in_filename = parts[2]
             # print ' * In file ', self.in_filename
+            
+            if '1' in parts[1]:
+                # scan file for #defines and reimport them
+                self._export_defines_from(parts[2])
             
             return True
         return False
@@ -104,7 +126,7 @@ class HFileWrapper():
                 self._test_and_skip_c_files() ):
             self.line_no += 1
     
-    def process_file(self, filename, outfile, inlinefile, hidden_types = []):
+    def process_file(self, filename, outfile, inlinefile, definefile, hidden_types = [], defines = ""):
         """
         
         """
@@ -114,10 +136,15 @@ class HFileWrapper():
         f = open(filename)
         self.c_lines = f.readlines()
         f.close()
-        self._skip_empty_lines()
         
         self.out_file = open(outfile, 'w')
         self.inline_file = open(inlinefile, 'w')
+        self.define_file = open(definefile, 'w')
+        
+        self._skip_empty_lines()
+        
+        print defines
+        self.out_file.write(defines)
         
         while not self.end_of_input():
             self.out_file.write(self.read_line())
@@ -179,10 +206,73 @@ class HFileWrapper():
     def close(self):
         self.out_file.close()
         self.inline_file.close()
+        self.define_file.close()
         
 def main():
-    fproc = HFileWrapper();
-    fproc.process_file("../test/allsdl.c", "../test/sdl.h", "../test/sdl_inline.c")
+    fproc = HFileWrapper('/Users/acain/Downloads/SDL-1.3.0-6050/include/');
+    
+    defines = """
+        #define SDL_INIT_TIMER          0x00000001
+        #define SDL_INIT_AUDIO          0x00000010
+        #define SDL_INIT_VIDEO          0x00000020
+        #define SDL_INIT_JOYSTICK       0x00000200
+        #define SDL_INIT_HAPTIC         0x00001000
+        #define SDL_INIT_NOPARACHUTE    0x00100000      /**< Don't catch fatal signals */
+        #define SDL_INIT_EVERYTHING     0x0000FFFF
+        #define SDL_BUTTON(X)		(1 << ((X)-1))
+        #define SDL_BUTTON_LEFT		1
+        #define SDL_BUTTON_MIDDLE	2
+        #define SDL_BUTTON_RIGHT	3
+        #define SDL_BUTTON_X1		4
+        #define SDL_BUTTON_X2		5
+        #define SDL_BUTTON_LMASK	SDL_BUTTON(SDL_BUTTON_LEFT)
+        #define SDL_BUTTON_MMASK	SDL_BUTTON(SDL_BUTTON_MIDDLE)
+        #define SDL_BUTTON_RMASK	SDL_BUTTON(SDL_BUTTON_RIGHT)
+        #define SDL_BUTTON_X1MASK	SDL_BUTTON(SDL_BUTTON_X1)
+        #define SDL_BUTTON_X2MASK	SDL_BUTTON(SDL_BUTTON_X2)
+        #define SDL_HAT_CENTERED	0x00
+        #define SDL_HAT_UP		0x01
+        #define SDL_HAT_RIGHT		0x02
+        #define SDL_HAT_DOWN		0x04
+        #define SDL_HAT_LEFT		0x08
+        #define SDL_HAT_RIGHTUP		(SDL_HAT_RIGHT|SDL_HAT_UP)
+        #define SDL_HAT_RIGHTDOWN	(SDL_HAT_RIGHT|SDL_HAT_DOWN)
+        #define SDL_HAT_LEFTUP		(SDL_HAT_LEFT|SDL_HAT_UP)
+        #define SDL_HAT_LEFTDOWN	(SDL_HAT_LEFT|SDL_HAT_DOWN)
+        #define SDL_SWSURFACE       0x00000000  /**< Note Not used */
+        #define SDL_SRCALPHA        0x00010000
+        #define SDL_SRCCOLORKEY     0x00020000
+        #define SDL_ANYFORMAT       0x00100000
+        #define SDL_HWPALETTE       0x00200000
+        #define SDL_DOUBLEBUF       0x00400000
+        #define SDL_FULLSCREEN      0x00800000
+        #define SDL_RESIZABLE       0x01000000
+        #define SDL_NOFRAME         0x02000000
+        #define SDL_OPENGL          0x04000000
+        #define SDL_HWSURFACE       0x08000001  /**< Note Not used */
+        #define SDL_ASYNCBLIT       0x08000000  /**< Note Not used */
+        #define SDL_RLEACCELOK      0x08000000  /**< Note Not used */
+        #define SDL_HWACCEL         0x08000000  /**< Note Not used */
+        #define SDL_APPMOUSEFOCUS	0x01
+        #define SDL_APPINPUTFOCUS	0x02
+        #define SDL_APPACTIVE		0x04
+        #define SDL_LOGPAL 0x01
+        #define SDL_PHYSPAL 0x02
+        #define SDL_ACTIVE_EVENT	SDL_EVENT_COMPAT1
+        #define SDL_VIDEORESIZE	SDL_EVENT_COMPAT2
+        #define SDL_VIDEOEXPOSE	SDL_EVENT_COMPAT3
+        #define SDL_BUTTON_WHEELUP	4
+        #define SDL_BUTTON_WHEELDOWN	5
+        #define SDL_DEFAULT_REPEAT_DELAY	500
+        #define SDL_DEFAULT_REPEAT_INTERVAL	30
+        #define SDL_YV12_OVERLAY  0x32315659    /**< Planar mode: Y + V + U  (3 planes) */
+        #define SDL_IYUV_OVERLAY  0x56555949    /**< Planar mode: Y + U + V  (3 planes) */
+        #define SDL_YUY2_OVERLAY  0x32595559    /**< Packed mode: Y0+U0+Y1+V0 (1 plane) */
+        #define SDL_UYVY_OVERLAY  0x59565955    /**< Packed mode: U0+Y0+V0+Y1 (1 plane) */
+        #define SDL_YVYU_OVERLAY  0x55595659    /**< Packed mode: Y0+V0+Y1+U0 (1 plane) */
+    """
+    
+    fproc.process_file("../test/allsdl.c", "../test/sdl.h", "../test/sdl_inline.c", "../test/sdl_define.c", defines=defines)
 
 if __name__ == '__main__':
     main()

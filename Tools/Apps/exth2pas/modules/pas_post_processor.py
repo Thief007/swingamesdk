@@ -170,7 +170,7 @@ class PasPostProcessor:
                 self._remove_struct(k, found_types)
                 
     
-    def _process_consts(self):
+    def _process_consts(self, const_proc):
         start_line = self.line_no
         
         in_const_block = False
@@ -197,6 +197,8 @@ class PasPostProcessor:
             elif re.search("^((function)|(procedure)|(type))", sline, flags=re.IGNORECASE): #at end of type block
                 in_const_block = False
             elif in_const_block: #in type block, not at the end...
+                for proc in const_proc:
+                    line = proc(line)
                 self._write_output("  " + line)
             
             #print line, in_const_block
@@ -346,7 +348,7 @@ class PasPostProcessor:
         self.out_file.write(data)
         # print data
     
-    def process_file(self, pas_file_name, out_file, cust_types = [], type_procs = [], ignore_types = [], fn_proc=[]):
+    def process_file(self, pas_file_name, out_file, cust_types = [], type_procs = [], ignore_types = [], fn_proc=[], const_proc=[]):
         """Post process the supplied pas file."""
         
         # Read the lines from the file
@@ -366,11 +368,10 @@ class PasPostProcessor:
         #process the file...
         self._process_unit_header()
         self._process_types(cust_types, type_procs)
-        self._process_consts()
+        self._process_consts(const_proc)
         self._process_functions(fn_proc)
         self._process_implementation()
         
-        self._write_output("implementation\n")
         self._write_output("end.\n")
         
     
@@ -419,6 +420,10 @@ def main():
         # This is a type and a function... rename the type
         lambda line: line.replace("SDL_threadID =", "SDL_Thread_ID ="),
     ]
+    constproc = [
+        # Adjust scan codes to include type cast in consts
+        lambda line: re.sub("= (SDL_SCANCODE_[A-Za-z0-9_]*)", "= LongInt(\g<1>)", line),
+    ]
     
     fnproc = [
         lambda line: line.replace(":SDL_threadID", ":SDL_Thread_ID"),   # Convert SDL_ThreadID parameters
@@ -427,7 +432,7 @@ def main():
     ]
     
     fproc = PasPostProcessor();
-    fproc.process_file("../test/sdl.pp1", "../test/sdl.pas", cust_types, proc, ignore_types, fnproc)
+    fproc.process_file("../test/sdl.pp1", "../test/sdl.pas", cust_types, proc, ignore_types, fnproc, constproc)
 
 if __name__ == '__main__':
     main()

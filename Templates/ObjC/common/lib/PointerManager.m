@@ -17,7 +17,7 @@ void removeObject(void *ptr)
 {
     id key = [NSValue valueWithPointer:ptr];
     
-    NSLog(@"Freeing '%X'-'%@'", ptr, key);
+    NSLog(@"Freeing '%p'-'%@'", ptr, key);
     
     id <PointerWrapper> obj = [_ptrRegister objectForKey:key];
     if (obj != nil)

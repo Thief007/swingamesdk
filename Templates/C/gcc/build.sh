@@ -33,10 +33,21 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-O3 -Wall -std=c99"
+C_FLAGS="-std=c99"
 SG_INC="-I${APP_PATH}/lib/"
 
-GCC_BIN=`which gcc`
+#Locate the compiler...
+GCC_BIN=`which clang`
+if [ -z "$GCC_BIN" ]; then
+    #try locating gcc
+    GCC_BIN=`which gcc`
+    
+    if [ -z "$GCC_BIN" ]; then
+        #no compiler found :(
+        echo "Unable to find a C compiler. Install either clang or gcc."
+        exit -1
+    fi
+fi
 
 ICON=SwinGame
 
@@ -44,7 +55,7 @@ CLEAN="N"
 
 Usage()
 {
-    echo "Usage: [-c] [-h] [-d] [name]"
+    echo "Usage: [-c] [-h] [-r] [name]"
     echo 
     echo "Compiles your game into an executable application."
     echo "Output is located in $OUT_DIR."
@@ -52,17 +63,19 @@ Usage()
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message"
-    echo " -d   Create a debug build"
+    echo " -r   Create a release build"
     echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chdi: o
+RELEASE=""
+
+while getopts chri: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  DEBUG="Y" ;;
+    r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -77,15 +90,17 @@ fi
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
-    C_FLAGS="-g -Wall"
-    OUT_DIR="${OUT_DIR}/Debug"
-    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
-    TMP_DIR="${TMP_DIR}/Debug"
-else
+
+if [ -n "${RELEASE}" ]; then
+    C_FLAGS="-std=c99 -O3 -Wall"
     OUT_DIR="${OUT_DIR}/Release"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
+else
+    C_FLAGS="-std=c99 -g -Wall"
+    OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
+    TMP_DIR="${TMP_DIR}/Debug"
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -367,8 +382,8 @@ then
     doCopyResources
 else
     CleanTmp
-    rm -rf "${OUT_DIR}"
-    mkdir "${OUT_DIR}"
+    rm -rf "${APP_PATH}/bin"
+    mkdir "${APP_PATH}/bin"
     echo    ... Cleaned
 fi
 

@@ -1779,25 +1779,25 @@ implementation
     result^.values[ROTATION_IDX]  := 0;
     
     AddName(result^.valueIds, 'scale');           //idx 2 = scale, default to 1
-    result^.values[SCALE_IDX]     := 1;
+    result^.values[SCALE_IDX]       := 1;
     
     // Position the sprite
-    result^.position              := PointAt(0,0);
+    result^.position                := PointAt(0,0);
     
     // Initialise sprite movement
-    result^.velocity              := VectorTo(0,0);
+    result^.velocity                := VectorTo(0,0);
     
     // Setup animation detials
-    result^.animationScript     := ani;
-    result^.animationInfo         := nil;
+    result^.animationScript         := ani;
+    result^.animationInfo           := nil;
     
     // Setup collision details
-    result^.collisionKind         := PixelCollisions;
-    result^.collisionBitmap       := result^.layers[0];
+    result^.collisionKind           := PixelCollisions;
+    result^.collisionBitmap         := result^.layers[0];
     
     // Setup cache details
-    result^.backupCollisionBitmap := nil;
-    result^.cacheImage := nil;
+    result^.backupCollisionBitmap   := nil;
+    result^.cacheImage              := nil;
   end;
   
   function HasSprite(name: String): Boolean;

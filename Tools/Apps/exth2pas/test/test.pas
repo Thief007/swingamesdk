@@ -6,9 +6,10 @@ var
     wnd: PSDL_Window;
 begin
     wnd := SDL_CreateWindow(PChar('title:Pchar'), 0, 0, 800, 600, 0);
+    wnd := SDL_CreateWindow(PChar('title:Pchar'), 0, 0, 800, 600, 0);
     
     WriteLn(HexStr(wnd));
     
-    while true do ;
+    Readln();
     
 end.

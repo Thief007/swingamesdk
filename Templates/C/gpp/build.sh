@@ -33,10 +33,21 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-O3 -Wall"
+C_FLAGS="-x c++"
 SG_INC="-I${APP_PATH}/lib/"
 
-GCC_BIN=`which g++`
+#Locate the compiler...
+GCC_BIN=`which clang`
+if [ -z "$GCC_BIN" ]; then
+    #try locating gcc
+    GCC_BIN=`which g++`
+    
+    if [ -z "$GCC_BIN" ]; then
+        #no compiler found :(
+        echo "Unable to find a C compiler. Install either clang or g++."
+        exit -1
+    fi
+fi
 
 ICON=SwinGame
 
@@ -44,7 +55,7 @@ CLEAN="N"
 
 Usage()
 {
-    echo "Usage: [-c] [-h] [-d] [name]"
+    echo "Usage: [-c] [-h] [-r] [name]"
     echo 
     echo "Compiles your game into an executable application."
     echo "Output is located in $OUT_DIR."
@@ -52,17 +63,19 @@ Usage()
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message"
-    echo " -d   Create a debug build"
+    echo " -r   Create a release build"
     echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chdi: o
+RELEASE=""
+
+while getopts chri: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  DEBUG="Y" ;;
+    r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -77,15 +90,16 @@ fi
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
-    C_FLAGS="-g -Wall"
-    OUT_DIR="${OUT_DIR}/Debug"
-    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
-    TMP_DIR="${TMP_DIR}/Debug"
-else
+if [ -n "${RELEASE}" ]; then
+    C_FLAGS="-x c++ -O3 -Wall"
     OUT_DIR="${OUT_DIR}/Release"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
+else
+    C_FLAGS="-x c++ -g -Wall"
+    OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
+    TMP_DIR="${TMP_DIR}/Debug"
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -135,13 +149,6 @@ doBasicMacCompile()
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
     done
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$` ; do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .c
-        out_file="${TMP_DIR}/${name}.o"
-        doCompile "${file}" "${name}" "${out_file}" "-arch i386"
-    done
-    
     #Assemble all of the .s files
     echo "  ... Creating game"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
@@ -166,18 +173,12 @@ doMacCompile()
         doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$` ; do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
-        out_file="${TMP_DIR}/${1}/${name}.o"
-        doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
-    done
-    
     #Assemble all of the .s files
     echo "  ... Creating game for $1"
-    FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 $2 -o "${TMP_DIR}/${1}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -252,12 +253,6 @@ doLinuxCompile()
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$`; do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
-        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
-    done
-    
     #Assemble all of the .s files
     echo "  ... Creating game"
     
@@ -279,22 +274,10 @@ doWindowsCompile()
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]cpp$`; do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
-        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
-    done
-    
-    windres "${LIB_DIR}/swingame.rc" "${TMP_DIR}/swingame_res_rc.o"
-    
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-	#need to add -Wl,-subsystem,windows to hide console, but then all
-	# terminal output will be hidden... should default to a debug build
-	# and then include this in the release build
-	
-    ${GCC_BIN} -L${LIB_DIR} -static-libgcc -lsgsdk -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -349,6 +332,9 @@ then
 
     
     if [ "$OS" = "$MAC" ]; then
+        HAS_PPC=false
+        HAS_i386=false
+        HAS_LEOPARD_SDK=false
         OS_VER=`sw_vers -productVersion`
         
         if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
@@ -395,8 +381,8 @@ then
     doCopyResources
 else
     CleanTmp
-    rm -rf "${OUT_DIR}"
-    mkdir "${OUT_DIR}"
+    rm -rf "${APP_PATH}/bin"
+    mkdir "${APP_PATH}/bin"
     echo    ... Cleaned
 fi
 
