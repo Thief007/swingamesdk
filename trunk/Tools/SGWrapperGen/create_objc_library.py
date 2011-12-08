@@ -192,6 +192,9 @@ def _create_objc_property_details(the_property, other):
     
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
 
+    #Record the line ending... as it can change if there is a property...
+    line_end = ';'
+
     if the_property.is_static:
         #print 'static', the_property.name
         
@@ -217,12 +220,13 @@ def _create_objc_property_details(the_property, other):
             'readonly ' if the_property.setter == None else 'readwrite', 
             type_name, 
             the_property.name)
+        line_end = ''
     
     if is_wrapped and the_property.data_type.is_struct:
         #rename getter
         the_property.getter.uname = 'pri_' + the_property.getter.uname
     
-    result_details['property_headers'] += header + ';'
+    result_details['property_headers'] += header + line_end
     result_details['property_synthesizes'] += '\n@dynamic %s;' % the_property.name
     
     _create_objc_method_details(the_property.getter, other);

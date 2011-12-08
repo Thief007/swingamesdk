@@ -834,7 +834,8 @@ implementation
         if result^.effect = nil then
         begin
             Dispose(result);
-            RaiseException('Error loading sound effect: ' + MIX_GetError());
+            result := nil;
+            RaiseWarning('Error loading sound effect: ' + MIX_GetError());
             exit;
         end;
         

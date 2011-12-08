@@ -4,7 +4,7 @@ uses
 
 procedure Main();
 var
-  snd, snd2, snd3: SoundEffect;
+  snd, snd2, snd3, snd4: SoundEffect;
   mus, mus1, miditest: Music;
   i: Integer;
 begin
@@ -20,6 +20,7 @@ begin
   snd := LoadSoundEffectNamed('shock', 'shock.wav');
   snd2 := LoadSoundEffectNamed('menu', 'menu.ogg');
   snd3 := LoadSoundEffectNamed('menu3', 'menu.ogg');
+  snd4 := LoadSoundEffectNamed('bounce', 'faulty bounce.wav');
   miditest := LoadMusicNamed('ASNY', 'aintseennothingyet.mid');
   
   WriteLn(HexStr(mus), ' = Loaded ', MusicName(mus), ' for file ', MusicFilename(mus));
@@ -34,6 +35,8 @@ begin
   if SoundEffectPlaying('shock') then WriteLn('ERROR- sound should be stopped');
   if SoundEffectPlaying(SoundEffectNamed('shock')) then WriteLn('ERROR- sound should have stopped v2');
   Delay(500);
+  
+  PlaySoundEffect('bounce');
       
   FadeMusicIn(mus, 500);
   Delay(1000);

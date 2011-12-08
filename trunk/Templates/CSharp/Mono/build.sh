@@ -33,10 +33,19 @@ GMCS_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll" #" -r:Micro
 CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
-if [ -d "/c/Windows" ]; then
+if [ "$OS" = "$WIN" ]; then
     GMCS_BIN=`which csc`
+    
+    if [ -z $GMCS_BIN ]; then
+        GMCS_BIN=`which gmcs`
+    fi
 else
     GMCS_BIN=`which gmcs`
+fi
+
+if [ -z $GMCS_BIN ]; then
+    echo "Unable to find C# compiler, please install Mono and check your system path" >&2
+    exit -1
 fi
 
 ICON=SwinGame
@@ -52,18 +61,20 @@ Usage()
     echo
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
-    echo " -d   Debug build"
+    echo " -r   Release build"
     echo " -h   Show this help message "
     echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chdi: o
+RELEASE=""
+
+while getopts chri: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  DEBUG="Y" ;;
+    d)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -78,13 +89,14 @@ fi
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
+if [ -n "${RELEASE}" ]; then
+    CS_FLAGS="-optimize+"
+    OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
+else
     CS_FLAGS="-debug -define:DEBUG"
     OUT_DIR="${OUT_DIR}/Debug"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
-else
-    OUT_DIR="${OUT_DIR}/Release"
-    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
 fi
 
 if [ -f "${LOG_FILE}" ]

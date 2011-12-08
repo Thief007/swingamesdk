@@ -57,7 +57,7 @@ interface
     ///
     /// @class AnimationScript
     /// @dispose
-    procedure FreeAnimationScript(var framesToFree: AnimationScript);
+    procedure FreeAnimationScript(var scriptToFree: AnimationScript);
     
     
     
@@ -157,7 +157,7 @@ interface
     /// @class Animation
     /// @constructor
     /// @csn initAsName:%s from:%s
-    function CreateAnimation(identifier: String;    frames: AnimationScript): Animation; overload;
+    function CreateAnimation(identifier: String;    script: AnimationScript): Animation; overload;
     
     /// Creates an animation from a `AnimationScript`. If ``withSound`` is ``true``, this may
     /// play a sound effect if the animation is set to play a sound effect on its first frame.
@@ -170,7 +170,7 @@ interface
     /// @csn initAsName:%s from:%s withSound:%s
     ///
     /// @doc_details
-    function CreateAnimation(identifier: String;    frames: AnimationScript; withSound: Boolean): Animation;
+    function CreateAnimation(identifier: String;    script: AnimationScript; withSound: Boolean): Animation;
     
     /// Creates an animation from an `AnimationScript`. If ``withSound`` is ``true``, this may
     /// play a sound effect if the animation is set to play a sound effect on its first frame.
@@ -183,7 +183,7 @@ interface
     /// @csn initAtIndex:%s from:%s withSound:%s
     ///
     /// @doc_details
-    function CreateAnimation(identifier: Longint;    frames: AnimationScript; withSound: Boolean): Animation; overload;
+    function CreateAnimation(identifier: Longint;    script: AnimationScript; withSound: Boolean): Animation; overload;
     
     /// Creates an animation from an `AnimationScript`. This may play a sound effect
     /// if the animation is set to play a sound effect on its first frame.
@@ -196,7 +196,7 @@ interface
     /// @csn initAtIndex:%s from:%s
     ///
     /// @doc_details
-    function CreateAnimation(identifier: Longint;    frames: AnimationScript): Animation; overload;
+    function CreateAnimation(identifier: Longint;    script: AnimationScript): Animation; overload;
     
     /// Disposes of the resources used in the animation.
     ///
@@ -221,7 +221,7 @@ interface
     /// @class Animation
     /// @overload AssignAnimation AssignAnimationNamed
     /// @csn assignAnimationNamed:%s from:%s
-    procedure AssignAnimation(anim: Animation; name: String; frames: AnimationScript); overload;
+    procedure AssignAnimation(anim: Animation; name: String; script: AnimationScript); overload;
     
     /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
     /// This may play a sound if the first frame of the animation is linked to a sound effect, and withSound is true.
@@ -234,7 +234,7 @@ interface
     /// @csn assignAnimationNamed:%s from:%s withSound:%s
     ///
     /// @doc_details
-    procedure AssignAnimation(anim: Animation; name: String; frames: AnimationScript; withSound: Boolean); overload;
+    procedure AssignAnimation(anim: Animation; name: String; script: AnimationScript; withSound: Boolean); overload;
     
     /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
     /// This may play a sound if the first frame of the animation is linked to a sound effect.
@@ -247,7 +247,7 @@ interface
     /// @csn assignAnimation:%s from:%s
     ///
     /// @doc_details
-    procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript); overload;
+    procedure AssignAnimation(anim: Animation; idx: Longint; script: AnimationScript); overload;
     
     /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
     /// This may play a sound if the first frame of the animation is linked to a sound effect, and 
@@ -261,7 +261,7 @@ interface
     /// @csn assignAnimation:%s from:%s withSound:%s
     ///
     /// @doc_details
-    procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript; withSound: Boolean); overload;
+    procedure AssignAnimation(anim: Animation; idx: Longint; script: AnimationScript; withSound: Boolean); overload;
     
     
     
@@ -873,11 +873,11 @@ begin
     if Assigned(script) then result := script^.name;
 end;
 
-procedure FreeAnimationScript(var framesToFree: AnimationScript);
+procedure FreeAnimationScript(var scriptToFree: AnimationScript);
 begin
-    if Assigned(framesToFree) then
-        ReleaseAnimationScript(framesToFree^.name);
-    framesToFree := nil;
+    if Assigned(scriptToFree) then
+        ReleaseAnimationScript(scriptToFree^.name);
+    scriptToFree := nil;
 end;
 
 function LoadAnimationScriptNamed(name, filename: String): AnimationScript;
@@ -1062,63 +1062,69 @@ begin
     end;
 end;
 
-function CreateAnimation(identifier: Longint; frames: AnimationScript; withSound: Boolean): Animation; overload;
+function CreateAnimation(identifier: Longint; script: AnimationScript; withSound: Boolean): Animation; overload;
 begin
     result := nil;
-    if frames = nil then exit;
+    if script = nil then exit;
     
     new(result);
-    _AddAnimation(frames, result);
+    _AddAnimation(script, result);
     
-    AssignAnimation(result, identifier, frames, withSound)
+    AssignAnimation(result, identifier, script, withSound)
 end;
 
-function CreateAnimation(identifier: Longint;    frames: AnimationScript): Animation; overload;
+function CreateAnimation(identifier: Longint;    script: AnimationScript): Animation; overload;
 begin
-    result := CreateAnimation(identifier, frames, True);
+    result := CreateAnimation(identifier, script, True);
 end;
 
-function CreateAnimation(identifier: String; frames: AnimationScript; withSound: Boolean): Animation; overload;
+function CreateAnimation(identifier: String; script: AnimationScript; withSound: Boolean): Animation; overload;
 var
     idx: Integer;
 begin
     result := nil;
-    if frames = nil then exit;
+    if script = nil then exit;
         
-    idx := IndexOf(frames^.animationIds, identifier);
-    result := CreateAnimation(idx, frames, withSound);
+    idx := IndexOf(script^.animationIds, identifier);
+    result := CreateAnimation(idx, script, withSound);
 end;
 
-function CreateAnimation(identifier: String;    frames: AnimationScript): Animation; overload;
+function CreateAnimation(identifier: String;    script: AnimationScript): Animation; overload;
 begin
-    result := CreateAnimation(identifier, frames, True);
+    result := CreateAnimation(identifier, script, True);
 end;
 
-procedure AssignAnimation(anim: Animation; name: String; frames: AnimationScript); overload;
+procedure AssignAnimation(anim: Animation; name: String; script: AnimationScript); overload;
 begin
-    AssignAnimation(anim, name, frames, true);
+    AssignAnimation(anim, name, script, true);
 end;
 
-procedure AssignAnimation(anim: Animation; name: String; frames: AnimationScript; withSound: Boolean); overload;
+procedure AssignAnimation(anim: Animation; name: String; script: AnimationScript; withSound: Boolean); overload;
 begin
-    AssignAnimation(anim, AnimationIndex(frames, name), frames, withSound);
+    AssignAnimation(anim, AnimationIndex(script, name), script, withSound);
 end;
 
-procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript); overload;
+procedure AssignAnimation(anim: Animation; idx: Longint; script: AnimationScript); overload;
 begin
-    AssignAnimation(anim, idx, frames, true);
+    AssignAnimation(anim, idx, script, true);
 end;
 
-procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript; withSound: Boolean); overload;
+procedure AssignAnimation(anim: Animation; idx: Longint; script: AnimationScript; withSound: Boolean); overload;
 begin
-    if (not assigned(anim)) or (not assigned(frames)) then exit;
-    if (idx < 0) or (idx > High(frames^.animations)) then 
+    if (not assigned(anim)) or (not assigned(script)) then exit;
+    if (idx < 0) or (idx > High(script^.animations)) then 
     begin 
-        //RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); 
+        RaiseWarning('Assigning an animation frame that is not within range 0-' + IntToStr(High(script^.animations)) + '.'); 
         exit; 
     end;
     
-    anim^.firstFrame        := frames^.frames[frames^.animations[idx]];
+    // Animation is being assigned to another script
+    if anim^.script <> script then
+    begin
+        _RemoveAnimation(anim^.script, anim);   // remove from old script
+        _AddAnimation(script, anim);            // add to new script
+    end;
+    anim^.firstFrame        := script^.frames[script^.animations[idx]];
     RestartAnimation(anim, withSound);
 end;
 

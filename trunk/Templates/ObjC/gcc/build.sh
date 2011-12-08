@@ -20,26 +20,42 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+GAME_NAME=${APP_PATH##*/}
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
+
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-O3 -Wall"
+C_FLAGS=""
 SG_INC="-I${APP_PATH}/lib/"
 
-GCC_BIN=`which gcc`
+#Locate the compiler...
+GCC_BIN=`which clang`
+if [ -z "$GCC_BIN" ]; then
+    #try locating gcc
+    GCC_BIN=`which gcc`
+    
+    if [ -z "$GCC_BIN" ]; then
+        #no compiler found :(
+        echo "Unable to find a C compiler. Install either clang or gcc."
+        exit -1
+    fi
+fi
 
-GAME_NAME=${APP_PATH##*/}
 ICON=SwinGame
 
 CLEAN="N"
 
 Usage()
 {
-    echo "Usage: [-c] [-h] [-d] [name]"
+    echo "Usage: [-c] [-h] [-r] [name]"
     echo 
     echo "Compiles your game into an executable application."
     echo "Output is located in $OUT_DIR."
@@ -47,17 +63,19 @@ Usage()
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message"
-    echo " -d   Create a debug build"
+    echo " -r   Create a release build"
     echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chdi: o
+RELEASE=""
+
+while getopts chri: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  DEBUG="Y";;
+    r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -72,13 +90,17 @@ fi
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
+
+if [ -n "${RELEASE}" ]; then
+    C_FLAGS="-O3 -Wall"
+    OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
+    TMP_DIR="${TMP_DIR}/Release"
+else
     C_FLAGS="-g -Wall"
     OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
     TMP_DIR="${TMP_DIR}/Debug"
-else
-    OUT_DIR="${OUT_DIR}/Release"
-    TMP_DIR="${TMP_DIR}/Release"
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -110,11 +132,30 @@ doCompile()
     out_file=$3
     extra_opts=$4
     
-    if [ ! -f ${out_file} ] || [ $file -nt $out_file ]; then
+    if [ ! -f $out_file ] || [ $file -nt $out_file ]; then
         echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" ${file} >> ${LOG_FILE}
+        ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" "${file}" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
     fi
+}
+
+doBasicMacCompile()
+{
+    mkdir -p "${TMP_DIR}"
+    
+    for file in `find ${APP_PATH} -mindepth 2 | grep '[.]c$\|[.]m$'` ; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        out_file="${TMP_DIR}/${name}.o"
+        doCompile "${file}" "${name}" "${out_file}" "-arch i386"
+    done
+    
+    #Assemble all of the .o files
+    echo "  ... Creating game"
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch i386 -framework Foundation -framework Cocoa -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
 #
@@ -126,30 +167,19 @@ doMacCompile()
     mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep '[.]c$\|[.]m$'` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        
         out_file="${TMP_DIR}/${1}/${name}.o"
-        
         doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]m$`
-    do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.m} # %% = delete longest match from back, i.e. extract .c
-        
-        out_file="${TMP_DIR}/${1}/${name}.o"
-        
-        doCompile "${file}" "${name}" "${out_file}" "-arch ${1} "
-    done
     
-    #Assemble all of the .o files
+    #Assemble all of the .s files
     echo "  ... Creating game for $1"
-    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -framework Foundation -framework Cocoa -arch $1 -o ${TMP_DIR}/${1}/${GAME_NAME} `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 $2 -o "${TMP_DIR}/${1}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -164,11 +194,10 @@ doLipo()
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
-    if [ -d "${GAMEAPP_PATH}" ] 
-    then
-    	echo "  ... Removing old application"
-    	rm -rf "${GAMEAPP_PATH}"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
+    if [ -d "${GAMEAPP_PATH}" ]; then
+        echo "  ... Removing old application"
+        rm -rf "${GAMEAPP_PATH}"
     fi
 
     echo "  ... Creating Application Bundle"
@@ -219,60 +248,46 @@ doMacPackage()
 doLinuxCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
-    done
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]m$`
-    do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.m} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${OUT_DIR}/Resources"
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
-    done
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]m$`
-    do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.m} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${OUT_DIR}/Resources
-    
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    
+    RESOURCE_DIR=${FULL_OUT_DIR}/Resources
 }
 
 copyWithoutSVN()
@@ -318,10 +333,43 @@ then
 
     
     if [ "$OS" = "$MAC" ]; then
-        doMacCompile "ppc"
-        doMacCompile "i386"
+        HAS_PPC=false
+        HAS_i386=false
+        HAS_LEOPARD_SDK=false
+        OS_VER=`sw_vers -productVersion`
         
-        doLipo "i386" "ppc"
+        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+            HAS_PPC=true
+        fi
+        
+        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+            HAS_i386=true
+        fi
+        
+        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.5' ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
+            echo "  ... Building Universal Binary"
+            
+            if [ $OS_VER = '10.5' ]; then
+                doMacCompile "i386" ""
+                doMacCompile "ppc" ""
+            else
+                doMacCompile "i386" "-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+                doMacCompile "ppc" "-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+            fi
+            
+            doLipo "i386" "ppc"
+        else
+            doBasicMacCompile
+        fi
+        
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
@@ -334,8 +382,8 @@ then
     doCopyResources
 else
     CleanTmp
-    rm -rf "${OUT_DIR}"
-    mkdir "${OUT_DIR}"
+    rm -rf "${APP_PATH}/bin"
+    mkdir "${APP_PATH}/bin"
     echo    ... Cleaned
 fi
 
