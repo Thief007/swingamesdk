@@ -347,7 +347,6 @@ then
         
         if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
             echo "  ... Building Universal Binary"
-            echo "  ... Building Universal Binary"
             
             if [ $OS_VER = '10.5' ]; then
                 FPC_BIN=`which ppc386`
