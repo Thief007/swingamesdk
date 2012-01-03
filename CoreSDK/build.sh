@@ -111,6 +111,16 @@ CleanTmp()
     mkdir "${TMP_DIR}"
 }
 
+doBasicMacCompile()
+{
+    mkdir -p ${TMP_DIR}/${1}
+    echo "  ... Compiling $GAME_NAME - $1"
+    
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gh -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
+}
+
 #
 # Compile for Mac - manually assembles and links files
 # argument 1 is arch
@@ -309,12 +319,58 @@ then
     echo "  ... Creating ${GAME_NAME}"    
     
     if [ "$OS" = "$MAC" ]; then
-        FPC_BIN=`which ppc386`
-        doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
-        FPC_BIN=`which ppcppc`
-        doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+        HAS_PPC=false
+        HAS_i386=false
+        HAS_LEOPARD_SDK=false
+        HAS_LION=false
+        OS_VER=`sw_vers -productVersion`
         
-        doLipo "i386" "ppc"
+        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+            HAS_PPC=true
+        fi
+        
+        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+            HAS_i386=true
+        fi
+        
+        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.5' ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.7' ]; then
+            HAS_LION=true
+        fi
+        
+        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
+            echo "  ... Building Universal Binary"
+            echo "  ... Building Universal Binary"
+            
+            if [ $OS_VER = '10.5' ]; then
+                FPC_BIN=`which ppc386`
+                doMacCompile "i386" ""
+                
+                FPC_BIN=`which ppcppc`
+                doMacCompile "ppc" ""
+            else
+                FPC_BIN=`which ppc386`
+                doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+                
+                FPC_BIN=`which ppcppc`
+                doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
+            fi
+            
+            doLipo "i386" "ppc"
+        else
+            if [[ $HAS_LION ]]; then
+                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            fi
+            doBasicMacCompile
+        fi
+        
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
