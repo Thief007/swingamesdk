@@ -332,7 +332,7 @@ interface
     /// @param vol Indicates the percentage of the original volume to play the 
     ///                      `SoundEffect` at. This must be between 0 and 1.
     ///
-    /// @lib PlaySoundEffectNamedWithLoopAndVolume
+    /// @lib PlaySoundEffectNamedWithLoopAnd
     /// @sn playSoundEffectNamed:%s looped:%s atVolume:%s
     ///
     /// @doc_details
@@ -702,14 +702,10 @@ implementation
     uses
         SysUtils, Classes, 
         stringhash,                 // libsrc
-        SDL_Mixer, SDL,         // SDL
-        sgShared, sgResources, sgTrace;
+        sgShared, sgResources, sgTrace, sgDriverAudio;
 //=============================================================================
 
     var
-        // Contains the sound channels used to determine if a sound is currently
-        // playing and enables us to stop the sound, check if it is playing etc.
-        soundChannels: Array[0..31] of Pointer;
         _SoundEffects: TStringHash;
         _Music: TStringHash;
     
@@ -719,14 +715,9 @@ implementation
             TraceEnter('sgAudio', 'TryOpenAudio', '');
         {$ENDIF}
         
-        sgShared.AudioOpen :=    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048 ) >= 0;
+        sgShared.AudioOpen := AudioDriver.OpenAudio();
         result := sgShared.AudioOpen;
-        
-        if result then
-        begin
-            Mix_AllocateChannels(32);
-        end;
-        
+
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'TryOpenAudio', BoolToStr(result, true));
         {$ENDIF}
@@ -738,7 +729,7 @@ implementation
             TraceEnter('sgAudio', 'OpenAudio', '');
         {$ENDIF}
         
-        if not TryOpenAudio() then RaiseException('Error opening audio device: ' + string(Mix_GetError()));
+        if not TryOpenAudio() then RaiseException('Error opening audio device: ' + string(AudioDriver.GetError()));
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'OpenAudio');
@@ -765,7 +756,7 @@ implementation
         {$ENDIF}
         
         AudioOpen := False;
-        Mix_CloseAudio();
+        AudioDriver.CloseAudio();
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'CloseAudio');
@@ -773,8 +764,6 @@ implementation
     end;
     
     procedure SetMusicVolume(value: Single);
-    var
-        newVol: Longint;
     begin
         {$IFDEF TRACE}
             TraceEnter('sgAudio', 'SetMusicVolume', FloatToStr(value));
@@ -783,9 +772,7 @@ implementation
         if (value < 0) then value := 0
         else if value > 1 then value := 1;
 
-        //SDL music volume is 0 - 128
-        newVol := RoundInt(value * 128);
-        Mix_VolumeMusic(newVol);
+        AudioDriver.SetMusicVolume(value);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'SetMusicVolume');
@@ -798,7 +785,7 @@ implementation
             TraceEnter('sgAudio', 'MusicVolume', '');
         {$ENDIF}
         
-     result := Mix_VolumeMusic(-1) / 128.0;
+     result := AudioDriver.GetMusicVolume();
      
      {$IFDEF TRACE}
          TraceExit('sgAudio', 'MusicVolume', FloatToStr(result));
@@ -825,19 +812,8 @@ implementation
                 exit;
             end;
         end;
-        
-        New(result);        
-        result^.effect := Mix_LoadWAV(PChar(filename));
-        result^.filename := filename;
-        result^.name := name;
-        
-        if result^.effect = nil then
-        begin
-            Dispose(result);
-            result := nil;
-            RaiseWarning('Error loading sound effect: ' + MIX_GetError());
-            exit;
-        end;
+		
+		result := AudioDriver.LoadSoundEffect(filename, name);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'DoLoadSoundEffect', HexStr(result));
@@ -914,12 +890,7 @@ implementation
         if assigned(effect) then
         begin
             CallFreeNotifier(effect);
-            
-            if assigned(effect^.effect) then
-            begin
-                Mix_FreeChunk(effect^.effect);
-                Dispose(effect);
-            end;
+            AudioDriver.FreeSoundEffect(effect);
         end;
         effect := nil;
         {$IFDEF TRACE}
@@ -995,19 +966,8 @@ implementation
                 exit;
             end;
         end;
-        
-        New(result);
-        result^.music := Mix_LoadMUS(PChar(filename));
-        result^.name := name;
-        result^.filename := filename;
-        
-        if result^.music = nil then
-        begin
-            dispose(result);
-            result := nil;
-            RaiseException('Error loading music: ' + SDL_GetError());
-            exit;
-        end;
+		
+		result := AudioDriver.LoadMusic(filename, name);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'DoLoadMusic');
@@ -1084,11 +1044,7 @@ implementation
         if assigned(mus) then
         begin
             CallFreeNotifier(mus);
-            if assigned(mus^.music) then
-            begin
-                Mix_FreeMusic(mus^.music);
-            end;
-            dispose(mus);
+            AudioDriver.FreeMusic(mus);
         end;
         mus := nil;
         
@@ -1154,8 +1110,6 @@ implementation
     end;
     
     procedure PlaySoundEffect(effect: SoundEffect; loops: Longint; vol: Single); overload;
-    var
-        i: Longint;
     begin
         {$IFDEF TRACE}
             TraceEnter('sgAudio', 'PlaySoundEffect', HexStr(effect) + ' loops = ' + IntToStr(loops) + ' vol = ' + FloatToStr(vol));
@@ -1189,13 +1143,8 @@ implementation
         if loops >= 1 then loops := loops- 1;
         
         //play the effect, seaching for a channel
-        i := Mix_PlayChannel( -1, effect^.effect, loops);
-        if i <> -1 then
-        begin
-            Mix_Volume(i, RoundInt(vol * 128.0));
-            soundChannels[i] := effect;
-        end;
-        
+        if (not AudioDriver.PlaySoundEffect(effect, loops, vol)) then RaiseWarning('Error playing sound effect' + AudioDriver.GetError());
+
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'PlaySoundEffect');
         {$ENDIF}        
@@ -1277,8 +1226,12 @@ implementation
             exit;
         end;
         
-        if not Assigned(mus) then begin RaiseWarning('Music not supplied to PlayMusic'); exit; end;
-        Mix_PlayMusic(mus^.music, loops);
+        if not Assigned(mus) then 
+		begin 
+			RaiseWarning('Music not supplied to PlayMusic'); 
+			exit; 
+		end;
+        AudioDriver.PlayMusic(mus, loops);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'PlayMusic');
@@ -1322,8 +1275,12 @@ implementation
             exit;
         end;
         
-        if not Assigned(mus) then begin RaiseWarning('Music not supplied to FadeMusicIn'); exit; end;
-        Mix_FadeInMusic(mus^.music, loops, ms);
+        if not Assigned(mus) then 
+		begin 
+			RaiseWarning('Music not supplied to FadeMusicIn'); 
+			exit; 
+		end;
+        AudioDriver.FadeMusicIn(mus, loops, ms);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'FadeMusicIn');
@@ -1362,7 +1319,7 @@ implementation
             exit;
         end;
         
-        Mix_FadeOutMusic(ms);
+        AudioDriver.FadeMusicOut(ms);
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'FadeMusicOut');
@@ -1375,8 +1332,6 @@ implementation
     end;
     
     function SoundEffectPlaying(effect: SoundEffect): Boolean; overload;
-    var
-        i: Longint;
     begin
         {$IFDEF TRACE}
             TraceEnter('sgAudio', 'SoundEffectPlaying', HexStr(effect));
@@ -1386,15 +1341,7 @@ implementation
         
         if AudioReady() then
         begin
-            // Check each channel to see if it is playing the sound effect
-            for i := 0 to High(soundChannels) do
-            begin
-                if soundChannels[i] = effect then
-                begin
-                    result := result or (Mix_Playing(i) <> 0);
-                    if result then break;
-                end;
-            end;
+            result := AudioDriver.SoundEffectPlaying(effect);
         end;
         
         {$IFDEF TRACE}
@@ -1409,7 +1356,7 @@ implementation
         {$ENDIF}
         
         if AudioReady() then
-            result := Mix_PlayingMusic() <> 0
+            result := AudioDriver.MusicPlaying()
         else
             result := false;
         
@@ -1420,12 +1367,12 @@ implementation
     
     procedure PauseMusic();
     begin
-        Mix_PauseMusic();
+        AudioDriver.PauseMusic();
     end;
     
     procedure ResumeMusic();
     begin
-        Mix_ResumeMusic();
+        AudioDriver.ResumeMusic();
     end;
     
     
@@ -1550,8 +1497,6 @@ implementation
         {$ENDIF}
     end;
     
-    
-    
     //----------------------------------------------------------------------------
     
     procedure StopMusic();
@@ -1560,7 +1505,7 @@ implementation
             TraceEnter('sgAudio', 'StopMusic', '');
         {$ENDIF}
         
-        if AudioReady() then Mix_HaltMusic();
+        if AudioReady() then AudioDriver.StopMusic();
         
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'StopMusic');
@@ -1581,16 +1526,7 @@ implementation
         {$ENDIF}
         
         if not AudioReady() then exit;
-        
-        for i := 0 to High(soundChannels) do
-        begin
-            if soundChannels[i] = effect then
-            begin
-                Mix_HaltChannel(i);
-                soundChannels[i] := nil;
-            end;
-        end;
-        
+		AudioDriver.StopSoundEffect(effect);
         {$IFDEF TRACE}
             TraceExit('sgAudio', 'StopSoundEffect');
         {$ENDIF}

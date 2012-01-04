@@ -9,7 +9,7 @@ var
   i: Integer;
 begin
   OpenAudio();
-  //OpenGraphicsWindow('Audio Tests', 640, 480);
+  OpenGraphicsWindow('Audio Tests', 640, 480);
   
   //Test releasing of resources - not assigned
   ReleaseSoundEffect('fred');
@@ -28,14 +28,20 @@ begin
   WriteLn(HexStr(snd2), ' = Loaded ', SoundEffectName(snd2), ' for file ', SoundEffectFilename(snd2));
   WriteLn(HexStr(snd3), ' = Loaded ', SoundEffectName(snd3), ' for file ', SoundEffectFilename(snd3));
     
+  WriteLn('Playing shock');
   PlaySoundEffect('shock');
+  Delay(100);
+  if not SoundEffectPlaying(snd) then WriteLn('ERROR- snd should be playing');
   if not SoundEffectPlaying('shock') then WriteLn('ERROR- sound should be playing');
   if not SoundEffectPlaying(SoundEffectNamed('shock')) then WriteLn('ERROR- sound should be playing v2');
+  Delay(5000);
+  WriteLn('Stopping shock');
   StopSoundEffect('shock');
   if SoundEffectPlaying('shock') then WriteLn('ERROR- sound should be stopped');
   if SoundEffectPlaying(SoundEffectNamed('shock')) then WriteLn('ERROR- sound should have stopped v2');
   Delay(500);
   
+  WriteLn('Playing bounce');
   PlaySoundEffect('bounce');
       
   FadeMusicIn(mus, 500);
@@ -64,9 +70,11 @@ begin
   
   WriteLn('Should be playing midi any second...');
   FadeMusicIn(miditest, 500);
-  Delay(5000);
+  PlaySoundEffect(snd);
+  Delay(1000);
+  PlaySoundEffect(snd);
   WriteLn('Midi is finished...');
-  FadeMusicOut(500);
+  //StopMusic();
   WriteLn('Press enter');
   ReadLn();
   
