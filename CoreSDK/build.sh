@@ -43,7 +43,8 @@ if [ "$OS" = "$WIN" ]; then
 else
     PAS_FLAGS="-gw -Cr -Ci -Ct"
 fi
-SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
+DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
+SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src ${DRV_LIB}"
 CLEAN="N"
 
 

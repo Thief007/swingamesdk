@@ -140,7 +140,7 @@ if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 find ${SDK_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
-find ${SDK_LIB_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
+find ${SDK_LIB_SRC} -maxdepth 3 -path \*.pas ! -path \*.svn\* -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 find ${SDK_LIB_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
