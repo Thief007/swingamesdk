@@ -34,7 +34,7 @@ unit sgTypes;
 
 //=============================================================================
 interface
-  uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
+  uses SDL, SDL_Image, SDL_TTF;
 //=============================================================================
 
   type
@@ -123,7 +123,7 @@ interface
     /// @struct SoundEffectData
     /// @via_pointer
     SoundEffectData = packed record
-      effect: PMix_Chunk;
+      effect: Pointer;
       filename, name: String;
     end;
     
@@ -153,7 +153,7 @@ interface
     /// @struct MusicData
     /// @via_pointer
     MusicData = packed record
-      music: PMix_Music;
+      music: Pointer;
       filename, name: String;
     end;
     
