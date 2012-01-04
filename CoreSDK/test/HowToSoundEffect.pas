@@ -1,6 +1,6 @@
 program HowToSoundEffect;
 uses
-  sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
+  sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
 
 procedure Main();
 begin
