@@ -332,7 +332,7 @@ interface
     /// @param vol Indicates the percentage of the original volume to play the 
     ///                      `SoundEffect` at. This must be between 0 and 1.
     ///
-    /// @lib PlaySoundEffectNamedWithLoopAnd
+    /// @lib PlaySoundEffectNamedWithLoopAndVolume
     /// @sn playSoundEffectNamed:%s looped:%s atVolume:%s
     ///
     /// @doc_details
@@ -1518,8 +1518,6 @@ implementation
     end;
     
     procedure StopSoundEffect(effect: SoundEffect);
-    var
-        i: Longint;
     begin
         {$IFDEF TRACE}
             TraceEnter('sgAudio', 'StopSoundEffect', HexStr(effect));
