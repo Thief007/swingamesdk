@@ -10,7 +10,7 @@ begin
   
   PlaySoundEffect(LoadSoundEffect('boom.wav')); // load sound effect in ogg, wave audio files
   
-  ClearScreen(ColorBlack);
+  ClearScreen(ColorWhite);
   DrawFramerate(0,0);
     
   RefreshScreen();

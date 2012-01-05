@@ -10,7 +10,7 @@ begin
   
   PlayMusic(LoadMusic('Fast.mp3')); 
   
-  ClearScreen(ColorBlack);
+  ClearScreen(ColorWhite);
   
   RefreshScreen();
   
