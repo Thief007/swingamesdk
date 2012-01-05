@@ -3,17 +3,17 @@ unit sgDriverAudio;
 // sgDriverAudio.pas
 //=============================================================================
 //
-// The AudioDriver is responsible for providing an interface between SwinGame
+// The Audio Driver is responsible for providing an interface between SwinGame
 // code and the drivers. It can interface between any audio driver provided
-// it has 
+// It should not be changed, any changes to this file will probably cause all
+// the audio drivers to break.
+// 
+// 
 //
 // Notes:
 //		- Pascal PChar is equivalent to a C-type string
 // 		- Pascal Word is equivalent to a Uint16
-// TODO:
-// 		- Add the rest of the Audio methods called to the AudioDriverRecord
-//		- Make the procedures more generic by using a generic pointer where 
-//			applicable.
+//
 //=============================================================================
 interface
 	uses sgDriverAudioSDLMixer, sgTypes;

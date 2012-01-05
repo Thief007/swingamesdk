@@ -24,7 +24,7 @@ unit sgTimers;
 
 //=============================================================================
 interface
-  uses sgTypes, SDL;
+  uses sgTypes;
 //=============================================================================
   
   
@@ -134,7 +134,7 @@ interface
   
 //=============================================================================
 implementation
-  uses  sgTrace, sgShared,
+  uses  sgTrace, sgShared, sgDriverTimer,
         SysUtils,
         stringhash;         // libsrc;
 //=============================================================================
@@ -199,7 +199,7 @@ begin
   {$IFDEF TRACE}
     TraceEnter('sgTimers', 'ResetTimer');
   {$ENDIF}
-  tmr^.startTicks := SDL_GetTicks();
+  tmr^.startTicks := TimerDriver.GetTicks();
   {$IFDEF TRACE}
     TraceEnter('sgTimers', 'ResetTimer');
   {$ENDIF}
@@ -292,7 +292,7 @@ begin
   begin
     started := true;
     paused := false;
-    startTicks := SDL_GetTicks();
+    startTicks := TimerDriver.GetTicks();
   end;
   {$IFDEF TRACE}
     TraceExit('sgTimers', 'StartTimer');
@@ -326,7 +326,7 @@ begin
     if started and (not paused) then
     begin
       paused := true;
-      pausedTicks := Longword(SDL_GetTicks() - startTicks);
+      pausedTicks := Longword(TimerDriver.GetTicks() - startTicks);
     end;
   end;
   {$IFDEF TRACE}
@@ -345,7 +345,7 @@ begin
     if paused then
     begin
       paused := false;
-      startTicks := Longword(SDL_GetTicks() - pausedTicks);
+      startTicks := Longword(TimerDriver.GetTicks() - pausedTicks);
       pausedTicks := 0;
     end;
   end;
@@ -367,7 +367,7 @@ begin
     if started then
     begin
       if paused then result := pausedTicks
-      else result := Longword(SDL_GetTicks() - startTicks);
+      else result := Longword(TimerDriver.GetTicks() - startTicks);
       exit;
     end;
   end;
