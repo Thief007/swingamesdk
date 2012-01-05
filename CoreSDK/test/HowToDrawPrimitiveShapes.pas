@@ -2,8 +2,7 @@ program HowToDrawPrimitiveShapes;
 uses sgAudio, sgGraphics, sgUtils, sgResources;
 
 procedure Main();
-begin
-    OpenAudio();
+begin    
     OpenGraphicsWindow('Primitive shapes', 800, 600);
     
 	ClearScreen();
@@ -20,8 +19,7 @@ begin
     
     Delay(5000);
 
-    ReleaseAllResources();
-    CloseAudio();
+    ReleaseAllResources();    
 end;
 	
 begin
