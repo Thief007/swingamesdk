@@ -2,8 +2,7 @@ program HowToDrawBitmap;
 uses sgGraphics, sgTypes, sgImages, sgUtils, sgAudio;
 
 procedure main();
-begin
-    OpenAudio();
+begin    
     OpenGraphicsWindow('Import Bitmap', 800, 600);
     
 	ClearScreen();
