@@ -51,15 +51,18 @@ Usage()
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message "
     echo " -i [icon] Change the icon file"
+    echo " -r   Create a release version that does not include debug information"
     exit 0
 }
+
+RELEASE=""
 
 while getopts chdi: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  DEBUG="Y" ;;
+    r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     esac
 done
@@ -69,19 +72,20 @@ shift $((${OPTIND}-1))
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
-    if [ "$OS" = "$MAC" ]; then
-        PAS_FLAGS="-gw -vw"
-    else
-        PAS_FLAGS="-g -vw"
-    fi
-    OUT_DIR="${OUT_DIR}/Debug"
-    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
-    TMP_DIR="${TMP_DIR}/Debug"
-else
+if [ -n "${RELEASE}" ]; then
     OUT_DIR="${OUT_DIR}/Release"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
+else
+  #its a debug build
+  if [ "$OS" = "$MAC" ]; then
+      PAS_FLAGS="-gw -vw -gh"
+  else
+      PAS_FLAGS="-g -vw -gh"
+  fi
+  OUT_DIR="${OUT_DIR}/Debug"
+  FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
+  TMP_DIR="${TMP_DIR}/Debug"
 fi
 
 if [ ! -d ${TMP_DIR} ]; then
@@ -288,7 +292,7 @@ then
     echo "--------------------------------------------------"
     echo "  Running script from $APP_PATH"
     echo "  Saving output to $OUT_DIR"
-    echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+    echo "  Compiler flags ${SG_INC} ${PAS_FLAGS}"
     echo "--------------------------------------------------"
     echo "  ... Creating ${GAME_NAME}"
     
