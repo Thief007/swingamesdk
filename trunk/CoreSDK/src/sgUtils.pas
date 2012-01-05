@@ -21,7 +21,7 @@ unit sgUtils;
 
 //=============================================================================
 interface
-  uses sgTypes, SDL;
+  uses sgTypes, sgDriverTimer;
 //=============================================================================
 
 //----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'Delay');
     {$ENDIF}
-    if time > 0 then SDL_Delay(time);
+    if time > 0 then TimerDriver.Delay(time);
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'Delay');
     {$ENDIF}
@@ -223,7 +223,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'GetTicks');
     {$ENDIF}
-    result := SDL_GetTicks();
+    result := TimerDriver.GetTicks();
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'GetTicks');
     {$ENDIF}
