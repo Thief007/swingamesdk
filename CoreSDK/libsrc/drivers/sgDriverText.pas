@@ -23,12 +23,13 @@ interface
 		LoadFontProcedure = function(fontName, fileName : String; size : Longint) : font;
 		CloseFontProcedure = procedure(fontToClose : font) ;
 		PrintStringsProcedure = procedure(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
-		
+		PrintWideStringsProcedure = procedure(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
 		
 		TextDriverRecord = record
 			LoadFont : LoadFontProcedure;
 			CloseFont : CloseFontProcedure;
 			PrintStrings : PrintStringsProcedure;
+			PrintWideStrings : PrintWideStringsProcedure;
 		end;
 		
 		
@@ -63,6 +64,12 @@ implementation
 		TextDriver.PrintStrings(dest,font,str,rc,clrFg,clrBg,flags)
 	end;
 	
+	procedure DefaultPrintWideStringsProcedure(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
+	begin
+		LoadDefaultTextDriver();
+		TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags)
+	end;
+	
 //=============================================================================
 	
 	
@@ -73,6 +80,7 @@ implementation
 		TextDriver.LoadFont := @DefaultLoadFontProcedure;
 		TextDriver.CloseFont := @DefaultCloseFontProcedure;
 		TextDriver.PrintStrings := @DefaultPrintStringsProcedure;
+		TextDriver.PrintWideStrings := @DefaultPrintWideStringsProcedure;
 	end;
 
 end.
