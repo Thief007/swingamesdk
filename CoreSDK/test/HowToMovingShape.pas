@@ -14,7 +14,7 @@ begin
   repeat // The game loop...
     ProcessEvents();
     
-    ClearScreen(ColorBlack);
+    ClearScreen(ColorWhite);
 	
 	FillRectangle(ColorGreen, right, 250, 200, 100);
 	right += 1;

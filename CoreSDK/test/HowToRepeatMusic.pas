@@ -12,7 +12,7 @@ begin
   repeat // The game loop...
     ProcessEvents();
 	
-    ClearScreen(ColorBlack);
+    ClearScreen(ColorWhite);
 	
     RefreshScreen();
   until WindowCloseRequested();
