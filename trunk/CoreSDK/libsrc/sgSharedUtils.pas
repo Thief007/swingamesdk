@@ -50,7 +50,7 @@ uses sgTypes;
   procedure ZeroArray (var singles : array of SingleArray); overload;
   
   procedure MakeFalse (var visited: Array of Boolean);
-  
+  function WithinRange(lowerBound : Integer; upperBound : Integer; currentIndex : Integer) : Boolean;
   
   type
     LineData = record
@@ -70,6 +70,11 @@ implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgShared, sgResources;
+
+	function WithinRange(lowerBound: Integer; upperBound : Integer; currentIndex : Integer) : Boolean;
+	begin
+		result := (currentIndex >= lowerBound) and (currentIndex <= upperBound);
+	end;
 
   procedure ZeroArray (var ints : LongintArray); overload;
   var

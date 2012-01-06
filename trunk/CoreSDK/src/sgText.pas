@@ -1203,7 +1203,6 @@ implementation
     ReleaseAllFonts();
     FreeAndNil(_Fonts);
     TextDriver.Quit();
-    //TTF_Quit();
   end;
 
 end.
