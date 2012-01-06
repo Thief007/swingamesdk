@@ -626,7 +626,7 @@ implementation
   uses SysUtils, Classes, 
        stringhash, sgTrace,         // libsrc
        sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
-       SDL, SDL_TTF, SDL_gfx, sgDriverText;
+		sdl_gfx, sgDriverText;
 //=============================================================================
 
   const EOL = LineEnding; // from sgShared
@@ -770,14 +770,15 @@ implementation
   procedure FontSetStyle(font: Font; value: FontStyle);
   begin
     if not Assigned(font) then begin RaiseWarning('No font supplied to FontSetStyle'); exit; end;
-    TTF_SetFontStyle(font^.fptr, Longint(value));
+    //TTF_SetFontStyle(font^.fptr, Longint(value));
+	TextDriver.SetFontStyle(font,value);
   end;
   
   function FontFontStyle(font: Font): FontStyle;
   begin
     result := NormalFont;
     if not Assigned(font) then begin RaiseWarning('No font supplied to FontFontStyle'); exit; end;
-    result := FontStyle(TTF_GetFontStyle(font^.fptr));
+    result := TextDriver.GetFontStyle(font);
   end;
 
   function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
@@ -1060,7 +1061,7 @@ implementation
     try
       y := 0;
       if length(theText) = 0 then result := 0 
-      else TTF_SizeText(theFont^.fptr, PChar(theText), result, y);
+	  else TextDriver.SizeOfText(theFont, theText, result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -1075,7 +1076,7 @@ implementation
     try
       y := 0; 
       if length(theText) = 0 then result := 0
-      else TTF_SizeUNICODE(theFont^.fptr, PUInt16(theText), result, y);
+      else TextDriver.SizeOfUnicode(theFont, theText, result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -1095,8 +1096,8 @@ implementation
     
     if not Assigned(theFont) then begin RaiseWarning('No font supplied to TextHeight'); exit; end;
     try
-      w := 0;
-      TTF_SizeText(theFont^.fptr, PChar(theText), w, result);
+        w := 0;
+		TextDriver.SizeOfText(theFont, theText, w, result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;
@@ -1111,7 +1112,7 @@ implementation
     if not Assigned(theFont) then begin RaiseWarning('No font supplied to TextHeight'); exit; end;
     try
       w := 0;
-      TTF_SizeUNICODE(theFont^.fptr, PUInt16(theText), w, result);
+	  TextDriver.SizeOfUnicode(theFont,theText,w,result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;
@@ -1189,9 +1190,9 @@ implementation
     
     _Fonts := TStringHash.Create(False, 1024);
     
-    if TTF_Init() = -1 then
+    if TextDriver.Init() = -1 then
     begin
-      begin RaiseException('Error opening font library. ' + string(TTF_GetError)); exit; end;
+      begin RaiseException('Error opening font library. ' + TextDriver.GetError()); exit; end;
     end;
   end;
 
@@ -1201,8 +1202,8 @@ implementation
   begin
     ReleaseAllFonts();
     FreeAndNil(_Fonts);
-    
-    TTF_Quit();
+    TextDriver.Quit();
+    //TTF_Quit();
   end;
 
 end.
