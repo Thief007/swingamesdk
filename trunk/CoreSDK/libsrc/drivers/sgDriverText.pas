@@ -20,16 +20,33 @@ interface
 	
 	type
 		// These function and procedure pointers are required by the TextDriverRecord
+			
+		//loads a TTF font with a font name and size. Return a swingame Font 
 		LoadFontProcedure = function(fontName, fileName : String; size : Longint) : font;
-		CloseFontProcedure = procedure(fontToClose : font) ;
+		
+		// closes a font.		
+		CloseFontProcedure = procedure(fontToClose : font);
+		/// This function prints "str" with font "font" and color "clrFg"
+	  ///  * onto a rectangle of color "clrBg".
+	  ///  * It does not pad the text.
 		PrintStringsProcedure = procedure(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
+    /// This function prints "str" with font "font" and color "clrFg"
+    ///  * onto a rectangle of color "clrBg".
+    ///  * It does not pad the text.
 		PrintWideStringsProcedure = procedure(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
+    // sets the current font and font style.
 		SetFontStyleProcedure = procedure(fontToSet : Font; value: Fontstyle);
+    // gets the current fontstyle of the given font
 		GetFontStyleProcedure = function(font : Font) : FontStyle;	
+    //returns the size of a given text using a given font.
 		SizeOfTextProcedure = function(font : Font ;  theText : String ; var w : Longint; var h : Longint) : Integer;
+    //returns the size of a given text using a given font.
 		SizeOfUnicodeProcedure = function(font : Font; theText : WideString; var w : Longint; var h : Longint) : Integer;
+    //closes the font module.
 		QuitProcedure = procedure();
+    // shows error messages.
 		GetErrorProcedure = function() : string;
+    //checks if font library is initialiszed.
 		InitProcedure = function() : integer;
 		
 		
