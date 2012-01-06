@@ -64,7 +64,7 @@ implementation
 	    subStr: String;
 	    n, w, h, i: Longint;
 	    rect: TSDL_Rect;
-		SDLrc: PSDL_Rect;
+		SDLrc: TSDL_Rect;
 	    colorFG: TSDL_Color;
 	    bgTransparent: Boolean;
 	begin
@@ -168,11 +168,9 @@ implementation
 		// Draw the text on top of that:
 		rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
 		if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
-		new(SDLrc);
 		
-		SDLrc^ := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
-		SDL_BlitSurface(sText^.surface, @rect, dest^.surface, SDLrc );
-		dispose(SDLrc);
+		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
+		SDL_BlitSurface(sText^.surface, @rect, dest^.surface, @SDLrc );
 		FreeBitmap(sText);
 	end;
 	
@@ -187,7 +185,7 @@ implementation
 	    n, w, h, i: Longint;
 	    rect: TSDL_Rect;
 	    colorFG: TSDL_Color;
-		SDLrc: PSDL_Rect;
+		SDLrc: TSDL_Rect;
 	    bgTransparent: Boolean;
 	  begin
 	    if dest^.surface = nil then begin RaiseWarning('Error Printing Strings: There was no surface to draw onto.'); exit; end;
@@ -289,21 +287,61 @@ implementation
 	    // Draw the text on top of that:
 	    rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
 	    if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
-		  new(SDLrc);
-		  SDLrc^ := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
-	    SDL_BlitSurface(sText^.surface, @rect, dest^.surface, SDLrc );
-		dispose(SDLrc);
+		  
+		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
+	    SDL_BlitSurface(sText^.surface, @rect, dest^.surface, @SDLrc );
+		
 	    FreeBitmap(sText);
-	  end;
+	end;
 	
+	procedure SetFontStyle(fontToSet : Font; value : FontStyle);
+	begin
+		TTF_SetFontStyle(fontToSet^.fptr, Longint(value));
+	end;
 	
+	function GetFontStyle(font : Font) : FontStyle;
+	begin
+		result := FontStyle(TTF_GetFontStyle(font^.fptr));
+	end;
+	
+	function SizeOfText(font : Font; theText : String; var w : Longint ; var h : LongInt) : Integer;
+	begin
+		result := TTF_SizeText(font^.fptr, PChar(theText), w, h);
+	end;
+	
+	function SizeOfUnicode(font : Font; theText : WideString; var w : Longint; var h : Longint) : Integer;
+	begin
+		result := TTF_SizeUNICODE(font^.fptr, PUInt16(theText),w,h);
+	end;
+	
+	Procedure Quit();
+	begin
+		TTF_Quit();
+	end;
+	
+	function GetError() : string;
+	begin
+		result := string(TTF_GetError);
+	end;
+	
+	function Init() : Integer;
+	begin
+		result := TTF_Init();
+	end;
 	
 	procedure LoadSDLTextDriver();
 	begin
 		TextDriver.LoadFont := @LoadFontProcedure;
 		TextDriver.CloseFont := @CloseFontProcedure;
 		TextDriver.PrintStrings := @PrintStringsProcedure;
-		TextDriver.PrintWideStrings :=@printWideStringsProcedure;
+		TextDriver.PrintWideStrings := @PrintWideStringsProcedure;
+		TextDriver.SetFontStyle := @SetFontStyle;
+		TextDriver.GetFontStyle := @GetFontStyle;
+		TextDriver.SizeOfText := @SizeOfText;
+		TextDriver.SizeOfUnicode := @SizeOfUnicode;
+		TextDriver.Quit := @Quit;
+		TextDriver.GetError := @GetError;
+		TextDriver.Init := @Init;
 	end;
 	
 
