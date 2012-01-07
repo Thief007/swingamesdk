@@ -1066,10 +1066,14 @@ function CreateAnimation(identifier: Longint; script: AnimationScript; withSound
 begin
     result := nil;
     if script = nil then exit;
-    
+	if (identifier < 0) or (identifier > High(script^.animations)) then
+    begin
+		RaiseWarning('Unable to create animation number ' + IntToStr(identifier) + ' from script ' + script^.name);
+		exit;
+	end;
+	
     new(result);
     _AddAnimation(script, result);
-    
     AssignAnimation(result, identifier, script, withSound)
 end;
 
@@ -1086,6 +1090,12 @@ begin
     if script = nil then exit;
         
     idx := IndexOf(script^.animationIds, identifier);
+	if (idx < 0) or (idx > High(script^.animations)) then
+    begin
+		RaiseWarning('Unable to create animation "' + identifier + '" from script ' + script^.name);
+		exit;
+	end;
+
     result := CreateAnimation(idx, script, withSound);
 end;
 
@@ -1115,7 +1125,7 @@ begin
     if (idx < 0) or (idx > High(script^.animations)) then 
     begin 
         RaiseWarning('Assigning an animation frame that is not within range 0-' + IntToStr(High(script^.animations)) + '.'); 
-        exit; 
+		exit; 
     end;
     
     // Animation is being assigned to another script
