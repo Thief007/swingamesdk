@@ -1985,8 +1985,20 @@ implementation
   end;
   
   procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean);
+  var
+	idx: Integer;
   begin
-    SpriteStartAnimation(s, AnimationIndex(s^.animationScript, named), withSound);
+	if not assigned(s) then exit;
+	if not assigned(s^.animationScript) then exit;
+	
+	idx := AnimationIndex(s^.animationScript, named);
+	if (idx < 0) or (idx > High(s^.animationScript^.animations)) then
+    begin
+		RaiseWarning('Unable to create animation "' + named + '" for sprite ' + s^.name + ' from script ' + s^.animationScript^.name);
+		exit;
+	end;
+
+    SpriteStartAnimation(s, idx, withSound);
   end;
   
   procedure SpriteStartAnimation(s: Sprite; idx: Longint);
@@ -1998,6 +2010,11 @@ implementation
   begin
     if not assigned(s) then exit;
     if not assigned(s^.animationScript) then exit;
+	if (idx < 0) or (idx > High(s^.animationScript^.animations)) then
+    begin
+		RaiseWarning('Unable to create animation no. ' + IntToStr(idx) + ' for sprite ' + s^.name + ' from script ' + s^.animationScript^.name);
+		exit;
+	end;
     
     if assigned(s^.animationInfo) then
       AssignAnimation(s^.animationInfo, idx, s^.animationScript, withSound)
