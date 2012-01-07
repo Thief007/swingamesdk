@@ -1,0 +1,17 @@
+SwinGame Animation #v1
+
+//Multi-frame: ranges are in[]
+//[a-b] = numbers from a to b inclusive
+//[a,b,c] = explicit values
+//[a-b,c] = combination
+
+m:[0-3],[0-3],5,0
+m:[4-7],[4-7],2,4
+m:[8-11],[8-11],2,8
+m:[12-15],[12-15],2,12
+
+//identifiers
+i:WalkFront,0
+i:WalkLeft,4
+i:WalkRight,8
+i:WalkBack,12
