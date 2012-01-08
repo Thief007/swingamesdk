@@ -1370,7 +1370,7 @@ implementation
        SDL_gfx, SDL, SDL_Image, // sdl
        sgSavePNG, 
        sgTrace, 
-       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface;
+       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -1819,16 +1819,10 @@ implementation
   end;
 
   procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : Longint); overload;
-  begin
-    if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
-    rectangleColor(dest^.surface, xPos, yPos, xPos + width - 1, yPos + height - 1, ToGfxColor(clr));
-  end;
-
-  procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : Longint);
   var
-    rect: SDL_Rect;
+    rect: Rectangle;
   begin
-    if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
+    if dest = nil then begin RaiseWarning('DrawRectangle - No destination bitmap supplied'); exit; end;
     
     if width < 0 then
     begin
@@ -1842,11 +1836,35 @@ implementation
       height := -height;
     end else rect.y := yPos;
     
-    rect.w := width;
-    rect.h := height;
+    rect.width := width;
+    rect.height := height;
+    
+    GraphicsDriver.DrawRectangle(dest, rect, clr);
+  end;
+
+  procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : Longint);
+  var
+    rect: Rectangle;
+  begin
+    if dest = nil then begin RaiseWarning('FillRectangle - No destination bitmap supplied'); exit; end;
+    
+    if width < 0 then
+    begin
+      rect.x := xPos + width; //move back by width
+      width := -width;
+    end else rect.x := xPos;
+    
+    if height < 0 then
+    begin
+      rect.y := yPos + height; //move up by height
+      height := -height;
+    end else rect.y := yPos;
+    
+    rect.width := width;
+    rect.height := height;
     
     //SDL_FillRect(dest^.surface, @rect, clr);
-    boxColor(dest^.surface, rect.x, rect.y, rect.x + width - 1, rect.y + height - 1, ToGfxColor(clr));
+    GraphicsDriver.FillRectangle(dest, rect, clr);
   end;
   
   /// Draws a vertical line on the destination bitmap.
@@ -1860,8 +1878,8 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: Longint);
   begin
-    if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
-    vlineColor(dest^.surface, x, y1, y2, ToGfxColor(clr));
+    if dest = nil then begin RaiseWarning('DrawVerticalLine - No destination bitmap supplied'); exit; end;
+    DrawLine(dest, clr, x, y1, x, y2);
   end;
 
   /// Draws a horizontal line on the destination bitmap.
@@ -1875,9 +1893,8 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: Longint);
   begin
-    if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
-      
-    hlineColor(dest^.surface, x1, x2, y, ToGfxColor(clr));
+    if dest = nil then begin RaiseWarning('DrawHorizontalLine - No destination bitmap supplied'); exit; end;
+    DrawLine(dest, clr, x1, y, x2, y);
   end;
 
   /// Draws a line on the destination bitmap.
@@ -1891,10 +1908,8 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint);
   begin
-    try
-      aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(clr));
-    except
-    end;
+		if dest = nil then begin RaiseWarning('DrawLine - No destination bitmap supplied'); exit; end;
+		GraphicsDriver.DrawLine(dest, xPosStart, yPosStart, xPosEnd, yPosEnd, clr);
   end;
 
   /// Draws a pixel onto the destination bitmap.
@@ -1907,15 +1922,14 @@ implementation
   /// - Sets one pixel on the destination bitmap
   procedure DrawPixel(dest: Bitmap; clr: Color; x, y: Longint); overload;
   begin
-    if dest = nil then begin RaiseException('The destination bitmap to draw a pixel is nil'); exit; end;
+    if dest = nil then begin RaiseWarning('DrawPixel - No destination bitmap supplied'); exit; end;
     
-    if (x < 0) or (x >= dest^.surface^.w) or (y < 0) or (y >= dest^.surface^.h) then exit;
-    
-    //if SDL_MUSTLOCK(dest^.surface) then SDL_LockSurface(dest^.surface);
-    
-    pixelColor(dest^.surface, x, y, ToGfxColor(clr));
-    
-    //if SDL_MUSTLOCK(dest^.surface) then SDL_UnlockSurface(dest^.surface);
+    if (x < 0) or (x >= dest^.surface^.w) or (y < 0) or (y >= dest^.surface^.h) then 
+    begin 
+      RaiseWarning('DrawPixel - Coordinate out of range of Bitmap supplied'); 
+      exit; 
+    end;
+    GraphicsDriver.SetPixelColor(dest, x, y, clr);
   end;
   
   
@@ -2093,13 +2107,9 @@ implementation
   end;
   
   procedure DoSetClip(bmp: Bitmap; const r: Rectangle); overload;
-  var
-    rect: SDL_Rect;
   begin
-    if bmp = nil then begin RaiseException('Cannot set clip, bmp must not be nil'); exit; end;
-    
-    rect := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
-    SDL_SetClipRect(bmp^.surface, @rect);
+    if bmp = nil then begin RaiseWarning('DoSetClip - Cannot set clip, bmp must not be nil'); exit; end;
+    GraphicsDriver.SetClipRectangle(bmp, r);
   end;
   
   procedure PushClip(bmp: Bitmap; const r: Rectangle); overload;
@@ -2194,84 +2204,6 @@ implementation
 // Set Icon / Window Open / Screen Size / Resize
 //----------------------------------------------------------------------------
 
-  procedure _SetupScreen();
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGraphics', '_SetupScreen');
-    {$ENDIF}
-    if screen = nil then New(screen)
-    else if (screen^.surface <> nil) then SDL_FreeSurface(screen^.surface);
-
-    with _screen^.format^ do
-    begin
-      screen^.surface := SDL_CreateRGBSurface(SDL_HWSURFACE,
-                                             ScreenWidth(), ScreenHeight(), 32,
-                                             RMask, GMask, BMask, 
-                                             $ffffffff and not RMask
-                                                and not GMask
-                                                and not BMask);
-      
-      //WriteLn(RMask, ':', GMask, ':', BMask, ':', screen^.surface^.format^.AMask);
-      
-      //Turn off alpha blending for when scr is blit onto _screen
-      SDL_SetAlpha(screen^.surface, 0, 255);
-      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, 0);
-
-      baseSurface := screen^.surface;
-
-      screen^.width := _screen^.w;
-      screen^.height := _screen^.h;
-      screenRect := BitmapRectangle(0,0,screen);
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgGraphics', '_SetupScreen');
-    {$ENDIF}
-  end;
-
-  /// Sets up the graphical window for the specified width and height.
-  /// Sets the caption of the window, and the icon if one is specified.
-  procedure _InitSDL(caption: String; screenWidth, screenHeight: Longint);
-  var
-    icon: PSDL_Surface;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGraphics', 'InitSDL');
-    {$ENDIF}
-
-    if (screenWidth < 1) or (screenHeight < 1) then
-    begin
-      RaiseException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
-      exit;
-    end;
-
-    if Length(iconFile) > 0 then
-    begin
-      try
-        icon := IMG_Load(PChar(iconFile));
-        SDL_WM_SetIcon(icon, 0);
-        SDL_FreeSurface(icon);
-      except
-        RaiseException('The icon file specified could not be loaded');
-        exit;
-      end;
-    end;
-
-    _screen := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
-    if _screen = nil then
-    begin
-      RaiseException('Unable to create window drawing surface... ' + SDL_GetError());
-      exit;
-    end;
-
-    _SetupScreen();
-    if length(caption) > 0 then
-      SDL_WM_SetCaption(PChar(caption), nil);
-
-    {$IFDEF TRACE}
-      TraceExit('sgGraphics', '_InitSDL');
-    {$ENDIF}
-  end;
-
   procedure SetIcon(filename: String);
   begin
     {$IFDEF TRACE}
@@ -2291,12 +2223,12 @@ implementation
 
     if screen <> nil then
     begin
-      RaiseException('Screen has been created. Cannot create multiple windows.');
+      RaiseWarning('Screen has been created. Cannot create multiple windows.');
       exit;
     end;
 
     try         
-      _InitSDL(caption, width, height);
+      GraphicsDriver.InitializeGraphicsWindow(caption, width, height);
       
       //Init the colors
       ColorWhite := RGBAColor(255, 255, 255, 255);
@@ -2387,29 +2319,23 @@ implementation
   end;
 
   procedure ChangeScreenSize(width, height: Longint);
-  var
-    oldScr: PSDL_Surface;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ChangeScreenSize');
     {$ENDIF}
     if (screen = nil) then
     begin
-      RaiseException('Screen has not been created. Unable to get screen width.');
+      RaiseWarning('Screen has not been created. Unable to get screen width.');
       exit;
     end;
 
     if (width < 1) or (height < 1) then
     begin
-      RaiseException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+      RaiseWarning('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
       exit; 
     end;
-
     if (width = ScreenWidth()) and (height = ScreenHeight()) then exit;
-
-    oldScr := _screen;
-    _screen := SDL_SetVideoMode(width, height, 32, oldScr^.flags);
-    _SetupScreen();
+    GraphicsDriver.ResizeGraphicsWindow(width, height);
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ChangeScreenSize');
     {$ENDIF}
@@ -2422,7 +2348,7 @@ implementation
     {$ENDIF}
     if (_screen = nil) then
     begin
-      RaiseException('Screen has not been created. Unable to get screen width.');
+      RaiseWarning('Screen has not been created. Unable to get screen width.');
       exit;
     end;
     
@@ -2439,7 +2365,7 @@ implementation
     {$ENDIF}
     if (_screen = nil) then
     begin
-      RaiseException('Screen has not been created. Unable to get screen height.');
+      RaiseWarning('Screen has not been created. Unable to get screen height.');
       exit;
     end;
     result := _screen^.h;
@@ -2473,9 +2399,9 @@ implementation
     end;
     
     //if SDL_SaveBMP(screen^.surface, PChar(path + filename)) = -1 then
-    if not png_save_surface(path + filename, screen^.surface) then
+    if not GraphicsDriver.SaveImage(screen, path + filename) then
     begin
-      RaiseException('Failed to save ' + basename + ': ' + SDL_GetError());
+      RaiseWarning('Failed to save ' + basename + ': ' + SDL_GetError());
       exit;
     end;
     {$IFDEF TRACE}

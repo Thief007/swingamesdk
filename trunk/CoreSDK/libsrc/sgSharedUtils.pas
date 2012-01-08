@@ -51,7 +51,7 @@ uses sgTypes;
   
   procedure MakeFalse (var visited: Array of Boolean);
   function WithinRange(lowerBound : Integer; upperBound : Integer; currentIndex : Integer) : Boolean;
-  
+    
   type
     LineData = record
       filename: String;

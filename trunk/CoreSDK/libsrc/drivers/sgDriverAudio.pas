@@ -13,6 +13,7 @@ unit sgDriverAudio;
 // Notes:
 //		- Pascal PChar is equivalent to a C-type string
 // 		- Pascal Word is equivalent to a Uint16
+//		- Pascal LongWord is equivalent to a Uint32
 //
 //=============================================================================
 interface
