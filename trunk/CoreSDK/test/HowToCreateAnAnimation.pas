@@ -30,6 +30,9 @@ begin
 	until SpriteAnimationHasEnded(explosion);
 	
 	Delay(800);
+	
+	CloseAudio();
+	ReleaseAllResources();
 end;
 
 begin

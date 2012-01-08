@@ -18,6 +18,8 @@ begin
 	DrawSprite(ball);
 	RefreshScreen();
 	Delay(5000);
+	
+	ReleaseAllResources();
 end;
 
 begin

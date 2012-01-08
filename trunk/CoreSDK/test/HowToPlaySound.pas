@@ -17,6 +17,9 @@ begin
     
 	PlaySoundEffect('boom');
     Delay(500);
+	
+	CloseAudio();
+	ReleaseAllResources();
 end;
 
 begin
