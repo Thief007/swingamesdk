@@ -13,6 +13,8 @@ begin
 	RefreshScreen();
     
     delay(5000);
+
+	ReleaseAllResources();
 end;
 
 begin

@@ -23,6 +23,8 @@ begin
 		RefreshScreen();
 		ProcessEvents();
 	until WindowCloseRequested();
+
+	ReleaseAllResources();  
 end;
 
 begin

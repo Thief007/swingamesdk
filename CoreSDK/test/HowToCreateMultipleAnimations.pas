@@ -61,6 +61,9 @@ begin
 		UpdateSprite(explosion_loop);
 		ProcessEvents();
 	until WindowCloseRequested();
+	
+	CloseAudio();
+	ReleaseAllResources();
 end;
 
 begin
