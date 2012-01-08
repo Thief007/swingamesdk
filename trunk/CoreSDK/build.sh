@@ -4,6 +4,8 @@
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
 
 #
 # Step 1: Detect the operating system
@@ -24,6 +26,7 @@ fi
 # Set the basic paths
 #
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
@@ -39,9 +42,9 @@ fi
 #
 FPC_BIN=`which fpc`
 if [ "$OS" = "$WIN" ]; then
-    PAS_FLAGS="-g -Cr -Ci -gc -Ct"
+    PAS_FLAGS="-g -Ci -gc -Ct"
 else
-    PAS_FLAGS="-gw -Cr -Ci -Ct"
+    PAS_FLAGS="-gw -Ci -Ct"
 fi
 DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src ${DRV_LIB}"
@@ -117,7 +120,7 @@ doBasicMacCompile()
     mkdir -p ${TMP_DIR}/${1}
     echo "  ... Compiling $GAME_NAME - $1"
     
-    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gh -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
     
@@ -183,7 +186,7 @@ doLipo()
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ] 
     then
     	echo "  ... Removing old application"
@@ -246,7 +249,7 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${OUT_DIR}/Resources"
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
@@ -274,7 +277,7 @@ doWindowsCompile()
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${OUT_DIR}/Resources
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
@@ -300,7 +303,7 @@ doCopyResources()
 {
     echo "  ... Copying Resources into $GAME_NAME"
     
-    copyWithoutSVN "${APP_PATH}/test/Resources" "${RESOURCE_DIR}"
+    copyWithoutSVN "${FULL_APP_PATH}/test/Resources" "${RESOURCE_DIR}"
 }
 
 
@@ -397,7 +400,7 @@ rm -f ${LOG_FILE} 2>> /dev/null
 echo "  Finished"
 echo "--------------------------------------------------"
 if [ "$OS" = "$MAC" ]; then
-    ${APP_PATH}/bin/Test.app/Contents/MacOS/Test
+    ${FULL_APP_PATH}/bin/Test.app/Contents/MacOS/Test
 else
-    ${APP_PATH}/bin/Test
+    ${FULL_APP_PATH}/bin/Test
 fi
