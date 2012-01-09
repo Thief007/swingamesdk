@@ -1,5 +1,5 @@
 program HowToCreateASprite;
-uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils;
+uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgResources;
 
 procedure Main();
 var
@@ -16,6 +16,7 @@ begin
 	SpriteSetY(ball, 100);
 	
 	DrawSprite(ball);
+	UpdateSprite(ball);
 	RefreshScreen();
 	Delay(5000);
 	

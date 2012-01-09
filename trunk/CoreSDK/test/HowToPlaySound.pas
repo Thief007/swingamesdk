@@ -1,5 +1,5 @@
 program HowToPlaySound;
-uses sgGraphics, sgTypes, sgImages, sgUtils, sgAudio;
+uses sgGraphics, sgTypes, sgImages, sgUtils, sgAudio, sgResources;
 
 procedure Main();
 begin

@@ -1,5 +1,5 @@
 program HowToExplodeASprite;
-uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations;
+uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
 
 procedure CheckExplosion(ball, explosion : sprite);
 begin

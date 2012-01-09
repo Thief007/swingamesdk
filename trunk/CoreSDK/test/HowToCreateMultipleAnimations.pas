@@ -1,5 +1,5 @@
 program HowToCreateAnAnimation;
-uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations;
+uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
 
 procedure Main();
 var
@@ -7,6 +7,7 @@ var
 	implosion: Sprite;
 	explosion_loop: Sprite;
 	explosionBmp: Bitmap;
+	input: String;
 begin
     OpenAudio();
 	OpenGraphicsWindow('Miltiple Animations', 800, 600);
@@ -19,10 +20,6 @@ begin
 	implosion := CreateSprite(explosionBmp, AnimationScriptNamed('explosionScrpt'));
 	explosion_loop := CreateSprite(explosionBmp, AnimationScriptNamed('explosionScrpt'));
 	
-	SpriteStartAnimation(explosion, 'explosion');
-	SpriteStartAnimation(implosion, 'implosion');
-	SpriteStartAnimation(explosion_loop, 'explosion_loop');
-	
 	SpriteSetX(explosion, 200);
     SpriteSetY(explosion, 100);
 	
@@ -32,35 +29,52 @@ begin
 	SpriteSetX(explosion_loop, 600);
 	SpriteSetY(explosion_loop, 500);
 	
+	writeln('Please enter (e) for explosion, (i) for implosion or (l) for continous explosion');
+	readln(input);
+	
+	SpriteStartAnimation(explosion, 'explosion');
+	SpriteStartAnimation(implosion, 'implosion');
+	SpriteStartAnimation(explosion_loop, 'explosion_loop');
+	
 	ClearScreen(ColorWhite);
 	
-	repeat
-		ClearScreen(ColorWhite);
-		DrawSprite(explosion);
-		RefreshScreen();
-		UpdateSprite(explosion);
-		ProcessEvents();
-	until SpriteAnimationHasEnded(explosion);
+	if (input = 'e') then
+	begin
+		repeat
+			ClearScreen(ColorWhite);
+			DrawSprite(explosion);
+			RefreshScreen();
+			UpdateSprite(explosion);
+			ProcessEvents();
+		until SpriteAnimationHasEnded(explosion);
+	end
 	
-	delay(1500);
+	else if (input = 'i') then
+	begin
+		repeat
+			ClearScreen(ColorWhite);
+			DrawSprite(implosion);
+			RefreshScreen();
+			UpdateSprite(implosion);
+			ProcessEvents();
+		until SpriteAnimationHasEnded(implosion);
+	end
 	
-	repeat
-		ClearScreen(ColorWhite);
-		DrawSprite(implosion);
-		RefreshScreen();
-		UpdateSprite(implosion);
-		ProcessEvents();
-	until SpriteAnimationHasEnded(implosion);
+	else if (input = 'l') then
+	begin
+		repeat
+			ClearScreen(ColorWhite);
+			DrawSprite(explosion_loop);
+			RefreshScreen();
+			UpdateSprite(explosion_loop);
+			ProcessEvents();
+		until WindowCloseRequested();
+	end
 	
-	delay(1500);
-	
-	repeat
-		ClearScreen(ColorWhite);
-		DrawSprite(explosion_loop);
-		RefreshScreen();
-		UpdateSprite(explosion_loop);
-		ProcessEvents();
-	until WindowCloseRequested();
+	else
+		writeln('you provided a wrong input, GOOD BYE!!');
+		
+	delay(500);
 	
 	CloseAudio();
 	ReleaseAllResources();
