@@ -133,6 +133,30 @@ implementation
     SDL_SetClipRect(dest^.surface, @SDLrect);
   end;
   
+  procedure ResetClipProcedure(bmp : Bitmap);
+  begin
+    if bmp = nil then begin RaiseWarning('SDL1.2 Driver - ResetClip recieved empty Bitmap'); exit; end;
+    
+    SetLength(bmp^.clipStack, 0);
+    SDL_SetClipRect(bmp^.surface, nil);
+  end;
+
+  procedure SetVideoModeFullScreenProcedure();
+  var
+    oldScr: PSDL_Surface;
+  begin    
+    oldScr := _screen;
+    _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
+  end;
+  
+  procedure SetVideoModeNoFrameProcedure();
+  var
+    oldScr: PSDL_Surface;
+  begin    
+    oldScr := _screen;
+    _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_NOFRAME);
+  end;
+  
   // This procedure sets up the global variable (screen)
   procedure _SetupScreen();
   begin
@@ -227,25 +251,25 @@ implementation
 	begin
 		Write('Loading SDL 1.2 Graphics Driver...');
 		GraphicsDriver.GetPixel32 := @GetPixel32Procedure;
-		GraphicsDriver.PutPixel := @PutPixelProcedure;
-		
+		GraphicsDriver.PutPixel := @PutPixelProcedure;		
 		GraphicsDriver.FillTriangle := @FillTriangleProcedure;
-		GraphicsDriver.DrawTriangle := @DrawTriangleProcedure;
-		
+		GraphicsDriver.DrawTriangle := @DrawTriangleProcedure;		
 		GraphicsDriver.FillCircle := @FillCircleProcedure;
-		GraphicsDriver.DrawCircle := @DrawCircleProcedure;
-		
+		GraphicsDriver.DrawCircle := @DrawCircleProcedure;		
 		GraphicsDriver.FillEllipse := @FillEllipseProcedure;
-		GraphicsDriver.DrawEllipse := @DrawEllipseProcedure;
-		
+		GraphicsDriver.DrawEllipse := @DrawEllipseProcedure;		
 		GraphicsDriver.FillRectangle := @FillRectangleProcedure;
 		GraphicsDriver.DrawLine := @DrawLineProcedure;
 		GraphicsDriver.SetPixelColor := @SetPixelColorProcedure;
     GraphicsDriver.DrawRectangle := @DrawRectangleProcedure;
     GraphicsDriver.SetClipRectangle := @SetClipRectangleProcedure;
+    GraphicsDriver.ResetClip                := @ResetClipProcedure;
+    GraphicsDriver.SetVideoModeFullScreen   := @SetVideoModeFullScreenProcedure;
+    GraphicsDriver.SetVideoModeNoFrame      := @SetVideoModeNoFrameProcedure;
+    
     GraphicsDriver.InitializeGraphicsWindow := @InitializeGraphicsWindowProcedure;
-    GraphicsDriver.ResizeGraphicsWindow := @ResizeGraphicsWindowProcedure;
-    GraphicsDriver.SaveImage := @SaveImageProcedure;
+    GraphicsDriver.ResizeGraphicsWindow     := @ResizeGraphicsWindowProcedure;
+    GraphicsDriver.SaveImage                := @SaveImageProcedure;
 		WriteLn('Finished.');
 	end;
 end.
