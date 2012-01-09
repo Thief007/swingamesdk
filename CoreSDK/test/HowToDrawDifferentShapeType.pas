@@ -3,17 +3,16 @@ uses
   sgTypes, sgInput, sgGraphics, sgResources, sgUtils;
 
 type
-	ShapeType = (Circle, Line, Rectangle, Triangle, Square);
+	ShapeType = (Circle, Line, Rectangle, Triangle, Square, Ellipse);
 	
-procedure HandleInput();
-var	
-	typeOfShape : ShapeType;
+procedure HandleInput(var typeOfShape : ShapeType);
 begin	
 	if(KeyDown(vk_c)) then typeOfShape := Circle;
 	if(KeyDown(vk_l)) then typeOfShape := Line;
 	if(KeyDown(vk_r)) then typeOfShape := Rectangle;
 	if(KeyDown(vk_t)) then	typeOfShape := Triangle;
 	if(KeyDown(vk_s)) then	typeOfShape := Square;
+  if(KeyDown(vk_e)) then	typeOfShape := Ellipse;
 	
 	if(MouseClicked(LeftButton)) then
 	begin		
@@ -23,20 +22,25 @@ begin
 			Rectangle: 	FillRectangle(RandomColor(), MousePosition.x-30, MousePosition.y-15, 60, 30);
 			Square:		FillRectangle(RandomColor(), MousePosition.x-30, MousePosition.y-30, 60, 60);
 			Triangle:	FillTriangle(RandomColor(), MousePosition.x-25, MousePosition.y+25, MousePosition.x+25, MousePosition.y+25, MousePosition.x, MousePosition.y-25);
+			Ellipse :	FillEllipse(RandomColor(), MousePosition.x-30, MousePosition.y-30, 60, 30);
 		end;		
 	end
 end;
   
 procedure Main();
+var	
+	typeOfShape : ShapeType;
 begin 
 	OpenGraphicsWindow('Drawing different type of shapes', 800, 600);	
 	
 	ClearScreen(ColorWhite);	
 	
+	typeOfShape := Circle;
+	
 	repeat // The game loop...
 		ProcessEvents();		
 		
-		HandleInput();		
+		HandleInput(typeOfShape);		
 		
 		RefreshScreen();
 	until WindowCloseRequested();

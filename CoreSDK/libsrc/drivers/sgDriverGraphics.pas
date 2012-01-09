@@ -20,6 +20,17 @@ interface
 	uses sgTypes, sgDriverGraphicsSDL;
 	
 	type
+	  GetPixel32Procedure = function (bmp: Bitmap; x, y: Longint) : Color;
+    PutPixelProcedure = procedure (bmp: Bitmap; clr: Color; x, y: Longint);      
+    FillTriangleProcedure = procedure (dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);  
+    DrawTriangleProcedure = procedure (dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+      
+    FillCircleProcedure = procedure (dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); 
+    DrawCircleProcedure = procedure (dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
+      
+      
+	  FillEllipseProcedure = procedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+	  DrawEllipseProcedure = procedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
 		FillRectangleProcedure = procedure (dest : Bitmap; rect : Rectangle; clr : Color);
     DrawRectangleProcedure = procedure (dest : Bitmap; rect : Rectangle; clr : Color);
 		DrawLineProcedure = procedure (dest : Bitmap; x1, y1, x2, y2 : Longint; clr : Color);
@@ -30,14 +41,25 @@ interface
     SaveImageProcedure = function(bmpToSave : Bitmap; path : String) : Boolean;
 
 	GraphicsDriverRecord = record
-	  FillRectangle : FillRectangleProcedure;
-		DrawLine : DrawLineProcedure;
-		SetPixelColor : SetPixelColorProcedure;
-    DrawRectangle : DrawRectangleProcedure;
-    SetClipRectangle : SetClipRectangleProcedure;
-    InitializeGraphicsWindow : InitializeGraphicsWindowProcedure;
-    ResizeGraphicsWindow : ResizeGraphicsWindowProcedure;
-    SaveImage : SaveImageProcedure;
+	  GetPixel32                : GetPixel32Procedure;
+	  PutPixel                  : PutPixelProcedure;
+	  
+	  FillTriangle              : FillTriangleProcedure;
+	  DrawTriangle              : DrawTriangleProcedure;
+	  
+	  FillCircle                : FillCircleProcedure;
+	  DrawCircle                : DrawCircleProcedure;
+	  
+    FillEllipse               : FillEllipseProcedure;
+	  DrawEllipse               : DrawEllipseProcedure;
+	  FillRectangle             : FillRectangleProcedure;
+		DrawLine                  : DrawLineProcedure;
+		SetPixelColor             : SetPixelColorProcedure;
+    DrawRectangle             : DrawRectangleProcedure;
+    SetClipRectangle          : SetClipRectangleProcedure;
+    InitializeGraphicsWindow  : InitializeGraphicsWindowProcedure;
+    ResizeGraphicsWindow      : ResizeGraphicsWindowProcedure;
+    SaveImage                 : SaveImageProcedure;
 	end;
 	
 	var
@@ -47,6 +69,54 @@ implementation
 	procedure LoadDefaultGraphicsDriver();
 	begin
 		LoadSDLGraphicsDriver();
+	end;
+	
+	function DefaultGetPixel32Procedure (bmp: Bitmap; x, y: Longint) : Color;
+	begin
+		LoadDefaultGraphicsDriver();
+		result := GraphicsDriver.GetPixel32(bmp, x, y);
+	end;
+	
+	procedure DefaultPutPixelProcedure (bmp: Bitmap; clr: Color; x, y: Longint);
+	begin
+		LoadDefaultGraphicsDriver();
+		GraphicsDriver.PutPixel(bmp, clr, x, y);
+	end;
+
+  procedure DefaultFillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  begin
+  	LoadDefaultGraphicsDriver();
+  	GraphicsDriver.FillTriangle(dest, clr, x1, y1, x2, y2, x3, y3);
+  end;
+
+  procedure DefaultDrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  begin
+  	LoadDefaultGraphicsDriver();
+  	GraphicsDriver.DrawTriangle(dest, clr, x1, y1, x2, y2, x3, y3);
+  end;
+  
+  procedure DefaultFillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); 
+  begin
+  	LoadDefaultGraphicsDriver();
+  	GraphicsDriver.FillCircle(dest, clr, xc, yc, radius);
+  end;
+
+  procedure DefaultDrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); 
+  begin
+  	LoadDefaultGraphicsDriver();
+  	GraphicsDriver.DrawCircle(dest, clr, xc, yc, radius);
+  end;
+	
+	procedure DefaultFillEllipseProcedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+	begin
+		LoadDefaultGraphicsDriver();
+		GraphicsDriver.FillEllipse(dest, clr,  xPos, yPos, halfWidth, halfHeight);
+	end;
+	
+	procedure DefaultDrawEllipseProcedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+	begin
+		LoadDefaultGraphicsDriver();
+		GraphicsDriver.DrawEllipse(dest, clr,  xPos, yPos, halfWidth, halfHeight);
 	end;
 	
 	procedure DefaultFillRectangleProcedure (dest : Bitmap; rect : Rectangle; clr : Color);
@@ -99,6 +169,17 @@ implementation
 
 	initialization
 	begin
+		GraphicsDriver.GetPixel32 := @DefaultGetPixel32Procedure;
+  	GraphicsDriver.PutPixel := @DefaultPutPixelProcedure;
+		
+		GraphicsDriver.FillTriangle := @DefaultFillTriangleProcedure;
+		GraphicsDriver.DrawTriangle := @DefaultDrawTriangleProcedure;
+		
+		GraphicsDriver.FillCircle := @DefaultFillCircleProcedure;
+		GraphicsDriver.DrawCircle := @DefaultDrawCircleProcedure;		
+		
+		GraphicsDriver.FillEllipse := @DefaultFillEllipseProcedure;
+		GraphicsDriver.DrawEllipse := @DefaultDrawEllipseProcedure;
 		GraphicsDriver.FillRectangle := @DefaultFillRectangleProcedure;
 		GraphicsDriver.DrawLine := @DefaultDrawLineProcedure;
 		GraphicsDriver.SetPixelColor := @DefaultSetPixelColorProcedure;

@@ -23,10 +23,76 @@ interface
 implementation
 	uses sgDriverGraphics, sysUtils;
 	
+	function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
+	begin
+		if not Assigned(bmp) then begin RaiseWarning('SDL1.2 Driver - GetPixel32Procedure recieved empty Bitmap'); exit; end;
+		
+	  if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
+    begin
+      result := 0;
+      exit;
+    end;  
+		  
+		result := GetPixel32(bmp^.surface, x, y);
+	end;
+		
+	procedure PutPixelProcedure(bmp: Bitmap; clr: Color; x, y: Longint);
+  var
+      p:    ^Color;
+      bpp:  Longint;
+  begin
+      if not assigned(bmp) then begin RaiseWarning('SDL1.2 Driver - PutPixelProcedure recieved empty Bitmap'); exit; end;
+        
+      bpp := bmp^.surface^.format^.BytesPerPixel;
+      // Here p is the address to the pixel we want to set
+      p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
+
+      if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
+      p^ := clr;
+  end;
+  
+  procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  begin
+    if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawTriangleProcedure recieved empty Bitmap'); exit; end;
+    trigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
+  end;
+
+  procedure FillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  begin
+    if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillTriangleProcedure recieved empty Bitmap'); exit; end;
+    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
+  end;
+	
+  procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
+  begin
+    if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawCircleProcedure recieved empty Bitmap'); exit; end;
+    aacircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
+  end;
+
+  procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
+  begin
+    if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
+    filledCircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
+  end;
+  
+	// This procedure draws an Ellipse to a bitmap
+	procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+	begin
+		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillEllipseProcedure recieved empty Bitmap'); exit; end;
+		filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
+	end;
+	
+	// This procedure draws an Ellipse to a bitmap
+	procedure DrawEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+	begin
+		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawEllipseProcedure recieved empty Bitmap'); exit; end;
+		aaellipseColor(dest^.surface, xPos, yPos, halfWidth, halfHeight, ToGfxColor(clr));
+	end;
+	
 	// This procedure draws a filled rectangle to a bitmap
 	procedure FillRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
 	begin
-		if not Assigned(dest^.surface) then RaiseWarning('SDL1.2 Driver - FillRectangleProcedure recieved empty Bitmap');
+		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillRectangleProcedure recieved empty Bitmap'); exit; end;
 		boxColor(dest^.surface, 
 			RoundInt(rect.x), RoundInt(rect.y), 
 			RoundInt(rect.x + rect.width - 1), RoundInt(rect.y + rect.height - 1), 
@@ -35,7 +101,7 @@ implementation
 	
 	procedure DrawRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
 	begin
-		if not Assigned(dest^.surface) then RaiseWarning('SDL1.2 Driver - DrawRectangleProcedure recieved empty Bitmap');
+		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawRectangleProcedure recieved empty Bitmap'); exit; end;
     rectangleColor(dest^.surface, 
       RoundInt(rect.x), RoundInt(rect.y), 
       RoundInt(rect.x + rect.width - 1), RoundInt(rect.y + rect.height - 1), 
@@ -160,6 +226,18 @@ implementation
 	procedure LoadSDLGraphicsDriver();
 	begin
 		Write('Loading SDL 1.2 Graphics Driver...');
+		GraphicsDriver.GetPixel32 := @GetPixel32Procedure;
+		GraphicsDriver.PutPixel := @PutPixelProcedure;
+		
+		GraphicsDriver.FillTriangle := @FillTriangleProcedure;
+		GraphicsDriver.DrawTriangle := @DrawTriangleProcedure;
+		
+		GraphicsDriver.FillCircle := @FillCircleProcedure;
+		GraphicsDriver.DrawCircle := @DrawCircleProcedure;
+		
+		GraphicsDriver.FillEllipse := @FillEllipseProcedure;
+		GraphicsDriver.DrawEllipse := @DrawEllipseProcedure;
+		
 		GraphicsDriver.FillRectangle := @FillRectangleProcedure;
 		GraphicsDriver.DrawLine := @DrawLineProcedure;
 		GraphicsDriver.SetPixelColor := @SetPixelColorProcedure;
