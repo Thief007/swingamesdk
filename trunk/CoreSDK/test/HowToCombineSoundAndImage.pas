@@ -40,6 +40,9 @@ begin
 	CircleEffect();
 	RectangleEffect();
 	Delay(1600);
+	
+	CloseAudio();
+	ReleaseAllResources();
 end;
 
 begin
