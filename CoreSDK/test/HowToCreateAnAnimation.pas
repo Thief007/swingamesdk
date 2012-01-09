@@ -1,5 +1,5 @@
 program HowToCreateAnAnimation;
-uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations;
+uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
 
 procedure Main();
 var

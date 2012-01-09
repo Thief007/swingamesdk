@@ -1,5 +1,5 @@
 program HowToDrawBitmap;
-uses sgGraphics, sgTypes, sgImages, sgUtils, sgAudio;
+uses sgGraphics, sgTypes, sgImages, sgUtils, sgAudio, sgResources;
 
 procedure main();
 begin    
