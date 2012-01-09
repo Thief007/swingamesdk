@@ -23,12 +23,9 @@ interface
 	  GetPixel32Procedure = function (bmp: Bitmap; x, y: Longint) : Color;
     PutPixelProcedure = procedure (bmp: Bitmap; clr: Color; x, y: Longint);      
     FillTriangleProcedure = procedure (dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);  
-    DrawTriangleProcedure = procedure (dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
-      
+    DrawTriangleProcedure = procedure (dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);      
     FillCircleProcedure = procedure (dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); 
-    DrawCircleProcedure = procedure (dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
-      
-      
+    DrawCircleProcedure = procedure (dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);      
 	  FillEllipseProcedure = procedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
 	  DrawEllipseProcedure = procedure (dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
 		FillRectangleProcedure = procedure (dest : Bitmap; rect : Rectangle; clr : Color);
@@ -36,20 +33,22 @@ interface
 		DrawLineProcedure = procedure (dest : Bitmap; x1, y1, x2, y2 : Longint; clr : Color);
 		SetPixelColorProcedure = procedure (dest : Bitmap; x, y : Integer; clr : Color);
     SetClipRectangleProcedure = procedure (dest : Bitmap; rect : Rectangle);
+      
+    ResetClipProcedure = procedure (bmp: Bitmap);  
+    SetVideoModeFullScreenProcedure   = procedure ();
+    SetVideoModeNoFrameProcedure      = procedure ();
+      
     InitializeGraphicsWindowProcedure = procedure(caption : String; screenWidth, screenHeight : LongInt);
     ResizeGraphicsWindowProcedure = procedure(newWidth, newHeight : LongInt);
     SaveImageProcedure = function(bmpToSave : Bitmap; path : String) : Boolean;
 
 	GraphicsDriverRecord = record
 	  GetPixel32                : GetPixel32Procedure;
-	  PutPixel                  : PutPixelProcedure;
-	  
+	  PutPixel                  : PutPixelProcedure;	  
 	  FillTriangle              : FillTriangleProcedure;
-	  DrawTriangle              : DrawTriangleProcedure;
-	  
+	  DrawTriangle              : DrawTriangleProcedure;	  
 	  FillCircle                : FillCircleProcedure;
-	  DrawCircle                : DrawCircleProcedure;
-	  
+	  DrawCircle                : DrawCircleProcedure;	  
     FillEllipse               : FillEllipseProcedure;
 	  DrawEllipse               : DrawEllipseProcedure;
 	  FillRectangle             : FillRectangleProcedure;
@@ -57,6 +56,9 @@ interface
 		SetPixelColor             : SetPixelColorProcedure;
     DrawRectangle             : DrawRectangleProcedure;
     SetClipRectangle          : SetClipRectangleProcedure;
+    ResetClip                 : ResetClipProcedure;
+    SetVideoModeFullScreen    : SetVideoModeFullScreenProcedure;
+    SetVideoModeNoFrame       : SetVideoModeNoFrameProcedure;
     InitializeGraphicsWindow  : InitializeGraphicsWindowProcedure;
     ResizeGraphicsWindow      : ResizeGraphicsWindowProcedure;
     SaveImage                 : SaveImageProcedure;
@@ -148,6 +150,24 @@ implementation
     LoadDefaultGraphicsDriver();
     GraphicsDriver.SetClipRectangle(dest, rect);
   end;
+  
+  procedure DefaultResetClipProcedure(dest : Bitmap);
+  begin
+    LoadDefaultGraphicsDriver();
+    GraphicsDriver.ResetClip(dest);
+  end;
+
+  procedure DefaultSetVideoModeFullScreenProcedure();
+  begin
+    LoadDefaultGraphicsDriver();
+    GraphicsDriver.SetVideoModeFullScreen();
+  end;
+
+  procedure DefaultSetVideoModeNoFrameProcedure();
+  begin
+    LoadDefaultGraphicsDriver();
+    GraphicsDriver.SetVideoModeNoFrame();
+  end;
 	
   procedure DefaultInitializeGraphicsWindowProcedure(caption : String; screenWidth, screenHeight : LongInt);
   begin
@@ -169,25 +189,25 @@ implementation
 
 	initialization
 	begin
-		GraphicsDriver.GetPixel32 := @DefaultGetPixel32Procedure;
-  	GraphicsDriver.PutPixel := @DefaultPutPixelProcedure;
-		
-		GraphicsDriver.FillTriangle := @DefaultFillTriangleProcedure;
-		GraphicsDriver.DrawTriangle := @DefaultDrawTriangleProcedure;
-		
-		GraphicsDriver.FillCircle := @DefaultFillCircleProcedure;
-		GraphicsDriver.DrawCircle := @DefaultDrawCircleProcedure;		
-		
-		GraphicsDriver.FillEllipse := @DefaultFillEllipseProcedure;
-		GraphicsDriver.DrawEllipse := @DefaultDrawEllipseProcedure;
-		GraphicsDriver.FillRectangle := @DefaultFillRectangleProcedure;
-		GraphicsDriver.DrawLine := @DefaultDrawLineProcedure;
-		GraphicsDriver.SetPixelColor := @DefaultSetPixelColorProcedure;
-    GraphicsDriver.DrawRectangle := @DefaultDrawRectangleProcedure;
-    GraphicsDriver.SetClipRectangle := @DefaultSetClipRectangleProcedure;
+		GraphicsDriver.GetPixel32               := @DefaultGetPixel32Procedure;
+  	GraphicsDriver.PutPixel                 := @DefaultPutPixelProcedure;		
+		GraphicsDriver.FillTriangle             := @DefaultFillTriangleProcedure;
+		GraphicsDriver.DrawTriangle             := @DefaultDrawTriangleProcedure;		
+		GraphicsDriver.FillCircle               := @DefaultFillCircleProcedure;
+		GraphicsDriver.DrawCircle               := @DefaultDrawCircleProcedure;				
+		GraphicsDriver.FillEllipse              := @DefaultFillEllipseProcedure;
+		GraphicsDriver.DrawEllipse              := @DefaultDrawEllipseProcedure;
+		GraphicsDriver.FillRectangle            := @DefaultFillRectangleProcedure;
+		GraphicsDriver.DrawLine                 := @DefaultDrawLineProcedure;
+		GraphicsDriver.SetPixelColor            := @DefaultSetPixelColorProcedure;
+    GraphicsDriver.DrawRectangle            := @DefaultDrawRectangleProcedure;
+    GraphicsDriver.SetClipRectangle         := @DefaultSetClipRectangleProcedure;
+    GraphicsDriver.ResetClip                := @DefaultResetClipProcedure;
+    GraphicsDriver.SetVideoModeFullScreen   := @DefaultSetVideoModeFullScreenProcedure;
+    GraphicsDriver.SetVideoModeNoFrame      := @DefaultSetVideoModeNoFrameProcedure;
     GraphicsDriver.InitializeGraphicsWindow := @DefaultInitializeGraphicsWindowProcedure;
-    GraphicsDriver.ResizeGraphicsWindow := @DefaultResizeGraphicsWindowProcedure;
-    GraphicsDriver.SaveImage := @DefaultSaveImageProcedure;
+    GraphicsDriver.ResizeGraphicsWindow     := @DefaultResizeGraphicsWindowProcedure;
+    GraphicsDriver.SaveImage                := @DefaultSaveImageProcedure;
 	end;
 end.
 	

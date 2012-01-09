@@ -2080,10 +2080,7 @@ implementation
   
   procedure ResetClip(bmp: Bitmap); overload;
   begin
-    if bmp = nil then exit;
-    
-    SetLength(bmp^.clipStack, 0);
-    SDL_SetClipRect(bmp^.surface, nil);
+    GraphicsDriver.ResetClip(bmp);
   end;
 
   procedure ResetClip(); overload;
@@ -2093,14 +2090,15 @@ implementation
   
   procedure DoSetClip(bmp: Bitmap; const r: Rectangle); overload;
   begin
-    if bmp = nil then begin RaiseWarning('DoSetClip - Cannot set clip, bmp must not be nil'); exit; end;
     GraphicsDriver.SetClipRectangle(bmp, r);
   end;
   
   procedure PushClip(bmp: Bitmap; const r: Rectangle); overload;
   begin
+    if bmp = nil then begin RaiseWarning('PushClip recieved empty Bitmap'); exit; end;
+
     SetLength(bmp^.clipStack, Length(bmp^.clipStack) + 1);
-    
+
     if Length(bmp^.clipStack) > 1 then
     begin
       // WriteLn('Adding clip ', RectangleToString(r));
@@ -2110,7 +2108,7 @@ implementation
     end
     else
       bmp^.clipStack[high(bmp^.clipStack)] := r;
-    
+
     DoSetClip(bmp, bmp^.clipStack[high(bmp^.clipStack)]);
   end;
 
@@ -2266,17 +2264,14 @@ implementation
   end;
 
   procedure ToggleFullScreen();
-  var
-    oldScr: PSDL_Surface;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ToggleFullScreen');
     {$ENDIF}
-    oldScr := _screen;
 
     try
       //Remember... _screen is a pointer to screen buffer, not a "surface"!
-      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
+      GraphicsDriver.SetVideoModeFullScreen();
     except on exc: Exception do
     end;
     {$IFDEF TRACE}
@@ -2285,17 +2280,14 @@ implementation
   end;
   
   procedure ToggleWindowBorder();
-  var
-    oldScr: PSDL_Surface;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ToggleWindowBorder');
     {$ENDIF}
-    oldScr := _screen;
     
     try
       //Remember... _screen is a pointer to screen buffer, not a "surface"!
-      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_NOFRAME);
+      GraphicsDriver.SetVideoModeNoFrame();
     except on exc: Exception do
     end;
     {$IFDEF TRACE}
