@@ -1394,15 +1394,7 @@ implementation
 
   function GetPixel(bmp: Bitmap; x, y: Longint): Color;
   begin
-    if not Assigned(bmp) then begin RaiseException('No bitmap supplied'); exit; end;
-
-    if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
-    begin
-      result := 0;
-      exit;
-    end;
-
-    result := GetPixel32(bmp^.surface, x, y);
+    result := GraphicsDriver.GetPixel32(bmp, x, y);
   end;
 
   function GetPixelFromScreen(x, y: Longint): Color;
@@ -1413,18 +1405,11 @@ implementation
   procedure PutPixel(bmp: Bitmap; value: Color; x, y: Longint);
   var
     clr:  Color;
-    p:    ^Color;
-    bpp:  Longint;
   begin
-    if not assigned(bmp) then exit;
+    if not assigned(bmp) then begin RaiseWarning('PutPixel recieved empty Bitmap'); exit; end;
     
     clr := ColorFrom(bmp, value);
-    bpp := bmp^.surface^.format^.BytesPerPixel;
-    // Here p is the address to the pixel we want to set
-    p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
-    
-    if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
-    p^ := clr;
+    GraphicsDriver.PutPixel(bmp, clr, x, y);
   end;
   
   /// Draws a pixel onto the screen.
@@ -1582,7 +1567,7 @@ implementation
 
   procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    trigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
+      GraphicsDriver.DrawTriangle(dest, clr, x1, y1, x2, y2, x3, y3);
   end;
 
   procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
@@ -1612,7 +1597,7 @@ implementation
 
   procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
+    GraphicsDriver.FillTriangle(dest, clr, x1, y1, x2, y2, x3, y3);
   end;
 
   //=============================================================================
@@ -1677,12 +1662,12 @@ implementation
 
   procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
-    aacircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
+    GraphicsDriver.DrawCircle(dest, clr, xc, yc, radius);
   end;
 
   procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
   begin
-    filledCircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
+    GraphicsDriver.FillCircle(dest, clr, xc, yc, radius);
   end;
   
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
@@ -1786,7 +1771,7 @@ implementation
     halfWidth := width div 2;
     halfHeight := height div 2;
     
-    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
+    GraphicsDriver.DrawEllipse(dest, clr, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight);    
   end;
 
   procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: Longint);
@@ -1807,7 +1792,7 @@ implementation
     halfWidth := width div 2;
     halfHeight := height div 2;
     
-    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
+    GraphicsDriver.FillEllipse(dest, clr, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight);
   end;
 
   //=============================================================================

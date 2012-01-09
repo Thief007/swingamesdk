@@ -399,8 +399,9 @@ rm -f ${LOG_FILE} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
+cd "${FULL_APP_PATH}"
 if [ "$OS" = "$MAC" ]; then
-    ${FULL_APP_PATH}/bin/Test.app/Contents/MacOS/Test
+    ${APP_PATH}/bin/Test.app/Contents/MacOS/Test
 else
-    ${FULL_APP_PATH}/bin/Test
+    ${APP_PATH}/bin/Test
 fi
