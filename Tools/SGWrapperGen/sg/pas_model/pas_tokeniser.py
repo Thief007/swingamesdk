@@ -7,8 +7,10 @@ Created by Andrew Cain on 2009-05-26.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
-import logging
-# from sg_cache import logger
+from pas_token_kind import *
+from pas_token import *
+
+from Program import *
 
 class SGPasTokeniser(object):
     
@@ -27,10 +29,10 @@ class SGPasTokeniser(object):
         '''
         
         if isinstance(filename, list):
-            # logger.debug('Tokenising list')
+            logger.debug('Tokenising list')
             self.pas_lines = filename
         else:
-            # logger.debug('Tokenising %s', filename)
+            logger.debug('Tokenising %s', filename)
             self._filename = filename
             f = open(filename)
             self.pas_lines = f.readlines()
@@ -174,19 +176,8 @@ class SGPasTokeniser(object):
         
     
     def next_token(self):
-        '''Find and return a tuple with the next token details. Tuple contains 
-        the token (type, value) as strings. The token types and details are: 
-        
-            number,       # such as 1234, 123.45, -123, +123.4
-            comment,      # single // or multi-line (* ... *), { ... } 
-            meta comment, # start with /// ...
-            id,           # identifier name starting with alpha, including 
-                          # alpha-numeric characters and the _ character
-            attribute,    # name starting with @... inside meta comment block 
-                          # follows the id name character rules
-            operator,     # one of + - / * ** := < > <= >= <>
-            symbol,       # one of ':;,.()'
-        
+        '''
+        Find and return the next token     
         '''
         
         def num_match(cha, tmp):
@@ -203,6 +194,10 @@ class SGPasTokeniser(object):
             t = self._next_char();
             self._token_start = self._char_no
             
+            kind = None
+            value = ''
+            
+            
             # Ignore white space characters
             if t == ' ' or t == '\t': #ignore white space
                 pass
@@ -211,78 +206,94 @@ class SGPasTokeniser(object):
                 self._advance_line()
             # Numbers (int or float style format
             elif t in '1234567890' or (t in '-+' and self._peek(1) in '1234567890'): #is digit or +/-
-                result = ('number', self._read_matching(t, num_match))
-                # logger.debug('Tokenisier: read %s - %s', result[0], result[1])
-                return result
+               kind = TokenKind.Number
+               char_number = self._char_no
+               value = self._read_matching(t, num_match)
+               logger.debug('Tokeniser      : read %s (%s)', kind, value)
+               return Token(kind, value, self._line_no, char_number)
             # Comment, single line // or meta comment line ///
             elif t == '/' and self._peek(1) == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
-                        kind = 'meta comment'
                         self._meta_comment_start = self._char_no
                         self._meta_comment_line = self._line_no
-                        comment = self.read_to_end_of_comment()
+                        kind = TokenKind.MetaComment
+                        char_number = self._char_no
+                        value = self.read_to_end_of_comment()
                     else:
-                        kind = 'comment'
-                        comment = self.read_to_eol()
-                    result = (kind, comment)
+                        kind = TokenKind.Comment
+                        char_number = self._char_no
+                        value = self.read_to_eol()
+                        logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                    return Token(kind, value, self._line_no, char_number)
                 else:
-                    result = ('error', t)
-                # logger.debug('Tokenisier: read %s', result[0])
-                return result
+                    logger.error("Unexpected error: " + self.line_details)
             # Attribute identified by an @ symbol then a name
             elif t == '@':
-                name = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
-                result = ('attribute', name)
-                # logger.debug('Tokenisier: read %s - %s', result[0], result[1])
-                return result
+                kind = TokenKind.Attribute
+                char_number = self._char_no
+                value = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no, char_number)
             # Identifier (id) of alphanumeric characters including 
             elif t.isalpha():
-                name = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
-                if name.lower() in ['true','false']:
-                    result = ('boolean', name)
+                char_number = self._char_no
+                value = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
+                if value.lower() in ['true','false']:
+                    kind = TokenKind.Boolean
                 else:
-                    result = ('id', name)
-                # logger.debug('Tokenisier: read %s - %s', result[0], result[1])
-                return result
+                    kind = TokenKind.Identifier
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no, char_number)
             #Bound Comment
             elif t == '{' or (t == '(' and self._peek(1) == '*'):
                 if t == '(' and self._match_and_read('*'):
+                    char_number = self._char_no
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
-                    result = ('comment', comment[:-2])
+                    kind = TokenKind.Comment
+                    value = comment[:-2]
+                    logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                    return Token(kind, value, self._line_no, char_number)
                 elif t == '{':
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
-                    result = ('comment', comment[:-1])
-                # logger.log(logging.DEBUG, 'Tokenisier: read %s', result[0])
-                return result
+                    kind = TokenKind.Comment
+                    value = comment[:-1]
+                    logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                    return Token(kind, value, self._line_no, char_number)
             # Operator
             elif (t == ':' and self._peek(1) == '=') or t in '=+-*/><':
+                kind = TokenKind.Operator
+                char_number = self._char_no
                 if t == ':' and self._match_and_read('='):
-                    result = ('operator', ':=')
+                    value = ':='
                 elif t == '*' and self._match_and_read('*'):
-                    result = ('operator', '**')
+                    value = '**'
                 elif t == '<' and self._match_and_read('>'):
-                    result = ('operator', '<>')
+                    value = '<>'
                 elif t in '<>' and self._match_and_read('='):
-                    result = ('operator', t + '=')
+                    value = t + '='
                 else:
-                    result = ('operator', t)
-                return result
+                    value = t
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no, char_number)
             # Symbol
             elif t in '(),:;[].^':
-                result = ('symbol', t)
-                # logger.debug('Tokenisier: read %s - %s', result[0], result[1])
-                return result
+                kind = TokenKind.Symbol
+                char_number = self._char_no
+                value = t
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no, char_number)
             # Catch any single quotes inside a string value.
             elif t == "'":
+                char_number = self._char_no
                 string = self._read_until('', lambda temp: (temp[-1:] == "'") and (not self._match_and_read("'")))
-                result = ('string', string[:-1])
-                # logger.debug('Tokenisier: read %s - %s', result[0], result[1])
-                return result
+                kind = TokenKind.String
+                value = string[:-1]
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no, char_number)
             # Hmm.. unknown token. What did we forget? 
             else:
-                # logger.error("Unknown token type: "+t)
-                return ('error', t)
+                logger.error("Unknown token type: " + t)
     
 
 #----------------------------------------------------------------------------=

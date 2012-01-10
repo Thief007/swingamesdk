@@ -1,3 +1,8 @@
+import logging
+
+from pas_token import *
+from pas_block import *
+from Program import *
 
 class PascalProgram(object):
     """The model object to represent a pascal program:
@@ -8,23 +13,20 @@ class PascalProgram(object):
     """
     
     def __init__(self):
-        super(PascalProgram, self).__init__()
         self._name = None
+        self._block = None
     
     def parse(self, tokens):
+        """
+        Parses the entire pascal program
+        """
+        tokens.match_token(TokenKind.Identifier, 'program');
+        self._name = tokens.match_token(TokenKind.Identifier)._value;
+        tokens.match_token(TokenKind.Symbol, ';')
         
-        tokens.match_token('id', 'program');
-        self._name = tokens.match_token('id')[1];
-        tokens.match_token('symbol', ';')
-        
-        
-        
-if __name__ == '__main__':
-    stream = SGTokenStream('../../../../CoreSDK/Test/ParserTest.pas')
-    
-    
-    
-    while True:
-        print stream.next_token()
+        # Read block
+        self._block = PascalBlock(None)
+        self._block.parse(tokens)
+      
 
     
