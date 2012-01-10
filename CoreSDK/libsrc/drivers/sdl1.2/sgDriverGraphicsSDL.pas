@@ -15,15 +15,14 @@ unit sgDriverGraphicsSDL;
 //
 //=============================================================================
 interface
-	uses sgTypes, sgShared, sgGeometry,
-		SDL_gfx, SDL, SDL_Image, sgSavePNG;
 
 
 	
 	procedure LoadSDLGraphicsDriver();
 		
 implementation
-	uses sgDriverGraphics, sysUtils;
+	uses sgDriverGraphics, sysUtils,sgTypes, sgShared, sgGeometry,
+		SDL_gfx, SDL, SDL_Image, sgSavePNG, sgInputBackend;
 	
 	function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
 	begin
@@ -261,7 +260,7 @@ implementation
   procedure RefreshScreenProcedure(screen : Bitmap);
   begin  
   	if not Assigned(screen^.surface) then begin RaiseWarning('SDL1.2 Driver - RefreshScreenProcedure recieved empty Bitmap'); exit; end;
-    sdlManager.DrawCollectedText(screen^.surface);
+    DrawCollectedText(screen);
     SDL_BlitSurface(screen^.surface, nil, _screen, nil);
     SDL_Flip(_screen);
   end;

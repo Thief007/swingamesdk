@@ -821,9 +821,9 @@ implementation
     if dest = nil then begin RaiseWarning('Cannot draw text, as no destination was supplied'); exit; end;
       
     rect.x := x + 1;
- 	rect.y := y + 1;
- 	rect.width := TextWidth(theFont, theText) + 2;
- 	rect.height := TextHeight(theFont, theText) + 2;
+   	rect.y := y + 1;
+   	rect.width := TextWidth(theFont, theText) + 2;
+   	rect.height := TextHeight(theFont, theText) + 2;
     PrintStrings(dest, theFont, theText, rect, textColor, ColorTransparent, AlignLeft);
   end;
 

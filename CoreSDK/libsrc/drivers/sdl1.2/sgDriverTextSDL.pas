@@ -294,37 +294,37 @@ implementation
 	    FreeBitmap(sText);
 	end;
 	
-	procedure SetFontStyle(fontToSet : Font; value : FontStyle);
+	procedure SetFontStyleProcedure(fontToSet : Font; value : FontStyle);
 	begin
 		TTF_SetFontStyle(fontToSet^.fptr, Longint(value));
 	end;
 	
-	function GetFontStyle(font : Font) : FontStyle;
+	function GetFontStyleProcedure(font : Font) : FontStyle;
 	begin
 		result := FontStyle(TTF_GetFontStyle(font^.fptr));
 	end;
 	
-	function SizeOfText(font : Font; theText : String; var w : Longint ; var h : LongInt) : Integer;
+	function SizeOfTextProcedure(font : Font; theText : String; var w : Longint ; var h : LongInt) : Integer;
 	begin
 		result := TTF_SizeText(font^.fptr, PChar(theText), w, h);
 	end;
 	
-	function SizeOfUnicode(font : Font; theText : WideString; var w : Longint; var h : Longint) : Integer;
+	function SizeOfUnicodeProcedure(font : Font; theText : WideString; var w : Longint; var h : Longint) : Integer;
 	begin
 		result := TTF_SizeUNICODE(font^.fptr, PUInt16(theText),w,h);
 	end;
 	
-	Procedure Quit();
+	Procedure QuitProcedure();
 	begin
 		TTF_Quit();
 	end;
 	
-	function GetError() : string;
+	function GetErrorProcedure() : string;
 	begin
 		result := string(TTF_GetError);
 	end;
 	
-	function Init() : Integer;
+	function InitProcedure() : Integer;
 	begin
 		result := TTF_Init();
 	end;
@@ -335,13 +335,13 @@ implementation
 		TextDriver.CloseFont := @CloseFontProcedure;
 		TextDriver.PrintStrings := @PrintStringsProcedure;
 		TextDriver.PrintWideStrings := @PrintWideStringsProcedure;
-		TextDriver.SetFontStyle := @SetFontStyle;
-		TextDriver.GetFontStyle := @GetFontStyle;
-		TextDriver.SizeOfText := @SizeOfText;
-		TextDriver.SizeOfUnicode := @SizeOfUnicode;
-		TextDriver.Quit := @Quit;
-		TextDriver.GetError := @GetError;
-		TextDriver.Init := @Init;
+		TextDriver.SetFontStyle := @SetFontStyleProcedure;
+		TextDriver.GetFontStyle := @GetFontStyleProcedure;
+		TextDriver.SizeOfText := @SizeOfTextProcedure;
+		TextDriver.SizeOfUnicode := @SizeOfUnicodeProcedure;
+		TextDriver.Quit := @QuitProcedure;
+		TextDriver.GetError := @GetErrorProcedure;
+		TextDriver.Init := @InitProcedure;
 	end;
 	
 

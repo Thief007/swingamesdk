@@ -13,7 +13,7 @@ begin
   p1.x := -6000;
   p1.y := 2000;
   p2.x := 1000;
-  p2.y := 40000;
+  p2.y := 20000;
   
   DrawLineOnScreen(ColorRed, p1, p2);
   
