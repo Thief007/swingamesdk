@@ -17,7 +17,6 @@ unit sgDriver;
 //
 //=============================================================================
 interface
-	uses sgTypes, sgDriverSDL;
 	
 	type
 	  GetErrorProcedure = function () : PChar;
@@ -30,6 +29,8 @@ interface
 		Driver : DriverRecord;
 		
 implementation
+  	uses sgTypes, sgDriverSDL;
+  	
 	procedure LoadDefaultDriver();
 	begin
 		LoadSDLDriver();
