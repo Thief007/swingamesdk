@@ -1367,10 +1367,9 @@ implementation
 //=============================================================================
 
   uses Math, Classes, SysUtils, // system
-       SDL_gfx, SDL, SDL_Image, // sdl
        sgSavePNG, 
        sgTrace, 
-       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics;
+       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics, sgDriver;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -1755,7 +1754,7 @@ implementation
   
   procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: Longint); overload;
   var
-    halfWidth, halfHeight: Sint16;
+    halfWidth, halfHeight: SmallInt;
   begin
     if width < 0 then
     begin
@@ -1776,7 +1775,7 @@ implementation
 
   procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: Longint);
   var
-    halfWidth, halfHeight: Sint16;
+    halfWidth, halfHeight: SmallInt;
   begin
     if width < 0 then
     begin
@@ -2230,8 +2229,7 @@ implementation
       GUISetForegroundColor(ColorGreen);
       GUISetBackgroundColor(ColorBlack);
       
-      SDL_FillRect(screen^.surface, nil, ColorGrey);
-      stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
+      GraphicsDriver.InitializeScreen(screen, screenWidth div 2 - 30, screenHeight div 2, ColorWhite, ColorGrey, 'Loading ...');
       RefreshScreen();
     except on e: Exception do
       begin
@@ -2378,7 +2376,7 @@ implementation
     //if SDL_SaveBMP(screen^.surface, PChar(path + filename)) = -1 then
     if not GraphicsDriver.SaveImage(screen, path + filename) then
     begin
-      RaiseWarning('Failed to save ' + basename + ': ' + SDL_GetError());
+      RaiseWarning('Failed to save ' + basename + ': ' + Driver.GetError());
       exit;
     end;
     {$IFDEF TRACE}
@@ -2394,9 +2392,7 @@ implementation
       TraceEnter('sgGraphics', 'RefreshScreen');
     {$ENDIF}
     //Draw then delay
-    sdlManager.DrawCollectedText(screen^.surface);
-    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
-    SDL_Flip(_screen);
+    GraphicsDriver.RefreshScreen(screen);
 
     nowTime := GetTicks();
     _UpdateFPSData(nowTime - _lastUpdateTime); // delta
@@ -2414,9 +2410,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'RefreshScreen');
     {$ENDIF}
-    sdlManager.DrawCollectedText(screen^.surface);
-    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
-    SDL_Flip(_screen);
+    GraphicsDriver.RefreshScreen(screen);
     
     nowTime := GetTicks();
     delta := nowTime - _lastUpdateTime;
@@ -2446,7 +2440,7 @@ implementation
   var
     r,g,b,a : byte;
   begin
-    colorComponents(c,r,g,b,a);
+    ColorComponents(c,r,g,b,a);
     result:=IntToStr(r)+','+IntToStr(g)+','+IntToStr(b)+','+IntToStr(a);
   end;
 
@@ -2464,8 +2458,7 @@ implementation
       b := (c and $000000FF);
       exit;
     end;
-    
-    SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
+    GraphicsDriver.ColorComponents(c, r, g, b, a);
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ColorComponents');
     {$ENDIF}
@@ -2624,7 +2617,7 @@ implementation
     
     ColorComponents(apiColor, r, g, b, a);
     
-    result := SDL_MapRGBA(bmp^.surface^.format, r, g, b, a);
+    result := GraphicsDriver.ColorFrom(bmp, r, g, b, a);
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ColorFrom');
     {$ENDIF}
@@ -2643,7 +2636,7 @@ implementation
     end;
 
     try
-      result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
+      result := GraphicsDriver.RGBAColor(red, green, blue, alpha);
     except
       RaiseException('Error occured while trying to get a color from RGBA components');
       exit;

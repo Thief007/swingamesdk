@@ -17,6 +17,8 @@ unit sgDriverGraphicsSDL;
 interface
 	uses sgTypes, sgShared, sgGeometry,
 		SDL_gfx, SDL, SDL_Image, sgSavePNG;
+
+
 	
 	procedure LoadSDLGraphicsDriver();
 		
@@ -198,7 +200,7 @@ implementation
 
     if (screenWidth < 1) or (screenHeight < 1) then
     begin
-      RaiseException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+      RaiseWarning('Screen Width and Height must be greater then 0 when opening a Graphical Window');
       exit;
     end;
 
@@ -217,7 +219,7 @@ implementation
     _screen := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
     if _screen = nil then
     begin
-      RaiseException('Unable to create window drawing surface... ' + SDL_GetError());
+      RaiseWarning('Unable to create window drawing surface... ' + SDL_GetError());
       exit;
     end;
 
@@ -228,6 +230,14 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGraphics', '_InitSDL');
     {$ENDIF}
+  end;
+  
+  // This resizes the graphics window used by SwinGame
+	procedure InitializeScreenProcedure( screen: Bitmap; width, height : LongInt; bgColor, strColor : Color; msg : String);
+  begin      
+  	if not Assigned(screen^.surface) then begin RaiseWarning('SDL1.2 Driver - SetPixelColorProcedure recieved empty Bitmap'); exit; end;
+    SDL_FillRect(screen^.surface, nil, bgColor);
+    stringColor(screen^.surface, width div 2 - 30, height div 2, PChar(msg), ToGFXColor(strColor));
   end;
   
   // This resizes the graphics window used by SwinGame
@@ -244,32 +254,61 @@ implementation
   // returns true if the save is successful, and false if it is not
   function SaveImageProcedure(bmpToSave : Bitmap; path : String) : Boolean;
   begin
+		if not Assigned(bmpToSave^.surface) then begin RaiseWarning('SDL1.2 Driver - SaveImageProcedure recieved empty Bitmap'); exit; end;
     result := png_save_surface(path, bmpToSave^.surface);
+  end;
+  
+  procedure RefreshScreenProcedure(screen : Bitmap);
+  begin  
+  	if not Assigned(screen^.surface) then begin RaiseWarning('SDL1.2 Driver - RefreshScreenProcedure recieved empty Bitmap'); exit; end;
+    sdlManager.DrawCollectedText(screen^.surface);
+    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
+    SDL_Flip(_screen);
+  end;
+  
+  procedure ColorComponentsProcedure(c: Color; var r, g, b, a: byte);
+  begin
+    SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
+  end;
+  
+  function ColorFromProcedure(bmp : Bitmap; r, g, b, a : byte) : Color;
+  begin
+		if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - ColorFromProcedure recieved empty Bitmap'); exit; end;
+    result := SDL_MapRGBA(bmp^.surface^.format, r, g, b, a);
+  end;
+  
+  function RGBAColorProcedure(red, green, blue, alpha: byte) : Color;
+  begin
+    result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
   end;
   
 	procedure LoadSDLGraphicsDriver();
 	begin
 		Write('Loading SDL 1.2 Graphics Driver...');
-		GraphicsDriver.GetPixel32 := @GetPixel32Procedure;
-		GraphicsDriver.PutPixel := @PutPixelProcedure;		
-		GraphicsDriver.FillTriangle := @FillTriangleProcedure;
-		GraphicsDriver.DrawTriangle := @DrawTriangleProcedure;		
-		GraphicsDriver.FillCircle := @FillCircleProcedure;
-		GraphicsDriver.DrawCircle := @DrawCircleProcedure;		
-		GraphicsDriver.FillEllipse := @FillEllipseProcedure;
-		GraphicsDriver.DrawEllipse := @DrawEllipseProcedure;		
-		GraphicsDriver.FillRectangle := @FillRectangleProcedure;
-		GraphicsDriver.DrawLine := @DrawLineProcedure;
-		GraphicsDriver.SetPixelColor := @SetPixelColorProcedure;
-    GraphicsDriver.DrawRectangle := @DrawRectangleProcedure;
-    GraphicsDriver.SetClipRectangle := @SetClipRectangleProcedure;
+		GraphicsDriver.GetPixel32               := @GetPixel32Procedure;
+		GraphicsDriver.PutPixel                 := @PutPixelProcedure;		
+		GraphicsDriver.FillTriangle             := @FillTriangleProcedure;
+		GraphicsDriver.DrawTriangle             := @DrawTriangleProcedure;		
+		GraphicsDriver.FillCircle               := @FillCircleProcedure;
+		GraphicsDriver.DrawCircle               := @DrawCircleProcedure;		
+		GraphicsDriver.FillEllipse              := @FillEllipseProcedure;
+		GraphicsDriver.DrawEllipse              := @DrawEllipseProcedure;		
+		GraphicsDriver.FillRectangle            := @FillRectangleProcedure;
+		GraphicsDriver.DrawLine                 := @DrawLineProcedure;
+		GraphicsDriver.SetPixelColor            := @SetPixelColorProcedure;
+    GraphicsDriver.DrawRectangle            := @DrawRectangleProcedure;
+    GraphicsDriver.SetClipRectangle         := @SetClipRectangleProcedure;
     GraphicsDriver.ResetClip                := @ResetClipProcedure;
     GraphicsDriver.SetVideoModeFullScreen   := @SetVideoModeFullScreenProcedure;
-    GraphicsDriver.SetVideoModeNoFrame      := @SetVideoModeNoFrameProcedure;
-    
+    GraphicsDriver.SetVideoModeNoFrame      := @SetVideoModeNoFrameProcedure;    
     GraphicsDriver.InitializeGraphicsWindow := @InitializeGraphicsWindowProcedure;
+    GraphicsDriver.InitializeScreen         := @InitializeScreenProcedure;
     GraphicsDriver.ResizeGraphicsWindow     := @ResizeGraphicsWindowProcedure;
     GraphicsDriver.SaveImage                := @SaveImageProcedure;
+    GraphicsDriver.RefreshScreen            := @RefreshScreenProcedure;
+    GraphicsDriver.ColorComponents          := @ColorComponentsProcedure;
+    GraphicsDriver.ColorFrom                := @ColorFromProcedure;
+    GraphicsDriver.RGBAColor                := @RGBAColorProcedure;
 		WriteLn('Finished.');
 	end;
 end.
