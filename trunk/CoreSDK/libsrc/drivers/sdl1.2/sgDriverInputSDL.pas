@@ -51,9 +51,13 @@ implementation
     end
     else
     begin
-      WriteLn(VirtKeyCode);
       result := false;
     end;
+  end;
+  
+  function GetKeyStateProcedure(): Byte;
+  begin
+    result := SDL_GetKeyState(nil)^;
   end;
   
   function CheckQuitProcedure() : Boolean;
@@ -183,11 +187,11 @@ implementation
     InputDriver.CheckQuit := @CheckQuitProcedure;
     InputDriver.ProcessEvents := @ProcessEventsProcedure;
     InputDriver.DrawCollectedText := @DrawCollectedTextProcedure;
-    InputDriver.ShiftDown := @ShiftDownProcedure;
     InputDriver.FreeOldSurface := @FreeOldSurfaceProcedure;
     InputDriver.RenderTextSurface := @RenderTextSurfaceProcedure;
     InputDriver.StartReadingText := @StartReadingTextProcedure;
     InputDriver.Destroy := @DestroyProcedure;
+    InputDriver.GetKeyState := @GetKeyStateProcedure;
   end;
   
 end.

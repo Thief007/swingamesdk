@@ -10,23 +10,22 @@ type
   CheckQuitProcedure = function() : Boolean;
   ProcessEventsProcedure = procedure();
   DrawCollectedTextProcedure = procedure(dest: Bitmap);
-  ShiftDownProcedure = function(keycode : LongInt) : Boolean;
   FreeOldSurfaceProcedure = procedure();
   RenderTextSurfaceProcedure = procedure(text : String);
   DestroyProcedure = procedure();  
   StartReadingTextProcedure = procedure(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle; var tempString : String);
-    
+  GetKeyStateProcedure = function() : Byte;
     
   InputDriverRecord = Record
     IsKeyPressed : IsKeyPressedProcedure;
     CheckQuit : CheckQuitProcedure;
     ProcessEvents : ProcessEventsProcedure;
     DrawCollectedText : DrawCollectedTextProcedure;
-    ShiftDown : ShiftDownProcedure;
     FreeOldSurface : FreeOldSurfaceProcedure;
     RenderTextSurface : RenderTextSurfaceProcedure;
     StartReadingText : StartReadingTextProcedure;
     Destroy : DestroyProcedure;
+    GetKeyState : GetKeyStateProcedure;
   end;
 
 var
@@ -62,11 +61,6 @@ implementation
     InputDriver.DrawCollectedText(dest);
   end;
   
-  function DefaultShiftDownProcedure(keycode : LongInt) : Boolean;
-  begin
-    LoadDefaultInputDriver();
-    result := InputDriver.ShiftDown(keyCode);
-  end;
   
   procedure DefaultFreeOldSurfaceProcedure();
   begin
@@ -92,6 +86,12 @@ implementation
     LoadDefaultInputDriver();
     InputDriver.StartReadingText(textColor,maxLength,theFont,area,tempString);
   end;
+  
+  function DefaultGetKeyStateProcedure() : Byte; 
+  begin
+    LoadDefaultInputDriver();
+    result := InputDriver.GetKeyState();
+  end;
 
 initialization
   begin
@@ -99,11 +99,11 @@ initialization
     InputDriver.CheckQuit := @DefaultCheckQuitProcedure;
     InputDriver.ProcessEvents := @DefaultProcessEventsProcedure;
     InputDriver.DrawCollectedText := @DefaultDrawCollectedTextProcedure;
-    InputDriver.ShiftDown := @DefaultShiftDownProcedure;
     InputDriver.FreeOldSurface := @DefaultFreeOldSurfaceProcedure;
     InputDriver.RenderTextSurface := @DefaultRenderTextSurfaceProcedure;
     InputDriver.StartReadingText := @DefaultStartReadingTextProcedure;
     InputDriver.Destroy := @DefaultDestroyProcedure;
+    InputDriver.GetKeyState := @DefaultGetKeyStateProcedure;
   end;
 
 

@@ -16,7 +16,7 @@ interface
     function  EndReadingText(): String;
     // key pressed/typed tests
     function WasKeyTyped(kyCode: Longint): Boolean;
-    function IsKeyPressed(virtKeyCode: Longint): Boolean;
+   // function IsKeyPressed(virtKeyCode: Longint): Boolean;
     function WasAKeyPressed(): Boolean;
     // event register/process Quit
     //procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
@@ -79,10 +79,39 @@ implementation
     result := _textCancelled;
   end;
   // move sgInput.
-  function IsKeyPressed(virtKeyCode: Longint): Boolean;
-  begin
-    result := InputDriver.IsKeyPressed(virtKeyCode);
-  end;
+ // function IsKeyPressed(virtKeyCode: Longint): Boolean;
+ // var
+ //   
+ //   keysPtr: ^Byte;
+ //   {$IFNDEF FPC}
+ //   indexAddress: Longword;
+ //   intPtr: ^Byte;
+ //   {$ENDIF}
+ // begin
+ //   keysPtr InputDriver.GetKeyState();
+ //   if keysPtr <> nil then
+ //   begin
+ //     {$IFDEF FPC}
+ //       result := (keysPtr + virtKeyCode)^ = 1;
+ //     {$ELSE}
+ //       indexAddress := Longword(keysPtr) + Longword(virtKeyCode);
+ //       intPtr := Ptr(indexAddress);
+ //       result := intPtr^ = 1;
+ //     {$ENDIF}
+ //
+ //     {$IFDEF FPC}
+ //     if not result then
+ //     begin
+ //       if virtKeyCode = LongInt(vk_LSUPER) then result := (keysPtr + LongInt(vk_LMETA))^ = 1
+ //       else if virtKeyCode = LongInt(vk_RSUPER) then result := (keysPtr + LongInt(vk_RMETA))^ = 1;
+ //     end;
+ //     {$ENDIF}
+ //   end
+ //   else
+ //   begin
+ //     result := false;
+ //   end;
+ // end;
   
   procedure CheckQuit();
   begin
@@ -161,7 +190,7 @@ implementation
   var
     i: Integer;
   begin
-    if InputDriver.ShiftDown(kyCode) then exit;
+    if (kyCode = LongInt(vk_LSHIFT)) or (kyCode = LongInt(vk_RSHIFT)) then exit;
     
     // WriteLn(kyCode, ' ', kyChar);
     for i := 0 to High(_KeyDown) do

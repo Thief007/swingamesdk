@@ -116,7 +116,7 @@ interface
 implementation
   uses 
     SysUtils, Math, Classes, //System
-    sgSavePNG, sgShared, sgTrace, sgEventProcessing, //SwinGame shared library code
+    sgSavePNG, sgShared, sgTrace, sgInputBackend, //SwinGame shared library code
     sgResources, sgGeometry, sgImages, sgUserInterface, sgGraphics; //SwinGame
 //=============================================================================
 
