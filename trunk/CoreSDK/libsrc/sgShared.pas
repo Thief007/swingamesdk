@@ -33,7 +33,7 @@ interface
   uses 
     SDL, SDL_Image,     //SDL
     stringhash,   // libsrc
-    sgEventProcessing, sgTypes;
+    sgInputBackend, sgTypes;
 //=============================================================================
   
   type
@@ -92,7 +92,7 @@ interface
   // Used by SwinGame units to register event "handlers" what will be called
   // when SDL events have occured. Events such as mouse movement, button
   // clicking and key changes (up/down). See sgInput.
-  procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+ // procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   
   // All SwinGame initialisation code must call this before performing any processing...
   procedure InitialiseSwinGame();
@@ -132,7 +132,7 @@ interface
     
     // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.
-    sdlManager: TSDLManager = nil;
+    //sdlManager: TSDLManager = nil;
 
     // The name of the icon file shown.
     // TODO: Does this work? Full path or just resource/filename?
@@ -318,15 +318,15 @@ implementation
     result := (r shl 24) or (g shl 16) or (b shl 8) or a;
   end;
   
-  procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-  begin
-    if sdlManager = nil then
-    begin
-      sdlManager := TSDLManager.Create();
-    end;
-    
-    sdlManager.RegisterEventProcessor(handle, handle2);
-  end;
+  //procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+  //begin
+  //  if sdlManager = nil then
+  //  begin
+  //    sdlManager := TSDLManager.Create();
+  //  end;
+  //  
+  //  sdlManager.RegisterEventProcessor(handle, handle2);
+  //end;
   
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   begin
@@ -544,11 +544,11 @@ end;
     end;
     {$endif}
     
-    if sdlManager <> nil then
-    begin
-      sdlManager.Free();
-      sdlManager := nil;
-    end;
+    //if sdlManager <> nil then
+    //begin
+    //  sdlManager.Free();
+    //  sdlManager := nil;
+    //end;
     
     if screen <> nil then
     begin

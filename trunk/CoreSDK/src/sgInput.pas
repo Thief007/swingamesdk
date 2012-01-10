@@ -258,7 +258,7 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend;
 
 //----------------------------------------------------------------------------
 // Game Loop Essentials
@@ -269,10 +269,10 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgInput', 'WindowCloseRequested');
     {$ENDIF}
-    if sdlManager = nil then
-      result := false
-    else
-      result := sdlManager.HasQuit();
+    //if sdlManager = nil then
+    //  result := false
+    //else
+      result := HasQuit();
     {$IFDEF TRACE}
       TraceExit('sgInput', 'WindowCloseRequested');
     {$ENDIF}
@@ -289,7 +289,7 @@ implementation
     CyclePool();
     {$endif}
     SDL_GetRelativeMouseState(x, y);
-    sdlManager.ProcessEvents();
+    InputBackendProcessEvents();
     {$IFDEF TRACE}
       TraceExit('sgInput', 'ProcessEvents');
     {$ENDIF}
@@ -300,17 +300,17 @@ implementation
 
   function KeyTyped(key: KeyCode): Boolean;
   begin
-    result := sdlManager.WasKeyTyped(Longint(key));
+    result := WasKeyTyped(Longint(key));
   end;
 
   function KeyDown(key : keyCode): Boolean;
   begin
-    result := sdlManager.IsKeyPressed(Longint(key));
+    result := IsKeyPressed(Longint(key));
   end;
 
   function AnyKeyPressed(): Boolean;
   begin
-   result := sdlManager.WasAKeyPressed();
+   result := WasAKeyPressed();
   end;
 
   //---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ implementation
     if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
     if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
     
-    sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont^.fptr, NewSDLRect(area));
+    StartReadingText(textColor, maxLength, theFont, area);
   end;
   
   procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
@@ -332,7 +332,7 @@ implementation
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, area);
-    sdlManager.SetText(text);    
+    SetText(text);    
   end;
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const pt: Point2D); overload;
@@ -343,30 +343,29 @@ implementation
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, x, y);
-    sdlManager.SetText(text);
+    SetText(text);
   end;
   
   function ReadingText(): Boolean;
   begin
-    result := sdlManager.IsReading;
+    result := IsReading();
   end;
   
   function TextEntryCancelled(): Boolean;
   begin
-    result := sdlManager.TextEntryWasCancelled;
+    result := TextEntryWasCancelled();
   end;
   
   function EndReadingText(): String;
   begin
-    result := sdlManager.EndReadingText();
+    result := EndReadingText();
   end;
   
   function TextReadAsASCII(): String;
   begin
-    result := String(sdlManager.EnteredString);
+    result := EnteredString();
   end;
   
-  var _ButtonsClicked: Array [MouseButton] of Boolean;
   
   //---------------------------------------------------------------------------
   
@@ -471,23 +470,7 @@ implementation
     result := _ButtonsClicked[button];
   end;
   
-  procedure ProcessMouseEvent(event: PSDL_Event);
-  begin
-    if event = nil then exit;
-    
-    if event^.type_ = SDL_MOUSEBUTTONUP then
-    begin
-      _ButtonsClicked[MouseButton(event^.button.button)] := true;
-    end;
-  end;
   
-  procedure StartProcessMouseEvents();
-  var
-    b: MouseButton;
-  begin
-    for b := LeftButton to MouseX2Button do
-      _ButtonsClicked[b] := false;
-  end;
 
   function KeyName(key: KeyCode): String;
   begin
@@ -748,7 +731,7 @@ implementation
   initialization
   begin
     InitialiseSwinGame();
-    RegisterEventProcessor(@ProcessMouseEvent, @StartProcessMouseEvents);
+    //RegisterEventProcessor(@ProcessMouseEvent, @StartProcessMouseEvents);
   end;
 
 end.
