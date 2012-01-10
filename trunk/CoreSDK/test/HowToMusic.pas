@@ -1,6 +1,6 @@
 program HowToMusic;
 uses
-  sgInput, sgImages, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
+  sgGraphics, sgResources, sgAudio, sgUtils;
 
 procedure Main();
 begin
