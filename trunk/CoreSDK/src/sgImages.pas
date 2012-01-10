@@ -915,6 +915,7 @@ uses sgTypes;
 //=============================================================================
 implementation
 uses sgResources, sgCamera, sgGeometry, sgGraphics,
+     sgDriverImages, sgDriver,
      stringhash,         // libsrc
      SysUtils, 
      sgSavePNG, sgShared, sgTrace, 
@@ -954,23 +955,12 @@ begin
   
   New(result);
   
-  if (baseSurface = nil) or (baseSurface^.format = nil) then
-  begin
-    RaiseWarning('Creating ARGB surface as screen format unknown.');
-    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
-  end
-  else
-  begin
-    with baseSurface^.format^ do
-    begin
-      result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
-    end;
-  end;
+  ImagesDriver.CreateBitmap(result, width, height);
   
-  if result^.surface = nil then
+  if not ImagesDriver.SurfaceExists(result) then//if result^.surface = nil then
   begin
     Dispose(result);
-    RaiseException('Failed to create a bitmap: ' + SDL_GetError());
+    RaiseException('Failed to create a bitmap: ' + Driver.GetError());
     exit;
   end;
   
@@ -1000,8 +990,7 @@ begin
   result^.name      := realName;
   result^.filename  := '';
   
-  SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
-  SDL_FillRect(result^.surface, nil, ColorTransparent);
+  ImagesDriver.InitBitmapColors(result);
   
   if not _Images.setValue(realName, obj) then
   begin
@@ -1049,32 +1038,9 @@ begin
   BitmapSetCellDetails(result, w, h, cols, rows, Length(bitmaps));
 end;
 
-// Sets the non-transparent pixels in a Bitmap. This is then used for
-// collision detection, allowing the original surface to be optimised.
-//
-// @param bmp  A pointer to the Bitmap being set
-// @param surface The surface with pixel data for this Bitmap
-procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
-var
-  r, c: Longint;
-begin
-  if not assigned(bmp) then exit;
-  
-  SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-  
-  for c := 0 to bmp^.width - 1 do
-  begin
-    for r := 0 to bmp^.height - 1 do
-    begin
-      bmp^.nonTransparentPixels[c, r] := (GetPixel32(surface, c, r) <> transparentColor);
-    end;
-  end;
-end;
-
 function DoLoadBitmap(name, filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
 var
   obj: tResourceContainer;
-  loadedImage: PSDL_Surface;
   correctedTransColor: Color;
 begin
   {$IFDEF TRACE}
@@ -1099,42 +1065,9 @@ begin
       RaiseWarning('Unable to locate bitmap ' + filename);
       exit;
     end;
-  end;
+  end;  
   
-  //Load the image
-  loadedImage := IMG_Load(PChar(filename));
-  
-  if loadedImage = nil then
-  begin
-    RaiseWarning('Error loading image: ' + filename + ': ' + SDL_GetError());
-    exit;
-  end;
-  
-  //
-  // Image loaded, so create SwinGame bitmap
-  //
-  new(result);
-  
-  if not transparent then 
-  begin
-    // Only move to screen alpha if window is open...
-    if baseSurface = nil then
-      result^.surface := loadedImage
-    else
-      result^.surface := SDL_DisplayFormatAlpha(loadedImage);
-  end
-  else result^.surface := SDL_DisplayFormat(loadedImage);
-  
-  if not assigned(result^.surface) then
-  begin
-    SDL_FreeSurface(loadedImage);
-    dispose(result);
-    result := nil;
-    RaiseException('Error loading image.')
-  end;
-    
-  result^.width     := result^.surface^.w;
-  result^.height    := result^.surface^.h;
+  result := ImagesDriver.DoLoadBitmap(filename, transparent, transparentColor);
   result^.cellW     := result^.width;
   result^.cellH     := result^.height;
   result^.cellCols  := 1;
@@ -1144,24 +1077,7 @@ begin
   result^.filename  := filename;
   SetLength(result^.clipStack, 0);
   
-  //Determine pixel level collision data
-  if transparent then
-  begin
-    correctedTransColor := ColorFrom(result, transparentColor);
-    SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-    SetNonTransparentPixels(result, loadedImage, transparentColor);
-  end
-  else
-  begin
-    SetNonAlphaPixels(result, loadedImage);
-  end;
-  
-  // Free the loaded image if its not the result's surface
-  if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
-  
-  //
   // Place the bitmap in the _Images hashtable
-  //
   obj := tResourceContainer.Create(result);
   {$IFDEF TRACE}
     Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + ' obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
