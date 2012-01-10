@@ -102,12 +102,9 @@ implementation
   end;
   
   // FreeSoundEffectProcedure frees the memory of the sound effect
-  // and sets the SoundEffect passed in to null
   procedure FreeSoundEffectProcedure(effect : SoundEffect);
   begin
     Mix_FreeChunk(effect^.effect);
-    Dispose(effect);
-    effect := nil;
   end;
   
   // PlaySoundEffectProcedure plays a sound effect a number of times

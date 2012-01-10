@@ -891,6 +891,7 @@ implementation
         begin
             CallFreeNotifier(effect);
             AudioDriver.FreeSoundEffect(effect);
+            Dispose(effect);
         end;
         effect := nil;
         {$IFDEF TRACE}
