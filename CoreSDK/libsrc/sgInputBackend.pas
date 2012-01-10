@@ -31,12 +31,12 @@ interface
     
     
     
-    type
-      KeyDownData = record
-        downAt:   Longint;
-        code:     Longint;
-        keyChar:  Longint;
-      end;
+  type
+    KeyDownData = record
+      downAt:   Longint;
+      code:     Longint;
+      keyChar:  Longint;
+    end;
      
   var
     _quit:                  Boolean;
@@ -78,40 +78,6 @@ implementation
   begin
     result := _textCancelled;
   end;
-  // move sgInput.
- // function IsKeyPressed(virtKeyCode: Longint): Boolean;
- // var
- //   
- //   keysPtr: ^Byte;
- //   {$IFNDEF FPC}
- //   indexAddress: Longword;
- //   intPtr: ^Byte;
- //   {$ENDIF}
- // begin
- //   keysPtr InputDriver.GetKeyState();
- //   if keysPtr <> nil then
- //   begin
- //     {$IFDEF FPC}
- //       result := (keysPtr + virtKeyCode)^ = 1;
- //     {$ELSE}
- //       indexAddress := Longword(keysPtr) + Longword(virtKeyCode);
- //       intPtr := Ptr(indexAddress);
- //       result := intPtr^ = 1;
- //     {$ENDIF}
- //
- //     {$IFDEF FPC}
- //     if not result then
- //     begin
- //       if virtKeyCode = LongInt(vk_LSUPER) then result := (keysPtr + LongInt(vk_LMETA))^ = 1
- //       else if virtKeyCode = LongInt(vk_RSUPER) then result := (keysPtr + LongInt(vk_RMETA))^ = 1;
- //     end;
- //     {$ENDIF}
- //   end
- //   else
- //   begin
- //     result := false;
- //   end;
- // end;
   
   procedure CheckQuit();
   begin
@@ -230,15 +196,15 @@ implementation
       oldStr := _tempString;
       
       //If the key is not a control character
-      if (kyCode = LongInt(KeyCode.vk_BACKSPACE)) and (Length(_tempString) > 0) then
+      if (kyCode = LongInt(vk_BACKSPACE)) and (Length(_tempString) > 0) then
       begin
          _tempString := Copy(_tempString, 1, Length(_tempString) - 1);
       end
-      else if (kyCode = LongInt(KeyCode.vk_RETURN)) or (kyCode = LongInt(KeyCode.vk_KP_ENTER)) then
+      else if (kyCode = LongInt(vk_RETURN)) or (kyCode = LongInt(vk_KP_ENTER)) then
       begin
         _readingString := false;
       end
-      else if kyCode = LongInt(KeyCode.vk_ESCAPE) then
+      else if kyCode = LongInt(vk_ESCAPE) then
       begin
         _tempString := '';
         _readingString := false;
