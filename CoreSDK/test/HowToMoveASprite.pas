@@ -1,4 +1,4 @@
-program HowToCreateASprite;
+program HowToMoveASprite;
 uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources;
 
 procedure Main();
