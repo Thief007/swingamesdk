@@ -1,4 +1,4 @@
-program GameMain;
+program HowToOpenHelloWorldWindowWithFramerate;
 uses
   sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
 

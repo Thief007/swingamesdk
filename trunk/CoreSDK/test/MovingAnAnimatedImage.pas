@@ -7,7 +7,7 @@ var
 	fish: Bitmap;
 begin
     OpenAudio();
-	OpenGraphicsWindow('Exploding a Sprite', 800, 600);
+	OpenGraphicsWindow('Walking Frog', 800, 600);
 
 	fish := LoadBitmapNamed('walking', 'frog.png');
     BitmapSetCellDetails(fish, 32, 48, 4, 4, 16);
