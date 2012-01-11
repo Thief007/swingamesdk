@@ -321,7 +321,7 @@ implementation
     if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
     if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
     
-    StartReadingText(textColor, maxLength, theFont, area);
+    InputBackendStartReadingText(textColor, maxLength, theFont, area);
   end;
   
   procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
@@ -358,7 +358,7 @@ implementation
   
   function EndReadingText(): String;
   begin
-    result := EndReadingText();
+    result := InputBackendEndReadingText();
   end;
   
   function TextReadAsASCII(): String;

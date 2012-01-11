@@ -30,7 +30,10 @@ implementation
      	
 	function SurfaceExistsProcedure(bmp : Bitmap) : Boolean;
 	begin
-	  result := Assigned(bmp^.surface);
+	  if not assigned(bmp) then 
+	    result := false
+	  else 
+	    result := Assigned(bmp^.surface);
 	end;
 	
 	procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);

@@ -288,9 +288,9 @@ implementation
 	    rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
 	    if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
 		  
-		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
+		  SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
 	    SDL_BlitSurface(sText^.surface, @rect, dest^.surface, @SDLrc );
-		
+	    
 	    FreeBitmap(sText);
 	end;
 	
