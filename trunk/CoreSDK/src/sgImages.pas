@@ -960,7 +960,7 @@ begin
   if not ImagesDriver.SurfaceExists(result) then//if result^.surface = nil then
   begin
     Dispose(result);
-    RaiseException('Failed to create a bitmap: ' + Driver.GetError());
+    RaiseWarning('Failed to create a bitmap: ' + Driver.GetError());
     exit;
   end;
   
@@ -1041,7 +1041,6 @@ end;
 function DoLoadBitmap(name, filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
 var
   obj: tResourceContainer;
-  correctedTransColor: Color;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'LoadBitmap', filename);
@@ -1118,14 +1117,7 @@ begin
   if Assigned(bitmapToFree) then
   begin
     
-    //Free the surface
-    if Assigned(bitmapToFree^.surface) then
-    begin
-      //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
-      SDL_FreeSurface(bitmapToFree^.surface);
-    end;
-    
-    bitmapToFree^.surface := nil;
+    ImagesDriver.FreeSurface(bitmapToFree);
     
     //Remove the image from the hashtable
     _Images.remove(BitmapName(bitmapToFree)).Free();
@@ -1270,20 +1262,17 @@ end;
 
 procedure MakeOpaque(bmp: Bitmap);
 begin
-  if not assigned(bmp) then exit;
-  SDL_SetAlpha(bmp^.surface, 0, 255);
+  ImagesDriver.MakeOpaque(bmp);
 end;
 
 procedure SetOpacity(bmp: Bitmap; pct: Single);
 begin
-  if not assigned(bmp) then exit;
-  SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, RoundUByte(pct * 255));
+  ImagesDriver.SetOpacity(bmp, pct)
 end;
 
 procedure MakeTransparent(bmp: Bitmap);
 begin
-  if not assigned(bmp) then exit;
-  SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
+  ImagesDriver.MakeTransparent(bmp);
 end;
 
 //---------------------------------------------------------------------------
@@ -1319,11 +1308,10 @@ begin
     exit;
   end;
   
+  ImagesDriver.RotateScaleSurface(result, src, deg, scale, 0);
+  
   with result^ do
   begin
-    surface := rotozoomSurface(src^.surface, deg, scale, 0);
-    width   := surface^.w;
-    height  := surface^.h;
     
     if degRot = 0 then
       BitmapSetCellDetails(result, RoundInt(src^.cellW * scale), RoundInt(src^.cellH * scale), src^.cellCount, src^.cellRows, src^.cellCount)

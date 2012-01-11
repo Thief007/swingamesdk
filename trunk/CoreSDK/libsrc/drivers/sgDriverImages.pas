@@ -21,9 +21,14 @@ interface
 	
 	type
 	  InitBitmapColorsProcedure            = procedure (bmp : Bitmap);
-	  CreateBitmapProcedure                = procedure(bmp : Bitmap; width, height : LongInt);
-	  SurfaceExistsProcedure               = function(bmp : Bitmap) : Boolean;
-	  DoLoadBitmapProcedure                = function(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
+	  CreateBitmapProcedure                = procedure (bmp : Bitmap; width, height : LongInt);
+	  SurfaceExistsProcedure               = function  (bmp : Bitmap) : Boolean;
+	  DoLoadBitmapProcedure                = function  (filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
+    FreeSurfaceProcedure                 = procedure (bmp : Bitmap);
+    MakeOpaqueProcedure                  = procedure (bmp : Bitmap);
+    SetOpacityProcedure                  = procedure (bmp : Bitmap; pct : Single);
+    MakeTransparentProcedure             = procedure (bmp : Bitmap);
+    RotateScaleSurfaceProcedure          = procedure (resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
     SameBitmapProcedure                  = function (const bitmap1, bitmap2 : Bitmap) : Boolean;
     BlitSurfaceProcedure                 = procedure (srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr);
     
@@ -33,6 +38,11 @@ interface
 	  SurfaceExists               : SurfaceExistsProcedure;
 	  CreateBitmap                : CreateBitmapProcedure;
 	  DoLoadBitmap                : DoLoadBitmapProcedure;
+	  FreeSurface                 : FreeSurfaceProcedure;
+	  MakeOpaque                  : MakeOpaqueProcedure;
+	  SetOpacity                  : SetOpacityProcedure;
+	  MakeTransparent             : MakeTransparentProcedure;
+	  RotateScaleSurface          : RotateScaleSurfaceProcedure;
 	  SameBitmap                  : SameBitmapProcedure;
 	  BlitSurface                 : BlitSurfaceProcedure;
 	end;
@@ -85,6 +95,36 @@ implementation
     ImagesDriver.BlitSurface(srcBmp, destBmp, srcRect, destRect);
   end;
   
+  procedure DefaultFreeSurfaceProcedure(bmp : Bitmap);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.FreeSurface(bmp);
+  end;
+
+  procedure DefaultMakeOpaqueProcedure(bmp : Bitmap);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.MakeOpaque(bmp);
+  end;
+
+  procedure DefaultSetOpacityProcedure(bmp : Bitmap; pct : Single);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.SetOpacity(bmp, pct);
+  end;
+
+  procedure DefaultMakeTransparentProcedure(bmp : Bitmap);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.MakeTransparent(bmp);
+  end;
+
+  procedure DefaultRotateScaleSurfaceProcedure(resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.RotateScaleSurface(resultBmp, src, deg, scale, smooth);
+  end;
+
 	initialization
 	begin
 	  ImagesDriver.InitBitmapColors           := @DefaultInitBitmapColorsProcedure;
@@ -93,6 +133,11 @@ implementation
 		ImagesDriver.DoLoadBitmap               := @DefaultDoLoadBitmapProcedure;
 		ImagesDriver.SameBitmap                 := @DefaultSameBitmapProcedure;
 		ImagesDriver.BlitSurface                := @DefaultBlitSurfaceProcedure;
+		ImagesDriver.FreeSurface                := @DefaultFreeSurfaceProcedure;
+		ImagesDriver.MakeOpaque                 := @DefaultMakeOpaqueProcedure;
+		ImagesDriver.SetOpacity                 := @DefaultSetOpacityProcedure;
+		ImagesDriver.MakeTransparent            := @DefaultMakeTransparentProcedure;
+	  ImagesDriver.RotateScaleSurface         := @DefaultRotateScaleSurfaceProcedure;
 	end;
 end.
 	
