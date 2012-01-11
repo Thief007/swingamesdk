@@ -129,6 +129,46 @@ implementation
     if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
 	end;
 	
+	procedure FreeSurfaceProcedure(bmp : Bitmap);
+	begin
+	  //Free the surface
+    if Assigned(bmp^.surface) then
+    begin
+      //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
+      SDL_FreeSurface(bmp^.surface);
+    end;
+    
+    bmp^.surface := nil;
+	end;
+	
+	procedure MakeOpaqueProcedure(bmp : Bitmap);
+	begin
+    if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - MakeOpaqueProcedure recieved empty Bitmap'); exit; end;
+    SDL_SetAlpha(bmp^.surface, 0, 255);
+	end;
+
+	procedure SetOpacityProcedure(bmp : Bitmap; pct : Single);
+	begin
+    if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - SetOpacityProcedure recieved empty Bitmap'); exit; end;
+    SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, RoundUByte(pct * 255));
+	end;
+
+	procedure MakeTransparentProcedure(bmp : Bitmap);
+	begin
+    if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - MakeTransparentProcedure recieved empty Bitmap'); exit; end;
+    SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
+	end;
+
+	procedure RotateScaleSurfaceProcedure(resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
+	begin
+    if not Assigned(resultBmp^.surface) then begin RaiseWarning('SDL1.2 Driver - RotateScaleSurfaceProcedure recieved empty Bitmap'); exit; end;
+    if not Assigned(src^.surface) then begin RaiseWarning('SDL1.2 Driver - RotateScaleSurfaceProcedure recieved empty Bitmap'); exit; end;
+        
+    resultBmp^.surface := rotozoomSurface(src^.surface, deg, scale, 0);
+    resultBmp^.width   := resultBmp^.surface^.w;
+    resultBmp^.height  := resultBmp^.surface^.h;
+	end;
+
 	function SameBitmapProcedure(const bitmap1,bitmap2 : Bitmap) : Boolean;
 	begin
 	 result := (Bitmap1^.surface = Bitmap2^.surface);
@@ -162,8 +202,13 @@ implementation
 		ImagesDriver.SurfaceExists                            := @SurfaceExistsProcedure;
 		ImagesDriver.CreateBitmap                             := @CreateBitmapProcedure;
 		ImagesDriver.DoLoadBitmap                             := @DoLoadBitmapProcedure;
+		ImagesDriver.FreeSurface                              := @FreeSurfaceProcedure;
+		ImagesDriver.MakeOpaque                               := @MakeOpaqueProcedure;
+		ImagesDriver.SetOpacity                               := @SetOpacityProcedure;
 		ImagesDriver.SameBitmap                               := @SameBitmapProcedure;
 		ImagesDriver.BlitSurface                              := @BlitSurfaceProcedure;
+		ImagesDriver.MakeTransparent                          := @MakeTransparentProcedure;
+		ImagesDriver.RotateScaleSurface                       := @RotateScaleSurfaceProcedure;
 		WriteLn('Finished.');
 	end;
 end.
