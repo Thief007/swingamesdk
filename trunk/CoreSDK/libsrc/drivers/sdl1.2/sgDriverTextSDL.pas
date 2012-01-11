@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages;
+	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx;
 	
 	const EOL = LineEnding; // from sgShared
 
@@ -329,6 +329,11 @@ implementation
 		result := TTF_Init();
 	end;
 	
+	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
+	begin
+	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColor(theColor) );
+	end;
+	
 	procedure LoadSDLTextDriver();
 	begin
 		TextDriver.LoadFont := @LoadFontProcedure;
@@ -342,6 +347,7 @@ implementation
 		TextDriver.Quit := @QuitProcedure;
 		TextDriver.GetError := @GetErrorProcedure;
 		TextDriver.Init := @InitProcedure;
+		TextDriver.StringColor  := @StringColorProcedure;
 	end;
 	
 
