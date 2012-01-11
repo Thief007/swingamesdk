@@ -128,6 +128,32 @@ implementation
     // Free the loaded image if its not the result's surface
     if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
 	end;
+	
+	function SameBitmapProcedure(const bitmap1,bitmap2 : Bitmap) : Boolean;
+	begin
+	 result := (Bitmap1^.surface = Bitmap2^.surface);
+	end;
+	
+	procedure BlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr); 
+	var
+	  sRect, dRect : SDL_Rect;
+	  pDRect : ^SDL_Rect = nil;
+	  pSRect : ^SDL_Rect = nil;
+	   
+	begin
+	  if assigned(srcRect) then
+	  begin
+	    sRect := NewSDLRect(srcRect^);
+  	  pSRect := @sRect;
+	  end;
+	  if assigned(destRect) then
+	  begin
+	    dRect := NewSDLRect(destRect^);
+  	  pDRect := @dRect;
+	  end;
+	  
+	  SDL_BlitSurface(srcBmp^.surface, pSRect, destBmp^.surface, pDRect)
+	end;
   
 	procedure LoadSDLImagesDriver();
 	begin
@@ -136,6 +162,8 @@ implementation
 		ImagesDriver.SurfaceExists                            := @SurfaceExistsProcedure;
 		ImagesDriver.CreateBitmap                             := @CreateBitmapProcedure;
 		ImagesDriver.DoLoadBitmap                             := @DoLoadBitmapProcedure;
+		ImagesDriver.SameBitmap                               := @SameBitmapProcedure;
+		ImagesDriver.BlitSurface                              := @BlitSurfaceProcedure;
 		WriteLn('Finished.');
 	end;
 end.

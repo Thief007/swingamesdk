@@ -37,6 +37,8 @@ interface
 //=============================================================================
   
   type
+    
+    RectPtr = ^Rectangle;
     // The resource contain is an object to hold the resource for the 
     // hash table
     TResourceContainer = class(tObject)
@@ -330,8 +332,9 @@ implementation
   
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   begin
-    result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
+      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
   end;
+
   
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   begin
