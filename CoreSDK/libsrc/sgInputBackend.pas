@@ -12,14 +12,12 @@ interface
     // text reading/draw collection
     procedure DrawCollectedText(dest: Bitmap);
     procedure SetText(text: String);
-    procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
-    function  EndReadingText(): String;
+    procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
+    function  InputBackendEndReadingText(): String;
     // key pressed/typed tests
     function WasKeyTyped(kyCode: Longint): Boolean;
-   // function IsKeyPressed(virtKeyCode: Longint): Boolean;
     function WasAKeyPressed(): Boolean;
     // event register/process Quit
-    //procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
     procedure InputBackendProcessEvents();
     procedure ProcessMouseEvent(button: Byte);
     function HasQuit(): Boolean;
@@ -48,18 +46,22 @@ interface
     _KeyDown:               Array of KeyDownData;
     _KeyTyped:              Array of Longint;
     _maxStringLen:          LongInt;
-    //temp string too
-    //isReading
+    _textBitmap:            Bitmap;
+    _cursorBitmap:          Bitmap;
+    _font:                  Font;
+    _foreColor:             Color;
+    _area:                  Rectangle;
     _readingString:         Boolean;
     _ButtonsClicked: Array [MouseButton] of Boolean;
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils;
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared;
   
   procedure _InitGlobalVars(); 
   begin
     _quit := false;
     _keyPressed := false;
-
+    _textBitmap := nil;
+    _cursorBitmap := nil;
     _readingString := false;
     _textCancelled := false;
     _lastKeyRepeat := 0;
@@ -238,18 +240,93 @@ implementation
       end;
   end;
   
+  
+  procedure FreeOldSurface();
+  begin
+    if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then 
+      FreeBitmap(_textBitmap);
+  end;
+  
+  procedure RenderTextSurface(text : String);
+  var
+    outStr: String;
+  begin
+    if Length(text) > 0 then
+    begin
+      outStr := text + '|';
+      _textBitmap := DrawTextTo(_font, outStr, _forecolor);
+    end
+    else
+      _textBitmap := _cursorBitmap;  
+  end;
+  
+  procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
+  var
+    newStr: String;
+  begin
+    if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then
+    begin
+      //Free the old surface
+      imagesDriver.FreeSurface(_textBitmap );
+    end;
+
+    _readingString := true;
+    _textCancelled := false;
+    _tempString := '';
+    _maxStringLen := maxLength;
+    _foreColor := textColor;
+
+    _font := theFont;
+    _area := area;
+
+    newStr := '|';
+
+    if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
+    _cursorBitmap := DrawTextTo(_font, newStr, _foreColor);
+    _textBitmap := _cursorBitmap;
+  end;
+  
+  procedure DrawCollectedText(dest : Bitmap);
+  var
+    srect, drect: Rectangle;
+    textWidth: Longint;
+  begin
+    if (not imagesDriver.SurfaceExists(dest)) then exit;
+
+    if _readingString then
+      if (imagesDriver.SurfaceExists(_textBitmap)) then
+        begin
+          textWidth := _textBitmap^.width;
+
+          if textWidth > _area.width then
+            srect.x := SmallInt(textWidth - _area.width)
+          else
+            srect.x := 0;
+          srect.y := 0;
+
+          srect.width := _area.width;
+          srect.height := _area.height;
+
+          drect := _area;
+
+          imagesDriver.BlitSurface(_textBitmap,  dest,@srect, @drect);
+        end;
+  end;
+
+  
+  
   procedure SetText(text: String);
   begin
     _tempString := text;
     
      //Free the old surface
-    InputDriver.FreeOldSurface();
+    FreeOldSurface();
     
     //Render a new text surface
-    InputDriver.RenderTextSurface(_tempString);
+    RenderTextSurface(_tempString);
   end;
   
-  function EndReadingText(): String;
+  function InputBackendEndReadingText(): String;
   begin
     _readingString := false;
     result := _tempString;
@@ -285,19 +362,13 @@ implementation
     end;
   end;
   
-  procedure DrawCollectedText(dest: Bitmap);
-  begin
-    InputDriver.DrawCollectedText(dest);
-  end;
-  
-  procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
-  begin
-    InputDriver.StartReadingText(textColor,maxLength,theFont,area, _tempString);
-  end;
+
   
   procedure Destroy();
   begin
-    InputDriver.Destroy();
+    if(Assigned(_textBitmap)) then FreeBitmap(_textBitmap);
+    if(Assigned(_cursorBitmap)) then FreeBitmap(_cursorBitmap);
+    if(Assigned(_font)) then FreeFont(_font);
   end;
   
   initialization

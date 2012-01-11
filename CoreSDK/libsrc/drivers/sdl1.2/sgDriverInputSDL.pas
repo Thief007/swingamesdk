@@ -4,22 +4,11 @@ interface
   uses sdl, sdl_ttf;
   procedure LoadSDLInputDriver();
 
-    var 
-      _textSurface:           PSDL_Surface;
-      _cursorSurface:         PSDL_Surface;
-      _maxStringLen:          Longint;
-      _font:                  PTTF_Font;
-      _foreColor:             TSDL_Color;
-      _area:                  SDL_Rect;
       
 implementation
   uses sgDriverInput, sgInputBackend, sgInput, sgShared, sgTypes ;
   
-  Procedure InitializeGlobalVars();
-  begin
-    _textSurface := nil;
-    _cursorSurface := nil;
-  end;
+
   
   function IsKeyPressedProcedure(virtKeyCode : LongInt) : Boolean;
   
@@ -95,102 +84,21 @@ implementation
        end;
      end;
   end;
-  
-  procedure DrawCollectedTextProcedure(dest : Bitmap);
-  var
-    srect, drect: SDL_Rect;
-    textWidth: Longint;
-  begin
-    if not assigned(dest^.Surface) then exit;
 
-    if _readingString then
-      if (_textSurface <> nil) then
-        begin
-          textWidth := _textSurface^.w;
-
-          if textWidth > _area.w then
-            srect.x := SInt16(textWidth - _area.w)
-          else
-            srect.x := 0;
-          srect.y := 0;
-
-          srect.w := _area.w;
-          srect.h := _area.h;
-
-          drect := _area;
-
-          SDL_BlitSurface(_textSurface, @srect, dest^.Surface, @drect);
-        end;
-  end;
   
   function ShiftDownProcedure(kycode : LongInt) : Boolean;
   begin
     result := ((kyCode = SDLK_LSHIFT) or (kyCode = SDLK_RSHIFT));
   end;
-  
-  procedure FreeOldSurfaceProcedure();
-  begin
-    if assigned(_textSurface) and (_textSurface <> _cursorSurface) then 
-      SDL_FreeSurface( _textSurface );
-  end;
-  
-  procedure RenderTextSurfaceProcedure(text : String);
-  var
-    outStr: String;
-  begin
-    if Length(text) > 0 then
-    begin
-      outStr := text + '|';
-      _textSurface := TTF_RenderText_Blended(_font, PChar(outStr), _foreColor)
-    end
-    else
-      _textSurface := _cursorSurface;  
-  end;
-  
-  procedure StartReadingTextProcedure(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle; var tempString : String);
-  var
-    newStr: String;
-  begin
-    if assigned(_textSurface) and (_textSurface <> _cursorSurface) then
-    begin
-      //Free the old surface
-      SDL_FreeSurface( _textSurface );
-      _textSurface := nil;
-    end;
 
-    _readingString := true;
-    _textCancelled := false;
-    tempString := '';
-    _maxStringLen := maxLength;
-    _foreColor := ToSDLColor(textColor);
-
-    _font := theFont^.fptr;
-    _area := NewSDLRect(area);
-
-    newStr := '|';
-
-    if assigned(_cursorSurface) then SDL_FreeSurface(_cursorSurface);
-    _cursorSurface := TTF_RenderText_Blended(_font, PChar(newStr), _foreColor);
-    _textSurface := _cursorSurface;
-  end;  
   
   
-  procedure DestroyProcedure();
-  begin
-    if assigned(_textSurface) and (_textSurface <> _cursorSurface) then SDL_FreeSurface(_textSurface);
-    if assigned(_cursorSurface) then SDL_FreeSurface(_cursorSurface);
-  end;
 
   procedure LoadSDLInputDriver(); 
   begin
     InputDriver.IsKeyPressed := @IsKeyPressedProcedure;
     InputDriver.CheckQuit := @CheckQuitProcedure;
     InputDriver.ProcessEvents := @ProcessEventsProcedure;
-    InputDriver.DrawCollectedText := @DrawCollectedTextProcedure;
-    InputDriver.FreeOldSurface := @FreeOldSurfaceProcedure;
-    InputDriver.RenderTextSurface := @RenderTextSurfaceProcedure;
-    InputDriver.StartReadingText := @StartReadingTextProcedure;
-    InputDriver.Destroy := @DestroyProcedure;
     InputDriver.GetKeyState := @GetKeyStateProcedure;
   end;
   

@@ -96,7 +96,7 @@ implementation
 		TextDriver.PrintStrings(dest,font,str,rc,clrFg,clrBg,flags)
 	end;
 	
-	procedure DefaultPrintWideStringsProcedure(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
+	procedure DefaultPrintWideStringsProcedure(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment) ;
 	begin
 		LoadDefaultTextDriver();
 		TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags)

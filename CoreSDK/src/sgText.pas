@@ -305,6 +305,18 @@ interface
   /// @sn bitmap:%s drawText:%s color:%s fontNamed:%s size:%s atPt:%s
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; name: String; size: Longint; const pt: Point2D); overload;
   
+  /// Draws the text onto the bitmap at the specified point using the color and font indicated.
+  /// Drawing text is a slow operation, and drawing it to a bitmap, then drawing the bitmap to screen is a
+  /// good idea if the text does not change frequently.
+  ///
+  /// This version only draws a single line of text, to draw text that contains line breaks use the
+  /// `DrawTextLines` procedure.
+  ///
+  /// @lib DrawTextToBitmapAtPointWithFontNamedAndSize
+  /// @sn bitmap:%s drawText:%s rc:%s color:%s   
+  
+  
+  function DrawTextTo(font: Font; str: String; clrFg : Color) : Bitmap;
   
   /// Draws the text onto the screen at the specified x,y location using the color and font indicated.
   /// As the text is draw directly onto the screen the camera location does not effect its position.
@@ -789,7 +801,7 @@ implementation
   /// This function prints "str" with font "font" and color "clrFg"
   ///  * onto a rectangle of color "clrBg".
   ///  * It does not pad the text.
-  procedure PrintStrings(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
+  procedure PrintStrings(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment) ;
   begin
   	TextDriver.PrintStrings(dest,font,str,rc,clrFg, clrBg,flags)
   end;
@@ -798,9 +810,23 @@ implementation
   ///  * It does not pad the text.
   procedure PrintWideStrings(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
   begin
-	TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags);
+	  TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags);
   end;
   
+  function DrawTextTo(font: Font; str: String; clrFg : Color) : Bitmap;
+  var
+    resultBitmap : Bitmap;
+    bitmapSize : Rectangle;
+  begin
+    bitmapSize.x := 0;
+    bitmapSize.y := 0;
+    bitmapSize.width := TextWidth(font, str) + 2;
+    bitmapSize.height := TextHeight(font,str) + 2;
+    resultBitmap := CreateBitmap(bitmapSize.width, bitmapSize.height);
+    PrintStrings(resultBitmap,font,str,bitmapSize,clrFg, ColorTransparent, AlignLeft);
+    MakeOpaque(resultBitmap);
+    result := resultBitmap;
+  end;
   
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; name: String; x, y: Longint); overload;
