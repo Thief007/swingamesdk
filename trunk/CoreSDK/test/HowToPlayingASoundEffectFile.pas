@@ -1,4 +1,4 @@
-program HowToSoundEffect;
+program HowToPlayingASoundEffectFile;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
 
@@ -11,7 +11,7 @@ begin
 	ClearScreen(ColorWhite);
 	
 	PlaySoundEffect(LoadSoundEffect('applause-3.wav')); // load sound effect in ogg, wave audio files	
-	DrawText('How To Playing A Sound Effect File!!!', ColorRed, 40, 120);	
+	DrawText('How To Playing A Sound Effect File!!!', ColorRed, 10, 120);	
 		
 	RefreshScreen();
 		

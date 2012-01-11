@@ -1,4 +1,4 @@
-program HowToSoundEffect;
+program HowToPlayingAMusicFile;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
 

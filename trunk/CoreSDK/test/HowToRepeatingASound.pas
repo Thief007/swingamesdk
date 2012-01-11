@@ -1,11 +1,11 @@
-program HowToRepeatingSoundEffect;
+program HowToRepeatingASound;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils, sgTypes;
 
 procedure Main();
 begin  
   OpenAudio();
-  OpenGraphicsWindow('Repeat Sound Effect', 320, 240);
+  OpenGraphicsWindow('Repeating Sound Effect', 320, 240);
   
   repeat // The game loop...
     ProcessEvents();    
@@ -13,7 +13,8 @@ begin
 	ClearScreen(ColorWhite);
 	
 	PlaySoundEffect(LoadSoundEffect('applause-3.wav')); // load sound effect in ogg, wave audio files	
-	DrawText('How To Playing A Sound Effect!!!', ColorRed, 40, 120);
+	DrawText('The applause sound effect only lasted', ColorRed, 10, 90);
+	DrawText('for 18 sec yet the sound keep looping!', ColorRed, 10, 110);	
 	
     RefreshScreen();
   until WindowCloseRequested();
