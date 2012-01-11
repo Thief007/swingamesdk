@@ -17,19 +17,24 @@ unit sgDriverImages;
 //
 //=============================================================================
 interface
-	uses sgTypes;
+	uses sgTypes, sgShared;
 	
 	type
 	  InitBitmapColorsProcedure            = procedure (bmp : Bitmap);
 	  CreateBitmapProcedure                = procedure(bmp : Bitmap; width, height : LongInt);
 	  SurfaceExistsProcedure               = function(bmp : Bitmap) : Boolean;
 	  DoLoadBitmapProcedure                = function(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
-
+    SameBitmapProcedure                  = function (const bitmap1, bitmap2 : Bitmap) : Boolean;
+    BlitSurfaceProcedure                 = procedure (srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr);
+    
+    
 	ImagesDriverRecord = record
 	  InitBitmapColors            : InitBitmapColorsProcedure;
 	  SurfaceExists               : SurfaceExistsProcedure;
 	  CreateBitmap                : CreateBitmapProcedure;
 	  DoLoadBitmap                : DoLoadBitmapProcedure;
+	  SameBitmap                  : SameBitmapProcedure;
+	  BlitSurface                 : BlitSurfaceProcedure;
 	end;
 	
 	var
@@ -46,8 +51,8 @@ implementation
 	
 	procedure DefaultInitBitmapColorsProcedure(bmp : Bitmap);
 	begin	  
-  		LoadSDLImagesDriver();
-  		ImagesDriver.InitBitmapColors(bmp);
+		LoadDefaultDriver();
+		ImagesDriver.InitBitmapColors(bmp);
 	end;
 	
 	function DefaultSurfaceExistsProcedure(bmp : Bitmap) : Boolean;
@@ -67,13 +72,27 @@ implementation
 		LoadDefaultDriver();
 		result := ImagesDriver.DoLoadBitmap(filename, transparent, transparentColor);
 	end;
-
+	
+	function DefaultSameBitmapProcedure(const bitmap1, bitmap2 : Bitmap) : Boolean;
+  begin
+    LoadDefaultDriver();
+    result := ImagesDriver.SameBitmap(Bitmap1, Bitmap2);
+  end;
+  
+  procedure DefaultBlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr);
+  begin
+    LoadDefaultDriver();
+    ImagesDriver.BlitSurface(srcBmp, destBmp, srcRect, destRect);
+  end;
+  
 	initialization
 	begin
 	  ImagesDriver.InitBitmapColors           := @DefaultInitBitmapColorsProcedure;
 	  ImagesDriver.SurfaceExists              := @DefaultSurfaceExistsProcedure;
 		ImagesDriver.CreateBitmap               := @DefaultCreateBitmapProcedure;
 		ImagesDriver.DoLoadBitmap               := @DefaultDoLoadBitmapProcedure;
+		ImagesDriver.SameBitmap                 := @DefaultSameBitmapProcedure;
+		ImagesDriver.BlitSurface                := @DefaultBlitSurfaceProcedure;
 	end;
 end.
 	
