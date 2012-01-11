@@ -96,6 +96,25 @@ implementation
     result := SDL_GetRelativeMouseState(x,y);
   end;
   
+  function GetMouseStateProcedure(var x : LongInt; var y : LongInt): Byte; 
+  begin
+    result := SDL_GetMouseState(x,y);
+  end;
+  
+  function ShowCursorProcedure(toggle:LongInt): LongInt; 
+  begin
+    result := SDL_ShowCursor(toggle);
+  end;
+  
+  function ButtonProcedure(toggle : LongInt): LongInt; 
+  begin
+    result := SDL_Button(toggle);
+  end;  
+  
+  procedure WarpMouseProcedure(x,y : Byte);
+  begin
+    SDL_WarpMouse(x,y);
+  end;
 
   procedure LoadSDLInputDriver(); 
   begin
@@ -103,7 +122,11 @@ implementation
     InputDriver.CheckQuit := @CheckQuitProcedure;
     InputDriver.ProcessEvents := @ProcessEventsProcedure;
     InputDriver.GetKeyState := @GetKeyStateProcedure;
-    InputDriver.GetRelativeMouseState := @GetRelativeMouseStateProcedure
+    InputDriver.GetMouseState := @GetMouseStateProcedure;
+    InputDriver.GetRelativeMouseState := @GetRelativeMouseStateProcedure;
+    InputDriver.ShowCursor := @ShowCursorProcedure;
+    InputDriver.Button := @ButtonProcedure;
+    InputDriver.WarpMouse := @WarpMouseProcedure;
   end;
   
 end.
