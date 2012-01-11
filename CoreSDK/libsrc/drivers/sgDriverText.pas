@@ -48,6 +48,7 @@ interface
 		GetErrorProcedure = function() : string;
     //checks if font library is initialiszed.
 		InitProcedure = function() : integer;
+		StringColorProcedure = procedure (dest : Bitmap; x,y : Single; theText : String; theColor : Color);
 		
 		
 		TextDriverRecord = record
@@ -62,6 +63,7 @@ interface
 			Quit : QuitProcedure;
 			GetError : GetErrorProcedure;
 			Init : InitProcedure;
+			StringColor : StringColorProcedure;
 		end;
 		
 		
@@ -132,16 +134,22 @@ implementation
 		TextDriver.Quit();
 	end;
 	
-	function DefaultGetError() : String;
+	function DefaultGetErrorProcedure() : String;
 	begin
 		LoadDefaultTextDriver();
 		result := TextDriver.GetError();
 	end;
 	
-	function DefaultInit(): integer;
+	function DefaultInitProcedure(): integer;
 	begin
 		LoadDefaultTextDriver();
 		result := TextDriver.Init();
+	end;
+	
+	procedure DefaultStringColorProcedure(dest : Bitmap; x,y : Single; theText : String; theColor : Color); 
+	begin
+	  LoadDefaultTextDriver();
+	  TextDriver.StringColor(dest,x,y,theText,theColor);
 	end;
 	
 //=============================================================================
@@ -160,8 +168,9 @@ implementation
 		TextDriver.SizeOfText := @DefaultSizeOfTextProcedure;
 		TextDriver.SizeOfUnicode := @DefaultSizeOfUnicodeProcedure;
 		TextDriver.Quit := @DefaultQuitProcedure;
-		TextDriver.GetError := @DefaultGetError;
-		TextDriver.Init := @DefaultInit;
+		TextDriver.GetError := @DefaultGetErrorProcedure;
+		TextDriver.Init := @DefaultInitProcedure;
+		TextDriver.StringColor := @DefaultStringColorProcedure;
 	end;
 
 end.

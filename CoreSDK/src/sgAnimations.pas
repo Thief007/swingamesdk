@@ -465,8 +465,7 @@ interface
 implementation
     uses
         SysUtils, StrUtils, Classes, 
-        stringhash, sgSharedUtils, sgNamedIndexCollection,   // libsrc
-        SDL_Mixer, SDL,                     // SDL
+        stringhash, sgSharedUtils, sgNamedIndexCollection,
         sgShared, sgResources, sgTrace, sgAudio, sgImages;
 //=============================================================================
 

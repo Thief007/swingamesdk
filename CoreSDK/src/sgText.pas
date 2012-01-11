@@ -637,8 +637,7 @@ interface
 implementation
   uses SysUtils, Classes, 
        stringhash, sgTrace,         // libsrc
-       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
-		sdl_gfx, sgDriverText;
+       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages, sgDriverText;
 //=============================================================================
 
   const EOL = LineEnding; // from sgShared
@@ -1190,7 +1189,7 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
-    stringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGFXColor(textColor));
+    TextDriver.stringColor(dest, x, y, theText,textColor);
   end;
   
   function TextAlignmentFrom(str: String): FontAlignment;
