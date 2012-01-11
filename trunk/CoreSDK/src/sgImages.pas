@@ -918,9 +918,7 @@ uses sgResources, sgCamera, sgGeometry, sgGraphics,
      sgDriverImages, sgDriver,
      stringhash,         // libsrc
      SysUtils, 
-     sgSavePNG, sgShared, sgTrace, 
-     SDL_gfx, SDL, SDL_Image // sdl
-     ;
+     sgSavePNG, sgShared, sgTrace;
 //=============================================================================
 
 var
@@ -928,7 +926,6 @@ var
 
 
 //----------------------------------------------------------------------------
-
 
 
 function CreateBitmap(width, height: Longint): Bitmap;
@@ -1336,15 +1333,8 @@ end;
 //---------------------------------------------------------------------------
 
 procedure OptimiseBitmap(surface: Bitmap);
-var
-  oldSurface: PSDL_Surface;
 begin
-  if not assigned(surface) then exit;
-  
-  oldSurface := surface^.surface;
-  SetNonAlphaPixels(surface, oldSurface);
-  surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
-  SDL_FreeSurface(oldSurface);
+  ImagesDriver.OptimiseBitmap(surface);
 end;
 
 //---------------------------------------------------------------------------
@@ -1359,25 +1349,26 @@ end;
 /// - Draws the src at the x,y location in the destination.
 procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : Longint); overload;
 var
-  offset: SDL_Rect;
+  offset: Rectangle;
 begin
   if (not assigned(dest)) or (not assigned(src)) then exit;
   
-  offset := NewSDLRect(x, y, 0, 0);
-  SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
+  offset := RectangleFrom(x, y, 0, 0);
+  ImagesDriver.BlitSurface(src, dest, nil, @offset);
 end;
 
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
 var
-  offset, source: SDL_Rect;
+  offset, source: Rectangle;
 begin
   if (not assigned(dest)) or (not assigned(src)) then begin {RaiseException('No bitmap supplied');} exit; end;
   if (srcW <= 0) or (srcH <= 0) then begin {RaiseException('Width and Height must be >= 0');} exit; end;
   
-  offset := NewSDLRect(x, y, 0, 0);
-  source := NewSDLRect(srcX, srcY, srcW, srcH);
-
-  SDL_BlitSurface(src^.surface, @source, dest^.surface, @offset);
+  
+  offset := RectangleFrom(x, y, 0, 0);
+  source := RectangleFrom(srcX, srcY, srcW, srcH);
+  
+  ImagesDriver.BlitSurface(src, dest, @source, @offset);
 end;
 
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : Longint); overload;
@@ -1459,12 +1450,7 @@ end;
 
 procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
 begin
-  if not assigned(dest) then
-  begin
-    RaiseWarning('Cannot clear, destination bitmap not supplied (nil)');
-    exit;
-  end;
-  SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
+  ImagesDriver.ClearSurface(dest, toColor);
 end;
 
 procedure ClearSurface(dest: Bitmap); overload;
@@ -1735,8 +1721,7 @@ end;
 
 procedure SaveBitmap(src: Bitmap; filepath: String);
 begin
-  if not assigned(src) then exit;
-  SDL_SaveBMP(src^.surface, PChar(filepath));
+  ImagesDriver.SaveBitmap(src, filepath);
 end;
 
 //---------------------------------------------------------------------------
@@ -1762,6 +1747,7 @@ begin
   
   png_save_surface(filename, bmp^.surface);
 end;
+
 
 //=============================================================================
 

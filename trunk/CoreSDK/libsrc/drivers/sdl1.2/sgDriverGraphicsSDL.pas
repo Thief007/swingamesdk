@@ -44,9 +44,9 @@ implementation
   begin
       if not assigned(bmp) then begin RaiseWarning('SDL1.2 Driver - PutPixelProcedure recieved empty Bitmap'); exit; end;
         
-      bpp := bmp^.surface^.format^.BytesPerPixel;
+      bpp := PSDL_Surface(bmp^.surface)^.format^.BytesPerPixel;
       // Here p is the address to the pixel we want to set
-      p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
+      p := PSDL_Surface(bmp^.surface)^.pixels + y * PSDL_Surface(bmp^.surface)^.pitch + x * bpp;
 
       if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
       p^ := clr;
@@ -177,7 +177,7 @@ implementation
       
       //Turn off alpha blending for when scr is blit onto _screen
       SDL_SetAlpha(screen^.surface, 0, 255);
-      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, 0);
+      SDL_FillRect(screen^.surface, @PSDL_Surface(screen^.surface)^.clip_rect, 0);
 
       baseSurface := screen^.surface;
 
@@ -273,17 +273,26 @@ implementation
   function ColorFromProcedure(bmp : Bitmap; r, g, b, a : byte) : Color;
   begin
 		if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - ColorFromProcedure recieved empty Bitmap'); exit; end;
-    result := SDL_MapRGBA(bmp^.surface^.format, r, g, b, a);
+    result := SDL_MapRGBA(PSDL_Surface(bmp^.surface)^.format, r, g, b, a);
   end;
   
   function RGBAColorProcedure(red, green, blue, alpha: byte) : Color;
   begin
     result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
   end;
+
+  function GetSurfaceWidthProcedure(src : Bitmap) : LongInt;
+  begin
+    result := PSDL_Surface(src^.surface)^.w;
+  end;
   
+  function GetSurfaceHeightProcedure(src : Bitmap) : LongInt;
+  begin
+    result := PSDL_Surface(src^.surface)^.h;
+  end;
+
 	procedure LoadSDLGraphicsDriver();
 	begin
-		Write('Loading SDL 1.2 Graphics Driver...');
 		GraphicsDriver.GetPixel32               := @GetPixel32Procedure;
 		GraphicsDriver.PutPixel                 := @PutPixelProcedure;		
 		GraphicsDriver.FillTriangle             := @FillTriangleProcedure;
@@ -308,6 +317,7 @@ implementation
     GraphicsDriver.ColorComponents          := @ColorComponentsProcedure;
     GraphicsDriver.ColorFrom                := @ColorFromProcedure;
     GraphicsDriver.RGBAColor                := @RGBAColorProcedure;
-		WriteLn('Finished.');
+    GraphicsDriver.GetSurfaceWidth          := @GetSurfaceWidthProcedure;
+    GraphicsDriver.GetSurfaceHeight         := @GetSurfaceHeightProcedure;
 	end;
 end.

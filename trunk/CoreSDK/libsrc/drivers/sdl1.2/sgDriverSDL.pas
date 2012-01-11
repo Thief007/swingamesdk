@@ -28,8 +28,6 @@ implementation
   
 	procedure LoadSDLDriver();
 	begin
-		Write('Loading SDL 1.2 Driver...');
-		Driver.GetError := @GetErrorProcedure;
-		WriteLn('Finished.');
+		Driver.GetError           := @GetErrorProcedure;
 	end;
 end.

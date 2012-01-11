@@ -36,14 +36,16 @@ interface
     ResetClipProcedure                    = procedure (bmp: Bitmap);  
     SetVideoModeFullScreenProcedure       = procedure ();
     SetVideoModeNoFrameProcedure          = procedure ();      
-    InitializeGraphicsWindowProcedure     = procedure(caption : String; screenWidth, screenHeight : LongInt);
-    InitializeScreenProcedure             = procedure( screen: Bitmap; width, height : LongInt; bgColor, stringColor : Color; msg : String);      
-    ResizeGraphicsWindowProcedure         = procedure(newWidth, newHeight : LongInt);
-    SaveImageProcedure                    = function(bmpToSave : Bitmap; path : String) : Boolean;
-    RefreshScreenProcedure                = procedure(screen : Bitmap);
-    ColorComponentsProcedure              = procedure(c : Color; var r, g, b, a : Byte); 
-    ColorFromProcedure                    = function(bmp : Bitmap; r, g, b, a: Byte)  : Color;
-    RGBAColorProcedure                    = function(r, g, b, a: Byte)  : Color;
+    InitializeGraphicsWindowProcedure     = procedure (caption : String; screenWidth, screenHeight : LongInt);
+    InitializeScreenProcedure             = procedure ( screen: Bitmap; width, height : LongInt; bgColor, stringColor : Color; msg : String);      
+    ResizeGraphicsWindowProcedure         = procedure (newWidth, newHeight : LongInt);
+    SaveImageProcedure                    = function  (bmpToSave : Bitmap; path : String) : Boolean;
+    RefreshScreenProcedure                = procedure (screen : Bitmap);
+    ColorComponentsProcedure              = procedure (c : Color; var r, g, b, a : Byte); 
+    ColorFromProcedure                    = function  (bmp : Bitmap; r, g, b, a: Byte)  : Color;
+    RGBAColorProcedure                    = function  (r, g, b, a: Byte)  : Color;
+    GetSurfaceWidthProcedure              = function  (src : Bitmap) : LongInt;
+    GetSurfaceHeightProcedure             = function  (src : Bitmap) : LongInt;
 
 	GraphicsDriverRecord = record
 	  GetPixel32                : GetPixel32Procedure;
@@ -70,6 +72,8 @@ interface
     ColorComponents           : ColorComponentsProcedure;
     ColorFrom                 : ColorFromProcedure;
     RGBAColor                 : RGBAColorProcedure;
+    GetSurfaceWidth           : GetSurfaceWidthProcedure;
+    GetSurfaceHeight          : GetSurfaceHeightProcedure;
 	end;
 	
 	var
@@ -225,6 +229,18 @@ implementation
     result := GraphicsDriver.RGBAColor(r, g, b, a);
   end;
 
+  function DefaultGetSurfaceWidthProcedure(src : Bitmap)  : LongInt;
+  begin
+    LoadDefaultGraphicsDriver();
+    result := GraphicsDriver.GetSurfaceWidth(src);
+  end;
+
+  function DefaultGetSurfaceHeightProcedure(src : Bitmap)  : LongInt;
+  begin
+    LoadDefaultGraphicsDriver();
+    result := GraphicsDriver.GetSurfaceHeight(src);
+  end;
+
 	initialization
 	begin
 		GraphicsDriver.GetPixel32               := @DefaultGetPixel32Procedure;
@@ -251,6 +267,8 @@ implementation
     GraphicsDriver.ColorComponents          := @DefaultColorComponentsProcedure;
     GraphicsDriver.ColorFrom                := @DefaultColorFromProcedure;
     GraphicsDriver.RGBAColor                := @DefaultRGBAColorProcedure;
+    GraphicsDriver.GetSurfaceWidth          := @DefaultGetSurfaceWidthProcedure;
+    GraphicsDriver.GetSurfaceHeight         := @DefaultGetSurfaceHeightProcedure;
 	end;
 end.
 	

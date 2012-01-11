@@ -29,9 +29,11 @@ interface
     SetOpacityProcedure                  = procedure (bmp : Bitmap; pct : Single);
     MakeTransparentProcedure             = procedure (bmp : Bitmap);
     RotateScaleSurfaceProcedure          = procedure (resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
-    SameBitmapProcedure                  = function (const bitmap1, bitmap2 : Bitmap) : Boolean;
+    SameBitmapProcedure                  = function  (const bitmap1, bitmap2 : Bitmap) : Boolean;
     BlitSurfaceProcedure                 = procedure (srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr);
-    
+    ClearSurfaceProcedure                = procedure (dest : Bitmap; toColor : Color);
+    OptimiseBitmapProcedure              = procedure (surface : Bitmap);
+    SaveBitmapProcedure                  = procedure (src : Bitmap; filepath : String);
     
 	ImagesDriverRecord = record
 	  InitBitmapColors            : InitBitmapColorsProcedure;
@@ -45,6 +47,9 @@ interface
 	  RotateScaleSurface          : RotateScaleSurfaceProcedure;
 	  SameBitmap                  : SameBitmapProcedure;
 	  BlitSurface                 : BlitSurfaceProcedure;
+	  ClearSurface                : ClearSurfaceProcedure;
+	  OptimiseBitmap              : OptimiseBitmapProcedure;
+	  SaveBitmap                  : SaveBitmapProcedure;
 	end;
 	
 	var
@@ -125,6 +130,24 @@ implementation
     ImagesDriver.RotateScaleSurface(resultBmp, src, deg, scale, smooth);
   end;
 
+  procedure DefaultClearSurfaceProcedure(dest : Bitmap; toColor : Color);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.ClearSurface(dest, toColor);
+  end;
+
+  procedure DefaultOptimiseBitmapProcedure(surface : Bitmap);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.OptimiseBitmap(surface);
+  end;
+
+  procedure DefaultSaveBitmapProcedure(src : Bitmap; filepath : String);
+  begin	  
+    LoadDefaultDriver();
+    ImagesDriver.SaveBitmap(src, filepath);
+  end;
+
 	initialization
 	begin
 	  ImagesDriver.InitBitmapColors           := @DefaultInitBitmapColorsProcedure;
@@ -138,6 +161,9 @@ implementation
 		ImagesDriver.SetOpacity                 := @DefaultSetOpacityProcedure;
 		ImagesDriver.MakeTransparent            := @DefaultMakeTransparentProcedure;
 	  ImagesDriver.RotateScaleSurface         := @DefaultRotateScaleSurfaceProcedure;
+	  ImagesDriver.ClearSurface               := @DefaultClearSurfaceProcedure;
+	  ImagesDriver.OptimiseBitmap             := @DefaultOptimiseBitmapProcedure;
+	  ImagesDriver.SaveBitmap                 := @DefaultSaveBitmapProcedure;
 	end;
 end.
 	

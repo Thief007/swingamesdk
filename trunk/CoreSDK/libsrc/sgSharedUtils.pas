@@ -52,6 +52,9 @@ uses sgTypes;
   procedure MakeFalse (var visited: Array of Boolean);
   function WithinRange(arrayLength : Integer; currentIndex : Integer) : Boolean;
     
+  //Checks if pointer is assigned, then raises a warning and exits
+  procedure CheckAssigned(msg : String; ptr : Pointer);
+    
   type
     LineData = record
       filename: String;
@@ -505,5 +508,14 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'ProcessLinesInFile');
     {$ENDIF}
+  end;
+  	
+  procedure CheckAssigned(msg : String; ptr : Pointer);
+  begin
+    if not Assigned(ptr) then 
+    begin 
+      RaiseWarning(msg); 
+      exit; 
+    end;
   end;
 end.

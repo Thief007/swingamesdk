@@ -1908,7 +1908,7 @@ implementation
   begin
     if dest = nil then begin RaiseWarning('DrawPixel - No destination bitmap supplied'); exit; end;
     
-    if (x < 0) or (x >= dest^.surface^.w) or (y < 0) or (y >= dest^.surface^.h) then 
+    if (x < 0) or (x >= GraphicsDriver.GetSurfaceWidth(dest)) or (y < 0) or (y >= GraphicsDriver.GetSurfaceHeight(dest)) then 
     begin 
       RaiseWarning('DrawPixel - Coordinate out of range of Bitmap supplied'); 
       exit; 
