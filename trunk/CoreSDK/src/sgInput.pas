@@ -50,7 +50,7 @@ unit sgInput;
 interface
 //=============================================================================
 
-  uses sdl, sgTypes;
+  uses sgTypes;
   
 //----------------------------------------------------------------------------
 // Window close and Processing events
@@ -269,9 +269,6 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgInput', 'WindowCloseRequested');
     {$ENDIF}
-    //if sdlManager = nil then
-    //  result := false
-    //else
       result := HasQuit();
     {$IFDEF TRACE}
       TraceExit('sgInput', 'WindowCloseRequested');
@@ -374,7 +371,7 @@ implementation
     x, y: Longint;
   begin
     x := 0; y := 0;
-    SDL_GetMouseState(x, y);
+    InputDriver.GetMouseState(x, y);
     result := VectorTo(x, y);
   end;
 
@@ -391,8 +388,8 @@ implementation
   procedure ShowMouse(show : Boolean); overload;
   begin
     try
-      if show then SDL_ShowCursor(1)
-      else SDL_ShowCursor(0);
+      if show then InputDriver.ShowCursor(1)
+      else InputDriver.ShowCursor(0);
     except
       begin RaiseException('Unable to show or hide mouse'); exit; end;
     end;
@@ -400,19 +397,19 @@ implementation
   
   procedure MoveMouse(x, y : Byte);overload;
   begin
-    SDL_WarpMouse(x,y);
+    InputDriver.WarpMouse(x,y);
     MouseMovement();
   end;
   
   procedure MoveMouse(const point : Point2d);overload;
   begin
-    SDL_WarpMouse(RoundUShort(point.x), RoundUShort(point.y));
+    InputDriver.WarpMouse(RoundUShort(point.x), RoundUShort(point.y));
     MouseMovement();
   end;
   
   function MouseShown(): Boolean;
   begin
-    result := SDL_ShowCursor(-1) = 1;
+    result := InputDriver.ShowCursor(-1) = 1;
   end;
   
   function MousePosition(): Point2D;
@@ -420,7 +417,7 @@ implementation
     x, y: Longint;
   begin
     x := 0; y := 0;
-    SDL_GetMouseState(x, y);
+    InputDriver.GetMouseState(x, y);
     result := PointAt(x, y);    
   end;
   
@@ -457,7 +454,7 @@ implementation
     x, y: Longint;
   begin
     x := 0; y := 0;
-    result := (SDL_GetMouseState(x, y) and SDL_BUTTON(Longint(button))) > 0;
+    result := (InputDriver.GetMouseState(x, y) and InputDriver.Button(Longint(button))) > 0;
   end;
   
   function MouseUp(button: MouseButton): Boolean;
