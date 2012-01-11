@@ -34,7 +34,6 @@ unit sgTypes;
 
 //=============================================================================
 interface
-  uses SDL, SDL_Image, SDL_TTF;
 //=============================================================================
 
   type
@@ -269,7 +268,7 @@ interface
     /// @via_pointer
     BitmapData = packed record
       filename, name: String;         // Used for locating bitmaps during load/freeing
-      surface:        PSDL_Surface;   // The actual bitmap image
+      surface:        Pointer;   // The actual bitmap image
       
       width:  Longint;        // The width of the bitmap
       height: Longint;        // The height of the bitmap
@@ -416,7 +415,8 @@ interface
     /// @struct FontData
     /// @via_pointer
     FontData = packed record
-        fptr: PTTF_Font;
+      fptr : Pointer;
+        //fptr: PTTF_Font;
         name: String;
     end;
     
