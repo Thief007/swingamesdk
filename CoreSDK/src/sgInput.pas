@@ -50,7 +50,7 @@ unit sgInput;
 interface
 //=============================================================================
 
-  uses SDL, sgTypes;
+  uses sdl, sgTypes;
   
 //----------------------------------------------------------------------------
 // Window close and Processing events
@@ -128,7 +128,7 @@ interface
   /// 
   /// @lib
   /// @sn moveMouseToX:%s y:%s
-  procedure MoveMouse(x, y : UInt16); overload;
+  procedure MoveMouse(x, y : Byte); overload;
     
   /// Moves the mouse cursor to the specified screen location.
   /// 
@@ -288,7 +288,7 @@ implementation
     {$ifdef DARWIN}
     CyclePool();
     {$endif}
-    SDL_GetRelativeMouseState(x, y);
+    InputDriver.GetRelativeMouseState(x, y);
     InputBackendProcessEvents();
     {$IFDEF TRACE}
       TraceExit('sgInput', 'ProcessEvents');
@@ -398,7 +398,7 @@ implementation
     end;
   end;
   
-  procedure MoveMouse(x, y : UInt16);overload;
+  procedure MoveMouse(x, y : Byte);overload;
   begin
     SDL_WarpMouse(x,y);
     MouseMovement();
@@ -444,7 +444,7 @@ implementation
     
     x := 0; 
     y := 0;
-    SDL_GetRelativeMouseState(x, y);
+    InputDriver.GetRelativeMouseState(x, y);
     result := VectorTo(x, y);
 
     {$IFDEF TRACE}
