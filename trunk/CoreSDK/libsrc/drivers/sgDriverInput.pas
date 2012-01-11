@@ -11,6 +11,7 @@ type
   ProcessEventsProcedure = procedure();
   DestroyProcedure = procedure();  
   GetKeyStateProcedure = function() : Byte;
+  GetRelativeMouseStateProcedure = function(var x : LongInt; var y : LongInt): Byte;
     
   InputDriverRecord = Record
     IsKeyPressed : IsKeyPressedProcedure;
@@ -18,6 +19,7 @@ type
     ProcessEvents : ProcessEventsProcedure;
     Destroy : DestroyProcedure;
     GetKeyState : GetKeyStateProcedure;
+    GetRelativeMouseState : GetRelativeMouseStateProcedure;
   end;
 
 var
@@ -60,6 +62,12 @@ implementation
     LoadDefaultInputDriver();
     result := InputDriver.GetKeyState();
   end;
+  
+  function DefaultGetRelativeMouseStateProcedure(var x : LongInt; var y : LongInt) : Byte;
+  begin
+    LoadDefaultInputDriver();
+    result := InputDriver.GetRelativeMouseState(x,y);
+  end;
 
 initialization
   begin
@@ -68,6 +76,7 @@ initialization
     InputDriver.ProcessEvents := @DefaultProcessEventsProcedure;
     InputDriver.Destroy := @DefaultDestroyProcedure;
     InputDriver.GetKeyState := @DefaultGetKeyStateProcedure;
+    InputDriver.GetRelativeMouseState := @DefaultGetRelativeMouseStateProcedure;
   end;
 
 

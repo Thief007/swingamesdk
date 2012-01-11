@@ -91,7 +91,10 @@ implementation
     result := ((kyCode = SDLK_LSHIFT) or (kyCode = SDLK_RSHIFT));
   end;
 
-  
+  function GetRelativeMouseStateProcedure(var x : LongInt; var y : LongInt) : Byte; 
+  begin
+    result := SDL_GetRelativeMouseState(x,y);
+  end;
   
 
   procedure LoadSDLInputDriver(); 
@@ -100,6 +103,7 @@ implementation
     InputDriver.CheckQuit := @CheckQuitProcedure;
     InputDriver.ProcessEvents := @ProcessEventsProcedure;
     InputDriver.GetKeyState := @GetKeyStateProcedure;
+    InputDriver.GetRelativeMouseState := @GetRelativeMouseStateProcedure
   end;
   
 end.
