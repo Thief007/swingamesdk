@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2012-01-12: Aaron : changed input to use InputDrivers.
 // - 2010-02-02: Andrew : Added starting text reading within a region
 // - 2009-07-24: Andrew : Renamed mouse code
 // - 2009-07-10: Andrew : Added call to initialise SwinGame.

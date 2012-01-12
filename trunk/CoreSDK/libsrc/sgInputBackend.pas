@@ -267,9 +267,9 @@ implementation
     if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then
     begin
       //Free the old surface
-      imagesDriver.FreeSurface(_textBitmap );
+      FreeBitmap(_textBitmap );
     end;
-
+    if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
     _readingString := true;
     _textCancelled := false;
     _tempString := '';
@@ -281,7 +281,7 @@ implementation
 
     newStr := '|';
 
-    if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
+    
     _cursorBitmap := DrawTextTo(_font, newStr, _foreColor);
     _textBitmap := _cursorBitmap;
   end;
