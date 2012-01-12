@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics; // sdl;
+	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics, sgDriverGraphicsSDL; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -37,29 +37,6 @@ implementation
 	  else 
 	    result := Assigned(bmp^.surface);
 	end;
-	function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
-  begin
-    if w < 0 then
-    begin
-      x += w;
-      w := -w;
-    end;
-    if h < 0 then
-    begin
-      y += h;
-      h := -h;
-    end;
-    
-    result.x := x;
-    result.y := y;
-    result.w := Word(w);
-    result.h := Word(h);
-  end;
-  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
-  begin
-      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
-  end;
-
   
 
 	procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);
