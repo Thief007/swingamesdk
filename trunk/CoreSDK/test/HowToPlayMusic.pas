@@ -1,4 +1,4 @@
-program HowToPlayMusicFile;
+program HowToPlayMusic;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
 
@@ -6,12 +6,12 @@ procedure Main();
 begin
 	OpenAudio();
 
-	OpenGraphicsWindow('How To Play Music File', 320, 240);
+	OpenGraphicsWindow('How To Play Music', 320, 240);
 
 	ClearScreen(ColorWhite);
 	
 	PlayMusic(LoadMusic('diving-turtle.mp3')); 
-	DrawText('How To Play Music File!!!', ColorRed, 40, 120);	
+	DrawText('How To Play Music!!!', ColorRed, 40, 120);	
 		
 	RefreshScreen();
 		
