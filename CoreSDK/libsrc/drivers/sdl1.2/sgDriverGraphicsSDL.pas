@@ -15,14 +15,15 @@ unit sgDriverGraphicsSDL;
 //
 //=============================================================================
 interface
-
-
+uses sgTypes, SDL;
+  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
+  function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
 	
 	procedure LoadSDLGraphicsDriver();
-		
+	
 implementation
-	uses sgDriverGraphics, sysUtils,sgTypes, sgShared, sgGeometry,
-		SDL_gfx, SDL, SDL_Image, sgSavePNG, sgInputBackend;
+	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry,
+		SDL_gfx, SDL_Image, sgSavePNG, sgInputBackend;
 	
 
   
@@ -113,6 +114,9 @@ implementation
     ColorComponentsProcedure(val, r, g, b, a);
     result := (r shl 24) or (g shl 16) or (b shl 8) or a;
   end;
+  
+  
+  
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   begin
     if w < 0 then

@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics;
+	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics, sgDriverGraphicsSDL;
 	
 	const EOL = LineEnding; // from sgShared
 
@@ -45,30 +45,7 @@ implementation
 	  
 	end;
 	
-	function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
-  begin
-    if w < 0 then
-    begin
-      x += w;
-      w := -w;
-    end;
-    if h < 0 then
-    begin
-      y += h;
-      h := -h;
-    end;
-    
-    result.x := x;
-    result.y := y;
-    result.w := Word(w);
-    result.h := Word(h);
-  end;
-	
-  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
-  begin
-      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
-  end;
-  
+
 
   
 	function ToSDLColor(color: Longword): TSDL_Color;
