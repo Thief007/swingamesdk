@@ -12,9 +12,8 @@ begin
 	
 	ClearScreen(ColorWhite);
 	
-	PlaySoundEffect(LoadSoundEffect('applause-3.wav')); // load sound effect in ogg, wave audio files	
-	DrawText('The applause sound effect only lasted', ColorRed, 10, 90);
-	DrawText('for 18 sec yet the sound keep looping!', ColorRed, 10, 110);	
+	PlaySoundEffect(LoadSoundEffect('Siren.ogg')); // load sound effect in ogg, wave audio files	
+	DrawText('How To Play Sound Effect!!!', ColorRed, 10, 120);	
 	
     RefreshScreen();
   until WindowCloseRequested();
