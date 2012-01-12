@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx;
+	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics;
 	
 	const EOL = LineEnding; // from sgShared
 
@@ -45,6 +45,46 @@ implementation
 	  
 	end;
 	
+	function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
+  begin
+    if w < 0 then
+    begin
+      x += w;
+      w := -w;
+    end;
+    if h < 0 then
+    begin
+      y += h;
+      h := -h;
+    end;
+    
+    result.x := x;
+    result.y := y;
+    result.w := Word(w);
+    result.h := Word(h);
+  end;
+	
+  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
+  begin
+      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
+  end;
+  
+
+  
+	function ToSDLColor(color: Longword): TSDL_Color;
+  begin
+    if (screen^.surface = nil) or (PSDL_Surface(screen^.surface)^.format = nil) then
+    begin
+      RaiseWarning('Estimating color as screen is not created.');
+      result.r := color and $00FF0000 shr 16;
+      result.g := color and $0000FF00 shr 8;
+      result.b := color and $000000FF;
+      exit;
+    end;
+
+    SDL_GetRGB(color, PSDL_Surface(screen^.surface)^.format, @result.r, @result.g, @result.b);
+  end;
+	
 	procedure CloseFontProcedure(fontToClose : font);
 	begin
 		TTF_CloseFont(fontToClose^.fptr);
@@ -54,7 +94,7 @@ implementation
   	begin
     	result := (Longint(toCheck) and Longint(checkFor)) = Longint(checkFor);
   	end;
-	
+
 	procedure PrintStringsProcedure(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
 	var
 		sText: Bitmap;
@@ -331,7 +371,7 @@ implementation
 	
 	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
 	begin
-	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColor(theColor) );
+	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), GraphicsDriver.ToGfxColor(theColor) );
 	end;
 	
 	procedure LoadSDLTextDriver();

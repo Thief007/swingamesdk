@@ -34,6 +34,7 @@ interface
     ClearSurfaceProcedure                = procedure (dest : Bitmap; toColor : Color);
     OptimiseBitmapProcedure              = procedure (surface : Bitmap);
     SaveBitmapProcedure                  = procedure (src : Bitmap; filepath : String);
+    SetNonAlphaPixelsProcedure           = procedure (bmp: Bitmap);
     
 	ImagesDriverRecord = record
 	  InitBitmapColors            : InitBitmapColorsProcedure;
@@ -50,6 +51,7 @@ interface
 	  ClearSurface                : ClearSurfaceProcedure;
 	  OptimiseBitmap              : OptimiseBitmapProcedure;
 	  SaveBitmap                  : SaveBitmapProcedure;
+	  SetNonAlphaPixels           : SetNonAlphaPixelsProcedure;
 	end;
 	
 	var
@@ -62,6 +64,12 @@ implementation
 	procedure LoadDefaultDriver();
 	begin
 		LoadSDLImagesDriver();
+	end;
+	
+	procedure DefaultSetNonAlphaPixelsProcedure(bmp : Bitmap);
+	begin
+	 LoadDefaultDriver();
+	 ImagesDriver.SetNonAlphaPixels(bmp);
 	end;
 	
 	procedure DefaultInitBitmapColorsProcedure(bmp : Bitmap);
@@ -164,6 +172,7 @@ implementation
 	  ImagesDriver.ClearSurface               := @DefaultClearSurfaceProcedure;
 	  ImagesDriver.OptimiseBitmap             := @DefaultOptimiseBitmapProcedure;
 	  ImagesDriver.SaveBitmap                 := @DefaultSaveBitmapProcedure;
+	  ImagesDriver.SetNonAlphaPixels          := @DefaultSetNonAlphaPixelsProcedure;
 	end;
 end.
 	

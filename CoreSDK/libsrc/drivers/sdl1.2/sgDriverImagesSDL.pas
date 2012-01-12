@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL_gfx, SDL, SDL_Image; // sdl;
+	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -37,19 +37,43 @@ implementation
 	  else 
 	    result := Assigned(bmp^.surface);
 	end;
-	
+	function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
+  begin
+    if w < 0 then
+    begin
+      x += w;
+      w := -w;
+    end;
+    if h < 0 then
+    begin
+      y += h;
+      h := -h;
+    end;
+    
+    result.x := x;
+    result.y := y;
+    result.w := Word(w);
+    result.h := Word(h);
+  end;
+  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
+  begin
+      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
+  end;
+
+  
+
 	procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);
 	begin
  	  CheckAssigned('SDL1.2 ImagesDriver - CreateBitmapProcedure recieved unassigned Bitmap', bmp);
     
-		if (baseSurface = nil) or (baseSurface^.format = nil) then
+		if (screen^.surface = nil) or (PSDL_Surface(screen^.surface)^.format = nil) then
     begin
       RaiseWarning('Creating ARGB surface as screen format unknown.');
       bmp^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
     end
     else
     begin
-      with baseSurface^.format^ do
+      with PSDL_Surface(screen^.surface)^.format^ do
       begin
         bmp^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
       end;
@@ -61,7 +85,7 @@ implementation
   //
   // @param bmp  A pointer to the Bitmap being set
   // @param surface The surface with pixel data for this Bitmap
-  procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
+  procedure SetNonTransparentPixels(bmp: Bitmap; transparentColor: Color);
   var
     r, c: Longint;
   begin
@@ -73,7 +97,24 @@ implementation
     begin
       for r := 0 to bmp^.height - 1 do
       begin
-        bmp^.nonTransparentPixels[c, r] := (GetPixel32(surface, c, r) <> transparentColor);
+        bmp^.nonTransparentPixels[c, r] := (GraphicsDriver.GetPixel32(bmp^.surface, c, r) <> transparentColor);
+      end;
+    end;
+  end;
+  
+  procedure SetNonAlphaPixelsProcedure(bmp : Bitmap); 
+  var
+    r, c: Longint;
+    hasAlpha: Boolean;
+  begin
+    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
+    hasAlpha := PSDL_Surface(bmp^.surface)^.format^.BytesPerPixel = 4;
+
+    for c := 0 to bmp^.width - 1 do
+    begin
+      for r := 0 to bmp^.height - 1 do
+      begin
+        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GraphicsDriver.GetPixel32(bmp, c, r) and SDL_Swap32($000000FF)) > 0);
       end;
     end;
   end;
@@ -99,7 +140,7 @@ implementation
     if not transparent then 
     begin
       // Only move to screen alpha if window is open...
-      if baseSurface = nil then
+      if screen^.surface = nil then
         result^.surface := loadedImage
       else
         result^.surface := SDL_DisplayFormatAlpha(loadedImage);
@@ -122,11 +163,11 @@ implementation
     begin
       correctedTransColor := ColorFrom(result, transparentColor);
       SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-      SetNonTransparentPixels(result, loadedImage, transparentColor);
+      SetNonTransparentPixels(result, transparentColor);
     end
     else
     begin
-      SetNonAlphaPixels(result, loadedImage);
+      SetNonAlphaPixelsProcedure(result);
     end;
 
     // Free the loaded image if its not the result's surface
@@ -222,7 +263,7 @@ implementation
    	CheckAssigned('SDL1.2 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap Surface', surface^.surface);
   
     oldSurface := surface^.surface;
-    SetNonAlphaPixels(surface, oldSurface);
+    SetNonAlphaPixelsProcedure(surface);
     surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
     SDL_FreeSurface(oldSurface);
   end;
@@ -233,6 +274,8 @@ implementation
    	CheckAssigned('SDL1.2 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap Surface', src^.surface);   
     SDL_SaveBMP(src^.surface, PChar(filepath));
   end;
+  
+
   
 	procedure LoadSDLImagesDriver();
 	begin
@@ -249,5 +292,6 @@ implementation
 		ImagesDriver.RotateScaleSurface                       := @RotateScaleSurfaceProcedure;
 		ImagesDriver.ClearSurface                             := @ClearSurfaceProcedure;
 		ImagesDriver.OptimiseBitmap                           := @OptimiseBitmapProcedure;
+		ImagesDriver.SetNonAlphaPixels                        := @SetNonAlphaPixelsProcedure;
 	end;
 end.

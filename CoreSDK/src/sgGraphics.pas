@@ -2327,7 +2327,7 @@ implementation
       exit;
     end;
     
-    result := _screen^.w;
+    result := GraphicsDriver.GetScreenWidth();
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ScreenWidth');
     {$ENDIF}
@@ -2343,7 +2343,7 @@ implementation
       RaiseWarning('Screen has not been created. Unable to get screen height.');
       exit;
     end;
-    result := _screen^.h;
+    result := GraphicsDriver.GetScreenHeight();
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ScreenHeight');
     {$ENDIF}
@@ -2449,7 +2449,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ColorComponents');
     {$ENDIF}
-    if baseSurface = nil then
+    if screen^.surface = nil then
     begin
       RaiseWarning('Estimating color components as Windows has not been opened.');
       a := (c and $FF000000) shr 24;
@@ -2628,7 +2628,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'RGBAColor');
     {$ENDIF}
-    if (baseSurface = nil) or (baseSurface^.format = nil) then
+    if (screen^.surface = nil) or (not GraphicsDriver.SurfaceFormatAssigned(screen)) then
     begin
       RaiseWarning('Estimating RGBAColor as the window is not open');
       result := (alpha shl 24) or (red shl 16) or (green shl 8) or (blue);

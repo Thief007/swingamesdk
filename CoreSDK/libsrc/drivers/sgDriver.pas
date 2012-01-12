@@ -16,35 +16,55 @@ unit sgDriver;
 //		- Pascal SmallInt is equivalent to Sint16
 //
 //=============================================================================
-interface
-	
-	type
-	  GetErrorProcedure = function () : PChar;
+interface	
+  type
+    GetErrorProcedure = function () : PChar;
+    QuitProcedure = procedure();
+    InitProcedure = procedure();
+    
+  	DriverRecord = record
+  	  GetError                : GetErrorProcedure;
+  	  Quit                    : QuitProcedure;
+  	  Init                    : InitProcedure
 
-	DriverRecord = record
-	  GetError                : GetErrorProcedure;
-	end;
+	  end;  
+	
 	
 	var
 		Driver : DriverRecord;
+
 		
 implementation
-  	uses sgTypes, sgDriverSDL;
-  	
+  	uses sgTypes, sgDriverSDL, sgDriverTimer;
+
 	procedure LoadDefaultDriver();
 	begin
 		LoadSDLDriver();
 	end;
-	
+
+	procedure DefaultInitProcedure();
+	begin
+	 LoadDefaultDriver();
+	 Driver.Init();
+	end;
+
 	function DefaultGetErrorProcedure () : PChar;
 	begin
 		LoadDefaultDriver();
 		result := Driver.GetError();
 	end;
 
-	initialization
+	procedure DefaultQuitProcedure();
+	begin
+	 LoadDefaultDriver();
+	 Driver.Quit();
+	end;
+
+initialization
 	begin
 		Driver.GetError               := @DefaultGetErrorProcedure;
+		Driver.Quit                   := @DefaultQuitProcedure;
+		Driver.Init                   := @DefaultInitProcedure;
 	end;
 end.
 	

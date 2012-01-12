@@ -1124,6 +1124,7 @@ begin
     
     //Dispose the pointer
     Dispose(bitmapToFree);
+    bitmapToFree := nil;
   end;
   
   bitmapToFree := nil;
@@ -1326,7 +1327,7 @@ begin
   if not assigned(src) then exit;
   if Length(src^.nonTransparentPixels) <> 0 then exit;
     
-  SetNonAlphaPixels(src, src^.surface);
+  ImagesDriver.SetNonAlphaPixels(src);
   OptimiseBitmap(src);
 end;
 

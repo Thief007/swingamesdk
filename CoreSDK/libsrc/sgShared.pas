@@ -31,7 +31,6 @@ unit sgShared;
 //=============================================================================
 interface
   uses 
-    SDL, SDL_Image,     //SDL
     stringhash,   // libsrc
     sgInputBackend, sgTypes;
 //=============================================================================
@@ -71,22 +70,9 @@ interface
   // Calls Release on all of the resources in the tbl hash table.
   procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
 
-  // Takes a 4-byte (32bit) unsigned integer representing colour in the
-  // current SDL pixel format and returns a nice `TSDL_Color` record with
-  // simple red, green and blue components
-  function ToSDLColor(color: Longword): TSDL_Color;
 
-  // Converts the passed in SwinGame `Color` format (which changes as does
-  // SDL to whatever the current SDL environment uses) to the Color structure
-  // used by SDL_GFX (which is always 4 bytes in RGBA order).
-  function ToGfxColor(val: Color): Color;
 
-  // Returns a new `SDL_Rect` at the specified position (``x`` and ``y``) and
-  // size (``w`` and ``h``). SDL_Rect are used internally by SDL to specify
-  // the part of a source or destination image to be used in clipping and
-  // blitting operations.
-  function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
-  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
+
 
   // Rounds `x` up... 1.1 -> 2
   function Ceiling(x: Single): Longint;
@@ -106,15 +92,13 @@ interface
   procedure CyclePool();
   {$endif}
   
-  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
-  function GetPixel32(surface: PSDL_Surface; x, y: Longint): Color;
   
-  function RoundUByte(val: Double): UInt8;
+  function RoundUByte(val: Double): Byte;
   function RoundInt(val: Double): LongInt;
-  function RoundUShort(val: Double): UInt16;
-  function RoundShort(val: Double): SInt16;
+  function RoundUShort(val: Double): Word;
+  function RoundShort(val: Double): Smallint;
   function StrToSingle(val: String): Single;
-  function StrToUByte(val: String): UInt8;
+  function StrToUByte(val: String): Byte;
   
   /// Called when ANY resource is freed to inform other languages to remove from
   /// their caches.
@@ -140,10 +124,6 @@ interface
     // TODO: Does this work? Full path or just resource/filename?
     iconFile: String = '';
 
-    // This "base" surface is used to get standard pixel format information
-    // for any other surfaces that need to be created and to support colour.
-    baseSurface: PSDL_Surface = nil;
-
     // Contains the last error message that has occured if `HasException` is
     // true. If multiple error messages have occured, only the last is stored.
     // Used only by the generated library code.
@@ -163,7 +143,7 @@ interface
     _lastUpdateTime: Longword = 0;
     
     // The pointer to the screen's surface
-    _screen: PSDL_Surface = nil;
+    _screen: Pointer = nil;
     
     _UpdateFPSData: IntProc = nil;
     
@@ -180,7 +160,7 @@ implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgTrace, sgGraphics, 
-    SDL_gfx;
+    sgImages, sgDriver,sgDriverTimer;
 //=============================================================================
   
   var
@@ -247,22 +227,11 @@ implementation
     {$IFDEF Trace}
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
     {$ENDIF}
+    //Driver.Init();
     
-    if SDL_INIT(SDL_INIT_VIDEO or SDL_INIT_AUDIO) = -1 then
-    begin
-      {$IFDEF Trace}
-      TraceIf(tlError, 'sgShared', 'ERROR', 'InitialiseSwinGame', SDL_GetError());
-      {$ENDIF}
-      RaiseException('Error loading sdl... ' + SDL_GetError());
-      exit;
-    end;
     
-    {$IFDEF Trace}
-      TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to enable unicode');
-    {$ENDIF}
-    
-    //Unicode required by input manager.
-    SDL_EnableUNICODE(SDL_ENABLE);
+    Driver.Init();
+
     
     //Initialise colors... assuming ARGB -  will be recalculated when window is opened
     ColorWhite        := $FFFFFFFF;
@@ -298,131 +267,16 @@ implementation
   end;
   {$endif}
 
-  function ToSDLColor(color: Longword): TSDL_Color;
-  begin
-    if (baseSurface = nil) or (baseSurface^.format = nil) then
-    begin
-      RaiseWarning('Estimating color as screen is not created.');
-      result.r := color and $00FF0000 shr 16;
-      result.g := color and $0000FF00 shr 8;
-      result.b := color and $000000FF;
-      exit;
-    end;
 
-    SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
-  end;
 
-  function ToGfxColor(val: Color): Color;
-  var
-    r, g, b, a: Byte;
-  begin
-    ColorComponents(val, r, g, b, a);
-    result := (r shl 24) or (g shl 16) or (b shl 8) or a;
-  end;
-  
-  //procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-  //begin
-  //  if sdlManager = nil then
-  //  begin
-  //    sdlManager := TSDLManager.Create();
-  //  end;
-  //  
-  //  sdlManager.RegisterEventProcessor(handle, handle2);
-  //end;
-  
-  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
-  begin
-      result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
-  end;
-
-  
-  function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
-  begin
-    if w < 0 then
-    begin
-      x += w;
-      w := -w;
-    end;
-    if h < 0 then
-    begin
-      y += h;
-      h := -h;
-    end;
-    
-    result.x := x;
-    result.y := y;
-    result.w := Word(w);
-    result.h := Word(h);
-  end;
-  
   function Ceiling(x: Single): Longint;
   begin
     result := Round(x);
     if result < x then result := result + 1;
   end;
+
   
-  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
-  var
-    r, c: Longint;
-    hasAlpha: Boolean;
-  begin
-    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-    hasAlpha := surface^.format^.BytesPerPixel = 4;
 
-    for c := 0 to bmp^.width - 1 do
-    begin
-      for r := 0 to bmp^.height - 1 do
-      begin
-        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
-      end;
-    end;
-  end;
-  
-  function GetPixel32(surface: PSDL_Surface; x, y: Longint): Color;
-  var
-    pixel, pixels: PUint32;
-    offset: Longword;
-  {$IFDEF FPC}
-    pixelAddress: PUint32;
-  {$ELSE}
-    pixelAddress: Longword;
-  {$ENDIF}
-  begin
-    //Convert the pixels to 32 bit
-    pixels := surface^.pixels;
-
-    //Get the requested pixel
-    offset := (( y * surface^.w ) + x) * surface^.format^.BytesPerPixel;
-
-    {$IFDEF FPC}
-      pixelAddress := pixels + (offset div 4);
-      pixel := PUint32(pixelAddress);
-    {$ELSE}
-      pixelAddress := Longword(pixels) + offset;
-      pixel := Ptr(pixelAddress);
-    {$ENDIF}
-
-    {$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
-    case surface^.format^.BytesPerPixel of
-      1: result := pixel^ and $000000ff;
-      2: result := pixel^ and $0000ffff;
-      3: result := pixel^ and $00ffffff;
-      4: result := pixel^;
-    else
-      RaiseException('Unsuported bit format...');
-      exit;
-    end;
-    {$ELSE}
-    case surface^.format^.BytesPerPixel of
-      1: result := pixel^ and $ff000000;
-      2: result := pixel^ and $ffff0000;
-      3: result := pixel^ and $ffffff00;
-      4: result := pixel^;
-    else
-      raise Exception.Create('Unsuported bit format...')
-    end;
-    {$IFEND}
-  end;
   
   procedure RaiseException(message: String);
   begin
@@ -498,9 +352,9 @@ begin
   else result := falseVal;
 end;
 
-function RoundUByte(val: Double): UInt8;
+function RoundUByte(val: Double): Byte;
 begin
-  result := UInt8(Round(val));
+  result := Byte(Round(val));
 end;
 
 function RoundInt(val: Double): LongInt;
@@ -508,14 +362,14 @@ begin
   result := LongInt(Round(val));
 end;
 
-function RoundUShort(val: Double): UInt16;
+function RoundUShort(val: Double): Word;
 begin
-  result := UInt16(Round(val));
+  result := Word(Round(val));
 end;
 
-function RoundShort(val: Double): SInt16;
+function RoundShort(val: Double): SmallInt;
 begin
-  result := SInt16(Round(val));
+  result := SmallInt(Round(val));
 end;
 
 function StrToSingle(val: String): Single;
@@ -523,9 +377,9 @@ begin
   result := Single(StrToFloat(val));
 end;
 
-function StrToUByte(val: String): UInt8;
+function StrToUByte(val: String): Byte;
 begin
-  result := UInt8(StrToInt(val));
+  result := Byte(StrToInt(val));
 end;
 
 //=============================================================================
@@ -553,18 +407,10 @@ end;
     //  sdlManager := nil;
     //end;
     
-    if screen <> nil then
-    begin
-      if screen^.surface <> nil then 
-        SDL_FreeSurface(screen^.surface);
-    
-      Dispose(screen);
-      screen := nil;
-      //scr and baseSurface are now the same!
-      baseSurface := nil;
-    end;
-    
-    SDL_Quit();
+    if screen <> nil then FreeBitmap(screen);
+
+  
+    Driver.Quit();
     
     {$ifdef DARWIN}
       // last pool will self drain...

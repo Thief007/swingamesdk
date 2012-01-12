@@ -17,7 +17,7 @@ interface
 	procedure LoadSDLTimerDriver();
 	
 implementation
-	uses sgDriverTimer;
+	uses sgDriverTimer, sgShared, sgDriver;
 	procedure DelayProcedure(time : LongWord);
 	begin
 		SDL_Delay(time);
@@ -27,6 +27,8 @@ implementation
 	begin
 		result := SDL_GetTicks();
 	end;
+	
+
 	
 	procedure LoadSDLTimerDriver();
 	begin

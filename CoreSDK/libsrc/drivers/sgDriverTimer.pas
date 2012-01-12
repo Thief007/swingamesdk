@@ -17,11 +17,13 @@ interface
 	type
 		DelayProcedure = procedure (time : LongWord);
 		GetTicksProcedure = function () : LongWord;
-		
+	
 	TimerDriverRecord = record
-		Delay : DelayProcedure;
-		GetTicks : GetTicksProcedure;
-	end;
+		Delay                   : DelayProcedure;
+		GetTicks                : GetTicksProcedure;
+	end;  
+	
+	
 	
 	var
 		TimerDriver : TimerDriverRecord;
@@ -43,6 +45,7 @@ implementation
 		LoadDefaultTimerDriver();
 		result := TimerDriver.GetTicks();
 	end;
+
 	
 	initialization
 	begin
