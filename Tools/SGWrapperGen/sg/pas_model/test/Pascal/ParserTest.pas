@@ -6,6 +6,9 @@ var
 
 var secondDecvar : LongInt;
 begin
-	variableName := 5 + 10 - (53 / 3);
-	variableName := 5 + 10 - func(54 / 4);
+	variableName := 5 + (10 - (54 / 4) );
+	if 5 = 5 then
+	begin
+		secondVariable := 10;
+	end;
 end.

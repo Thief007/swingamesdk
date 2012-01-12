@@ -21,6 +21,10 @@ class PascalVarDeclaration(object):
     def part_kind(self):
         return 'variable declaration'
 
+    @property
+    def variables(self):
+        return self._vars
+
     # TODO enable parsing of arrays
     def parse(self, tokens):
         tokens.match_token(TokenKind.Identifier, 'var')

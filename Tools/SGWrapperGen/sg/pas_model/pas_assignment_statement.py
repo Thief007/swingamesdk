@@ -1,19 +1,25 @@
 from pas_token_kind import TokenKind
 from pas_expression import PascalExpression
+from pas_operator import PascalOperator
 class AssignmentStatement(object):
     """
     The assignment statement stores the information about an assignment statement
     """
 
-    def __init__(self):
+    def __init__(self, block):
         self._operand = None
         self._operator = None       # += *= /= -= := token
         self._expression = None
+        self._block = block
 
     def parse(self, tokens):
-        self._operand = tokens.match_token(TokenKind.Identifier).value
-        self._operator = tokens.match_token(TokenKind.Operator).value ################
-        self._expression = PascalExpression()
+        varName = tokens.match_token(TokenKind.Identifier).value
+        operatorValue = tokens.match_token(TokenKind.Operator).value
+
+        self._operand = self._block.get_variable(varName)
+        self._operator = PascalOperator(operatorValue)
+
+        self._expression = PascalExpression(self._block)
         self._expression.parse(tokens)
 
     @property
