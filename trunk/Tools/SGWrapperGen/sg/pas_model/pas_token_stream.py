@@ -1,10 +1,8 @@
-import logging
-
 from pas_tokeniser import SGPasTokeniser
-from pas_token_kind import *
-from pas_token import *
+from pas_token_kind import TokenKind
+from pas_token import Token
 
-from Program import *   # this should be replaced
+from pas_parser_utils import logger
 
 class SGTokenStream(object):
     """A stream of tokens the parsing code can move through"""
@@ -105,10 +103,9 @@ class SGTokenStream(object):
         tokenIdentifier - value pairs.
         Will throw an error if no match could be found
         """
-        matched = self.match_one_lookhead(token_lst, True)
-
+        matched = self.match_one_lookahead(token_lst, True)
+        tok = self.next_token()
         if not matched:
-            tok = self.next_token()
             logger.error('TokenStream    %s: unexpected %s(%s) expected %s', 
                 self._tokeniser.line_details(), 
                 tok._kind, tok._value, 

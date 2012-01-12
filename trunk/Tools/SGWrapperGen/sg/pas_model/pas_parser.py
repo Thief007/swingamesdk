@@ -3,13 +3,13 @@ import sys
 import os
 import glob
 
-from pas_token_stream import *
-from pas_file import *
-from pas_to_c import *
-from pas_to_stdout import *
+from pas_token_stream import SGTokenStream
+from pas_file import PascalFile
+from pas_to_c import convert_pas_to_c
+from pas_to_stdout import print_pas_file
 
-# Logger object is used to log events to console
-logger = logging.getLogger("sgLogger")
+from pas_parser_utils import logger
+
 _files = []
 
 def create_pas_file(name, path):

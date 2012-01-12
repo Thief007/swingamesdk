@@ -7,10 +7,9 @@ Created by Andrew Cain on 2009-05-26.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
-from pas_token_kind import *
-from pas_token import *
-
-from Program import *
+from pas_token_kind import TokenKind
+from pas_token import Token
+from pas_parser_utils import logger
 
 class SGPasTokeniser(object):
     
@@ -241,6 +240,8 @@ class SGPasTokeniser(object):
                 value = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
                 if value.lower() in ['true','false']:
                     kind = TokenKind.Boolean
+                elif value.lower() in ['or', 'and', 'not', 'xor', 'mod', 'div', 'in']:
+                    kind = TokenKind.Operator
                 else:
                     kind = TokenKind.Identifier
                 logger.debug('Tokeniser      : read %s (%s)', kind, value)
@@ -266,6 +267,14 @@ class SGPasTokeniser(object):
                 char_number = self._char_no
                 if t == ':' and self._match_and_read('='):
                     value = ':='
+                elif t in '+' and self._match_and_read('='):
+                    value = t + '='
+                elif t in '-' and self._match_and_read('='):
+                    value = t + '='
+                elif t in '/' and self._match_and_read('='):
+                    value = t + '='
+                elif t in '*' and self._match_and_read('='):
+                    value = t + '='
                 elif t == '*' and self._match_and_read('*'):
                     value = '**'
                 elif t == '<' and self._match_and_read('>'):
