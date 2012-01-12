@@ -7,22 +7,23 @@ class PascalFunctionCall(object):
         - Will stop reading a function call if an end brace ')' is encountered
     """
 
-    def __init__(self):
+    def __init__(self, block):
         self._identifier = None         # identifier of the function
         self._parameters = list()       # list of expressions
+        self._block = block
 
     def parse(self, tokens):
         from pas_expression import PascalExpression
-        logger.debug('Starting function call')
+        logger.debug('Processing function call %s', self._identifier)
         self._identifier = tokens.match_token(TokenKind.Identifier).value
         tokens.match_token(TokenKind.Symbol, '(')
         while True:
             if tokens.match_lookahead(TokenKind.Symbol, ')', consume=True):
                 break
-            newExpression = PascalExpression()
+            newExpression = PascalExpression(self._block)
             newExpression.parse(tokens)
             self._parameters.append(newExpression)
-        logger.debug('Ending function call %s', self._identifier)
+        logger.debug('Ended function call %s', self._identifier)
 
     def __str__(self):
         result += self._identifier
@@ -33,3 +34,11 @@ class PascalFunctionCall(object):
     @property
     def kind(self):
         return 'function_call'
+
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @property
+    def parameters(self):
+        return self._parameters

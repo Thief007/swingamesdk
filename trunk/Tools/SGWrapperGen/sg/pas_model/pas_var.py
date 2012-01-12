@@ -15,3 +15,7 @@ class PascalVariable(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def kind(self):
+        return 'variable'
