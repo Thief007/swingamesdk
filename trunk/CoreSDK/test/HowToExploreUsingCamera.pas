@@ -18,6 +18,12 @@ begin
 		//Draw the scene
 		ClearScreen(ColorWhite);
 		
+		FillCircle(ColorRed, 0, 0, 4);
+		DrawText('Starting position of Game World at 0,0', ColorRed, 7, -2);		
+		
+		//DrawText(PointToString(CameraPos()), ColorBlack, CameraPos());		
+		
+		
 		FillRectangle(RGBColor(205,201,201), -150, 250, 1150, 20);		
 		FillRectangle(RGBColor(205,201,201), -150, 330, 1150, 20);
 		
