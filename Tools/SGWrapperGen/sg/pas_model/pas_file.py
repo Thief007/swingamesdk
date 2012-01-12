@@ -1,11 +1,5 @@
-import logging
-
-from pas_token_stream import *
-from pas_program import *
-from pas_token_kind import *
-from pas_token import *
-
-from Program import *   # this should be replaced
+from pas_program import PascalProgram
+from pas_token_kind import TokenKind
 
 class PascalFile(object):
     """

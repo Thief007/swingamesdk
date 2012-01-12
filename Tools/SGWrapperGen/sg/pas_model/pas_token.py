@@ -1,5 +1,3 @@
-from pas_token_kind import *
-
 class Token(object):
     """
     The token stores a kind-value pair that describes a word in Pascal
@@ -13,9 +11,20 @@ class Token(object):
         self._lineColumn = columnNumber
 
     def __str__ (self):
-        return self._kind + ' : "' + self._value + '" at ' + str(self._lineNumber) + ',' + str(self._lineColumn)
+        return str(self._kind) + ' : "' + str(self._value) + '" at ' + str(self._lineNumber) + ',' + str(self._lineColumn)
 
+    @property
+    def kind(self):
+        return self._kind
 
+    @property
+    def value(self):
+        return self._value
 
+    @property
+    def line(self):
+        return self._lineNumber
 
-
+    @property
+    def column(self):
+        return self._lineColumn

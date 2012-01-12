@@ -1,8 +1,6 @@
 
 # from sg_pas_tokeniser import SGPasTokeniser
-from pas_token_kind import *
-from pas_token import *
-from pas_token_stream import *
+from pas_token_kind import TokenKind
 
 class PascalUsesClause(object):
     '''

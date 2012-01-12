@@ -1,13 +1,8 @@
-import logging
-from pas_token_kind import *
-from pas_token import *
-from pas_token_stream import *
-from pas_var import *
-from Program import *   # this should be replaced
-from pas_parsable import Parsable
-from pas_parser_utils import *
+from pas_token_kind import TokenKind
+from pas_var import PascalVariable
+from pas_parser_utils import logger, parse_identifier_list, reservedWords
 
-class PascalVarDeclaration(object, Parsable):
+class PascalVarDeclaration(object):
     """
     The PascalVarDeclaration describes a variable declaration in Pascal
     It stores the identifier-type pairs in the declaration
@@ -30,8 +25,7 @@ class PascalVarDeclaration(object, Parsable):
     def parse(self, tokens):
         tokens.match_token(TokenKind.Identifier, 'var')
 
-        reservedWords = [(TokenKind.Identifier, 'begin'), (TokenKind.Identifier, 'const'), (TokenKind.Identifier, 'type'), (TokenKind.Identifier, 'var'), (TokenKind.Identifier, 'procedure'), (TokenKind.Identifier, 'function')]
-        logging.debug("Parsing variable declaration")
+        logger.debug("Parsing variable declaration")
         while True:
             # identifier list, ':', type, ';'
             idList = parse_identifier_list(tokens)
@@ -43,12 +37,12 @@ class PascalVarDeclaration(object, Parsable):
                 if not varName in self._vars:
                     self._vars[varName] = PascalVariable(varName, typeName)  # create and assign the PascalVariable
                     self._contents.append(self._vars[varName])
-                    logging.debug("Parsed variable : " + varName + " : " + typeName)
+                    logger.debug("Parsed variable : " + varName + " : " + typeName)
                 else:
-                    logging.error("Duplicate variable identifier found: " + str(current_token))
+                    logger.error("Duplicate variable identifier found: " + str(current_token))
                     assert(False)
 
             if tokens.match_one_lookahead(reservedWords):
-                logging.debug("Finished parsing variable declaration")
+                logger.debug("Finished parsing variable declaration")
                 return self._vars
                 

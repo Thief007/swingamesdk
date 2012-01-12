@@ -1,8 +1,5 @@
-import logging
-
-from pas_token import *
-from pas_block import *
-from Program import *
+from pas_token_kind import TokenKind
+from pas_block import PascalBlock
 
 class PascalProgram(object):
     """The model object to represent a pascal program:
@@ -15,6 +12,14 @@ class PascalProgram(object):
     def __init__(self):
         self._name = None
         self._block = None
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def block(self):
+        return self._block
     
     def parse(self, tokens):
         """

@@ -1,9 +1,3 @@
-import logging
-from pas_token_kind import *
-from pas_token import *
-from pas_token_stream import *
-from Program import *   # this should be replaced
-
 class PascalVariable(object):
     """
     Describes a single variable in pascal
@@ -14,3 +8,10 @@ class PascalVariable(object):
         self._type = type
         self._name = name
                 
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def name(self):
+        return self._name

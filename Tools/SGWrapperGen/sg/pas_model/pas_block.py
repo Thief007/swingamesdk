@@ -1,15 +1,11 @@
-import logging
+from pas_token_kind import TokenKind
 
-from pas_token_kind import *
-from pas_token import *
-from pas_token_stream import *
+from pas_parser_utils import logger
 
-from pas_var_declaration import *
-from pas_compound_statement import *
-from Program import *   # this should be replaced
-from pas_parsable import Parsable
+from pas_var_declaration import PascalVarDeclaration 
+from pas_compound_statement import PascalCompoundStatement 
 
-class PascalBlock(object, Parsable):
+class PascalBlock(object):
     """
     The PascalBlock object stores the entire pascal block
     """
@@ -24,9 +20,21 @@ class PascalBlock(object, Parsable):
     
     def __init__(self, parent):
         self._parent = parent                 #parent block
-
+        self._compound_statement = None
         # list with block contents (in order
         self._contents = list()
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @property
+    def compound_statement(self):
+        return self._compound_statement
+
+    @property
+    def contents(self):
+        return self._contents
 
     def parse(self, tokens):
         # while the next token is not begin (start of compound statement), scan the block for declarations
@@ -40,11 +48,10 @@ class PascalBlock(object, Parsable):
             elif tokens.match_lookahead(TokenKind.Identifier, 'begin'):
                 break
             else:
-                print 'Unknown block token...', tokens.next_token()
+                logger.error('Unknown block token...' + str(tokens.next_token()))
                 assert False
             current_part.parse(tokens)
             self._contents.append(current_part)
-
         # at this point we must be at a begin
         self._compound_statement = PascalCompoundStatement()
         self._compound_statement.parse(tokens)
