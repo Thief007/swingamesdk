@@ -10,7 +10,7 @@ begin
 
 	ClearScreen(ColorWhite);
 	
-	PlaySoundEffect(LoadSoundEffect('Siren.ogg')); // load sound effect in ogg, wave audio files	
+	PlaySoundEffect(LoadSoundEffect('chipmunk.ogg')); // load sound effect in ogg, wave audio files	
 	DrawText('How To Play Sound Effect!!!', ColorRed, 10, 120);	
 		
 	RefreshScreen();
