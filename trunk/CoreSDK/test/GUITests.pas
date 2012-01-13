@@ -113,7 +113,7 @@ begin
   
   repeat
     ProcessEvents();
-    ClearScreen(ColorBlack);
+    ClearScreen(ColorGreen);
     
     DrawPanels();
     UpdateGUI(pnla, pnlb, lst);

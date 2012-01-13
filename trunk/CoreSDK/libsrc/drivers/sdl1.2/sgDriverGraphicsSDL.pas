@@ -442,4 +442,5 @@ implementation
     GraphicsDriver.GetScreenWidth           := @GetScreenWidthProcedure;
     GraphicsDriver.GetScreenHeight          := @GetScreenHeightProcedure;
 	end;
+	
 end.

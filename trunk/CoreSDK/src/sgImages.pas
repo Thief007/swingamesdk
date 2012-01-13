@@ -1112,19 +1112,18 @@ begin
   {$ENDIF}
   
   if Assigned(bitmapToFree) then
-  begin
-    
-    ImagesDriver.FreeSurface(bitmapToFree);
+  begin    
+
+    //Notify others that this is now gone!
+    CallFreeNotifier(bitmapToFree);
     
     //Remove the image from the hashtable
     _Images.remove(BitmapName(bitmapToFree)).Free();
     
-    //Notify others that this is now gone!
-    CallFreeNotifier(bitmapToFree);
+    ImagesDriver.FreeSurface(bitmapToFree);
     
     //Dispose the pointer
     Dispose(bitmapToFree);
-    bitmapToFree := nil;
   end;
   
   bitmapToFree := nil;

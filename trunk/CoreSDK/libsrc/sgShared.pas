@@ -160,7 +160,7 @@ implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgTrace, sgGraphics, 
-    sgImages, sgDriver,sgDriverTimer;
+    sgImages, sgDriver,sgDriverImages;
 //=============================================================================
   
   var
@@ -227,8 +227,6 @@ implementation
     {$IFDEF Trace}
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
     {$ENDIF}
-    //Driver.Init();
-    
     
     Driver.Init();
 
@@ -407,17 +405,25 @@ end;
     //  sdlManager := nil;
     //end;
     
-    if screen <> nil then FreeBitmap(screen);
-
-  
+    
+    //if screen^.surface <> nil then ImagesDriver.FreeSurface(screen^.surface);
+    //if screen <> nil then FreeBitmap(screen);
+      if screen <> nil then
+      begin
+        ImagesDriver.FreeSurface(screen);
+        Dispose(screen);
+        screen := nil;
+      end;
+    
+    
     Driver.Quit();
     
     {$ifdef DARWIN}
       // last pool will self drain...
       if assigned(pool) then
-      begin
-        objc_msgSend(pool, sel_registerName('drain'));
-      end;
+        begin
+          objc_msgSend(pool, sel_registerName('drain'));
+        end;
       pool := nil;
       NSAutoreleasePool := nil;
     {$endif}
