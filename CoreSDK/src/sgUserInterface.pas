@@ -2446,9 +2446,9 @@ begin
   GUIC.activeTextBox := t^.region;
   
   if ReadingText() then FinishReadingText();
-  
   StartReadingTextWithText( t^.contentString, 
-                            GUIC.foregroundClr, 
+                            GUIC.foregroundClr,
+                            GUIC.backgroundClr, 
                             t^.lengthLimit, 
                             t^.Font, 
                             InsetRectangle(TextboxTextArea(t^.region), 1)); // Need to inset 1 further to match printing text lines

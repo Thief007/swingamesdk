@@ -313,10 +313,8 @@ interface
   /// `DrawTextLines` procedure.
   ///
   /// @lib DrawTextToBitmapAtPointWithFontNamedAndSize
-  /// @sn bitmap:%s drawText:%s rc:%s color:%s   
-  
-  
-  function DrawTextTo(font: Font; str: String; clrFg : Color) : Bitmap;
+  /// @sn drawTextFont:%s string:%s textColor:%s backgroundColor:%s   
+  function DrawTextTo(font: Font; str: String; clrFg, backgroundColor : Color) : Bitmap;
   
   /// Draws the text onto the screen at the specified x,y location using the color and font indicated.
   /// As the text is draw directly onto the screen the camera location does not effect its position.
@@ -637,7 +635,7 @@ interface
 implementation
   uses SysUtils, Classes, 
        stringhash, sgTrace,         // libsrc
-       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages, sgDriverText;
+       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages, sgDriverText, sdl, sdl_gfx;
 //=============================================================================
 
   const EOL = LineEnding; // from sgShared
@@ -681,6 +679,7 @@ implementation
   procedure FreeFont(var fontToFree: Font);
   begin
     if Assigned(fontToFree) then ReleaseFont(fontToFree^.name);
+      
     fontToFree := nil;
   end;
 
@@ -812,7 +811,7 @@ implementation
 	  TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags);
   end;
   
-  function DrawTextTo(font: Font; str: String; clrFg : Color) : Bitmap;
+  function DrawTextTo(font: Font; str: String; clrFg, backgroundColor : Color) : Bitmap;
   var
     resultBitmap : Bitmap;
     bitmapSize : Rectangle;
@@ -823,7 +822,7 @@ implementation
     bitmapSize.height := TextHeight(font,str) + 2;
     resultBitmap := CreateBitmap(bitmapSize.width, bitmapSize.height);
     PrintStrings(resultBitmap,font,str,bitmapSize,clrFg, ColorTransparent, AlignLeft);
-    MakeOpaque(resultBitmap);
+  
     result := resultBitmap;
   end;
   

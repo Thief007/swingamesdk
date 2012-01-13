@@ -169,6 +169,8 @@ interface
   /// @lib StartReadingTextWithinArea
   /// @sn startReadingTextColor:%s maxLen:%s font:%s area:%s
   procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
+    
+
   
   /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
@@ -176,6 +178,14 @@ interface
   /// @lib StartReadingTextWithTextInArea
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s area:%s
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
+    
+  
+  /// The same as `StartReadingTextWithText` but with an additional ``bgColor`` parameter
+  /// that is displayed as default text to the user.  
+  ///
+  /// @lib StartReadingTextWithTextInArea
+  /// @sn startReadingTextWith:%s color:%s bgColor:%s maxLen:%s font:%s area:%s  
+  procedure StartReadingTextWithText(text: String; textColor, backGroundColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   
   /// Starts the reading of a string of characters from the user. Entry is 
   /// completed when the user presses ENTER, and aborted with ESCAPE.
@@ -322,6 +332,15 @@ implementation
     InputBackendStartReadingText(textColor, maxLength, theFont, area);
   end;
   
+  procedure StartReadingText(textColor, backgroundColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
+  begin
+    if theFont = nil then begin RaiseException('The specified font to start reading text is nil'); exit; end;
+    if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
+    if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
+    
+    InputBackendStartReadingText(textColor,backgroundColor, maxLength, theFont, area);
+  end;
+  
   procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, RectangleFrom(x, y, TextWidth(theFont, StringOfChar('M', maxLength)), TextHeight(theFont, 'M')));
@@ -332,6 +351,13 @@ implementation
     StartReadingText(textColor, maxLength, theFont, area);
     SetText(text);    
   end;
+  
+  procedure StartReadingTextWithText(text: String; textColor, backGroundColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
+  begin
+    StartReadingText(textColor, backGroundColor, maxLength, theFont, area);
+    SetText(text);    
+  end;
+  
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const pt: Point2D); overload;
   begin

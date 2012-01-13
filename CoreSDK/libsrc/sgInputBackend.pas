@@ -12,7 +12,8 @@ interface
     // text reading/draw collection
     procedure DrawCollectedText(dest: Bitmap);
     procedure SetText(text: String);
-    procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
+    procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);overload;
+    procedure InputBackendStartReadingText(textColor, backgroundColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);overload;
     function  InputBackendEndReadingText(): String;
     // key pressed/typed tests
     function WasKeyTyped(kyCode: Longint): Boolean;
@@ -50,11 +51,12 @@ interface
     _cursorBitmap:          Bitmap;
     _font:                  Font;
     _foreColor:             Color;
+    _backgroundColor:       Color;
     _area:                  Rectangle;
     _readingString:         Boolean;
     _ButtonsClicked: Array [MouseButton] of Boolean;
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared;
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sdl, sdl_gfx, sgGraphics;
   
   procedure _InitGlobalVars(); 
   begin
@@ -243,7 +245,7 @@ implementation
   
   procedure FreeOldSurface();
   begin
-    if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then 
+    if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then
       FreeBitmap(_textBitmap);
   end;
   
@@ -254,38 +256,42 @@ implementation
     if Length(text) > 0 then
     begin
       outStr := text + '|';
-      _textBitmap := DrawTextTo(_font, outStr, _forecolor);
+      FreeOldSurface();
+      WriteLn(_backgroundColor);
+      _textBitmap := DrawTextTo(_font, outStr, _forecolor, _backgroundColor);
     end
     else
       _textBitmap := _cursorBitmap;  
   end;
   
-  procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);
+  procedure InputBackendStartReadingText(textColor, backgroundColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);overload;
   var
     newStr: String;
   begin
-    if imagesDriver.SurfaceExists(_textBitmap) and (not imagesDriver.SameBitmap(_textBitmap, _cursorBitmap)) then
-    begin
-      //Free the old surface
-      FreeBitmap(_textBitmap );
-    end;
-    if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
+    FreeOldSurface();
+
     _readingString := true;
     _textCancelled := false;
     _tempString := '';
     _maxStringLen := maxLength;
     _foreColor := textColor;
-
+    _backgroundColor := backgroundColor;
     _font := theFont;
     _area := area;
 
     newStr := '|';
 
-    
-    _cursorBitmap := DrawTextTo(_font, newStr, _foreColor);
+    if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
+    _cursorBitmap := DrawTextTo(_font, newStr, _foreColor,_backgroundColor);
+    writeln(_backgroundColor);
     _textBitmap := _cursorBitmap;
   end;
   
+  procedure InputBackendStartReadingText(textColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);overload;
+  begin
+    InputBackendStartReadingText(textColor,ColorTransparent,maxLength,theFont,area);
+  end;
+
   procedure DrawCollectedText(dest : Bitmap);
   var
     srect, drect: Rectangle;
@@ -309,18 +315,17 @@ implementation
 
           drect := _area;
 
-          imagesDriver.BlitSurface(_textBitmap,  dest,@srect, @drect);
+          imagesDriver.BlitSurface(_textBitmap,  dest, @srect, @drect);
         end;
   end;
+  
+
 
   
   
   procedure SetText(text: String);
   begin
     _tempString := text;
-    
-     //Free the old surface
-    FreeOldSurface();
     
     //Render a new text surface
     RenderTextSurface(_tempString);
@@ -362,26 +367,7 @@ implementation
     end;
   end;
   
-
   
-  procedure Destroy();
-  begin
-    if(Assigned(_textBitmap)) then FreeBitmap(_textBitmap);
-    if(Assigned(_cursorBitmap)) then FreeBitmap(_cursorBitmap);
-    if(Assigned(_font)) then FreeFont(_font);
-  end;
-  
-  initialization
-
-
-  begin
-  
+initialization
     _InitGlobalVars();
-  
-  
-  end;
-finalization
-  Destroy();
-
-
 end.
