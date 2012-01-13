@@ -2205,17 +2205,17 @@ implementation
     
     rads := -deg * DEG_TO_RAD;
 
-    result[0, 0] := System.Cos(rads);
-    result[0, 1] := System.Sin(rads);
-    result[0, 2] := 0;
+    result.elements[0, 0] := System.Cos(rads);
+    result.elements[0, 1] := System.Sin(rads);
+    result.elements[0, 2] := 0;
   
-    result[1, 0] := -System.Sin(rads);
-    result[1, 1] := System.Cos(rads);
-    result[1, 2] := 0;
+    result.elements[1, 0] := -System.Sin(rads);
+    result.elements[1, 1] := System.Cos(rads);
+    result.elements[1, 2] := 0;
   
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
+    result.elements[2, 0] := 0;
+    result.elements[2, 1] := 0;
+    result.elements[2, 2] := 1;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RotationMatrix(deg: Single): Matrix2D', '');
@@ -2228,17 +2228,17 @@ implementation
       TraceEnter('sgGeometry', 'ScaleMatrix(const scale: Point2D): Matrix2D', '');
     {$ENDIF}
     
-    result[0, 0] := scale.x;
-    result[0, 1] := 0;
-    result[0, 2] := 0;
+    result.elements[0, 0] := scale.x;
+    result.elements[0, 1] := 0;
+    result.elements[0, 2] := 0;
     
-    result[1, 0] := 0;
-    result[1, 1] := scale.y;
-    result[1, 2] := 0;
+    result.elements[1, 0] := 0;
+    result.elements[1, 1] := scale.y;
+    result.elements[1, 2] := 0;
     
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
+    result.elements[2, 0] := 0;
+    result.elements[2, 1] := 0;
+    result.elements[2, 2] := 1;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'ScaleMatrix(const scale: Point2D): Matrix2D', '');
@@ -2251,17 +2251,17 @@ implementation
       TraceEnter('sgGeometry', 'ScaleMatrix(scale: Single): Matrix2D', '');
     {$ENDIF}
     
-    result[0, 0] := scale;
-    result[0, 1] := 0;
-    result[0, 2] := 0;
+    result.elements[0, 0] := scale;
+    result.elements[0, 1] := 0;
+    result.elements[0, 2] := 0;
 
-    result[1, 0] := 0;
-    result[1, 1] := scale;
-    result[1, 2] := 0;
+    result.elements[1, 0] := 0;
+    result.elements[1, 1] := scale;
+    result.elements[1, 2] := 0;
 
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
+    result.elements[2, 0] := 0;
+    result.elements[2, 1] := 0;
+    result.elements[2, 2] := 1;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'ScaleMatrix(scale: Single): Matrix2D', '');
@@ -2274,17 +2274,17 @@ implementation
       TraceEnter('sgGeometry', 'IdentityMatrix(): Matrix2D', '');
     {$ENDIF}
     
-    result[0, 0] := 1;
-    result[0, 1] := 0;
-    result[0, 2] := 0;
+    result.elements[0, 0] := 1;
+    result.elements[0, 1] := 0;
+    result.elements[0, 2] := 0;
 
-    result[1, 0] := 0;
-    result[1, 1] := 1;
-    result[1, 2] := 0;
+    result.elements[1, 0] := 0;
+    result.elements[1, 1] := 1;
+    result.elements[1, 2] := 0;
 
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
+    result.elements[2, 0] := 0;
+    result.elements[2, 1] := 0;
+    result.elements[2, 2] := 1;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'IdentityMatrix(): Matrix2D', '');
@@ -2312,8 +2312,8 @@ implementation
     
     result := IdentityMatrix();
 
-    result[0, 2] := dx;
-    result[1, 2] := dy;
+    result.elements[0, 2] := dx;
+    result.elements[1, 2] := dy;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'TranslationMatrix(dx, dy: Single): Matrix2D', '');
@@ -2330,17 +2330,17 @@ implementation
     
     rads := -deg * DEG_TO_RAD;
     
-    result[0, 0] := System.Cos(rads) * scale.x;
-    result[0, 1] := System.Sin(rads);
-    result[0, 2] := translate.x;
+    result.elements[0, 0] := System.Cos(rads) * scale.x;
+    result.elements[0, 1] := System.Sin(rads);
+    result.elements[0, 2] := translate.x;
     
-    result[1, 0] := -System.Sin(rads);
-    result[1, 1] := System.Cos(rads) * scale.y;
-    result[1, 2] := translate.y;
+    result.elements[1, 0] := -System.Sin(rads);
+    result.elements[1, 1] := System.Cos(rads) * scale.y;
+    result.elements[1, 2] := translate.y;
     
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
+    result.elements[2, 0] := 0;
+    result.elements[2, 1] := 0;
+    result.elements[2, 2] := 1;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'ScaleRotateTranslateMatrix(const scale: Point2D', '');
@@ -2354,35 +2354,35 @@ implementation
     {$ENDIF}
     
       //unwound for performance optimisation
-    result[0, 0] := m1[0, 0] * m2[0, 0] +
-                    m1[0, 1] * m2[1, 0] +
-                    m1[0, 2] * m2[2, 0];
-    result[0, 1] := m1[0, 0] * m2[0, 1] +
-                    m1[0, 1] * m2[1, 1] +
-                    m1[0, 2] * m2[2, 1];
-    result[0, 2] := m1[0, 0] * m2[0, 2] +
-                    m1[0, 1] * m2[1, 2] +
-                    m1[0, 2] * m2[2, 2];
+    result.elements[0, 0] := m1.elements[0, 0] * m2.elements[0, 0] +
+                             m1.elements[0, 1] * m2.elements[1, 0] +
+                             m1.elements[0, 2] * m2.elements[2, 0];
+    result.elements[0, 1] := m1.elements[0, 0] * m2.elements[0, 1] +
+                             m1.elements[0, 1] * m2.elements[1, 1] +
+                             m1.elements[0, 2] * m2.elements[2, 1];
+    result.elements[0, 2] := m1.elements[0, 0] * m2.elements[0, 2] +
+                             m1.elements[0, 1] * m2.elements[1, 2] +
+                             m1.elements[0, 2] * m2.elements[2, 2];
 
-    result[1, 0] := m1[1, 0] * m2[0, 0] +
-                    m1[1, 1] * m2[1, 0] +
-                    m1[1, 2] * m2[2, 0];
-    result[1, 1] := m1[1, 0] * m2[0, 1] +
-                    m1[1, 1] * m2[1, 1] +
-                    m1[1, 2] * m2[2, 1];
-    result[1, 2] := m1[1, 0] * m2[0, 2] +
-                    m1[1, 1] * m2[1, 2] +
-                    m1[1, 2] * m2[2, 2];
+    result.elements[1, 0] := m1.elements[1, 0] * m2.elements[0, 0] +
+                             m1.elements[1, 1] * m2.elements[1, 0] +
+                             m1.elements[1, 2] * m2.elements[2, 0];
+    result.elements[1, 1] := m1.elements[1, 0] * m2.elements[0, 1] +
+                             m1.elements[1, 1] * m2.elements[1, 1] +
+                             m1.elements[1, 2] * m2.elements[2, 1];
+    result.elements[1, 2] := m1.elements[1, 0] * m2.elements[0, 2] +
+                             m1.elements[1, 1] * m2.elements[1, 2] +
+                             m1.elements[1, 2] * m2.elements[2, 2];
 
-    result[2, 0] := m1[2, 0] * m2[0, 0] +
-                    m1[2, 1] * m2[1, 0] +
-                    m1[2, 2] * m2[2, 0];
-    result[2, 1] := m1[2, 0] * m2[0, 1] +
-                    m1[2, 1] * m2[1, 1] +
-                    m1[2, 2] * m2[2, 1];
-    result[2, 2] := m1[2, 0] * m2[0, 2] +
-                    m1[2, 1] * m2[1, 2] +
-                    m1[2, 2] * m2[2, 2];
+    result.elements[2, 0] := m1.elements[2, 0] * m2.elements[0, 0] +
+                             m1.elements[2, 1] * m2.elements[1, 0] +
+                             m1.elements[2, 2] * m2.elements[2, 0];
+    result.elements[2, 1] := m1.elements[2, 0] * m2.elements[0, 1] +
+                             m1.elements[2, 1] * m2.elements[1, 1] +
+                             m1.elements[2, 2] * m2.elements[2, 1];
+    result.elements[2, 2] := m1.elements[2, 0] * m2.elements[0, 2] +
+                             m1.elements[2, 1] * m2.elements[1, 2] +
+                             m1.elements[2, 2] * m2.elements[2, 2];
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'MatrixMultiply(const m1, m2: Matrix2D): Matrix2D', '');
@@ -2404,7 +2404,7 @@ implementation
       result := result + '|';
       for j := 0 to 2 do
       begin
-        result := result + ' ' + FormatFloat('###0.00', m[i,j]) + ' ';
+        result := result + ' ' + FormatFloat('###0.00', m.elements[i,j]) + ' ';
       end;
       result := result + '|' + LineEnding;
     end;
@@ -2421,8 +2421,8 @@ implementation
       TraceEnter('sgGeometry', 'MatrixMultiply(const m: Matrix2D', '');
     {$ENDIF}
     
-    result.x := v.x * m[0,0]  +  v.y * m[0,1] + m[0,2]; 
-    result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
+    result.x := v.x * m.elements[0,0]  +  v.y * m.elements[0,1] + m.elements[0,2]; 
+    result.y := v.x * m.elements[1,0]  +  v.y * m.elements[1,1] + m.elements[1,2]; 
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'MatrixMultiply(const m: Matrix2D', '');

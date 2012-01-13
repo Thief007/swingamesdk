@@ -185,8 +185,9 @@ interface
     /// @fixed_array_wrapper
     /// @field data: array[0..2,0..2] of Single
     /// @sameas Array [0..2,0..2] of Single
-    Matrix2D = Array [0..2,0..2] of Single;
-    
+    Matrix2D = packed record
+      elements : Array [0..2,0..2] of Single;
+    end;
     /// The color type is used within the SwinGameAPI to store color values.
     /// The color values are represented as 32bit RGBA values where R stores the
     /// color's red component, G stores the green component, B stores the blue
