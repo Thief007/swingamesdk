@@ -1175,7 +1175,7 @@ implementation
     for i := 0 to 2 do
     begin
       // if the closest point on the circle is in the triangle, or the triangle pt is in the circle
-      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) or PointInCircle(tri[i], c) then
+      if PointInTriangle(ClosestPointOnCircle(tri.points[i], c), tri) or PointInCircle(tri.points[i], c) then
       begin
         result := True;
         exit;

@@ -1465,15 +1465,15 @@ var
     
     if up then
     begin
-      tri[0] := RectangleBottomLeft(innerRect);
-      tri[1] := RectangleBottomRight(innerRect);
-      tri[2] := RectangleCenterTop(innerRect);
+      tri.points[0] := RectangleBottomLeft(innerRect);
+      tri.points[1] := RectangleBottomRight(innerRect);
+      tri.points[2] := RectangleCenterTop(innerRect);
     end
     else
     begin
-      tri[0] := RectangleTopLeft(innerRect);
-      tri[1] := RectangleTopRight(innerRect);
-      tri[2] := RectangleCenterBottom(innerRect);
+      tri.points[0] := RectangleTopLeft(innerRect);
+      tri.points[1] := RectangleTopRight(innerRect);
+      tri.points[2] := RectangleCenterBottom(innerRect);
     end;
     
     FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
@@ -1489,15 +1489,15 @@ var
     
     if left then
     begin
-      tri[0] := RectangleCenterLeft(innerRect);
-      tri[1] := RectangleBottomRight(innerRect);
-      tri[2] := RectangleTopRight(innerRect);
+      tri.points[0] := RectangleCenterLeft(innerRect);
+      tri.points[1] := RectangleBottomRight(innerRect);
+      tri.points[2] := RectangleTopRight(innerRect);
     end
     else
     begin
-      tri[0] := RectangleCenterRight(innerRect);
-      tri[1] := RectangleTopLeft(innerRect);
-      tri[2] := RectangleBottomLeft(innerRect);
+      tri.points[0] := RectangleCenterRight(innerRect);
+      tri.points[1] := RectangleTopLeft(innerRect);
+      tri.points[2] := RectangleBottomLeft(innerRect);
     end;
     
     FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
