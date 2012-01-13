@@ -2435,9 +2435,9 @@ implementation
       TraceEnter('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
     {$ENDIF}
     
-    tri[0] := MatrixMultiply(m, tri[0]);
-    tri[1] := MatrixMultiply(m, tri[1]);
-    tri[2] := MatrixMultiply(m, tri[2]);
+    tri.points[0] := MatrixMultiply(m, tri.points[0]);
+    tri.points[1] := MatrixMultiply(m, tri.points[1]);
+    tri.points[2] := MatrixMultiply(m, tri.points[2]);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
@@ -2748,16 +2748,16 @@ implementation
       TraceEnter('sgGeometry', 'RectangleFrom(const tri: Triangle): Rectangle', '');
     {$ENDIF}
     
-    minX := tri[0].x; maxX := tri[0].x;
-    minY := tri[0].y; maxY := tri[0].y;
+    minX := tri.points[0].x; maxX := tri.points[0].x;
+    minY := tri.points[0].y; maxY := tri.points[0].y;
     
     for i := 1 to 2 do
     begin
-      if tri[i].x < minX then minX := tri[i].x
-      else if tri[i].x > maxX then maxX := tri[i].x;
+      if tri.points[i].x < minX then minX := tri.points[i].x
+      else if tri.points[i].x > maxX then maxX := tri.points[i].x;
       
-      if tri[i].y < minY then minY := tri[i].y
-      else if tri[i].y > maxY then maxY := tri[i].y;
+      if tri.points[i].y < minY then minY := tri.points[i].y
+      else if tri.points[i].y > maxY then maxY := tri.points[i].y;
     end;
     
     result.x := minX;
@@ -2942,9 +2942,9 @@ implementation
     {$ENDIF}
     
     SetLength(result, 3);
-    result[0] := LineFrom(tri[0], tri[1]);
-    result[1] := LineFrom(tri[1], tri[2]);
-    result[2] := LineFrom(tri[2], tri[0]);
+    result[0] := LineFrom(tri.points[0], tri.points[1]);
+    result[1] := LineFrom(tri.points[1], tri.points[2]);
+    result[2] := LineFrom(tri.points[2], tri.points[0]);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
@@ -3012,7 +3012,7 @@ implementation
   
   function TriangleToString(const tri: Triangle): String;
   begin
-    result := 'Triangle @' + PointToString(tri[0]) + ' - ' + PointToString(tri[1]) + ' - ' + PointToString(tri[2]);
+    result := 'Triangle @' + PointToString(tri.points[0]) + ' - ' + PointToString(tri.points[1]) + ' - ' + PointToString(tri.points[2]);
   end;
   
   function RectangleToString(const rect:Rectangle): String;
@@ -3245,9 +3245,9 @@ implementation
       TraceEnter('sgGeometry', 'TriangleFrom(const a, b, c: Point2D): Triangle', '');
     {$ENDIF}
     
-    result[0] := a;
-    result[1] := b;
-    result[2] := c;
+    result.points[0] := a;
+    result.points[1] := b;
+    result.points[2] := c;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'TriangleFrom(const a, b, c: Point2D): Triangle', '');
@@ -3267,9 +3267,9 @@ implementation
     
     //Convert Points to vectors
     p := VectorToPoint(pt);
-    a := VectorToPoint(tri[0]);
-    b := VectorToPoint(tri[1]);
-    c := VectorToPoint(tri[2]);
+    a := VectorToPoint(tri.points[0]);
+    b := VectorToPoint(tri.points[1]);
+    c := VectorToPoint(tri.points[2]);
     
     // Compute vectors    
     v0 := SubtractVectors(c, a);
@@ -3321,8 +3321,8 @@ implementation
       TraceEnter('sgGeometry', 'TriangleBarycenter(const tri: Triangle): Point2D', '');
     {$ENDIF}
     
-    result.x := (tri[0].x + tri[1].x + tri[2].x) / 3;
-    result.y := (tri[0].y + tri[1].y + tri[2].y) / 3;
+    result.x := (tri.points[0].x + tri.points[1].x + tri.points[2].x) / 3;
+    result.y := (tri.points[0].y + tri.points[1].y + tri.points[2].y) / 3;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'TriangleBarycenter(const tri: Triangle): Point2D', '');
@@ -3348,16 +3348,16 @@ implementation
     minPt, maxPt: Point2D;
     i: Longint;
   begin
-    minPt := tri[0];
-    maxPt := tri[0];
+    minPt := tri.points[0];
+    maxPt := tri.points[0];
 
     for i := 1 to 2 do
     begin
-      if minPt.x > tri[i].x then minPt.x := tri[i].x
-      else if maxPt.x < tri[i].x then maxPt.x := tri[i].x;
+      if minPt.x > tri.points[i].x then minPt.x := tri.points[i].x
+      else if maxPt.x < tri.points[i].x then maxPt.x := tri.points[i].x;
 
-      if minPt.y > tri[i].y then minPt.y := tri[i].y
-      else if maxPt.y < tri[i].y then maxPt.y := tri[i].y;
+      if minPt.y > tri.points[i].y then minPt.y := tri.points[i].y
+      else if maxPt.y < tri.points[i].y then maxPt.y := tri.points[i].y;
     end;
 
     result := RectangleFrom(minPt, maxPt);
@@ -3446,9 +3446,9 @@ implementation
     b := RectangleBottom(rect);
     
     // Check line intersects see http://sebleedelisle.com/2009/05/super-fast-trianglerectangle-intersection-test/
-    result := _TriLineRectangleTest(tri[0],tri[1])
-              or _TriLineRectangleTest(tri[1],tri[2])
-              or _TriLineRectangleTest(tri[2],tri[0]);
+    result := _TriLineRectangleTest(tri.points[0],tri.points[1])
+              or _TriLineRectangleTest(tri.points[1],tri.points[2])
+              or _TriLineRectangleTest(tri.points[2],tri.points[0]);
     
     if not result then
     begin

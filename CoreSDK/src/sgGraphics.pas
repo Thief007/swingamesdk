@@ -1535,7 +1535,14 @@ implementation
   
   procedure DrawTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(dest, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(dest, 
+                clr,
+                tri.points[0].x,
+                tri.points[0].y, 
+                tri.points[1].x, 
+                tri.points[1].y, 
+                tri.points[2].x, 
+                tri.points[2].y);
   end;
 
   procedure DrawTriangleOnScreen(clr: Color; filled: Boolean; const tri: Triangle); overload;
@@ -1546,12 +1553,26 @@ implementation
 
   procedure DrawTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(screen, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(screen,
+                 clr, 
+                 tri.points[0].x, 
+                 tri.points[0].y, 
+                 tri.points[1].x, 
+                 tri.points[1].y, 
+                 tri.points[2].x, 
+                 tri.points[2].y);
   end;
 
   procedure DrawTriangle(clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(screen,
+                 clr, 
+                 tri.points[0].x, 
+                 tri.points[0].y, 
+                 tri.points[1].x, 
+                 tri.points[1].y, 
+                 tri.points[2].x, 
+                 tri.points[2].y);
   end;
   
   procedure DrawTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1571,12 +1592,25 @@ implementation
 
   procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(dest, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(dest,
+                 clr, 
+                 tri.points[0].x, 
+                 tri.points[0].y, 
+                 tri.points[1].x, 
+                 tri.points[1].y, 
+                 tri.points[2].x, 
+                 tri.points[2].y);
   end;
   
   procedure FillTriangle(clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(clr,
+                 tri.points[0].x, 
+                 tri.points[0].y, 
+                 tri.points[1].x, 
+                 tri.points[1].y, 
+                 tri.points[2].x, 
+                 tri.points[2].y);
   end;
 
   procedure FillTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1586,7 +1620,14 @@ implementation
 
   procedure FillTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(screen, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(screen, 
+                 clr, 
+                 tri.points[0].x, 
+                 tri.points[0].y, 
+                 tri.points[1].x, 
+                 tri.points[1].y, 
+                 tri.points[2].x, 
+                 tri.points[2].y);
   end;
   
   procedure FillTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;

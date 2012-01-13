@@ -105,10 +105,9 @@ interface
     end;
 
     /// @struct Triangle
-    /// @fixed_array_wrapper
-    /// @field data: array[0..2] of Point2D
-    Triangle = array [0..2] of Point2D;
-
+    Triangle = packed record 
+      points : array [0..2] of Point2D
+    end;
     /// @type LinesArray
     /// @array_wrapper
     /// @field data: array of LineSegment
