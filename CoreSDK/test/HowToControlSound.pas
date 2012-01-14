@@ -1,11 +1,9 @@
 program HowToControlSound;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils, sgTypes;
-
 procedure Main();
 var
-	sndEffect : SoundEffect;
-	
+	sndEffect : SoundEffect;	
 begin
 	OpenAudio();
 	
@@ -44,12 +42,11 @@ begin
 		DrawText('CTRL + (1-6) load different sound effects', ColorBlue, 'Arial', 14, 20, 200);		
 		
 		RefreshScreen(60);		
-	until WindowCloseRequested() OR KeyTyped(vk_ESCAPE) xOR KeyTyped(VK_Q);
+	until WindowCloseRequested() OR KeyTyped(vk_ESCAPE) OR KeyTyped(VK_Q);
 	
 	CloseAudio();
 	ReleaseAllResources();
 end;
-
 begin
   Main();
 end.
