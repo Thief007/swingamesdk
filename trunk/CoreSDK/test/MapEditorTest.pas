@@ -4,7 +4,7 @@ program GUITests;
 uses
   sgUserInterface, sgAudio, sgGraphics, sgResources, sgText,
   sgGeometry, sgTypes, sgInput, SysUtils, sgImages, sgMaps,
-  sgCamera, sgUtils;
+  sgCamera, sgUtils, sgSharedUtils;
 
 type
   PanelName = (Selector, SelectorDropDown, MapProperties, Kind, DefaultValues, Bottom, Grid, Bitmap, Bitmap_Type, Palette, BmpKind, DisplayList, LayerList);
