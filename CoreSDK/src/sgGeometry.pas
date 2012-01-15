@@ -397,6 +397,43 @@ interface
   /// @doc_idx 0
   function LineFromVector(const mv: Vector): LineSegment; overload;
   
+  
+  /// Returns a line segment from x1,y1 to x2,y2.
+  /// 
+  /// @lib
+  /// @sn CreateLineX1:%s y1:%s toX2:%s y2:%s
+  ///
+  /// @doc_idx 0
+  function CreateLine(x1, y1, x2, y2: Single): LineSegment; overload;
+
+  /// Returns a line from pt1 to pt2.
+  ///
+  /// @lib CreateLinePointToPoint
+  /// @sn CreateLine:%s to:%s
+  function CreateLine(const pt1, pt2: Point2D): LineSegment; overload;
+
+  /// Returns a line from a starting point to the point at the end of the
+  /// mv vector.
+  ///
+  /// @lib CreateLineVectorWithStartPoint
+  /// @sn CreateLineFrom:%s toOffset:%s
+  function CreateLineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
+
+  /// Returns a line from the x,y starting point to the point at the end of the
+  /// mv vector.
+  ///
+  /// @lib CreateLineVectorWithStartXY
+  /// @sn CreateLineFromX:%s y:%s toOffset:%s
+  function CreateLineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
+
+  /// Returns a line from the origin to the end of the mv vector.
+  ///
+  /// @lib
+  ///
+  /// @doc_idx 0
+  function CreateLineFromVector(const mv: Vector): LineSegment; overload;
+  
+  
   /// Returns the mid point of the line segment.
   ///
   /// @lib
@@ -3014,6 +3051,22 @@ implementation
     {$ENDIF}
   end;
   
+
+  function CreateLine(x1, y1, x2, y2: Single): LineSegment; overload;
+  begin
+    result := LineFrom(x1,y1,x2,y2);
+  end;
+
+  function CreateLine(const pt1, pt2: Point2D): LineSegment; overload;
+  begin
+    result := LineFrom(pt1,pt2);
+  end;
+  
+  
+  
+
+  
+  
   function LinesFrom(const tri: Triangle): LinesArray; overload;
   begin
     {$IFDEF TRACE}
@@ -3158,6 +3211,22 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'LineFromVector(const mv: Vector): LineSegment', '');
     {$ENDIF}
+  end;
+
+  function CreateLineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
+  begin
+    result := LineFromVector(pt,mv);
+  end;
+
+
+  function CreateLineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
+  begin
+    result := LineFromVector(x,y,mv);
+  end;
+
+  function CreateLineFromVector(const mv: Vector): LineSegment; overload;
+  begin
+    result := LineFromVector(mv);
   end;
 
   function RectangleAfterMove(const rect: Rectangle; const mv: Vector): Rectangle;
