@@ -443,6 +443,47 @@ interface
   /// @lib RectangleFromLines
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   
+  /// Returns a rectangle from a given x,y location with a given width
+  /// and height.
+  ///
+  /// @lib
+  /// @sn CreateRectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
+  function CreateRectangle(x, y: Single; w, h: Longint): Rectangle; overload;
+
+  /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
+  ///
+  /// @lib RectangleForPoints
+  /// @sn CreateRectangle:%s to:%s
+  function CreateRectangle(const pt1, pt2: Point2D): Rectangle; overload;
+
+  /// Returns a rectangle at a given point with a specified width and height.
+  ///
+  /// @lib RectangleAtPoint
+  /// @sn CreateRectangle:%s width:%s height:%s
+  function CreateRectangle(const pt: Point2D; width, height: Longint): Rectangle; overload;
+
+  /// Returns a rectangle that encloses the two points on the line segment.
+  ///
+  /// @lib CreateRectangleLine
+  function CreateRectangle(const line: LineSegment): Rectangle; overload;
+
+  /// Returns a rectangle that encloses a circle.
+  ///
+  /// @lib CreateRectangleCircle
+  function CreateRectangle(const c: Circle): Rectangle; overload;
+
+  /// Returns a rectangle that encloses th epoints in a triangle.
+  ///
+  /// @lib CreateRectangleTriangle
+  function CreateRectangle(const tri: Triangle): Rectangle; overload;
+
+  /// Returns a rectangle that encloses the lines in the lines array.
+  ///
+  /// @lib CreateRectangleLines
+  function CreateRectangle(const lines: LinesArray): Rectangle; overload;
+  
   /// Returns a rectangle that is inset from rect the amount specified.
   ///
   /// @lib
@@ -2824,6 +2865,44 @@ implementation
       TraceExit('sgGeometry', 'RectangleFrom(const line: LineSegment): Rectangle', '');
     {$ENDIF}
   end;
+    
+
+  function CreateRectangle(x, y: Single; w, h: Longint): Rectangle; overload;
+  begin
+    result := RectangleFrom(x,y,w,h);    
+  end;
+
+
+  function CreateRectangle(const pt1, pt2: Point2D): Rectangle; overload;
+  begin
+    result := RectangleFrom(pt1,pt2);
+  end;
+
+  function CreateRectangle(const pt: Point2D; width, height: Longint): Rectangle; overload;
+  begin
+    result := RectangleFrom(pt,width,height); 
+  end;
+
+  function CreateRectangle(const line: LineSegment): Rectangle; overload;
+  begin
+    result := RectangleFrom(line);
+  end;
+
+  function CreateRectangle(const c: Circle): Rectangle; overload;
+  begin
+    result := RectangleFrom(c);
+  end;
+
+  function CreateRectangle(const tri: Triangle): Rectangle; overload;
+  begin
+    result := RectangleFrom(tri);
+  end;
+
+  function CreateRectangle(const lines: LinesArray): Rectangle; overload;
+  begin
+    result := RectangleFrom(lines);
+  end;
+    
     
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
   const SMALL = 0.9;
