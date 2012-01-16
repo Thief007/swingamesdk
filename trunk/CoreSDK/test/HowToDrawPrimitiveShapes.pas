@@ -5,7 +5,7 @@ uses
 procedure Main();
 begin 
 
-	OpenGraphicsWindow('Primitive shapes', 800, 250);
+  OpenGraphicsWindow('Primitive shapes', 800, 250);
 
   ClearScreen(ColorWhite);
   DrawCircle(ColorBlack, 50, 50, 30);
@@ -23,7 +23,7 @@ begin
 
   Delay(5000);
 
-ReleaseAllResources();    
+  ReleaseAllResources();    
 end;
 
 begin
