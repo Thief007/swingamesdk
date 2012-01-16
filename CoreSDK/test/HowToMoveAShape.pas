@@ -1,13 +1,13 @@
 program HowToMoveAShape;
 uses
-  sgInput, sgGraphics, sgResources, sgText;  
+  sgInput, sgGraphics, sgResources, sgText, sgTypes;
 
 procedure Main();
 var 
-	right : Single;
-
+	x,y : Single;	
 begin
-  right := 0;  
+	x := 300;
+	y := 250;
   
   OpenGraphicsWindow('Moving Shape', 800, 600);
   
@@ -16,9 +16,28 @@ begin
     
     ClearScreen(ColorWhite);
 	
-	FillRectangle(ColorGreen, right, 250, 200, 100);
-	right += 1;
-	if (right = 800) then right := 0;
+	FillRectangle(ColorGreen, x, y, 200, 100);
+	
+	if(KeyDown(vk_UP)) then
+	begin
+		y -= 1;
+		if (y = 0) then y := 600;
+	end;
+	if(KeyDown(vk_DOWN)) then
+	begin
+		y += 1;
+		if (y = 600) then y := 0;
+	end;
+	if(KeyDown(vk_LEFT)) then
+	begin
+		x -= 1;
+		if (x = 0) then x := 800;
+	end;
+	if(KeyDown(vk_RIGHT)) then
+	begin
+		x += 1;
+		if (x = 800) then x := 0;
+	end;
 	
     RefreshScreen();
   until WindowCloseRequested();
