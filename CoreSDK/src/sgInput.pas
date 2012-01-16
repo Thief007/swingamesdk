@@ -244,6 +244,13 @@ interface
   /// @lib
   function KeyDown(key: KeyCode): Boolean;
   
+  /// Returns true when the key requested is just pressed down. This is updated
+  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
+  /// to specify the key to be checked.
+  ///
+  /// @lib
+  function KeyJustTyped(key: KeyCode): Boolean;
+  
   /// Returns true if the specified key was pressed down since the last time 
   /// `ProcessEvents` was called. This occurs only once for the key that is 
   /// pressed and will not return true again until the key is released and
@@ -313,7 +320,12 @@ implementation
 
   function KeyDown(key : keyCode): Boolean;
   begin
-    result := InputDriver.IsKeyPressed(Longint(key));
+    result := WasKeyDown(Longint(key));
+  end;
+  
+  function KeyJustTyped(key: KeyCode): Boolean;
+  begin
+    result := WasKeyJustTyped(LongInt(key));
   end;
 
   function AnyKeyPressed(): Boolean;

@@ -25,7 +25,8 @@ interface
     function isReading() : Boolean;
     function EnteredString: String; 
     function TextEntryWasCancelled: boolean; 
-    
+    function WasKeyDown(kyCode : LongInt) : Boolean;
+    function WasKeyJustTyped(kyCode : LongInt) : Boolean;
     
     
     
@@ -45,6 +46,7 @@ interface
 
     _lastKeyRepeat:         Longint;
     _KeyDown:               Array of KeyDownData;
+    _keyJustTyped:          Array of LongInt;
     _KeyTyped:              Array of Longint;
     _maxStringLen:          LongInt;
     _textBitmap:            Bitmap;
@@ -121,6 +123,7 @@ implementation
   begin
     _keyPressed := false;
     SetLength(_KeyTyped, 0);
+    SetLength(_KeyJustTyped, 0);
     ResetMouseState();
   
     InputDriver.ProcessEvents();
@@ -178,6 +181,17 @@ implementation
     end;
   end;
   
+  procedure ProcessKeyJustTyped(kyCode : LongInt);
+  var
+  i : Integer;
+  begin
+    for i := 0 to High(_KeyDown)do
+    begin
+      if(_Keydown[i].code = kyCode) then exit;
+    end;
+    SetLength(_KeyJustTyped, Length(_KeyJustTyped) + 1);
+    _KeyJustTyped[High(_KeyJustTyped)] := kyCode;
+  end;
   
   procedure HandleKeydownEvent(kyCode, kyChar : LongInt);
   begin
@@ -185,6 +199,8 @@ implementation
     
     SetLength(_KeyTyped, Length(_KeyTyped) + 1);
     _KeyTyped[High(_KeyTyped)] := kyCode;
+    
+    ProcessKeyJustTyped(kyCode);
     
     AddKeyData(kyCode, kyChar);
     ProcessKeyPress(kyCode, kyChar);
@@ -360,6 +376,35 @@ implementation
     for i := 0 to High(_KeyTyped) do
     begin
       if _KeyTyped[i] = kyCode then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  end;
+  function WasKeyJustTyped(kyCode : LongInt) : Boolean;
+  var
+  i : Integer;
+  begin
+    result := false;
+    for i := 0 to High(_KeyJustTyped) do
+    begin
+      if _KeyTyped[i] = kyCode then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  end;
+  
+  function WasKeyDown(kyCode : LongInt) : Boolean;
+  var
+  i : Integer;
+  begin
+    result := false;
+    for i := 0 to High(_KeyDown) do
+    begin
+      if _KeyDown[i].code = kyCode then
       begin
         result := true;
         exit;
