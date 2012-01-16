@@ -249,7 +249,7 @@ interface
   /// to specify the key to be checked.
   ///
   /// @lib
-  function KeyJustTyped(key: KeyCode): Boolean;
+  function KeyPress(key: KeyCode): Boolean;
   
   /// Returns true if the specified key was pressed down since the last time 
   /// `ProcessEvents` was called. This occurs only once for the key that is 
@@ -323,7 +323,7 @@ implementation
     result := WasKeyDown(Longint(key));
   end;
   
-  function KeyJustTyped(key: KeyCode): Boolean;
+  function KeyPress(key: KeyCode): Boolean;
   begin
     result := WasKeyJustTyped(LongInt(key));
   end;
