@@ -172,7 +172,7 @@ implementation
 	procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
 	begin
 		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillEllipseProcedure recieved empty Bitmap'); exit; end;
-		filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColorProcedure(clr));
+		filledEllipseColor(dest^.surface, xPos, yPos, halfWidth, halfHeight, ToGfxColorProcedure(clr));
 	end;
 	
 	// This procedure draws an Ellipse to a bitmap
