@@ -1,25 +1,29 @@
 program HowToDrawPrimitiveShapes;
-uses sgAudio, sgGraphics, sgUtils, sgResources;
+uses
+  sgTypes, sgGraphics, sgResources, sgUtils;
 
 procedure Main();
-begin
-  OpenGraphicsWindow('Primitive shapes', 800, 600);
-	
+begin 
+
+	OpenGraphicsWindow('Primitive shapes', 800, 250);
+
   ClearScreen(ColorWhite);
+  DrawCircle(ColorBlack, 50, 50, 30);
+  DrawEllipse(ColorBlue, 150, 20, 120, 60);
+  DrawLine(ColorGreen, 300, 40, 450, 40);
+  DrawRectangle(ColorGrey, 500, 20, 100, 60 );
+  DrawTriangle(ColorPink, 650, 80, 750, 80, 700, 20);
 
-  DrawRectangle(ColorGreen, 25, 100, 200, 100 );
-  FillRectangle(ColorGreen, 25, 400, 200, 100 );
-
-  DrawTriangle(ColorYellow, 275, 200, 475, 200, 375, 100);
-  FillTriangle(ColorYellow, 275, 500, 475, 500, 375, 400);
-
-  DrawCircle(ColorWhite, 625, 150, 100);
+  FillCircle(ColorMagenta, 50, 160, 30);
+  FillEllipse(ColorRed, 150, 130, 120, 60);
+  FillRectangle(ColorTurquoise, 300, 130, 100, 60);
+  FillTriangle(ColorYellow, 500, 190, 700, 190, 600, 130);
 
   RefreshScreen();
-	
+
   Delay(5000);
 
-  ReleaseAllResources();    
+ReleaseAllResources();    
 end;
 
 begin
