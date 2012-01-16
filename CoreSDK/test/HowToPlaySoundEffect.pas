@@ -4,20 +4,20 @@ uses
 
 procedure Main();
 begin
-	OpenAudio();
+  OpenAudio();
 
-	OpenGraphicsWindow('How To Play Sound Effect', 320, 240);
+  OpenGraphicsWindow('How To Play Sound Effect', 320, 240);
 
-	ClearScreen(ColorWhite);
+  ClearScreen(ColorWhite);
+
+  PlaySoundEffect(LoadSoundEffect('chipmunk.ogg')); // load sound effect in ogg, wave audio files	
+  DrawText('How To Play Sound Effect!!!', ColorRed, 10, 120);	
 	
-	PlaySoundEffect(LoadSoundEffect('chipmunk.ogg')); // load sound effect in ogg, wave audio files	
-	DrawText('How To Play Sound Effect!!!', ColorRed, 10, 120);	
-		
-	RefreshScreen();
-		
-	Delay(5000);	
-	CloseAudio();
-	ReleaseAllResources();  
+  RefreshScreen();
+	
+  Delay(5000);	
+  CloseAudio();
+  ReleaseAllResources();  
 end;
 
 begin
