@@ -1,4 +1,4 @@
-program HowToMovingShape;
+program HowToMoveAShape;
 uses
   sgInput, sgGraphics, sgResources, sgText;  
 
