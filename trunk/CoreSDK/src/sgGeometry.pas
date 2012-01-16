@@ -550,6 +550,11 @@ interface
   /// @sn fixRectangleX:%s y:%s width:%s height:%s
   procedure FixRectangle(var x, y: Single; var width, height: Longint);
   
+  //---------------------------------------------------------------------------
+  // Triangle creation code
+  //---------------------------------------------------------------------------
+  
+  
   /// Returns a triangle from the points passed in.
   /// 
   /// @lib
@@ -561,10 +566,23 @@ interface
   /// Returns a triangle made up of the three points passed in.
   ///
   /// @lib TriangleFromPoints
-  /// @sn trangleFromPtA:%s ptB:%s ptC:%s
+  /// @sn triangleFromPtA:%s ptB:%s ptC:%s
   function TriangleFrom(const a, b, c: Point2D): Triangle; overload;
   
+  /// Returns a triangle from the points passed in.
+  /// 
+  /// @lib
+  /// @sn CreateTriangleAx:%s ay:%s bx:%s by:%s cx:%s cy:%s
+  ///
+  /// @doc_idx 0
   
+  function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
+
+  /// Returns a triangle made up of the three points passed in.
+  ///
+  /// @lib CreateTrianglePoints
+  /// @sn CreateTrianglePtA:%s ptB:%s ptC:%s
+  function CreateTriangle(const a, b, c: Point2D): Triangle; overload;
   
 //----------------------------------------------------------------------------
 // 
@@ -3414,6 +3432,15 @@ implementation
     {$ENDIF}
   end;
   
+  function CreateTriangle(const a, b, c: Point2D): Triangle; overload;
+  begin
+    result := TriangleFrom(a,b,c);
+  end;
+  
+  function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
+  begin
+    result := TriangleFrom(ax, ay, bx, by, cx, cy);
+  end;
   function PointInTriangle(const pt : Point2D; const tri : Triangle): Boolean;
   var
     v0, v1, v2 : Vector;
