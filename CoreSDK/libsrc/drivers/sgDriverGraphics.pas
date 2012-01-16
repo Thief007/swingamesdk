@@ -46,7 +46,7 @@ interface
     RGBAColorProcedure                    = function  (r, g, b, a: Byte)  : Color;
     GetSurfaceWidthProcedure              = function  (src : Bitmap) : LongInt;
     GetSurfaceHeightProcedure             = function  (src : Bitmap) : LongInt;
-    ToGfxColorProcedure                   = function(val: Color): Color;
+    // ToGfxColorProcedure                   = function(val: Color): Color;
     GetRGBProcedure                       = procedure (pixel : Byte; r,g,b : Byte);
     SurfaceFormatAssignedProcedure        = function ( bmp : Bitmap) : Boolean;
     GetScreenWidthProcedure               = function():LongInt;
@@ -79,7 +79,7 @@ interface
     RGBAColor                 : RGBAColorProcedure;
     GetSurfaceWidth           : GetSurfaceWidthProcedure;
     GetSurfaceHeight          : GetSurfaceHeightProcedure;
-    ToGfxColor                : ToGfxColorProcedure;
+    // ToGfxColor                : ToGfxColorProcedure;
     GetRGB                    : GetRGBProcedure;
     SurfaceFormatAssigned     : SurfaceFormatAssignedProcedure;
     GetScreenWidth            : GetScreenWidthProcedure;
@@ -251,12 +251,12 @@ implementation
     result := GraphicsDriver.GetSurfaceHeight(src);
   end;
   
-  function DefaultToGfxColorProcedure(val : Color): Color; 
-  begin
-    LoadDefaultGraphicsDriver();
-    result := GraphicsDriver.ToGfxColor(val);
-  end;
-  
+  // function DefaultToGfxColorProcedure(val : Color): Color; 
+  // begin
+  //   LoadDefaultGraphicsDriver();
+  //   result := GraphicsDriver.ToGfxColor(val);
+  // end;
+  // 
   procedure DefaultGetRGBProcedure(pixel : Byte ; r,g,b : Byte);
   begin
     LoadDefaultGraphicsDriver();
@@ -309,7 +309,7 @@ implementation
     GraphicsDriver.RGBAColor                := @DefaultRGBAColorProcedure;
     GraphicsDriver.GetSurfaceWidth          := @DefaultGetSurfaceWidthProcedure;
     GraphicsDriver.GetSurfaceHeight         := @DefaultGetSurfaceHeightProcedure;
-    GraphicsDriver.ToGfxColor               := @DefaultToGfxColorProcedure;
+    // GraphicsDriver.ToGfxColor               := @DefaultToGfxColorProcedure;
     GraphicsDriver.GetRGB                   := @DefaultGetRGBProcedure;
     GraphicsDriver.SurfaceFormatAssigned    := @DefaultSurfaceFormatAssignedProcedure;
     GraphicsDriver.GetScreenWidth           := @DefaultGetScreenWidthProcedure;

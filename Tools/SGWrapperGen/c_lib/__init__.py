@@ -23,18 +23,22 @@ _data_switcher = {
 _type_switcher = {
     None :      dict(),
     'const':    dict(),
-    'const-cpp':    dict(),
     'var':      dict(),
     'out':      dict(),
+    'const-cpp':    dict(),
+    'var-cpp':      dict(),
+    'out-cpp':      dict(),
     'return':   dict(),
 }
 
 _adapter_type_switcher = {
     None:       dict(),
     'const':    dict(),
-    'const-cpp':    dict(),
     'var':      dict(),
     'out':      dict(),
+    'const-cpp':    dict(),
+    'var-cpp':      dict(),
+    'out-cpp':      dict(),
     'result':   dict(),
     'return':   dict(),
 }
@@ -75,6 +79,8 @@ _type_dictionary_creation_data = [
             # 'const':    '',
             'var':      '#2# *',
             'out':      '#2# *',
+            'var-cpp':      '#2# &',
+            'out-cpp':      '#2# &',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
@@ -82,6 +88,8 @@ _type_dictionary_creation_data = [
             # 'const':    '',
             'var':      '#2# *',
             'out':      '#2# *',
+            'var-cpp':      '#2# &',
+            'out-cpp':      '#2# &',
             #'result':   '#2# *',
             'return':   '#2#',
         }
@@ -105,11 +113,13 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2# ',
             'var':      '#2# *',
+            'var-cpp':      '#2# &',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
             None:       '#2#_data *',
             'var':      '#2# *',
+            'var-cpp':      '#2# &',
             'return':   '#2#',
         }
     },
@@ -135,6 +145,7 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2# ',
             'var':      '#2# *',
+            'var-cpp':      '#2# &',
             'out':      '#2# ',
             'return':   '#2#',
         },
@@ -152,6 +163,8 @@ _type_dictionary_creation_data = [
             None:       'const #2#',
             'var':      '#2#',
             'out':      '#2#',
+            'var-cpp':      '#2#',
+            'out-cpp':      '#2#',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
@@ -162,7 +175,6 @@ _type_dictionary_creation_data = [
     # array types
     {
         'identifiers': [
-            ('triangle',        'triangle '),
             ('linesarray',     'lines_array '),
             ('stringarray',     'string_array '),
             ('point2darray',    'point2d *'),
@@ -177,6 +189,7 @@ _type_dictionary_creation_data = [
             'const':    'const #2#',
             'const-cpp':    'const #2#',
             'var':      '#2#',
+            'var-cpp':      '#2#',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
@@ -184,26 +197,28 @@ _type_dictionary_creation_data = [
             'return':   '#2#',
         }
     },
-    # 2d array types
-    {
-        'identifiers': [
-            ('matrix2d',        'matrix2d '),
-        ],
-        '_type_switcher': {
-            None:       '#2#',
-            'const':    '#2#',
-            'const-cpp':    '#2#',
-            'var':      '#2#',
-            'return':   '#2#',
-        },
-        '_adapter_type_switcher': {
-            None:       '#2#',
-            'return':   '#2#',
-        }
-    },
+    # # 2d array types
+    # {
+    #     'identifiers': [
+    #         ('matrix2d',        'matrix2d '),
+    #     ],
+    #     '_type_switcher': {
+    #         None:       '#2#',
+    #         'const':    '#2#',
+    #         'const-cpp':    '#2#',
+    #         'var':      '#2#',
+    #         'return':   '#2#',
+    #     },
+    #     '_adapter_type_switcher': {
+    #         None:       '#2#',
+    #         'return':   '#2#',
+    #     }
+    # },
     # struct types
     {
         'identifiers': [
+            ('triangle',            'triangle '),
+            ('matrix2d',            'matrix2d '),
             ('directionangles',     'direction_angles'),
             ('vector',              'vector'),
             ('point2d',             'point2d'),
@@ -217,7 +232,9 @@ _type_dictionary_creation_data = [
             'const':    'const #2# *', #const parameters in Pascal are passed by reference
             'const-cpp':    'const #2# &', 
             'var':      '#2# *',
+            'var-cpp':      '#2# &',
             'out':      '#2# *',
+            'out-cpp':      '#2# &',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
@@ -242,6 +259,7 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2# ',
             'var':      '#2# *',
+            'var-cpp':  '#2# &',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {

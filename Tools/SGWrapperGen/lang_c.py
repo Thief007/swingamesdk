@@ -38,8 +38,8 @@ def type_visitor(the_type, modifier = None):
 
 def cpp_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame code (code facing the user)'''
-    if modifier == 'const':
-        modifier = 'const-cpp'
+    if modifier == 'const' or modifier == 'var' or modifier == 'out':
+        modifier = modifier + '-cpp'
     
     return lang_helper.std_type_visitor(c_lib._type_switcher, the_type, modifier)
 
@@ -118,6 +118,24 @@ def const_strip_arg_visitor(arg_str, the_arg, for_param_or_type):
     else:
         return arg_str
 
+def cpp_arg_visitor(arg_str, the_arg, for_param_or_type):
+    '''
+    Called for each argument in a call, performs required mappings.
+    This version adds in & operators for const var and out parameters...
+    '''
+    arg_str = arg_visitor(arg_str, the_arg, for_param_or_type)
+
+    if isinstance(for_param_or_type, SGType):
+        the_type = for_param_or_type
+    else:
+        the_type = for_param_or_type.data_type
+
+    if the_arg != None and isinstance(the_arg, SGParameter) and the_arg.modifier in ['const', 'var', 'out'] and not (the_type.is_array or the_type.name == 'String'):
+        return '&' + arg_str
+    else:
+        return arg_str
+
+
 def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
     return ''.join([line if line == docLines[0] else '// ' + line for line in docLines])
@@ -183,7 +201,7 @@ def _do_cpp_create_method_code(the_method):
     
     method_data = the_method.lang_data['cpp']
     
-    details = the_method.to_keyed_dict(cpp_param_visitor, cpp_type_visitor, const_strip_arg_visitor, doc_transform, lang_key='cpp')
+    details = the_method.to_keyed_dict(cpp_param_visitor, cpp_type_visitor, cpp_arg_visitor, doc_transform, lang_key='cpp')
     
     # Create signature
     method_data.signature   = '%(return_type)s %(name_lower)s(%(params)s);' % details

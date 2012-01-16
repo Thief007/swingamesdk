@@ -103,11 +103,14 @@ interface
         startPoint: Point2D;
         endPoint: Point2D;
     end;
-
+    
+    /// A Triangle contains an array of three points.
+    ///
     /// @struct Triangle
     Triangle = packed record 
-      points : array [0..2] of Point2D
+      points : array [0..2] of Point2D;
     end;
+    
     /// @type LinesArray
     /// @array_wrapper
     /// @field data: array of LineSegment
@@ -182,9 +185,6 @@ interface
     /// operations that need to be performed on Vectors.
     ///
     /// @struct Matrix2D
-    /// @fixed_array_wrapper
-    /// @field data: array[0..2,0..2] of Single
-    /// @sameas Array [0..2,0..2] of Single
     Matrix2D = packed record
       elements : Array [0..2,0..2] of Single;
     end;

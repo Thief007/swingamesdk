@@ -21,6 +21,8 @@ fi
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
 
 #
 # Step 3: Setup options
@@ -81,13 +83,14 @@ fi
 # Step 5: Set the paths to local variables
 #
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SDK_SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/tmp/out.log"
 FPC_BIN=`which fpc`
 
 if [ "$OS" = "$MAC" ]; then
-    FRAMEWORK_DIR="${APP_PATH}/lib"	
+    FRAMEWORK_DIR="${FULL_APP_PATH}/lib"	
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
     HEADER_DIR="${VERSION_DIR}/Headers"
     RESOURCES_DIR="${VERSION_DIR}/Resources"
@@ -95,8 +98,8 @@ if [ "$OS" = "$MAC" ]; then
 elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib"
     # FPC paths require c:/
-		SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
-		OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
+    SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
+    OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
 fi
 
 if [ $INSTALL != "N" ]; then
@@ -179,37 +182,45 @@ doMacCompile()
     
     LINK_OPTS="$2"
     
-    # Compile to assembly (.s)
-    "${FPC_BIN}" -Mobjfpc -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
+    FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    if [ "*$DEBUG*" = "**" ] ; then
+        EXTRA_OPTS="$EXTRA_OPTS -Xs"
+    fi
+    
+    # Compile...
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${FRAMEWORK_DIR}' -current_version '${VERSION}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
-    # Assemble all of the assembly (.s) files
-    echo "  ... Assembling library for $1"
-    for file in `find ${TMP_DIR} | grep [.]s$`
-    do
-        /usr/bin/as -o "${file%.s}.o" $file -arch $1
-        if [ $? != 0 ]; then echo "An error occurred while assembling $file"; exit 1; fi
-        rm $file
-    done
+    mv ${TMP_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${1}.dylib
     
-    echo "  ... Linking Library"
-    FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    
-    
-    #/usr/bin/libtool -no_order_inits -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
-    
-    #FIX: -no_order_inits for SnowLeopard
-    #FIX: -no_order_data for SnowLeopard can be removed with future versions of the compiler
-    /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` /usr/lib/dylib1.o -framework Cocoa
-
-    
-    if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
-    
-    if [ "*$DEBUG*" = "**" ] ; then
-        echo "  ... Stripping symbols from dylib"
-        /usr/bin/strip -x "${OUT_DIR}/libSGSDK${1}.dylib"
-    fi
+    # # Assemble all of the assembly (.s) files
+    # echo "  ... Assembling library for $1"
+    # for file in `find ${TMP_DIR} | grep [.]s$`
+    # do
+    #     /usr/bin/as -o "${file%.s}.o" $file -arch $1
+    #     if [ $? != 0 ]; then echo "An error occurred while assembling $file"; exit 1; fi
+    #     rm $file
+    # done
+    # 
+    # echo "  ... Linking Library"
+    # FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    # 
+    # 
+    # #/usr/bin/libtool -no_order_inits -install_name "@loader_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    # 
+    # #FIX: -no_order_inits for SnowLeopard
+    # #FIX: -no_order_data for SnowLeopard can be removed with future versions of the compiler
+    # /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@loader_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` /usr/lib/dylib1.o -framework Cocoa
+    # 
+    # 
+    # if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
+    #     
+    # if [ "*$DEBUG*" = "**" ] ; then
+    #     echo "  ... Stripping symbols from dylib"
+    #     /usr/bin/strip -x "${OUT_DIR}/libSGSDK${1}.dylib"
+    # fi
     
     CleanTmp
 }
@@ -303,22 +314,62 @@ then
     then
         DisplayHeader
         
+        HAS_PPC=false
+        HAS_i386=false
+        HAS_LEOPARD_SDK=false
+        HAS_LION=false
+        OS_VER=`sw_vers -productVersion`
+        
+        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+            HAS_PPC=true
+        fi
+        
+        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+            HAS_i386=true
+        fi
+        
+        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.5' ]; then
+            HAS_LEOPARD_SDK=true
+        fi
+        
+        if [ $OS_VER = '10.7' ]; then
+            HAS_LION=true
+        fi
+        
         echo "  ... Compiling Library"
-        #Compile ppc version of library
         
-        #Compile i386 version of library
-        FPC_BIN=`which ppc386`
-        doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
-        
-        FPC_BIN=`which ppcppc`
-        doMacCompile "ppc" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
-        #"-ldylib1.10.5.o"
-        
-        #FPC_BIN=`which ppcx64`
-        #doMacCompile "x86_64"
-        
-        #Combine into a fat dylib
-        doLipo "i386" "ppc"
+        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
+            echo "  ... Building Universal Binary"
+            
+            #Compile i386 version of library
+            FPC_BIN=`which ppc386`
+            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            
+            #Compile ppc version of library
+            FPC_BIN=`which ppcppc`
+            doMacCompile "ppc" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            #"-ldylib1.10.5.o"
+            
+            #FPC_BIN=`which ppcx64`
+            #doMacCompile "x86_64"
+            
+            #Combine into a fat dylib
+            doLipo "i386" "ppc"
+        else
+            if [[ $HAS_LION ]]; then
+                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            fi
+            
+            #Compile i386 version of library
+            FPC_BIN=`which ppc386`
+            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            
+            mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
+        fi
         
         #Convert into a Framework
         doCreateFramework
@@ -347,7 +398,7 @@ then
                 fi
             }
             
-            doCopyFramework "${OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
+            doCopyFramework "${FULL_OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
             for file in `find ${FRAMEWORK_DIR} -depth 1 | grep [.]framework$`
             do
                 doCopyFramework ${file} "${INSTALL_DIR}"

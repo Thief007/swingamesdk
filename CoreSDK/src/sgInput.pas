@@ -180,10 +180,10 @@ interface
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
     
   
-  /// The same as `StartReadingTextWithText` but with an additional ``bgColor`` parameter
+  /// The same as `StartReadingTextWithText` but with ``text`` and ``bgColor`` parameter
   /// that is displayed as default text to the user.  
   ///
-  /// @lib StartReadingTextWithTextInArea
+  /// @lib StartReadingTextWithTextAndColorInArea
   /// @sn startReadingTextWith:%s color:%s bgColor:%s maxLen:%s font:%s area:%s  
   procedure StartReadingTextWithText(text: String; textColor, backGroundColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   
