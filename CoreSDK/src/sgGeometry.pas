@@ -82,7 +82,19 @@ interface
   /// @doc_idx 0
   function CircleAt(x, y: Single; radius: Longint): Circle; overload;
   
-  
+  /// Creates a Circle at the point pt with the given radius.
+  ///
+  /// @lib
+  /// @sn CreateCircle:%s radius:%s
+  function CreateCircle(const pt: Point2D; radius: Longint): Circle; overload;
+
+  /// Creates a circle at the given x,y location with the indicated radius.
+  ///
+  /// @lib CircleFromXY
+  /// @sn CreateCircleX:%s y:%s radius:%s
+  ///
+  /// @doc_idx 0
+  function CreateCircle(x, y: Single; radius: Longint): Circle; overload;
   
 //---------------------------------------------------------------------------
 // Circle code
@@ -4338,6 +4350,15 @@ implementation
     {$ENDIF}
   end;
   
+  function CreateCircle(const pt: Point2D; radius: Longint): Circle; overload;
+  begin
+    result := CircleAt(pt,radius);
+  end;
+  
+  function CreateCircle(x, y: Single; radius: Longint): Circle; overload;
+  begin
+    result := CircleAt(x,y,radius);
+  end;
   function CircleX(const c: Circle): Single;
   begin
     {$IFDEF TRACE}
