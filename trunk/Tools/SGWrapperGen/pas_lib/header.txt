@@ -16,6 +16,7 @@ library %(name)s;
     Point2DPtr      = ^Point2D;
     LineSegmentPtr  = ^LineSegment;
     BitmapPtr       = ^Bitmap;
+    TrianglePtr     = ^Triangle;
   
   
   // The exception trap is used to ensure that exceptions do not propagate beyond the
@@ -39,65 +40,44 @@ library %(name)s;
     {$ENDIF}
   end;
   
-  // The following routines are used to copy array data
-  procedure TriCopyToPtr(tri: Point2DPtr; const fromTri: Triangle);
-  var
-    i: Longint;
-  begin
-    for i := 0 to 2 do
-    begin
-      (tri + i)^ := fromTri[i];
-    end;
-  end;
-  
-  procedure TriCopyFromPtr(var toTri: Triangle; tri: Point2DPtr);
-  var
-    i: Longint;
-  begin
-    for i := 0 to 2 do
-    begin
-      toTri[i] := (tri + i)^;
-    end;
-  end;
-  
-  procedure MatrixCopyToPtr(matrix: SinglePtr; const fromMatrix: Matrix2D);
-  var
-    i, j: Longint;
-  begin
-    //WriteLn('************************');
-    for i := 0 to 2 do
-    begin
-      //Write('|  ');
-      for j := 0 to 2 do
-      begin
-        //Write(fromMatrix[i,j]:4:2, '  ');
-        (matrix + (i * 3) + j)^ := fromMatrix[i,j];
-        //matrix[i,j] := fromMatrix[i,j];
-      end;
-      //Writeln('|');
-    end;
-    //WriteLn('************************');
-  end;
-  
-  procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
-  var
-    i, j: Longint;
-  begin
-    //WriteLn('************************');
-    for i := 0 to 2 do
-    begin
-      //Write('|  ');
-      for j := 0 to 2 do
-      begin
-        toMatrix[i,j] := (matrix + (i * 3) + j)^;
-        //toMatrix[i,j] := matrix[i,j];
-        
-        //Write(toMatrix[i,j]:4:2, '  ');
-      end;
-      //Writeln('|');
-    end;
-    //WriteLn('************************');
-  end;
+  // procedure MatrixCopyToPtr(matrix: SinglePtr; const fromMatrix: Matrix2D);
+  // var
+  //   i, j: Longint;
+  // begin
+  //   //WriteLn('************************');
+  //   for i := 0 to 2 do
+  //   begin
+  //     //Write('|  ');
+  //     for j := 0 to 2 do
+  //     begin
+  //       //Write(fromMatrix[i,j]:4:2, '  ');
+  //       (matrix + (i * 3) + j)^ := fromMatrix[i,j];
+  //       //matrix[i,j] := fromMatrix[i,j];
+  //     end;
+  //     //Writeln('|');
+  //   end;
+  //   //WriteLn('************************');
+  // end;
+  // 
+  // procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
+  // var
+  //   i, j: Longint;
+  // begin
+  //   //WriteLn('************************');
+  //   for i := 0 to 2 do
+  //   begin
+  //     //Write('|  ');
+  //     for j := 0 to 2 do
+  //     begin
+  //       toMatrix[i,j] := (matrix + (i * 3) + j)^;
+  //       //toMatrix[i,j] := matrix[i,j];
+  //       
+  //       //Write(toMatrix[i,j]:4:2, '  ');
+  //     end;
+  //     //Writeln('|');
+  //   end;
+  //   //WriteLn('************************');
+  // end;
   
   procedure LineCopyFromPtr(data: LineSegmentPtr; len: Longint; out arr: LinesArray);
   var
@@ -125,9 +105,9 @@ library %(name)s;
     end;
   end;
   
-  procedure TriangleCopyFromPtr(data: Point2DPtr; len: Longint; out arr: TriangleArray);
+  procedure TriangleCopyFromPtr(data: TrianglePtr; len: Longint; out arr: TriangleArray);
   var
-    i, j: Longint;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -135,26 +115,20 @@ library %(name)s;
 
     for i := 0 to len - 1 do
     begin
-      for j := 0 to 2 do
-      begin
-        arr[i][j] := (data + i * 3 + j)^;
-      end;
+        arr[i] := (data + i)^;
     end;
   end;
   
-  procedure TriangleCopyToPtr(const arr: TriangleArray; len: Longint; data: Point2DPtr);
+  procedure TriangleCopyToPtr(const arr: TriangleArray; len: Longint; data: TrianglePtr);
   var
-    i, j: Longint;
+    i: Longint;
   begin
     // len is number of triangles expected
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
     for i := Low(arr) to High(arr) do
     begin
-      for j := 0 to 2 do
-      begin
-        (data + i * 3 + j)^ := arr[i][j];
-      end;
+        (data + i)^ := arr[i];
     end;
   end;
   

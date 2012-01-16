@@ -20,6 +20,8 @@ uses sgTypes, SDL;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
 	
 	procedure LoadSDLGraphicsDriver();
+	    
+    function ToGfxColorProcedure(val : Color): Color;
 	
 implementation
 	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry,
@@ -115,8 +117,6 @@ implementation
     result := (r shl 24) or (g shl 16) or (b shl 8) or a;
   end;
   
-  
-  
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   begin
     if w < 0 then
@@ -147,13 +147,13 @@ implementation
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
   begin
     if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawTriangleProcedure recieved empty Bitmap'); exit; end;
-    trigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
+    trigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColorProcedure(clr));
   end;
 
   procedure FillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
   begin
     if not assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - FillTriangleProcedure recieved empty Bitmap'); exit; end;
-    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
+    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColorProcedure(clr));
   end;
 	
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
@@ -436,7 +436,7 @@ implementation
     GraphicsDriver.RGBAColor                := @RGBAColorProcedure;
     GraphicsDriver.GetSurfaceWidth          := @GetSurfaceWidthProcedure;
     GraphicsDriver.GetSurfaceHeight         := @GetSurfaceHeightProcedure;
-    GraphicsDriver.ToGfxColor               := @ToGfxColorProcedure;
+    // GraphicsDriver.ToGfxColor               := @ToGfxColorProcedure;
     GraphicsDriver.GetRGB                   := @GetRGBProcedure;
     GraphicsDriver.SurfaceFormatAssigned    := @SurfaceFormatAssignedProcedure;
     GraphicsDriver.GetScreenWidth           := @GetScreenWidthProcedure;

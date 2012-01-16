@@ -36,12 +36,12 @@ _array_copy_data = {
     'trianglearray':  'Triangle',
 }
 
-# dictionary for start of method names for copying fixed
-# length array data
-_array_copy_fixed_data = {
-    'triangle': 'Tri',
-    'matrix2d': 'Matrix',
-}
+# # dictionary for start of method names for copying fixed
+# # length array data
+# _array_copy_fixed_data = {
+#     'triangle': 'Tri',
+#     'matrix2d': 'Matrix',
+# }
 
 _names = []
 
@@ -69,7 +69,7 @@ def pas_library_param_visitor(the_param, last):
        * Strip var/const/out from arrays and strings
        * Make result a standard parameter - it must be a pointer to need to be a result param
     '''
-    if the_param.modifier in ['out','var', 'const', 'result'] and (the_param.data_type.name.lower() in ['string','triangle'] or the_param.data_type.wraps_array):
+    if the_param.modifier in ['out','var', 'const', 'result'] and (the_param.data_type.name.lower() in ['string'] or the_param.data_type.wraps_array):
         return '%s: %s%s' % (
             the_param.name, 
             type_visitor(the_param.data_type),
@@ -176,11 +176,11 @@ def _do_create_pas_library_code(method):
             #? elif type_name == 'color':
             #     temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
             
-            elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
-                if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
-                    temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
-                if local_var.modifier in [None, 'var', 'out'] or local_var.maps_result:
-                    temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
+            # elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
+            #     if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
+            #         temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
+            #     if local_var.modifier in [None, 'var', 'out'] or local_var.maps_result:
+            #         temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
             elif type_name in _array_copy_data:
                 if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
                     temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)

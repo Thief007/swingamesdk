@@ -392,40 +392,30 @@ end;
   finalization
   begin
     {$ifdef DARWIN}
-    if not assigned(pool) then
-    begin
-      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      pool := objc_msgSend(pool, sel_registerName('init'));
-    end;
+        if not assigned(pool) then
+        begin
+            pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+            pool := objc_msgSend(pool, sel_registerName('init'));
+        end;
     {$endif}
     
-    //if sdlManager <> nil then
-    //begin
-    //  sdlManager.Free();
-    //  sdlManager := nil;
-    //end;
-    
-    
-    //if screen^.surface <> nil then ImagesDriver.FreeSurface(screen^.surface);
-    //if screen <> nil then FreeBitmap(screen);
-      if screen <> nil then
-      begin
+    if screen <> nil then
+    begin
         ImagesDriver.FreeSurface(screen);
         Dispose(screen);
         screen := nil;
-      end;
-    
+    end;
     
     Driver.Quit();
     
     {$ifdef DARWIN}
       // last pool will self drain...
-      if assigned(pool) then
+        if assigned(pool) then
         begin
-          objc_msgSend(pool, sel_registerName('drain'));
+            objc_msgSend(pool, sel_registerName('drain'));
         end;
-      pool := nil;
-      NSAutoreleasePool := nil;
+        pool := nil;
+        NSAutoreleasePool := nil;
     {$endif}
   end;
 

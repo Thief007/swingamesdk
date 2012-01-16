@@ -220,6 +220,7 @@ _type_switcher = {
         'linesarray':   'LineSegment[] %s',
         'point2darray': 'Point2D[] %s',
         'triangle':     'Triangle %s',
+        'matrix2d':     'Matrix2D %s',
         'longintarray': 'int[] %s',
         'trianglearray':'Triangle[] %s',
         'bitmaparray':  'Bitmap[] %s',
@@ -232,9 +233,9 @@ _data_switcher = {
     {
         'string':       '%s.ToString()',
         'linesarray':   '%s',
-        'matrix2d':     'WrapperUtils.MatrixFromArray(%s)',
+        # 'matrix2d':     'WrapperUtils.MatrixFromArray(%s)',
         'point2darray': '%s',
-        'triangle':     'WrapperUtils.TriangleFromArray(%s)',
+        # 'triangle':     'WrapperUtils.TriangleFromArray(%s)',
         'longint':      '%s',
         'longintarray': '%s',
         'trianglearray':'WrapperUtils.TriangleArrayFrom(%s)',
@@ -323,10 +324,13 @@ _adapter_type_switcher = {
         'sprite':               'IntPtr %s',
         'bitmap':               'IntPtr %s',
         
-        'longword': 'uint %s',
+        #Structs
+        'triangle':     'Triangle %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
-        'triangle': 'Point2D[] %s',
+        
+        
+        'longword': 'uint %s',
         'point2d': 'Point2D %s',
         'linesarray': 'LineSegment[] %s',
         'font': 'IntPtr %s',
@@ -381,10 +385,15 @@ _adapter_type_switcher = {
         'resourcekind': 'int %s',
         'longword': 'uint %s',
         'bitmap': 'IntPtr %s',
+        
+        #Structs
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3)] Point2D[] %s',
+        # 'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3)] Point2D[] %s',
+        'triangle':     'Triangle %s',
         'point2d': 'Point2D %s',
+        
+        
         'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
         'font': 'IntPtr %s',
         'fontalignment': 'int %s',
@@ -417,12 +426,12 @@ _adapter_type_switcher = {
         'rectangle':    'ref Rectangle %s',
         'circle':       'ref Circle %s',
         'bitmapcell':   'ref BitmapCell %s',
+        'matrix2d':     'ref Matrix2D %s',
+        'triangle':     'ref Triangle %s',
+        'vector':       'ref Vector %s',
         
         # Arrays are passed by reference already
-        'matrix2d':     'float[,] %s',
-        'triangle':     'Point2D[] %s',
-        'trianglearray':'Point2D[] %s',
-        'vector':       'ref Vector %s',
+        'trianglearray':'Triangle[] %s',
         'linesarray':   'LineSegment[] %s',
         'longintarray': 'int[] %s',
         'bitmaparray':  'IntPtr[] %s',
@@ -437,11 +446,14 @@ _adapter_type_switcher = {
         'circle':       'ref Circle %s',
         'vector':       'ref Vector %s',
         'bitmapcell':   'ref BitmapCell %s',
+        'matrix2d':     'ref Matrix2D %s',
+        'triangle':     'ref Triangle %s',
+        
         
         # Arrays are passed by reference already
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
-        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
-        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Point2D[] %s',
+        # 'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
+        # 'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
+        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Triangle[] %s',
         'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] LineSegment[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] int[] %s',
         'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] IntPtr[] %s',
@@ -469,7 +481,7 @@ _adapter_type_switcher = {
         'single':               'ref float %s',
         'byte':                 'ref byte %s',
         
-        'triangle':             'Point2D[] %s',
+        'triangle':             'ref Triangle %s',
         'rectangle':            'ref Rectangle %s',
         'point2darray':         'Point2D[] %s',
     },
@@ -494,7 +506,7 @@ _adapter_type_switcher = {
         
         'string':               '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
         
-        'triangle':             '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        'triangle':             'ref Triangle %s',
         'point2darray':         '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In, Out] Point2D[] %s',
         
         'rectangle':            'ref Rectangle %s',
@@ -522,10 +534,10 @@ _adapter_type_switcher = {
         'string':           'StringBuilder %s',
         'stringarray':      'StringBuilder[] %s',
         'linesarray':       'LineSegment[] %s',
-        'matrix2d':         'float[,] %s',
+        # 'matrix2d':         'float[,] %s',
         'point2darray':     'Point2D[] %s',
-        'triangle':         'Point2D[] %s',
-        'trianglearray':    'Point2D[] %s',
+        # 'triangle':         'Point2D[] %s',
+        'trianglearray':    'Triangle[] %s',
         'longintarray':     'int[] %s',
         'bitmaparray':      'IntPtr[] %s',
     },
@@ -534,11 +546,11 @@ _adapter_type_switcher = {
         'stringarray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] StringBuilder[] %s',
         
         'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
+        # 'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
         'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
-        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
+        # 'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] int[] %s',
-        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
+        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Triangle[] %s',
         
         'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] IntPtr[] %s',
     },
@@ -576,6 +588,8 @@ _adapter_type_switcher = {
         'rectangle':        'Rectangle %s',
         'linesegment':      'LineSegment %s',
         'directionangles':  'DirectionAngles %s',
+        'matrix2d':         'Matrix2D %s',
+        'triangle':         'Triangle %s',
         
         # Enums
         'fontalignment':        'FontAlignment %s',
@@ -593,14 +607,14 @@ _adapter_type_switcher = {
 _local_type_switcher = {
     'string':       'StringBuilder %s = new StringBuilder(2048);',
     'color':        'int %s;',
-    'matrix2d':     'float[,] %s = new float[3,3];',
-    'triangle':     'Point2D[] %s = new Point2D[3];',
+    # 'matrix2d':     'float[,] %s = new float[3,3];',
+    # 'triangle':     'Point2D[] %s = new Point2D[3];',
     'linesarray':   'LineSegment[] %s;',
     'longintarray': 'int[] %s;',
     'bitmaparray' : 'IntPtr[] %s;',
     'point2darray': 'Point2D[] %s;',
     'longint':      'int %s;',
-    'trianglearray':'Point2D[] %s;',
+    'trianglearray':'Triangle[] %s;',
     'stringarray':  'string[] %s;',
 }
 
@@ -950,9 +964,9 @@ def method_visitor(the_method, other, as_accessor_name = None):
                                 the_method.fixed_result_size
                             )
                     elif the_method.length_call != None:
-                        # print the_method.name, local_var.data_type.name, ' = ', details['length_call']
+                        print the_method.name, local_var.data_type.name, ' = ', details['length_call']
                         #FIX THIS...
-                        assert local_var.data_type.name in ['LongintArray','Point2DArray','TriangleArray','StringArray','LinesArray','BitmapArray']
+                        assert local_var.data_type.name in ['LongintArray','Point2DArray','StringArray','LinesArray','BitmapArray']
                         
                         if local_var.data_type.name == 'StringArray':
                             temp_process_params = '%s = WrapperUtils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
@@ -962,11 +976,11 @@ def method_visitor(the_method, other, as_accessor_name = None):
                             temp_process_params = '%s = new %s[%s];\n    ' % (
                                 local_var.name,
                                 'int' if local_var.data_type.name in ['LongintArray'] \
-                                else 'Point2D' if local_var.data_type.name in ['Point2DArray', 'TriangleArray'] \
+                                else 'Point2D' if local_var.data_type.name in ['Point2DArray'] \
                                 else 'LineSegment' if local_var.data_type.name in ['LinesArray'] \
                                 else 'IntPtr' if local_var.data_type.name in ['BitmapArray'] \
                                 else 'StringBuilder',
-                                details['length_call'].replace('return ', '') + (' * 3' if local_var.data_type.name in ['TriangleArray'] else '')
+                                details['length_call'].replace('return ', '')
                             )
                         
                     # skip initialisation of result
@@ -985,11 +999,11 @@ def method_visitor(the_method, other, as_accessor_name = None):
                             local_var.name,
                             local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '._' + local_var.field_name
                         )
-                elif type_name == 'trianglearray' and not local_var.maps_result:
-                    temp_process_params += '%s = WrapperUtils.TriangleArrToPoint2DArr(%s);\n    ' % (
-                            local_var.name,
-                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
-                        )                    
+                # elif type_name == 'trianglearray' and not local_var.maps_result:
+                #     temp_process_params += '%s = WrapperUtils.TriangleArrToPoint2DArr(%s);\n    ' % (
+                #             local_var.name,
+                #             local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
+                #         )                    
                 elif type_name == 'bitmaparray' and not local_var.maps_result:
                     temp_process_params += '%s = WrapperUtils.BitmapArrToIntPtrArr(%s);\n    ' % (
                             local_var.name,

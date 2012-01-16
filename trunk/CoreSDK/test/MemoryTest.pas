@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgAudio, sgText, sgGraphics, sgResources;
+  sgTypes, sgAudio, sgText, sgGraphics, sgResources, sgInput;
 
 procedure Main();
 begin

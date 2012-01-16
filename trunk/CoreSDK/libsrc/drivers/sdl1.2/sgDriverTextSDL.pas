@@ -348,7 +348,7 @@ implementation
 	
 	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
 	begin
-	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), GraphicsDriver.ToGfxColor(theColor) );
+	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );
 	end;
 	
 	procedure LoadSDLTextDriver();

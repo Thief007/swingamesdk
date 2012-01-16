@@ -10,7 +10,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 from sg_cache import logger
 
-class SGPasTokeniser():
+class SGPasTokeniser(object):
     
     def __init__(self):
         self.pas_lines = []

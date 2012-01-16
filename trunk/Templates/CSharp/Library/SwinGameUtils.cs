@@ -6,7 +6,7 @@ namespace SwinGame
 {
     internal static class WrapperUtils
     {
-        internal static Matrix2D MatrixFromArray(float[,] data)
+/*        internal static Matrix2D MatrixFromArray(float[,] data)
         {
             Matrix2D result;
             result._data = data;
@@ -19,8 +19,8 @@ namespace SwinGame
             result._data = data;
             return result;
         }
-        
-        internal static Triangle[] TriangleArrayFrom(Point2D[] data)
+*/        
+/*        internal static Triangle[] TriangleArrayFrom(Point2D[] data)
         {
             Triangle[] result = new Triangle[data.Length / 3];
             
@@ -36,7 +36,7 @@ namespace SwinGame
             
             return result;
         }
-        
+*/        
         internal static StringBuilder[] ResultStringArray(int size)
         {
             StringBuilder[] result = new StringBuilder[size];
@@ -57,7 +57,7 @@ namespace SwinGame
             return result;
         }
         
-        internal static Point2D[] TriangleArrToPoint2DArr(Triangle[] data)
+/*        internal static Point2D[] TriangleArrToPoint2DArr(Triangle[] data)
         {
             Point2D[] result = new Point2D[data.Length * 3];
             
@@ -70,7 +70,7 @@ namespace SwinGame
             
             return result;
         }
-        
+*/        
         internal static Bitmap[] BitmapArrayFrom(IntPtr[] data)
         {
             Bitmap[] result = new Bitmap[data.Length];
