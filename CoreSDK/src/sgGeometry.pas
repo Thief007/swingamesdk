@@ -1118,7 +1118,56 @@ interface
   /// @sn vectorFromPt:%s to:%s
   function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   
-  
+  /// Returns a new `Vector` created using the angle and magnitude (length). 
+  /// The angle and magnitude are scalar values and the angle is in degrees.
+  ///
+  /// @lib
+  /// @sn CreatevectorFromAngle:%s magnitude:%s
+  function CreateVectorFromAngle(angle, magnitude: Single): Vector;
+
+  /// Returns a new `Vector` using the x and y value of a Point2D parameter.
+  ///
+  /// @lib
+  function CreateVectorToPoint(const p1: Point2D): Vector;
+
+  /// Returns a `Vector` created from the difference from the ``p1`` to 
+  /// the second ``p2`` points (`Point2D`).
+  ///
+  /// @lib
+  /// @sn vectorFrom:%s to:%s
+  ///
+  /// @class Point2D
+  /// @method CreateVectorToPoint
+  function CreateVectorFromPoints(const p1, p2: Point2D): Vector;
+
+  /// Returns a new `Vector` created from the start and end points of a 
+  /// `LineSegment`. Useful for calculating angle vectors or extracting a 
+  /// normal vector (see `LineNormal`) for the line.
+  ///
+  /// @lib
+  ///
+  /// @class LineSegment
+  /// @method CreateAsVector
+  function CreateLineAsVector(const line: LineSegment): Vector;
+
+
+  /// Returns a vector from the specified point to the specified rectangle.
+  /// 
+  /// @lib CreateVectorFromPointToRect
+  /// @sn CreatevectorFromX:%s y:%s toRectX:%s y:%s width:%s height:%s
+  function CreateVectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: Longint): Vector; overload;
+
+  /// Returns a vector from the specified point to the specified rectangle.
+  /// 
+  /// @lib CreateVectorFromPointToRectangle
+  /// @sn CreatevectorFromX:%s y:%s toRect:%s
+  function CreateVectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
+
+  /// Returns a vector from a point to the specified rectangle.
+  /// 
+  /// @lib CreateVectorFromPointPtToRectangle
+  /// @sn CreatevectorFromPt:%s to:%s
+  function CreateVectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   
 //---------------------------------------------------------------------------
 // Functions to get a vector out of some bounded shape
@@ -2123,6 +2172,40 @@ implementation
   end;
   
   
+
+  function CreateVectorFromAngle(angle, magnitude: Single): Vector;
+  begin
+    result := VectorFromAngle(angle,magnitude);
+  end;
+
+  function CreateVectorToPoint(const p1: Point2D): Vector;
+  begin
+    result := VectorToPoint(p1);
+  end;
+
+  function CreateVectorFromPoints(const p1, p2: Point2D): Vector;
+  begin
+    result := VectorFromPoints(p1,p2);
+  end;
+
+  function CreateLineAsVector(const line: LineSegment): Vector;
+  begin
+    result := LineAsVector(line);
+  end;
+
+  function CreateVectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: Longint): Vector; overload;
+  begin
+    result := VectorFromPointToRect(x,y,rectX,rectY,rectWidth,rectHeight);
+  end;
+
+  function CreateVectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
+  begin
+    result := VectorFromPointToRect(x,y,rect);
+  end;
+  function CreateVectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
+  begin
+    result := VectorFromPointToRect(pt,rect);
+  end;
   
 //---------------------------------------------------------------------------
 // Angle Calculation 
