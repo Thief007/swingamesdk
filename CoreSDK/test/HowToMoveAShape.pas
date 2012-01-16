@@ -18,25 +18,25 @@ begin
 
     FillRectangle(ColorGreen, x, y, 40, 20);
 
-    if(KeyDown(vk_UP)) then
+    if KeyDown(vk_UP) then
     begin
       y -= 1;
-      if (y = 0) then y := 240;
+      if y = 0 then y := 240;
     end;
-    if(KeyDown(vk_DOWN)) then
+    if KeyDown(vk_DOWN) then
     begin
       y += 1;
-      if (y = 240) then y := 0;
+      if y = 240 then y := 0;
     end;
-    if(KeyDown(vk_LEFT)) then
+    if KeyDown(vk_LEFT) then
     begin
       x -= 1;
-      if (x = 0) then x := 320;
+      if x = 0 then x := 320;
     end;
-    if(KeyDown(vk_RIGHT)) then
+    if KeyDown(vk_RIGHT) then
     begin
       x += 1;
-      if (x = 320) then x := 0;
+      if x = 320 then x := 0;
     end;
 
     RefreshScreen(60);

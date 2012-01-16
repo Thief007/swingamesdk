@@ -4,10 +4,10 @@ uses
   
 procedure HandleInput(var x,y: Single);
 begin
-	if(KeyDown(vk_LEFT)) then	x -= 1;
-	if(KeyDown(vk_RIGHT)) then x += 1;
-	if(KeyDown(vk_UP)) then y -= 1;
-	if(KeyDown(vk_DOWN)) then y += 1;
+	if KeyDown(vk_LEFT) then	x -= 1;
+	if KeyDown(vk_RIGHT) then x += 1;
+	if KeyDown(vk_UP) then y -= 1;
+	if KeyDown(vk_DOWN) then y += 1;
 end;
   
 procedure Main();
