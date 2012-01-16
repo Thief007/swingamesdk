@@ -15,22 +15,22 @@ begin
 
     ClearScreen(ColorWhite);
 
-    if(KeyDown(vk_RCTRL) OR KeyDown(vk_LCTRL)) then
+    if KeyDown(vk_RCTRL) OR KeyDown(vk_LCTRL) then
     begin
-      if(KeyTyped(vk_1)) then sndEffect := LoadSoundEffect('chipmunk.ogg');
-      if(KeyTyped(vk_2)) then sndEffect := LoadSoundEffect('bells.ogg');
-      if(KeyTyped(vk_3)) then sndEffect := LoadSoundEffect('camera.ogg');
-      if(KeyTyped(vk_4)) then sndEffect := LoadSoundEffect('comedy_boing.ogg');
-      if(KeyTyped(vk_5)) then sndEffect := LoadSoundEffect('dinosaur.ogg');
-      if(KeyTyped(vk_6)) then sndEffect := LoadSoundEffect('dog_bark.ogg');
+      if KeyTyped(vk_1) then sndEffect := LoadSoundEffect('chipmunk.ogg');
+      if KeyTyped(vk_2) then sndEffect := LoadSoundEffect('bells.ogg');
+      if KeyTyped(vk_3) then sndEffect := LoadSoundEffect('camera.ogg');
+      if KeyTyped(vk_4) then sndEffect := LoadSoundEffect('comedy_boing.ogg');
+      if KeyTyped(vk_5) then sndEffect := LoadSoundEffect('dinosaur.ogg');
+      if KeyTyped(vk_6) then sndEffect := LoadSoundEffect('dog_bark.ogg');
     end
     else
     begin						
-      if(KeyTyped(vk_1)) then PlaySoundEffect(sndEffect);
-      if(KeyTyped(vk_2)) then PlaySoundEffect(sndEffect, 0.5);
-      if(KeyTyped(vk_3)) then PlaySoundEffect(sndEffect, 3, 0.25);
-      if(KeyTyped(vk_4)) then PlaySoundEffect(sndEffect, -1, 0.1);
-      if(KeyTyped(vk_5)) then if(SoundEffectPlaying(sndEffect)) then StopSoundEffect(sndEffect);
+      if KeyTyped(vk_1) then PlaySoundEffect(sndEffect);
+      if KeyTyped(vk_2) then PlaySoundEffect(sndEffect, 0.5);
+      if KeyTyped(vk_3) then PlaySoundEffect(sndEffect, 3, 0.25);
+      if KeyTyped(vk_4) then PlaySoundEffect(sndEffect, -1, 0.1);
+      if KeyTyped(vk_5) then if SoundEffectPlaying(sndEffect) then StopSoundEffect(sndEffect);
     end;
 
     DrawText('Control Sound (Escape or q to quit)', ColorRed, 'Arial', 18, 15, 15);

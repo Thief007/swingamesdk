@@ -7,14 +7,14 @@ type
 	
 procedure HandleInput(var typeOfShape : ShapeType);
 begin	
-	if(KeyDown(vk_c)) then typeOfShape := Circle;
-	if(KeyDown(vk_l)) then typeOfShape := Line;
-	if(KeyDown(vk_r)) then typeOfShape := Rectangle;
-	if(KeyDown(vk_t)) then	typeOfShape := Triangle;
-	if(KeyDown(vk_s)) then	typeOfShape := Square;
-  if(KeyDown(vk_e)) then	typeOfShape := Ellipse;
+	if KeyDown(vk_c) then typeOfShape := Circle;
+	if KeyDown(vk_l) then typeOfShape := Line;
+	if KeyDown(vk_r) then typeOfShape := Rectangle;
+	if KeyDown(vk_t) then	typeOfShape := Triangle;
+	if KeyDown(vk_s) then	typeOfShape := Square;
+  if KeyDown(vk_e) then	typeOfShape := Ellipse;
 	
-	if(MouseClicked(LeftButton)) then
+	if MouseClicked(LeftButton) then
 	begin		
 		case typeOfShape of
 			Circle: 	FillCircle(RandomColor(), MousePosition.x, MousePosition.y, 40);

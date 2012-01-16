@@ -8,7 +8,7 @@ var
 begin
 	random := Rnd(8);
 	
-	if(CircleLinesCollision(c, l) = false) then
+	if CircleLinesCollision(c, l) = false then
 	begin	
 		case random of
 			0: begin // Top
