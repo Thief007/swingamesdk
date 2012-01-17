@@ -12,7 +12,7 @@ class PascalFunctionCall(object):
         self._parameters = list()       # list of expressions
         self._block = block
 
-    def parse(self, tokens):
+    def parse(self, tokens, inExpr = False):
         from pas_expression import PascalExpression
         logger.debug('Processing function call %s', self._identifier)
         self._identifier = tokens.match_token(TokenKind.Identifier).value
@@ -23,6 +23,10 @@ class PascalFunctionCall(object):
             newExpression = PascalExpression(self._block)
             newExpression.parse(tokens)
             self._parameters.append(newExpression)
+        
+        if (not inExpr) :
+            tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
+
         logger.debug('Ended function call %s', self._identifier)
 
     def __str__(self):

@@ -1,6 +1,6 @@
 class PascalNumber(object):
     """
-    Describes a number
+    Describes a number used in expressions
     """
     
     def __init__(self, value):
@@ -13,3 +13,6 @@ class PascalNumber(object):
     @property
     def value(self):
         return self._value
+
+    def __str__(self):
+        return str(value)

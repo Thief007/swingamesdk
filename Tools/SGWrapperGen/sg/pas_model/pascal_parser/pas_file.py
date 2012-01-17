@@ -1,5 +1,6 @@
-from pas_program import PascalProgram
+from pas_token_stream import SGTokenStream
 from pas_token_kind import TokenKind
+from pas_program import PascalProgram
 
 class PascalFile(object):
     """
@@ -10,6 +11,21 @@ class PascalFile(object):
         self._filename = '';
         self._contains_kind = None
         self._contents = None       # PascalProgram or PascalLibrary
+
+    @property
+    def contents(self):
+        return self._contents
+
+    @property
+    def name(self):
+        return self._filename
+
+    @staticmethod
+    def create_pas_file(name, path):
+        stream = SGTokenStream(path)
+        result = PascalFile()
+        result.parse(name, stream)
+        return result
 
     # __str__ overrides the Object's __str__ method and changes what happens
     # when the PascalFile object is converted to a string

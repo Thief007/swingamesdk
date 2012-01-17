@@ -1,14 +1,27 @@
 program ParserTest;
 
 var
-	variableName : String;
-	secondVariable, nextInt : Integer;
+	maximum, minimum, current : LongInt;
 
-var secondDecvar : LongInt;
+function Increase(toIncrease : LongInt) : LongInt;
+var
+	increaseInteger : LongInt;
 begin
-	variableName := 5 + (10 - (54 / 4) );
-	if 5 = 5 then
+	increaseInteger := 1;
+	if (toIncrease < maximum) then
 	begin
-		secondVariable := 10;
+		toIncrease += increaseInteger;
+	end;
+	result := toIncrease;
+end;
+
+begin
+	maximum := 10;
+	minimum := 0;
+	current := minimum;
+	while (current < maximum) do
+	begin
+		current := Increase(current);
+		WriteLn(current);
 	end;
 end.
