@@ -33,6 +33,7 @@ all_units = [
     # ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
     ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
+    # ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
 ]
 
 
