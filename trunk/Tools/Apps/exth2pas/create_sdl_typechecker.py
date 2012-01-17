@@ -31,6 +31,7 @@ def OutputCheckPascalEnum(enum):
    var
      _%(type_name)s : %(type_name)s;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(%(type_name)s) then WriteLn('Different size for %(type_name)s!');
@@ -39,8 +40,9 @@ def OutputCheckPascalEnum(enum):
      for _%(type_name)s := Low(%(type_name)s) to High(%(type_name)s) do
      begin
         try
+            WriteStr(name, _%(type_name)s);
             if cptr^ <> LongInt(_%(type_name)s) then
-                WriteLn('Values differ in %(type_name)s for ', _%(type_name)s, ' C Value: ', cptr^, ' Pas Value:', LongInt(_%(type_name)s));
+                WriteLn('Values differ in %(type_name)s for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_%(type_name)s));
             cptr += 1;
         except
         end;
@@ -287,7 +289,7 @@ def main():
     innerPackedRecordCount = 0
    # inCaseStatement = False
     
-    f = open('../../CoreSDK/libsrc/sdl.pas')
+    f = open('./test/sdl.pas')
     
     while 1:
         line = f.readline()

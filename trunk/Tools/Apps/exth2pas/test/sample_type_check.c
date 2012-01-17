@@ -1,4 +1,5 @@
-// #include "SDL/SDL.h"
+#include <stdio.h>
+#include "SDL/SDL.h"
 
 void PascalCheckEnum_SDL_EventType(int *ptr);
 
@@ -44,8 +45,9 @@ void c_check_enum_SDL_EventType()
   data[35] = SDL_EVENT_COMPAT3 ;
   data[36] = SDL_USEREVENT ;
   data[37] = SDL_LASTEVENT;
-    
+  printf("Checking SDL_EventType...\n");
   PascalCheckEnum_SDL_EventType(data);
+  printf("    Done... SDL_EventType\n");
 }
 
 int main()
