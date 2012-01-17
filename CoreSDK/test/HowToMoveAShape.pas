@@ -1,44 +1,42 @@
 program HowToMoveAShape;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes;
+  sgInput, sgGraphics, sgGeometry, sgResources, sgText, sgTypes;
 
 procedure Main();
 var 
-  x,y : Single;	
+  r: Rectangle;	
 begin
-  x := 140;
-  y := 110;
+  r := RectangleFrom(140, 110, 40, 20);
 
   OpenGraphicsWindow('How To Move A Shape', 320, 240);
 
   repeat // The game loop...
+    // Update the game
     ProcessEvents();
-
-    ClearScreen(ColorWhite);
-
-    FillRectangle(ColorGreen, x, y, 40, 20);
-
     if KeyDown(vk_UP) then
     begin
-      y -= 1;
-      if y = 0 then y := 240;
+      r.y -= 1;
+      if r.y < -20 then r.y := 240;
     end;
     if KeyDown(vk_DOWN) then
     begin
-      y += 1;
-      if y = 240 then y := 0;
+      r.y += 1;
+      if r.y > 240 then r.y := -20;
     end;
     if KeyDown(vk_LEFT) then
     begin
-      x -= 1;
-      if x = 0 then x := 320;
+      r.x -= 1;
+      if r.x < -40 then r.x := 320;
     end;
     if KeyDown(vk_RIGHT) then
     begin
-      x += 1;
-      if x = 320 then x := 0;
+      r.x += 1;
+      if r.x > 320 then r.x := -40;
     end;
-
+    
+    // Draw the game
+    ClearScreen(ColorWhite);
+    FillRectangle(ColorGreen, r);
     RefreshScreen(60);
   until WindowCloseRequested();
 
