@@ -604,7 +604,7 @@ class SGPasParser():
             values = []
             while not self._match_lookahead('symbol',')'):
                 temp = self._match_token('id')[1]
-                if self._match_lookahead('operator', '=', True): #assigned value
+                if self._match_lookahead('operator', '=', True) or self._match_lookahead('operator', ':=', True): #assigned value
                     values.append('%s = %s' % (temp, self._match_token('number')[1]))
                 else:
                     values.append(temp)
