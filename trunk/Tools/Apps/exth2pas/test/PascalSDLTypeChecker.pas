@@ -172,18 +172,18 @@ type IntPtr = ^LongInt;
 
    procedure PascalCheckEnum_SDL_WindowEventID(ptr: IntPtr); cdecl; export;
    var
-     _SDL_WindowEventID : SDL_WindowEventID;
+     my_SDL_WindowEventID : SDL_WindowEventID;
      cptr: IntPtr;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_WindowEventID) then WriteLn('Different size for SDL_WindowEventID!');
      cptr += 1;
      
-     for _SDL_WindowEventID := Low(SDL_WindowEventID) to High(SDL_WindowEventID) do
+     for my_SDL_WindowEventID := Low(SDL_WindowEventID) to High(SDL_WindowEventID) do
      begin
         try
-            if cptr^ <> LongInt(_SDL_WindowEventID) then
-                WriteLn('Values differ in SDL_WindowEventID for ', _SDL_WindowEventID, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_WindowEventID));
+            if cptr^ <> LongInt(my_SDL_WindowEventID) then
+                WriteLn('Values differ in SDL_WindowEventID for ', my_SDL_WindowEventID, ' C Value: ', cptr^, ' Pas Value:', LongInt(my_SDL_WindowEventID));
             cptr += 1;
         except
         end;
