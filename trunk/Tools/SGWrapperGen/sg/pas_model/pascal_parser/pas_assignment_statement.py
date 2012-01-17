@@ -1,6 +1,6 @@
 from pas_token_kind import TokenKind
 from pas_expression import PascalExpression
-from pas_operator import PascalOperator
+from types.pas_operator import PascalOperator
 class AssignmentStatement(object):
     """
     The assignment statement stores the information about an assignment statement
@@ -37,3 +37,7 @@ class AssignmentStatement(object):
     @property
     def expression(self):
         return self._expression
+
+    @property
+    def block(self):
+        return self._block

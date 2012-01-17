@@ -20,16 +20,22 @@ class PascalCompoundStatement(object):
     def block(self):
         return self._block
 
+    @property
+    def kind(self):
+        return 'compound statement'
+
     def parse(self, tokens):
         logger.debug("Parsing compound statement")
         tokens.match_token(TokenKind.Identifier, 'begin')
         while (True):
             # compound statement currently consumes the end keyword, but not the symbol ';' or '.'
             if tokens.match_lookahead(TokenKind.Identifier, 'end'):
-                tokens.next_token()             # consume end token
+                tokens.match_token(TokenKind.Identifier, 'end')             # consume end token
+                tokens.match_token(TokenKind.Symbol)
                 break
             elif tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, '.'):
                 # do not consume -> '.' is needed to tell the first block that it is at the end of the program
+                tokens.match_token(TokenKind.Symbol)
                 break   
             else:
                 self._statements.append(parse_statement(tokens, self._block))

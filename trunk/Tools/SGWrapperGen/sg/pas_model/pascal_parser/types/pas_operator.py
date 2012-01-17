@@ -1,6 +1,6 @@
 class PascalOperator(object):
     """
-    Describes a operator
+    Describes a operator used in expressions
     """
     
     def __init__(self, value):
