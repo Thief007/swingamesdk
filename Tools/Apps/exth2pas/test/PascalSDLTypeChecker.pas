@@ -6,6 +6,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_bool : SDL_bool;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_bool) then WriteLn('Different size for SDL_bool!');
@@ -14,8 +15,9 @@ type IntPtr = ^LongInt;
      for _SDL_bool := Low(SDL_bool) to High(SDL_bool) do
      begin
         try
+            WriteStr(name, _SDL_bool);
             if cptr^ <> LongInt(_SDL_bool) then
-                WriteLn('Values differ in SDL_bool for ', _SDL_bool, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_bool));
+                WriteLn('Values differ in SDL_bool for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_bool));
             cptr += 1;
         except
         end;
@@ -27,6 +29,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_DUMMY_ENUM : SDL_DUMMY_ENUM;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_DUMMY_ENUM) then WriteLn('Different size for SDL_DUMMY_ENUM!');
@@ -35,8 +38,9 @@ type IntPtr = ^LongInt;
      for _SDL_DUMMY_ENUM := Low(SDL_DUMMY_ENUM) to High(SDL_DUMMY_ENUM) do
      begin
         try
+            WriteStr(name, _SDL_DUMMY_ENUM);
             if cptr^ <> LongInt(_SDL_DUMMY_ENUM) then
-                WriteLn('Values differ in SDL_DUMMY_ENUM for ', _SDL_DUMMY_ENUM, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_DUMMY_ENUM));
+                WriteLn('Values differ in SDL_DUMMY_ENUM for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_DUMMY_ENUM));
             cptr += 1;
         except
         end;
@@ -48,6 +52,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_assert_state : SDL_assert_state;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_assert_state) then WriteLn('Different size for SDL_assert_state!');
@@ -56,8 +61,9 @@ type IntPtr = ^LongInt;
      for _SDL_assert_state := Low(SDL_assert_state) to High(SDL_assert_state) do
      begin
         try
+            WriteStr(name, _SDL_assert_state);
             if cptr^ <> LongInt(_SDL_assert_state) then
-                WriteLn('Values differ in SDL_assert_state for ', _SDL_assert_state, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_assert_state));
+                WriteLn('Values differ in SDL_assert_state for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_assert_state));
             cptr += 1;
         except
         end;
@@ -69,6 +75,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_errorcode : SDL_errorcode;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_errorcode) then WriteLn('Different size for SDL_errorcode!');
@@ -77,8 +84,9 @@ type IntPtr = ^LongInt;
      for _SDL_errorcode := Low(SDL_errorcode) to High(SDL_errorcode) do
      begin
         try
+            WriteStr(name, _SDL_errorcode);
             if cptr^ <> LongInt(_SDL_errorcode) then
-                WriteLn('Values differ in SDL_errorcode for ', _SDL_errorcode, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_errorcode));
+                WriteLn('Values differ in SDL_errorcode for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_errorcode));
             cptr += 1;
         except
         end;
@@ -90,6 +98,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_ThreadPriority : SDL_ThreadPriority;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_ThreadPriority) then WriteLn('Different size for SDL_ThreadPriority!');
@@ -98,8 +107,9 @@ type IntPtr = ^LongInt;
      for _SDL_ThreadPriority := Low(SDL_ThreadPriority) to High(SDL_ThreadPriority) do
      begin
         try
+            WriteStr(name, _SDL_ThreadPriority);
             if cptr^ <> LongInt(_SDL_ThreadPriority) then
-                WriteLn('Values differ in SDL_ThreadPriority for ', _SDL_ThreadPriority, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_ThreadPriority));
+                WriteLn('Values differ in SDL_ThreadPriority for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_ThreadPriority));
             cptr += 1;
         except
         end;
@@ -111,6 +121,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_AudioStatus : SDL_AudioStatus;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_AudioStatus) then WriteLn('Different size for SDL_AudioStatus!');
@@ -119,8 +130,9 @@ type IntPtr = ^LongInt;
      for _SDL_AudioStatus := Low(SDL_AudioStatus) to High(SDL_AudioStatus) do
      begin
         try
+            WriteStr(name, _SDL_AudioStatus);
             if cptr^ <> LongInt(_SDL_AudioStatus) then
-                WriteLn('Values differ in SDL_AudioStatus for ', _SDL_AudioStatus, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_AudioStatus));
+                WriteLn('Values differ in SDL_AudioStatus for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_AudioStatus));
             cptr += 1;
         except
         end;
@@ -132,6 +144,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_BlendMode : SDL_BlendMode;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_BlendMode) then WriteLn('Different size for SDL_BlendMode!');
@@ -140,8 +153,9 @@ type IntPtr = ^LongInt;
      for _SDL_BlendMode := Low(SDL_BlendMode) to High(SDL_BlendMode) do
      begin
         try
+            WriteStr(name, _SDL_BlendMode);
             if cptr^ <> LongInt(_SDL_BlendMode) then
-                WriteLn('Values differ in SDL_BlendMode for ', _SDL_BlendMode, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_BlendMode));
+                WriteLn('Values differ in SDL_BlendMode for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_BlendMode));
             cptr += 1;
         except
         end;
@@ -153,6 +167,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_WindowFlags : SDL_WindowFlags;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_WindowFlags) then WriteLn('Different size for SDL_WindowFlags!');
@@ -161,8 +176,9 @@ type IntPtr = ^LongInt;
      for _SDL_WindowFlags := Low(SDL_WindowFlags) to High(SDL_WindowFlags) do
      begin
         try
+            WriteStr(name, _SDL_WindowFlags);
             if cptr^ <> LongInt(_SDL_WindowFlags) then
-                WriteLn('Values differ in SDL_WindowFlags for ', _SDL_WindowFlags, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_WindowFlags));
+                WriteLn('Values differ in SDL_WindowFlags for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_WindowFlags));
             cptr += 1;
         except
         end;
@@ -172,18 +188,20 @@ type IntPtr = ^LongInt;
 
    procedure PascalCheckEnum_SDL_WindowEventID(ptr: IntPtr); cdecl; export;
    var
-     my_SDL_WindowEventID : SDL_WindowEventID;
+     _SDL_WindowEventID : SDL_WindowEventID;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_WindowEventID) then WriteLn('Different size for SDL_WindowEventID!');
      cptr += 1;
      
-     for my_SDL_WindowEventID := Low(SDL_WindowEventID) to High(SDL_WindowEventID) do
+     for _SDL_WindowEventID := Low(SDL_WindowEventID) to High(SDL_WindowEventID) do
      begin
         try
-            if cptr^ <> LongInt(my_SDL_WindowEventID) then
-                WriteLn('Values differ in SDL_WindowEventID for ', my_SDL_WindowEventID, ' C Value: ', cptr^, ' Pas Value:', LongInt(my_SDL_WindowEventID));
+            WriteStr(name, _SDL_WindowEventID);
+            if cptr^ <> LongInt(_SDL_WindowEventID) then
+                WriteLn('Values differ in SDL_WindowEventID for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_WindowEventID));
             cptr += 1;
         except
         end;
@@ -195,6 +213,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_GLattr : SDL_GLattr;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_GLattr) then WriteLn('Different size for SDL_GLattr!');
@@ -203,8 +222,9 @@ type IntPtr = ^LongInt;
      for _SDL_GLattr := Low(SDL_GLattr) to High(SDL_GLattr) do
      begin
         try
+            WriteStr(name, _SDL_GLattr);
             if cptr^ <> LongInt(_SDL_GLattr) then
-                WriteLn('Values differ in SDL_GLattr for ', _SDL_GLattr, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_GLattr));
+                WriteLn('Values differ in SDL_GLattr for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_GLattr));
             cptr += 1;
         except
         end;
@@ -216,6 +236,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_Scancode : SDL_Scancode;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_Scancode) then WriteLn('Different size for SDL_Scancode!');
@@ -224,8 +245,9 @@ type IntPtr = ^LongInt;
      for _SDL_Scancode := Low(SDL_Scancode) to High(SDL_Scancode) do
      begin
         try
+            WriteStr(name, _SDL_Scancode);
             if cptr^ <> LongInt(_SDL_Scancode) then
-                WriteLn('Values differ in SDL_Scancode for ', _SDL_Scancode, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_Scancode));
+                WriteLn('Values differ in SDL_Scancode for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_Scancode));
             cptr += 1;
         except
         end;
@@ -237,6 +259,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_Keymod : SDL_Keymod;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_Keymod) then WriteLn('Different size for SDL_Keymod!');
@@ -245,8 +268,9 @@ type IntPtr = ^LongInt;
      for _SDL_Keymod := Low(SDL_Keymod) to High(SDL_Keymod) do
      begin
         try
+            WriteStr(name, _SDL_Keymod);
             if cptr^ <> LongInt(_SDL_Keymod) then
-                WriteLn('Values differ in SDL_Keymod for ', _SDL_Keymod, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_Keymod));
+                WriteLn('Values differ in SDL_Keymod for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_Keymod));
             cptr += 1;
         except
         end;
@@ -258,6 +282,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_EventType : SDL_EventType;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_EventType) then WriteLn('Different size for SDL_EventType!');
@@ -266,8 +291,9 @@ type IntPtr = ^LongInt;
      for _SDL_EventType := Low(SDL_EventType) to High(SDL_EventType) do
      begin
         try
+            WriteStr(name, _SDL_EventType);
             if cptr^ <> LongInt(_SDL_EventType) then
-                WriteLn('Values differ in SDL_EventType for ', _SDL_EventType, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_EventType));
+                WriteLn('Values differ in SDL_EventType for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_EventType));
             cptr += 1;
         except
         end;
@@ -279,6 +305,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_eventaction : SDL_eventaction;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_eventaction) then WriteLn('Different size for SDL_eventaction!');
@@ -287,8 +314,9 @@ type IntPtr = ^LongInt;
      for _SDL_eventaction := Low(SDL_eventaction) to High(SDL_eventaction) do
      begin
         try
+            WriteStr(name, _SDL_eventaction);
             if cptr^ <> LongInt(_SDL_eventaction) then
-                WriteLn('Values differ in SDL_eventaction for ', _SDL_eventaction, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_eventaction));
+                WriteLn('Values differ in SDL_eventaction for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_eventaction));
             cptr += 1;
         except
         end;
@@ -300,6 +328,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_HintPriority : SDL_HintPriority;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_HintPriority) then WriteLn('Different size for SDL_HintPriority!');
@@ -308,8 +337,9 @@ type IntPtr = ^LongInt;
      for _SDL_HintPriority := Low(SDL_HintPriority) to High(SDL_HintPriority) do
      begin
         try
+            WriteStr(name, _SDL_HintPriority);
             if cptr^ <> LongInt(_SDL_HintPriority) then
-                WriteLn('Values differ in SDL_HintPriority for ', _SDL_HintPriority, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_HintPriority));
+                WriteLn('Values differ in SDL_HintPriority for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_HintPriority));
             cptr += 1;
         except
         end;
@@ -321,6 +351,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_LogPriority : SDL_LogPriority;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_LogPriority) then WriteLn('Different size for SDL_LogPriority!');
@@ -329,8 +360,9 @@ type IntPtr = ^LongInt;
      for _SDL_LogPriority := Low(SDL_LogPriority) to High(SDL_LogPriority) do
      begin
         try
+            WriteStr(name, _SDL_LogPriority);
             if cptr^ <> LongInt(_SDL_LogPriority) then
-                WriteLn('Values differ in SDL_LogPriority for ', _SDL_LogPriority, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_LogPriority));
+                WriteLn('Values differ in SDL_LogPriority for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_LogPriority));
             cptr += 1;
         except
         end;
@@ -342,6 +374,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_PowerState : SDL_PowerState;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_PowerState) then WriteLn('Different size for SDL_PowerState!');
@@ -350,8 +383,9 @@ type IntPtr = ^LongInt;
      for _SDL_PowerState := Low(SDL_PowerState) to High(SDL_PowerState) do
      begin
         try
+            WriteStr(name, _SDL_PowerState);
             if cptr^ <> LongInt(_SDL_PowerState) then
-                WriteLn('Values differ in SDL_PowerState for ', _SDL_PowerState, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_PowerState));
+                WriteLn('Values differ in SDL_PowerState for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_PowerState));
             cptr += 1;
         except
         end;
@@ -363,6 +397,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_RendererFlags : SDL_RendererFlags;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_RendererFlags) then WriteLn('Different size for SDL_RendererFlags!');
@@ -371,8 +406,9 @@ type IntPtr = ^LongInt;
      for _SDL_RendererFlags := Low(SDL_RendererFlags) to High(SDL_RendererFlags) do
      begin
         try
+            WriteStr(name, _SDL_RendererFlags);
             if cptr^ <> LongInt(_SDL_RendererFlags) then
-                WriteLn('Values differ in SDL_RendererFlags for ', _SDL_RendererFlags, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_RendererFlags));
+                WriteLn('Values differ in SDL_RendererFlags for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_RendererFlags));
             cptr += 1;
         except
         end;
@@ -384,6 +420,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_TextureAccess : SDL_TextureAccess;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_TextureAccess) then WriteLn('Different size for SDL_TextureAccess!');
@@ -392,8 +429,9 @@ type IntPtr = ^LongInt;
      for _SDL_TextureAccess := Low(SDL_TextureAccess) to High(SDL_TextureAccess) do
      begin
         try
+            WriteStr(name, _SDL_TextureAccess);
             if cptr^ <> LongInt(_SDL_TextureAccess) then
-                WriteLn('Values differ in SDL_TextureAccess for ', _SDL_TextureAccess, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_TextureAccess));
+                WriteLn('Values differ in SDL_TextureAccess for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_TextureAccess));
             cptr += 1;
         except
         end;
@@ -405,6 +443,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_TextureModulate : SDL_TextureModulate;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_TextureModulate) then WriteLn('Different size for SDL_TextureModulate!');
@@ -413,8 +452,9 @@ type IntPtr = ^LongInt;
      for _SDL_TextureModulate := Low(SDL_TextureModulate) to High(SDL_TextureModulate) do
      begin
         try
+            WriteStr(name, _SDL_TextureModulate);
             if cptr^ <> LongInt(_SDL_TextureModulate) then
-                WriteLn('Values differ in SDL_TextureModulate for ', _SDL_TextureModulate, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_TextureModulate));
+                WriteLn('Values differ in SDL_TextureModulate for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_TextureModulate));
             cptr += 1;
         except
         end;
@@ -426,6 +466,7 @@ type IntPtr = ^LongInt;
    var
      _SDL_GrabMode : SDL_GrabMode;
      cptr: IntPtr;
+     name: String;
    begin 
      cptr := ptr;
      if cptr^ <> sizeof(SDL_GrabMode) then WriteLn('Different size for SDL_GrabMode!');
@@ -434,8 +475,9 @@ type IntPtr = ^LongInt;
      for _SDL_GrabMode := Low(SDL_GrabMode) to High(SDL_GrabMode) do
      begin
         try
+            WriteStr(name, _SDL_GrabMode);
             if cptr^ <> LongInt(_SDL_GrabMode) then
-                WriteLn('Values differ in SDL_GrabMode for ', _SDL_GrabMode, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_GrabMode));
+                WriteLn('Values differ in SDL_GrabMode for ', name, ' C Value: ', cptr^, ' Pas Value:', LongInt(_SDL_GrabMode));
             cptr += 1;
         except
         end;
