@@ -1,6 +1,7 @@
 from pascal_parser.pas_parser_utils import logger
 from pas_type_switcher import convert_type, convert_operator
 from converted_file import ConvertedFile
+import string
 import c_lib
 
 # list.extend is used when a function returns a list
@@ -15,6 +16,7 @@ def convert_pas_to_c(file):
     if file._contains_kind == 'program':
         c_program.append('#include <stdint.h>')
         c_program.append('#include <stdio.h>')
+        c_program.append('#include <swingame.h>')
         c_program.extend(_convert_program(file.contents))
     return ConvertedFile(file._filename, c_program)
 
@@ -23,8 +25,9 @@ def _convert_program(program):
     program_contents.extend(_convert_block(program.block))    
     return program_contents
 
-def _convert_block(block):
+def _convert_block(block, isFunction=False):
     contents = list()  
+
     for part in block.contents:
         if part.kind == 'variable declaration':
             contents.extend(_convert_variable_list(part.variables))
@@ -38,14 +41,15 @@ def _convert_block(block):
 
     # C doesn't have a begin..end. part in the program -> this is replaced by a main() function
     if (block.parent != None):
-        contents.extend(_convert_compound_statement(block.compound_statement))
+        contents.extend(_convert_compound_statement(block.compound_statement, isFunction))
+        
+
     return contents
 
 def _convert_variable_list(variables, areParams=False):
     result = list()
     count = len(variables)
     currentVariable = ''
-   
     for identifier in variables:
         currentVariable += convert_type(c_lib._type_switcher, variables[identifier].type) + identifier 
         if (count > 1 and areParams):
@@ -71,8 +75,13 @@ def _convert_function(function):
         if (count >= 1 ):
             parameter_declaration += ','
     parameter_declaration += ')'
-    result.append(return_type + ' ' + function.name + parameter_declaration)
-    result.extend(_convert_block(function.block))
+    result.append(return_type + ' ' + string.lower(function.name) + parameter_declaration)
+
+    result.append('{')
+    if (function.isFunction) :
+        result.append(convert_type(c_lib._type_switcher, function.return_type) + 'result;')
+    result.extend(_convert_block(function.block, function.isFunction))  # return result will be added if isFunction
+    result.append('}')
     return result
 
 def _convert_statement(statement):
@@ -92,12 +101,12 @@ def _convert_statement(statement):
         assert False
     return result
     
-def _convert_compound_statement(compound_statement):
+def _convert_compound_statement(compound_statement, inFunction=False):
     result = list()
-    result.append("{")
     for statement in compound_statement.statements:
         result.extend(_convert_statement(statement))
-    result.append('}')
+    if (inFunction):
+        result.append('return result;')
     return result
         
 def _convert_assignment_statement(statement):
@@ -110,14 +119,18 @@ def _convert_if_statement(if_statement):
     result = list()
     if_expression = _expression_to_str(if_statement.expression)
     result.append( 'if (' + if_expression + ' )')
+    result.append('{')
     result.extend(_convert_statement(if_statement.statement))
+    result.append('}')
     return result
 
 def _convert_while_statement(while_statement):
     result = list()
     expression = _expression_to_str(while_statement.expression)
     result.append('while (' + expression + ' )')
+    result.append('{')
     result.extend(_convert_statement(while_statement.statement))
+    result.append('}')
     return result
 
 def _expression_to_str(expression):
@@ -145,10 +158,10 @@ def _convert_procedure_call_statement(statement):
 
 def _function_call_to_str(function_call, inExpr = False):
     """
-    returns a string that describes a function call in Pascal
+    returns a string that describes a function call in C
     """
     count = len(function_call.parameters)
-    result = function_call.identifier + '('
+    result = string.lower(function_call.identifier) + '('
     for parameter in function_call.parameters:
         result += _expression_to_str(parameter)
         count -= 1

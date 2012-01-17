@@ -23,8 +23,21 @@ def change_file_extension(fileName, new_extension):
 def write_file(file_data, path):
     newPath = change_file_extension(path + file_data.filename, '.c')
     file = open(newPath, "w")
+    tabs = 0
     for line in file_data.lines:
-        file.write(line + '\n')
+        if (line == '}'):
+            tabs -= 1
+
+        string_to_write = ''
+        for count in range(tabs):
+            string_to_write += '\t'
+        string_to_write += line + '\n'
+        file.write(string_to_write)
+
+        if (line == '{'):
+            tabs += 1
+
+
     file.close()
 
 if __name__ == '__main__':
