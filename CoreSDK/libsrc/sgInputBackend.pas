@@ -16,7 +16,7 @@ interface
     procedure InputBackendStartReadingText(textColor, backgroundColor: Color; maxLength: Longint; theFont: Font; area: Rectangle);overload;
     function  InputBackendEndReadingText(): String;
     // key pressed/typed tests
-    function WasKeyTyped(kyCode: Longint): Boolean;
+    function WasKeyReleased(kyCode: Longint): Boolean;
     function WasAKeyPressed(): Boolean;
     // event register/process Quit
     procedure InputBackendProcessEvents();
@@ -47,7 +47,7 @@ interface
     _lastKeyRepeat:         Longint;
     _KeyDown:               Array of KeyDownData;
     _keyJustTyped:          Array of LongInt;
-    _KeyTyped:              Array of Longint;
+    _KeyReleased:           Array of Longint;
     _maxStringLen:          LongInt;
     _textBitmap:            Bitmap;
     _cursorBitmap:          Bitmap;
@@ -122,7 +122,7 @@ implementation
   procedure InputBackendProcessEvents();
   begin
     _keyPressed := false;
-    SetLength(_KeyTyped, 0);
+    SetLength(_KeyReleased, 0);
     SetLength(_KeyJustTyped, 0);
     ResetMouseState();
   
@@ -135,6 +135,12 @@ implementation
   function isReading() : Boolean;
   begin
     result := _readingString;
+  end;
+  
+  procedure ProcessKeyReleased (kyCode :  LongInt);
+  begin
+    SetLength(_KeyReleased, Length(_KeyReleased) + 1);
+    _KeyReleased[High(_KeyReleased)] := kyCode;
   end;
   
   procedure HandleKeyupEvent(kyCode: LongInt);
@@ -157,7 +163,12 @@ implementation
       _KeyDown[i] := _KeyDown[i + 1];
     end;
     SetLength(_KeyDown, Length(_KeyDown) - 1);
+    
+    ProcessKeyReleased(kyCode);
+    
   end;
+
+
   
   procedure AddKeyData(kyCode, kyChar: Longint);
   var
@@ -196,10 +207,7 @@ implementation
   procedure HandleKeydownEvent(kyCode, kyChar : LongInt);
   begin
     _keyPressed := true;
-    
-    SetLength(_KeyTyped, Length(_KeyTyped) + 1);
-    _KeyTyped[High(_KeyTyped)] := kyCode;
-    
+  
     ProcessKeyJustTyped(kyCode);
     
     AddKeyData(kyCode, kyChar);
@@ -368,14 +376,14 @@ implementation
     result := _quit;
   end;
   
-  function WasKeyTyped(kyCode: Longint): Boolean;
+  function WasKeyReleased(kyCode: Longint): Boolean;
   var i: Longint;
   begin
     result := false;
   
-    for i := 0 to High(_KeyTyped) do
+    for i := 0 to High(_KeyReleased) do
     begin
-      if _KeyTyped[i] = kyCode then
+      if _KeyReleased[i] = kyCode then
       begin
         result := true;
         exit;
@@ -389,7 +397,7 @@ implementation
     result := false;
     for i := 0 to High(_KeyJustTyped) do
     begin
-      if _KeyTyped[i] = kyCode then
+      if _KeyJustTyped[i] = kyCode then
       begin
         result := true;
         exit;
