@@ -1597,19 +1597,19 @@ procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
 /// @class Dialog
 /// @setter Path
 procedure DialogSetPath(fullname: String);
-function IsSet(toCheck, checkFor: FileDialogSelectType): Boolean; overload;
+  
 /// Gets the path of the dialog
 ///
 /// @lib 
 /// @class Dialog
 /// @getter Path
 function DialogPath(): String;
+
 /// Gets if the dialog has been cancelled
 ///
 /// @lib 
 /// @class Dialog
 /// @getter Cancelled
-
 function DialogCancelled(): Boolean;
 
 /// Gets if the dialog has been Completed
