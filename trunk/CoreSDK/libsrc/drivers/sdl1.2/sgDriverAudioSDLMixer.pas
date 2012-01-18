@@ -37,7 +37,7 @@ implementation
     result := -1;
     for i := Low(soundChannels) to High(soundChannels) do
     begin
-      if soundChannels[i] = effect then
+      if (soundChannels[i] = effect) and (Mix_Playing(i) = 1) then
       begin
         result := i;
         break;
