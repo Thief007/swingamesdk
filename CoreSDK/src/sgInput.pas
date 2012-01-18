@@ -273,6 +273,14 @@ interface
   /// @lib
   function KeyName(key: KeyCode): String;
   
+  
+  /// Returns false when the key requested is being held down. This is updated
+  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
+  /// to specify the key to be checked.
+  ///
+  /// @lib
+  function KeyUp(key: KeyCode): Boolean;
+  
 //=============================================================================
 implementation
 //=============================================================================
@@ -314,6 +322,10 @@ implementation
 
   //---------------------------------------------------------------------------
 
+  function KeyUp(key: KeyCode): Boolean;
+  begin
+    result := (not KeyDown(key));
+  end;
   function KeyReleased(key: KeyCode): Boolean;
   begin
     result := WasKeyReleased(Longint(key));
