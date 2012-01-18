@@ -246,18 +246,19 @@ interface
   
   /// Returns true when the key requested is just pressed down. This is updated
   /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
-  /// to specify the key to be checked.
-  ///
-  /// @lib
-  function KeyPress(key: KeyCode): Boolean;
-  
-  /// Returns true if the specified key was pressed down since the last time 
-  /// `ProcessEvents` was called. This occurs only once for the key that is 
-  /// pressed and will not return true again until the key is released and
-  /// pressed down again.
+  /// to specify the key to be checked. this will only occur once for that key that is
+  /// pressed and will not return true again until the key is released and presssed down again
   ///
   /// @lib
   function KeyTyped(key: KeyCode): Boolean;
+  
+  /// Returns true if the specified key was released since the last time 
+  /// `ProcessEvents` was called. This occurs only once for the key that is 
+  /// released and will not return true again until the key is pressed down and
+  /// released again.
+  ///
+  /// @lib
+  function KeyReleased(key: KeyCode): Boolean;
   
   /// Checks to see if any key has been pressed since the last time 
   /// `ProcessEvents` was called.
@@ -313,9 +314,9 @@ implementation
 
   //---------------------------------------------------------------------------
 
-  function KeyTyped(key: KeyCode): Boolean;
+  function KeyReleased(key: KeyCode): Boolean;
   begin
-    result := WasKeyTyped(Longint(key));
+    result := WasKeyReleased(Longint(key));
   end;
 
   function KeyDown(key : keyCode): Boolean;
@@ -323,7 +324,7 @@ implementation
     result := WasKeyDown(Longint(key));
   end;
   
-  function KeyPress(key: KeyCode): Boolean;
+  function KeyTyped(key: KeyCode): Boolean;
   begin
     result := WasKeyJustTyped(LongInt(key));
   end;
