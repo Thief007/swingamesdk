@@ -1,21 +1,17 @@
-from pas_token_kind import TokenKind
-from pas_parser_utils import logger, parse_statement, parse_variable_declaration
+from pascal_parser.tokeniser.pas_token_kind import TokenKind
+from pascal_parser.pas_parser_utils import logger, parse_statement
 from pas_var import PascalVariable
 
 class PascalFunction(object):
     """
     PascalFunction is a container for a procedure or function in Pascal
     """
-
-    #declaration part
-        #constants
-        #type
-        #var
-        #procedure/function
-    #statement part
-
-    
+   
     def __init__(self, parent):
+        """
+        parent is the current block the function is 
+        being initialised from... current block is the function's parent
+        """
         from pas_block import PascalBlock
         self._parent = parent                 #parent block
         self._result = None    # PascalVariable
@@ -32,6 +28,10 @@ class PascalFunction(object):
     @property
     def parameters(self):
         return self._parameters
+
+    def add_parameter(self, variable):
+        self._parameters[variable.name] = variable
+        self._block._variables[variable.name] = variable
 
     @property
     def return_type(self):
@@ -58,24 +58,33 @@ class PascalFunction(object):
         return 'function'
 
     def parse(self, tokens):
-        from pas_type_cache import find_or_add_type
+        from types.pas_type_cache import find_or_add_type
+        from pas_param_declaration import PascalParameterDeclaration
         self._result = None
         self._return_type = None
 
+        # function / procedure
         if (tokens.match_lookahead(TokenKind.Identifier, 'function')):
             tokens.match_token(TokenKind.Identifier, 'function')
             self._isFunction = True
         else:
             tokens.match_token(TokenKind.Identifier, 'procedure')
 
+        # name
         self._name = tokens.match_token(TokenKind.Identifier).value
-        tokens.match_token(TokenKind.Symbol, '(')
+        
+        # ( parameter declaration )
+        
+        declaration = PascalParameterDeclaration()
+        declaration.parse(tokens, self)
         if tokens.match_lookahead(TokenKind.Identifier):
-            self._block._variables = parse_variable_declaration(tokens)
-            self._parameters.update(self._block._variables)
-        tokens.match_token(TokenKind.Symbol, ')')
+            self._parameters = PascalVarDeclaration()
+            self._parameters.parse(tokens, self)
+            self._block._variables.update(self._parameters.variables)
+
         if (self._isFunction):
             # read return type
+            # : type
             tokens.match_token(TokenKind.Symbol, ':')
             typeName = tokens.match_token(TokenKind.Identifier).value
             type = find_or_add_type(typeName)
@@ -83,6 +92,7 @@ class PascalFunction(object):
             self._block._variables['result'] = PascalVariable('result', type)
             self._result = self._block.get_variable('result')
 
+        # ;
         tokens.match_token(TokenKind.Symbol, ';')
         self._block.parse(tokens)
         

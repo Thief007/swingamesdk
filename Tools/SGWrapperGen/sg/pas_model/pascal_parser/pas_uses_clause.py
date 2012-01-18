@@ -1,5 +1,5 @@
-from pas_token_kind import TokenKind
-from pas_parser_utils import logger
+from pascal_parser.tokeniser.pas_token_kind import TokenKind
+from pascal_parser.pas_parser_utils import logger
 
 class PascalUsesClause(object):
     """
@@ -15,7 +15,7 @@ class PascalUsesClause(object):
 
     @property
     def kind(self):
-        return 'uses clause'
+        return 'uses_clause'
 
     def parse(self, tokens):
         logger.debug("Parsing uses clause")
@@ -26,8 +26,13 @@ class PascalUsesClause(object):
                 break
             elif (tokens.match_lookahead(TokenKind.Symbol, ',')):
                 tokens.match_token(TokenKind.Symbol, ',')
+
             elif (tokens.match_lookahead(TokenKind.Identifier)):
                 self._units.append(tokens.match_token(TokenKind.Identifier).value)
+
+            else:
+                logger.error('Error reading uses clause: ' + str(tokens.next_token()))
+                assert False
         logger.debug("Finished parsing uses clause")
 
 

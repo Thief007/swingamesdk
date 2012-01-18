@@ -1,6 +1,6 @@
-from pas_token_kind import TokenKind
+from pascal_parser.tokeniser.pas_token_kind import TokenKind
 
-from pas_parser_utils import logger, parse_statement
+from pascal_parser.pas_parser_utils import logger, parse_statement
 
 from pas_var_declaration import PascalVarDeclaration 
 from pas_function import PascalFunction

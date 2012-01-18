@@ -12,11 +12,11 @@ def _print_program(program):
 
 def _print_block(block):
     for part in block.contents:
-        if part.kind == 'variable declaration':
+        if part.kind == 'variable_declaration':
             _print_variable_decl(part)
         elif part.kind == 'function':
             _print_function(part)
-        elif part.kind == 'uses clause':
+        elif part.kind == 'uses_clause':
             print 'uses...'
         else:
             print part.kind

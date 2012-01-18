@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_block import PascalBlock
 
 class PascalProgram(object):
@@ -11,7 +11,7 @@ class PascalProgram(object):
     
     def __init__(self):
         self._name = None
-        self._block = None
+        self._block = None  # program block
 
     @property
     def name(self):
@@ -24,6 +24,7 @@ class PascalProgram(object):
     def parse(self, tokens):
         """
         Parses the entire pascal program
+        expects: 'program name;' at the start
         """
         tokens.match_token(TokenKind.Identifier, 'program');
         self._name = tokens.match_token(TokenKind.Identifier)._value;

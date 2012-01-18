@@ -25,7 +25,7 @@ def write_file(file_data, path):
     file = open(newPath, "w")
     tabs = 0
     for line in file_data.lines:
-        if (line == '}'):
+        if ('}' in line):
             tabs -= 1
 
         string_to_write = ''
@@ -34,7 +34,7 @@ def write_file(file_data, path):
         string_to_write += line + '\n'
         file.write(string_to_write)
 
-        if (line == '{'):
+        if ('{' in line):
             tabs += 1
 
 

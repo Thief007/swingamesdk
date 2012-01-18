@@ -1,5 +1,5 @@
-from pas_token_stream import SGTokenStream
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_stream import SGTokenStream
+from tokeniser.pas_token_kind import TokenKind
 from pas_program import PascalProgram
 
 class PascalFile(object):
@@ -22,6 +22,11 @@ class PascalFile(object):
 
     @staticmethod
     def create_pas_file(name, path):
+        """
+        Creates, then parses and returns a pascal file
+        path : The full path to the file including the file name
+        name : The name of the PascalFile to be created
+        """
         stream = SGTokenStream(path)
         result = PascalFile()
         result.parse(name, stream)
@@ -48,8 +53,6 @@ class PascalFile(object):
             assert False
         
         self._contents.parse(tokens)
-        
-        #check end of tokens...
             
 
     
