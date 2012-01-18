@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_parser_utils import logger
 
 class PascalFunctionCall(object):
@@ -13,6 +13,12 @@ class PascalFunctionCall(object):
         self._block = block
 
     def parse(self, tokens, inExpr = False):
+        """
+        parses a function call
+
+        inExpr = False by default
+        if inExpr is True a semi-colon is expected at the end of the function call
+        """
         from pas_expression import PascalExpression
         logger.debug('Processing function call %s', self._identifier)
         self._identifier = tokens.match_token(TokenKind.Identifier).value

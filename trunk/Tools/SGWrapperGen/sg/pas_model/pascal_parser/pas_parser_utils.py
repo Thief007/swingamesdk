@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 
 import logging
 
@@ -17,46 +17,6 @@ operators   =   [   (TokenKind.Operator, '+'), (TokenKind.Operator, '-'), (Token
 
 # Logger object is used to log events to console
 logger = logging.getLogger("sgLogger")
-
-def parse_identifier_list(tokens):
-    """
-    This method parses a Pascal identifier list, it returns a list of
-    variable identifiers
-    """
-    # { identifier }+(',')
-    names = list()
-    while True:
-        nameTok = tokens.match_token(TokenKind.Identifier)
-        names.append(nameTok._value)
-        if not tokens.match_lookahead(TokenKind.Symbol, ',', consume=True):
-            return names
-
-def parse_variable_declaration(tokens):
-    from pas_type_cache import find_or_add_type
-    from pas_var import PascalVariable
-
-    logger.debug("Parsing variable declaration")
-    variables = dict()
-    while True:
-        # identifier list, ':', type, ';'
-        idList = parse_identifier_list(tokens)
-        tokens.match_token(TokenKind.Symbol, ':')
-        typeName = tokens.match_token(TokenKind.Identifier)._value
-        type = find_or_add_type(typeName)
-        if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
-            tokens.match_token(TokenKind.Symbol, ';')
-
-        for varName in idList:
-            if not varName in variables:
-                variables[varName] = PascalVariable(varName, type)  # create and assign the PascalVariable
-                logger.debug("Parsed variable : " + varName + " : " + type.name)
-            else:
-                logger.error("Duplicate variable identifier found: " + str(tokens.next_token()))
-                assert(False)
-
-        if tokens.match_one_lookahead(reservedWords) or tokens.match_lookahead(TokenKind.Symbol, ')'):
-            logger.debug("Finished parsing variable declaration")
-            return variables
           
 def token_has_values(token, list_values):
     """
@@ -80,14 +40,19 @@ def parse_statement(tokens, block):
           result = _parse_if_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier, 'while'):
         result = _parse_while_statement(tokens, block)
+    elif tokens.match_lookahead(TokenKind.Identifier, 'repeat'):
+        result = _parse_repeat_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier):
         # { variable } ( '+=', '-=', '/=', '*=' ) { variable }
+        # assignment statement
         if token_has_values(tokens.lookahead(2)[1], assignmentOperators):
             result = _parse_assignment_statement(tokens, block)
+        # function/procedure call
         elif (tokens.lookahead(2)[1].value == '('):
             result = _parse_procedure_call_statement(tokens, block)
+        # something else?
         else:
-            logger.error("Incorrect assignment statement : " + str(tokens.next_token()))
+            logger.error("Unknown statement : " + str(tokens.next_token()))
             assert False
     else:
         logger.error("Unrecognised token: " + str(tokens.next_token()))
@@ -115,6 +80,13 @@ def _parse_while_statement(tokens, block):
     result.parse(tokens)
     return result
 
+def _parse_repeat_statement(tokens, block):
+    from pas_repeat_statement import PascalRepeatStatement 
+
+    result = PascalRepeatStatement(block)
+    result.parse(tokens)
+    return result
+
 def _parse_assignment_statement(tokens, block):
     from pas_assignment_statement import AssignmentStatement
 
@@ -127,6 +99,25 @@ def _parse_procedure_call_statement(tokens, block):
 
     result = PascalFunctionCall(block)
     result.parse(tokens)
+    return result
+
+def _parse_identifier_list(tokens):
+    """
+    This method parses a Pascal identifier list, it returns a list of
+    variable identifiers
+    """
+    # { identifier }+(',')
+    names = list()
+    while True:
+        nameTok = tokens.match_token(TokenKind.Identifier)
+        names.append(nameTok._value)
+        if not tokens.match_lookahead(TokenKind.Symbol, ',', consume=True):
+            return names
+
+def _parse_variable_declaration(tokens):
+    from pas_var_declaration import PascalVarDeclaration
+    result = PascalVarDeclaration()
+    result.parse
     return result
 
     

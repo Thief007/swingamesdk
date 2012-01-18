@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_parser_utils import logger, token_has_values, parse_statement
 
 from pas_assignment_statement import AssignmentStatement
@@ -6,6 +6,7 @@ from pas_assignment_statement import AssignmentStatement
 class PascalCompoundStatement(object):
     """
     The PascalCompoundStatement object parses a compound statement
+    as well as store a list of statements
     """
 
     def __init__(self, block):
@@ -26,7 +27,8 @@ class PascalCompoundStatement(object):
 
     def parse(self, tokens):
         logger.debug("Parsing compound statement")
-        tokens.match_token(TokenKind.Identifier, 'begin')
+        if tokens.match_lookahead(TokenKind.Identifier, 'begin'):
+            tokens.match_token(TokenKind.Identifier, 'begin')
         while (True):
             # compound statement currently consumes the end keyword, but not the symbol ';' or '.'
             if tokens.match_lookahead(TokenKind.Identifier, 'end'):
@@ -34,9 +36,13 @@ class PascalCompoundStatement(object):
                 tokens.match_token(TokenKind.Symbol)
                 break
             elif tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, '.'):
-                # do not consume -> '.' is needed to tell the first block that it is at the end of the program
+                # consumed end already -> somehow?
                 tokens.match_token(TokenKind.Symbol)
                 break   
+            elif tokens.match_lookahead(TokenKind.Identifier, 'until'):
+                # repeat..until needs to have the until token so that it knows it's at the end
+                break
+
             else:
                 self._statements.append(parse_statement(tokens, self._block))
 

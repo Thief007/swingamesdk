@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_parser_utils import logger
 from pas_expression import PascalExpression
 

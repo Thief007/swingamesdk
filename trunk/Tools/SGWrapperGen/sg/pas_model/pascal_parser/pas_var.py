@@ -4,10 +4,15 @@ class PascalVariable(object):
         Contains a name and type
     """
     
-    def __init__(self, name, type):
+    def __init__(self, name, type, modifier = None):
         self._type = type
         self._name = name
+        self._modifier = modifier
                 
+    @property  
+    def modifier(self):
+        return self._modifier
+
     @property
     def type(self):
         return self._type

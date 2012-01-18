@@ -1,7 +1,7 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_parser_utils import logger
-from pas_function_call import PascalFunctionCall
 
+from pas_function_call import PascalFunctionCall
 from types.pas_number import PascalNumber
 from types.pas_string import PascalString
 from types.pas_operator import PascalOperator
@@ -29,6 +29,7 @@ class PascalExpression(object):
         logger.debug('Parsing %s expression' % ('inner' if innerExpr else ''))
         newContent = None
         while (True):
+            # expression over?
             if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do'):
                 if innerExpr:
                     logger.error('Inner expression ended with ; or , : ', tokens.next_token().line_details)
@@ -36,28 +37,34 @@ class PascalExpression(object):
                 tokens.next_token() # consume the delimiter
                 logger.debug('Expression ended')
                 break
+            # Inner expression ended
             elif tokens.match_lookahead(TokenKind.Symbol, ')'):
                 if innerExpr:
-                    tokens.next_token() # consume the delimiter
+                    tokens.match_token(TokenKind.Symbol, ')') # consume the delimiter
                     logger.debug('Inner expression ended')
-                break
 
+                break
+            # Number
             elif tokens.match_lookahead(TokenKind.Number):
-                # read number
+                
                 newContent = PascalNumber(tokens.next_token().value)
             elif tokens.match_lookahead(TokenKind.String):
+                # string
                 newContent = PascalString(tokens.next_token().value)
+            # starts with an Identifier
             elif tokens.match_lookahead(TokenKind.Identifier):
-                # either a variable or a function call - which?
+                # function call
                 if tokens.lookahead(2)[1].value == '(':
-                    #function call
                     funcCall = PascalFunctionCall(self._block)
                     funcCall.parse(tokens, inExpr=True)
                     newContent = funcCall
+                #variable
                 else:
                     varName = tokens.match_token(TokenKind.Identifier).value
                     newContent = self._block.get_variable(varName)
+            # Operator
             elif tokens.match_lookahead(TokenKind.Operator):
+                
                 newContent = PascalOperator(tokens.match_token(TokenKind.Operator).value)
 
             elif tokens.match_lookahead(TokenKind.Symbol, '('):

@@ -1,4 +1,4 @@
-from pas_token_kind import TokenKind
+from tokeniser.pas_token_kind import TokenKind
 from pas_expression import PascalExpression
 from types.pas_operator import PascalOperator
 class AssignmentStatement(object):
