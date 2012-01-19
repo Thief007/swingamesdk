@@ -74,10 +74,10 @@ implementation
     SysUtils, Math, Classes, StrUtils,
     sgShared, sgResources;
 
-	function WithinRange(arrayLength : Integer; currentIndex : Integer) : Boolean;
-	begin
-		result := (currentIndex >= 0) and (currentIndex <= arrayLength);
-	end;
+  function WithinRange(arrayLength : Integer; currentIndex : Integer) : Boolean;
+  begin
+    result := (currentIndex >= 0) and (currentIndex < arrayLength);
+  end;
 
   procedure ZeroArray (var ints : LongintArray); overload;
   var
@@ -332,7 +332,15 @@ implementation
     SetLength(result, 0);
   
     if (value[1] <> '[') or (value[Length(value)] <> ']') then
-      exit; //not a range
+    begin
+      // is number?
+      if TryStrToInt(value, temp) then
+      begin
+        SetLength(result, 1);
+        result[0] := temp;
+      end;
+      exit; //not a range?
+    end;
   
     value := MidStr(value, 2, Length(value) - 2);
   
@@ -509,7 +517,7 @@ implementation
       TraceExit('sgUtils', 'ProcessLinesInFile');
     {$ENDIF}
   end;
-  	
+    
   procedure CheckAssigned(msg : String; ptr : Pointer);
   begin
     if not Assigned(ptr) then 

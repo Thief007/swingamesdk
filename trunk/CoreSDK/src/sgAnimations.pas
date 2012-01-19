@@ -460,13 +460,22 @@ interface
     /// @doc_details
     function AnimationFrameTime(anim: Animation): Single;
     
+    /// Returns the vector assigned to the current frame in the animation.
+    ///
+    /// @lib
+    ///
+    /// @class Animation
+    /// @getter Vector
+    ///
+    /// @doc_details
+    function AnimationCurrentVector(anim: Animation): Vector;
     
 //=============================================================================
 implementation
     uses
         SysUtils, StrUtils, Classes, 
         stringhash, sgSharedUtils, sgNamedIndexCollection,
-        sgShared, sgResources, sgTrace, sgAudio, sgImages;
+        sgShared, sgResources, sgTrace, sgAudio, sgImages, sgGeometry;
 //=============================================================================
 
 var
@@ -477,6 +486,7 @@ type
     RowData = record
         id,cell,dur,next: Longint;
         snd: SoundEffect;
+        mvmt: Vector;
     end;
     IdData = record
         name: String;
@@ -505,6 +515,7 @@ var
                 rows[j].snd := nil;
                 rows[j].cell := -1;
                 rows[j].next := -1;
+                rows[j].mvmt := VectorTo(0,0);
             end;
             
             maxId := myRow.id;
@@ -549,11 +560,12 @@ var
             RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A frame must have 4 values separated as id,cell,dur,next');
             exit;
         end;
-        myRow.id        := MyStrToInt(ExtractDelimited(1,data,[',']), false);
+        myRow.id    := MyStrToInt(ExtractDelimited(1,data,[',']), false);
         myRow.cell  := MyStrToInt(ExtractDelimited(2,data,[',']), false);
-        myRow.dur       := MyStrToInt(ExtractDelimited(3,data,[',']), false);
+        myRow.dur   := MyStrToInt(ExtractDelimited(3,data,[',']), false);
         myRow.next  := MyStrToInt(ExtractDelimited(4,data,[',']), true);
-        myRow.snd       := nil;
+        myRow.snd   := nil;
+        myRow.mvmt  := VectorTo(0,0);
         
         AddRow(myRow);
     end;
@@ -585,9 +597,10 @@ var
         for j := Low(id_range) to High(id_range) do
         begin
             myRow.id        := id_range[j];
-            myRow.cell  := cell_range[j];
+            myRow.cell      := cell_range[j];
             myRow.dur       := dur;
             myRow.snd       := nil;
+            myRow.mvmt      := VectorTo(0,0);
             if j <> High(id_range) then
                 myRow.next := id_range[j + 1]
             else
@@ -619,7 +632,7 @@ var
     begin
         if CountDelimiter(data, ',') <> 2 then
         begin
-            RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have three parts id,sound id,sound file.');
+            RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have three parts frame #,sound name,sound file.');
             exit;
         end;
 
@@ -636,7 +649,56 @@ var
                 exit;
             end;
         end;
-        rows[id].snd := SoundEffectNamed(sndId);
+        
+        if WithinRange(Length(rows), id) then
+            rows[id].snd := SoundEffectNamed(sndId)
+        else
+            RaiseWarning('At line ' + IntToStr(lineNo) + ' in animation ' + filename + ': No frame with id ' + IntToStr(id) + ' for sound file ' + sndFile)
+    end;
+    
+    procedure ProcessVector();
+    var
+      id_range: Array of Longint;
+      id, i: Longint;
+      xVal, yVal: String;
+      x, y: Single;
+      v: Vector;
+    begin
+        if CountDelimiter(data, ',') <> 2 then
+        begin
+            RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A vector must have three parts frame #s, x value, y value.');
+            exit;
+        end;
+        
+        id_range := ProcessRange(ExtractDelimitedWithRanges(1, data));
+        xVal := ExtractDelimitedWithRanges(2,data);
+        yVal := ExtractDelimitedWithRanges(3,data);
+        
+        if not TryStrToFloat(xVal, x) then
+        begin
+            RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. X value must be a number.');
+            exit;
+        end;
+        
+        if not TryStrToFloat(yVal, y) then
+        begin
+            RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Y value must be a number.');
+            exit;
+        end;
+        
+        v := VectorTo(x, y);
+        
+        // WriteLn('Vector ', PointToString(v) );
+        // 
+        for i := Low(id_range) to High(id_range) do
+        begin
+            id := id_range[i];
+            
+            if WithinRange(Length(rows), id) then
+            begin
+                rows[id].mvmt := v;
+            end;
+        end;
     end;
     
     procedure ProcessLine();
@@ -648,19 +710,20 @@ var
         // Verify that id is a single char
         if Length(id) <> 1 then
         begin
-            RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be a single character.');
+            RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with frame #: ' + id + '. This should be a single character.');
             exit;
         end;
         
         // Process based on id
         case LowerCase(id)[1] of // in all cases the data variable is read
-            'f': ProcessFrame();
+            'f': ProcessMultiFrame(); //test... or ProcessFrame();
             'm': ProcessMultiFrame();
             'i': ProcessId();
             's': ProcessSound();
+            'v': ProcessVector();
             else
             begin
-                RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of f,m,i or s.');
+                RaiseWarning('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of f,m,i, s, or v.');
                 exit;
             end;
         end;
@@ -686,6 +749,9 @@ var
             frames[j]^.cellIndex    := rows[j].cell;
             frames[j]^.sound        := rows[j].snd;
             frames[j]^.duration     := rows[j].dur;
+            frames[j]^.movement     := rows[j].mvmt;
+            //WriteLn(j, PointToString(frames[j]^.movement));
+            WriteLn('Frame ', HexStr(frames[j]), ' Vector ', PointToString(frames[j]^.movement));
             
             // Get the next id and then 
             nextIdx := rows[j].next;
@@ -698,7 +764,8 @@ var
             else if (nextIdx < 0) or (nextIdx > High(frames)) then
             begin
                 FreeAnimationScript(result);
-                RaiseException('Error in animation ' + filename + '. Error with id: ' + IntToStr(j) + '. Next is outside of available frames.');
+                result := nil;
+                RaiseWarning('Error in animation ' + filename + '. Error with frame: ' + IntToStr(j) + '. Next is outside of available frames.');
                 exit;
             end
             else
@@ -888,8 +955,11 @@ begin
         TraceEnter('sgAnimations', 'MapAnimationFrame', name + ' = ' + filename);
     {$ENDIF}
     
+    WriteLn('Loading Animation Script ', name, ' for ', filename);
+    
     if _Animations.containsKey(name) then
     begin
+        WriteLn('  Using existing... ', name, ' for ', filename);
         result := AnimationScriptNamed(name);
         exit;
     end;
@@ -950,11 +1020,13 @@ procedure DoFreeAnimationScript(var frm: AnimationScript);
 var
     i: Longint;
 begin
+    // WriteLn('Freeing Animation Script ', HexStr(frm), ' = ', frm^.name);
     FreeNamedIndexCollection(frm^.animationIds);
     
-    for i := 0 to frm^.nextAnimIdx - 1 do
+    // Must use downto as animations are removed from the array in FreeAnimation!
+    for i := frm^.nextAnimIdx - 1 downto 0 do
     begin
-        //WriteLn('Freeing ', HexStr(frm^.animObjs[i]));
+        // WriteLn('Freeing ', HexStr(frm^.animObjs[i]));
         FreeAnimation(frm^.animObjs[i]);
     end;
     
@@ -1039,7 +1111,7 @@ begin
     begin
         if script^.animObjs[i] = ani then
         begin
-            script^.nextAnimIdx -= 1;                                           // Move back one (will point to high first time...)
+            script^.nextAnimIdx -= 1;                                        // Move back one (will point to high first time...)
             script^.animObjs[i] := script^.animObjs[script^.nextAnimIdx];    // Copy back old last place
             script^.animObjs[script^.nextAnimIdx] := nil;                    // Just to make sure...
             exit;
@@ -1065,12 +1137,12 @@ function CreateAnimation(identifier: Longint; script: AnimationScript; withSound
 begin
     result := nil;
     if script = nil then exit;
-	if (identifier < 0) or (identifier > High(script^.animations)) then
-    begin
-		RaiseWarning('Unable to create animation number ' + IntToStr(identifier) + ' from script ' + script^.name);
-		exit;
-	end;
-	
+    if (identifier < 0) or (identifier > High(script^.animations)) then
+      begin
+      RaiseWarning('Unable to create animation number ' + IntToStr(identifier) + ' from script ' + script^.name);
+      exit;
+    end;
+    
     new(result);
     _AddAnimation(script, result);
     AssignAnimation(result, identifier, script, withSound)
@@ -1124,7 +1196,7 @@ begin
     if (idx < 0) or (idx > High(script^.animations)) then 
     begin 
         RaiseWarning('Assigning an animation frame that is not within range 0-' + IntToStr(High(script^.animations)) + '.'); 
-		exit; 
+        exit; 
     end;
     
     // Animation is being assigned to another script
@@ -1154,6 +1226,9 @@ begin
         anim^.frameTime := anim^.frameTime - anim^.currentFrame^.duration; //reduce the time
         anim^.lastFrame := anim^.currentFrame; //store last frame
         anim^.currentFrame := anim^.currentFrame^.next; //get the next frame
+        
+        if assigned(anim^.currentFrame) then
+        WriteLn('Frame ', HexStr(anim^.currentFrame), ' Vector ', PointToString(anim^.currentFrame^.movement));
         
         if assigned(anim^.currentFrame) and assigned(anim^.currentFrame^.sound) and withSound then
         begin
@@ -1215,6 +1290,19 @@ begin
         result := -1
     else  //Use the last frame drawn.
         result := anim^.lastFrame^.cellIndex;
+end;
+
+function AnimationCurrentVector(anim: Animation): Vector;
+begin
+    if not assigned(anim) then 
+        result := VectorTo(0,0)
+    else if not AnimationEnded(anim) then
+    begin
+        result := anim^.currentFrame^.movement;
+        WriteLn(PointToString(result));
+    end
+    else
+        result := VectorTo(0,0)
 end;
 
 function AnimationEnteredFrame(anim: Animation): Boolean;

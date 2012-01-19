@@ -2040,7 +2040,10 @@ implementation
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   begin
     if not assigned(s) then exit;
+    
     UpdateAnimation(s^.animationInfo, pct, withSound);
+    // WriteLn('Move ', PointToString(AnimationCurrentVector(s^.animationInfo)), ' ', pct);
+    MoveSprite(s, AnimationCurrentVector(s^.animationInfo), pct);
   end;
 
   procedure UpdateSprite(s: Sprite); overload;
