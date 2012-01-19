@@ -37,8 +37,11 @@ interface
 //=============================================================================
 
   type
-    
-    
+
+
+
+
+
     /// @type LongintArray
     /// @array_wrapper
     /// @field data: array of Longint
@@ -786,6 +789,227 @@ interface
     /// @pointer_wrapper
     /// @field pointer: ^CharacterData
     Character  = ^CharacterData;
+    
+    /// GUIElementKind is an enum of all the GUI types
+    /// 
+    ///
+    /// @enum GuiElementKind
+    GuiElementKind = ( 
+      gkLabel = 1, 
+      gkButton = 2, 
+      gkCheckBox = 4, 
+      gkRadioGroup = 8, 
+      gkTextBox = 16, 
+      gkList = 32,
+      gkAnyKind = 63 // = (1 or 2 or 4 or 8 or 16 or 32) 
+      );
+    /// The Event kind is an enum of all the events that could happen to a gui element
+    ///
+    /// @enum EventKind
+    EventKind = (
+        ekClicked,
+        ekTextEntryEnded,
+        ekSelectionMade
+      );
+
+      /// GUIList is a list GUI Element which contains ItemLists
+      ///
+      /// @class GUIList
+      /// @pointer_wrapper
+      /// @field pointer: pointer
+    
+      GUIList = ^GUIListData;
+    
+      /// Each list item has text and an image
+      ///
+      /// @struct GUIListItem
+      GUIListItem = packed record
+        text:     String;
+        image:    BitmapCell;
+        parent:   GUIList;
+      end;
+      /// @struct GUIListData
+      /// @via_pointer
+      GUIListData = packed record
+        verticalScroll: Boolean;
+        //The areas for the up/left down/right scrolling buttons
+        scrollUp:     Rectangle;
+        scrollDown:   Rectangle;
+        scrollArea:   Rectangle;
+        columns:      Longint;
+        rows:         Longint;
+        rowHeight:    Longint;
+        colWidth:     Longint;
+        scrollSize:   Longint;
+        placeholder:  Array of Rectangle;
+        activeItem:   Longint;
+        startingAt:   Longint;
+        font:         Font;
+        items:        Array of GUIListItem;
+        scrollButton: Bitmap;
+        alignment:    FontAlignment;
+      end;
+
+
+      /// @struct GUILabelData
+      /// @via_pointer
+    GUILabelData = packed record
+      contentString:  String;
+      font:           Font;
+      alignment:      FontAlignment;
+    end;
+    
+    /// GUILabel is a Label GUI Element which contains string font and font alignment
+    ///
+    /// @class GUILabel
+    /// @pointer_wrapper
+    /// @field pointer: ^GUILabelData
+    GUILabel = ^GUILabelData;
+
+    
+
+
+    
+
+
+    /// @struct GUILabelData
+    /// @via_pointer
+    GUICheckboxData = packed record
+      state:        boolean;
+    end;
+    
+    /// GUICheckbox is a Checkbox GUI Element which contains a bool
+    ///
+    /// @class GUICheckbox
+    /// @pointer_wrapper
+    /// @field pointer: ^GUICheckboxData
+    GUICheckbox = ^GUICheckboxData;
+    
+
+
+    /// The file dialog select type is an enum of how a file dialog displays files/directories
+    ///
+    /// @enum EventKind
+    FileDialogSelectType = ( 
+      fdFiles = 1, 
+      fdDirectories = 2, 
+      fdFilesAndDirectories = 3 // = (1 or 2)
+      );
+    
+
+
+    /// panel
+    ///
+    /// @class Panel
+    /// @pointer_wrapper
+    /// @field pointer: ^PanelData
+    Panel = ^PanelData;
+    
+    
+    /// Region is the area within a panel
+    ///
+    /// @class Region
+    /// @pointer_wrapper
+    /// @field pointer: ^RegionData
+    Region = ^RegionData;
+    
+    /// GUITextbox is a textbox gui component in swingame 
+    /// it has a string font length limit region and font alignment
+    ///
+    /// @class Region
+    /// @pointer_wrapper
+    /// @field pointer: ^RegionData
+    GUITextBox = ^GUITextBoxData;
+    
+    
+    /// GUIEventCallback is a callbackfunction for gui eventsin swingame 
+    ///
+    /// @class UserInterface
+    /// @type GUIEventCallback
+    GUIEventCallback = procedure (r: Region; kind: EventKind);
+    
+    /// @struct RegionData
+    /// @via_pointer
+    RegionData = packed record
+      stringID:       String;
+      kind:           GUIElementKind;
+      regionIdx:       Longint;
+      elementIndex:   Longint;
+      area:           Rectangle;
+      active:         Boolean;
+      parent:         Panel;
+      callbacks:      Array of GUIEventCallback;
+    end;
+
+    
+    
+    
+    /// @struct GUIRadioGroupData
+    /// @via_pointer
+    GUIRadioGroupData = packed record
+      groupID:      string;
+      buttons:      Array of Region;
+      activeButton: Longint;
+    end;
+    
+    
+    
+    /// GUI radio group is a radio group gui component in swingame.
+    ///
+    ///
+    /// @class RadioGroup
+    /// @pointer_wrapper
+    /// @field pointer : ^GUIRadioGroupData
+    GUIRadioGroup = ^GUIRadioGroupData;
+    
+    
+    /// @struct GUITextBoxData
+    /// @via_pointer
+    GUITextBoxData = packed record
+      contentString:  String;
+      font:           Font;
+      lengthLimit:    Longint;
+      region:         Region;
+      alignment:      FontAlignment;
+    end;
+    ///@struct PanelData
+    ///@via_pointer
+    PanelData = packed record
+      name:                 String;
+      filename:             String;
+      panelID:              Longint;
+      area:                 Rectangle;
+      visible:              Boolean;
+      active:               Boolean;
+      draggable:            Boolean;
+
+      // The panel's bitmaps
+      panelBitmap:          Bitmap;
+      panelBitmapInactive:  Bitmap;
+      panelBitmapActive:    Bitmap;
+
+      // The regions within the Panel
+      regions:              Array of Region;
+      regionIds:            NamedIndexCollection;
+
+      // The extra details for the different kinds of controls
+      labels:               Array of GUILabel;
+      checkBoxes:           Array of GUICheckbox;
+      radioGroups:          Array of GUIRadioGroup;
+      textBoxes:            Array of GUITextBox;
+      lists:                Array of GUIList;
+
+      modal:                Boolean;                      // A panel that is modal blocks events from panels shown earlier.
+
+      // Event callback mechanisms
+      DrawAsVectors:        Boolean;
+    end;
+    
+
+    
+    
+    
+
 
 //=============================================================================
 implementation

@@ -553,7 +553,7 @@ class SGPasParser():
             
             self._parse_type_declaration(the_type)
             
-            if 'type' or 'class' or 'struct' in the_type.keys():
+            if 'type' or 'class' or 'struct'in the_type.keys():
                 self._add_class(the_type)
             
             self.process_meta_comments()

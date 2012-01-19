@@ -30,10 +30,10 @@ all_units = [
     ('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
     ('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
-    # ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
+    #('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
     ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
-    # ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
+    ('sgUserInterface', 'UserInterface', '../../CoreSDK/src/sgUserInterface.pas'),
 ]
 
 
@@ -134,7 +134,7 @@ def show_file(the_file, other):
     print 'Done', the_file.name
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.WARNING,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         stream=sys.stdout)
     run_for_all_units(show_file)

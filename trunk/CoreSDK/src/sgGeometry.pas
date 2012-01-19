@@ -90,7 +90,7 @@ interface
 
   /// Creates a circle at the given x,y location with the indicated radius.
   ///
-  /// @lib CircleFromXY
+  /// @lib CreateCircleFromXY
   /// @sn CreateCircleX:%s y:%s radius:%s
   ///
   /// @doc_idx 0
@@ -503,13 +503,13 @@ interface
 
   /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
   ///
-  /// @lib RectangleForPoints
+  /// @lib CreateRectangleForPoints
   /// @sn CreateRectangle:%s to:%s
   function CreateRectangle(const pt1, pt2: Point2D): Rectangle; overload;
 
   /// Returns a rectangle at a given point with a specified width and height.
   ///
-  /// @lib RectangleAtPoint
+  /// @lib CreateRectangleAtPoint
   /// @sn CreateRectangle:%s width:%s height:%s
   function CreateRectangle(const pt: Point2D; width, height: Longint): Rectangle; overload;
 

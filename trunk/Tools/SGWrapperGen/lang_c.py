@@ -22,7 +22,7 @@ from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
 import c_lib
-import lang_helper
+import lang_helper    
 
 _out_path="../../Generated/C/lib"
 
