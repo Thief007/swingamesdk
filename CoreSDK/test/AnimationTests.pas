@@ -22,6 +22,7 @@ begin
   expl := BitmapNamed('explosion_bmp');
   
   WriteLn('ID of boom[0] = ', HexStr(boom[0]));
+  WriteLn('ID of boom[1] = ', HexStr(boom[1]));
   WriteLn('ID of expl = ', HexStr(expl));
   
   currentAnim := -1;
@@ -67,6 +68,8 @@ begin
     
     RefreshScreen(60);
   until WindowCloseRequested();
+  
+  FreeSprite(s);
   
   ReleaseAllResources();
   CloseAudio();
