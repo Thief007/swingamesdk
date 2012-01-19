@@ -109,6 +109,13 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
+            ('guilist',         'gui_list'),
+            ('guilabel',        'gui_label'),
+            ('guitextbox',      'gui_textbox'),
+            ('guicheckbox',     'gui_checkbox'),
+            ('panel',           'panel'),
+            ('region',          'region'),
+            ('guiradiogroup',   'gui_radio_group'),
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -141,6 +148,8 @@ _type_dictionary_creation_data = [
             ('pointer',         'void *'),
             ('freenotifier',    'free_notifier '),
             ('animationframe',  'animation_frame'),
+            ('guieventcallback',  'gui_event_callback'),
+            
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -226,6 +235,7 @@ _type_dictionary_creation_data = [
             ('rectangle',           'rectangle'),
             ('circle',              'circle'),
             ('bitmapcell',          'bitmap_cell'),
+            ('guilistitem',         'gui_list_item'),
         ],
         '_type_switcher': {
             None:       '#2# ', #used for _byval methods
@@ -255,6 +265,10 @@ _type_dictionary_creation_data = [
             ('collisionside',       'collision_side'),
             ('collisiontestkind',   'collision_test_kind'),
             ('shapekind',           'shape_kind'),
+            ('guielementkind',      'gui_element_kind'),
+            ('eventkind',           'event_kind'),
+            ('filedialogselecttype','file_dialog_select_type'),
+            
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -285,7 +299,10 @@ _type_dictionary_creation_data = [
             ('dirstatedata[0..n - 1][0..n - 1]',        'dir_state_data *'),
             ('linesegment[0..n - 1]',                   'line_segment *'),
             ('triangle[0..n - 1]',                      'triangle *'),
-            
+            ('guilistitem[0..n - 1]',                   'gui_list_item *'),
+            ('guieventcallback[0..n - 1]',              'gui_event_callback *'),
+            ('region[0..n - 1]',                        'region *'),
+          
             ('point2d[0..2]',                           'point2d %s[3]'),
             ('single[0..2][0..2]',                      'float %s[3][3]'),
             

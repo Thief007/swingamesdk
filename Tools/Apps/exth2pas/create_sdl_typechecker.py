@@ -3,6 +3,7 @@ import sys
 import re
 
 
+
 #Get the Size of the type
 #Get the offset of fields from a record
 
@@ -500,6 +501,7 @@ def main():
      
     createPascalProgram('test/PascalSDLTypeChecker.pas',enumList, fieldCollection, typeCollection)
     createCProgram('test/sample_type_check.c',enumList,fieldCollection, typeCollection)
+    subprocess.call("./test/run_type_check.sh")
     #getAllRecord(fieldCollection, typeCollection, '-c') 
     #getAllEnum(enumList)     
          

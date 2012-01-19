@@ -25,9 +25,11 @@ procedure InitInterface(var pnla, pnlb: panel);
 begin
   GUISetForegroundColor(RGBAColor(128,128,128,127));
   GUISetBackgroundColor(ColorTransparent);
-  
+  writeln('colors set');
   pnla := LoadPanel('panelwithbutton.txt');
   pnlb := LoadPanel('panelwithlabel.txt');
+  
+  writeln('panels loaded');
   
   ShowPanel(pnla);
   HidePanel(pnlb);
@@ -44,8 +46,6 @@ end;
 
 procedure UpdateGUI(var pnla, pnlb: panel; lst: GUilist);
 var
-  reg: Region;
-  parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
   // if (RegionClickedID() = 'Button1') then
@@ -79,13 +79,15 @@ begin
   //ToggleFullScreen();
   
   LoadResourceBundle('MainMenu.txt');
+  writeln('hi1');
   InitInterface(pnla,pnlb);
-  
+  writeln('hi2');
   lst := ListFromRegion(regionWithID('List1'));
-
+  writeln('hi3');
   ListAddItem(lst, BitmapNamed('hat'),'Hat');
   ListAddItem(lst, BitmapNamed('sword'),'Sword');
   ListAddItem(lst, BitmapNamed('cape'),'Cape');
+  writeln('hi4');
   ListAddItem(lst, 'Cheese');
   ListAddItem(lst, 'Cake');
   ListAddItem(lst, 'Mouse');
