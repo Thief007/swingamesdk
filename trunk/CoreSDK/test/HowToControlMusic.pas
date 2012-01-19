@@ -8,12 +8,12 @@ begin
   OpenAudio();
 
   OpenGraphicsWindow('How To Control Music', 320, 240);
-   LoadMusic('game.ogg');
-   LoadMusic('diving-turtle.mp3');
-   LoadMusic('fast.mp3');
-   LoadMusic('gentle-thoughts-1.mp3');
-   LoadMusic('morning-workout.mp3');
-   LoadMusic('saber.ogg');
+  LoadMusic('game.ogg');
+  LoadMusic('diving-turtle.mp3');
+  LoadMusic('fast.mp3');
+  LoadMusic('gentle-thoughts-1.mp3');
+  LoadMusic('morning-workout.mp3');
+  LoadMusic('saber.ogg');
 
   SetMusicVolume(1);
 
