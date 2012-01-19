@@ -281,7 +281,6 @@ implementation
     begin
       outStr := text + '|';
       FreeOldSurface();
-      WriteLn(_backgroundColor);
       _textBitmap := DrawTextTo(_font, outStr, _forecolor, _backgroundColor);
     end
     else
