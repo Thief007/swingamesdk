@@ -213,7 +213,6 @@ interface
       cellIndex:  Longint;          // Which cell of the current bitmap is drawn
       sound:      SoundEffect;      // Which sound should be played on entry
       duration:   Single;           // How long should this animation frame play for
-      movement:   Vector;           // Movement data associated with the frame
       next:       AnimationFrame;   // What is the next frame in this animation
     end;
     
@@ -822,6 +821,7 @@ interface
     
       /// Each list item has text and an image
       ///
+
       /// @struct GUIListItem
       GUIListItem = packed record
         text:     String;
@@ -989,15 +989,15 @@ interface
       panelBitmapActive:    Bitmap;
 
       // The regions within the Panel
-      regions:              Array of Region;
+      regions:              Array of RegionData;
       regionIds:            NamedIndexCollection;
 
       // The extra details for the different kinds of controls
-      labels:               Array of GUILabel;
-      checkBoxes:           Array of GUICheckbox;
-      radioGroups:          Array of GUIRadioGroup;
-      textBoxes:            Array of GUITextBox;
-      lists:                Array of GUIList;
+      labels:               Array of GUILabelData;
+      checkBoxes:           Array of GUICheckboxData;
+      radioGroups:          Array of GUIRadioGroupData;
+      textBoxes:            Array of GUITextBoxData;
+      lists:                Array of GUIListData;
 
       modal:                Boolean;                      // A panel that is modal blocks events from panels shown earlier.
 

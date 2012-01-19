@@ -2152,7 +2152,7 @@ begin
   for j := Low(p^.Regions) to High(p^.Regions) do
   begin
     currentReg := @p^.Regions[j];
-    case p^.Regions[j]^.kind of
+    case p^.Regions[j].kind of
       gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
       gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
       gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
@@ -2521,7 +2521,7 @@ begin
   
   for i := 0 to High(pnl^.radioGroups) do
   begin
-    if LowerCase(pnl^.radioGroups[i]^.groupID) = id then
+    if LowerCase(pnl^.radioGroups[i].groupID) = id then
     begin
       result := @pnl^.radioGroups[i];
       exit;
@@ -3734,7 +3734,7 @@ function StringToKind(s: String): GUIElementKind;
     newLbl.contentString  := Trim(ExtractDelimited(9, d, [',']));
     
     SetLength(result^.Labels, Length(result^.Labels) + 1);
-    result^.labels[High(result^.labels)] := @newLbl;
+    result^.labels[High(result^.labels)] := newLbl;
     forRegion^.elementIndex := High(result^.labels);  // The label index for the region -> so it knows which label
   end;
   
@@ -3754,7 +3754,7 @@ function StringToKind(s: String): GUIElementKind;
     
     for i := Low(result^.radioGroups) to High(result^.radioGroups) do
     begin
-      if (radioGroupID = result^.radioGroups[i]^.GroupID) then
+      if (radioGroupID = result^.radioGroups[i].GroupID) then
       begin
         AddRegionToGroup(forRegion, @result^.radioGroups[i]);
         forRegion^.elementIndex := i;
@@ -3769,18 +3769,14 @@ function StringToKind(s: String): GUIElementKind;
     newRadioGroup.activeButton := 0;
     // add to panel, record element index.
     SetLength(result^.radioGroups, Length(result^.radioGroups) + 1);
-    result^.radioGroups[High(result^.radioGroups)] := @newRadioGroup;
+    result^.radioGroups[High(result^.radioGroups)] := newRadioGroup;
     forRegion^.elementIndex := High(result^.radioGroups);
   end;
   
   procedure CreateCheckbox(forRegion: Region; data: string; result: Panel);
-  var
-    newCheckBox : GUICheckboxData;
   begin
-    
     SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
-    newCheckBox.state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
-    result^.Checkboxes[high(result^.checkboxes)] := @newCheckBox;
+    result^.Checkboxes[High(result^.Checkboxes)].state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
     forRegion^.elementIndex := High(result^.Checkboxes);
   end;
   
@@ -3805,7 +3801,7 @@ function StringToKind(s: String): GUIElementKind;
     newTextBox.region         := r;
     
     SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);
-    result^.textBoxes[High(result^.textBoxes)] := @newTextbox;
+    result^.textBoxes[High(result^.textBoxes)] := newTextbox;
     r^.ElementIndex := High(result^.textBoxes);
   end;
   
@@ -3877,7 +3873,7 @@ function StringToKind(s: String): GUIElementKind;
     SetLength(newList.items, 0);
     
     SetLength(result^.lists, Length(result^.lists) + 1);
-    result^.lists[High(result^.lists)] := @newList;
+    result^.lists[High(result^.lists)] := newList;
     r^.elementIndex := High(result^.lists);
   end;
   
@@ -3894,21 +3890,21 @@ function StringToKind(s: String): GUIElementKind;
     for i := 0 to High(p^.regions) do
     begin
       //Copy the old region data to the new region data
-      newRegions[i] := p^.regions[i]^;
+      newRegions[i] := p^.regions[i];
       //Get the element index
-      elemIdx := p^.regions[i]^.elementIndex;
+      elemIdx := p^.regions[i].elementIndex;
       
       // if a textbox or a radio group, remap pointers
-      case p^.regions[i]^.kind of
-        gkTextbox: p^.textBoxes[elemIdx]^.region := @newRegions[i];
+      case p^.regions[i].kind of
+        gkTextbox: p^.textBoxes[elemIdx].region := @newRegions[i];
         gkRadioGroup:
         begin
-          for j := 0 to High(p^.radioGroups[elemIdx]^.buttons) do
+          for j := 0 to High(p^.radioGroups[elemIdx].buttons) do
           begin
             //searching for the button that points to the old regions
-            if p^.radioGroups[elemIdx]^.buttons[j] = @p^.regions[i] then
+            if p^.radioGroups[elemIdx].buttons[j] = @p^.regions[i] then
             begin 
-               p^.radioGroups[elemIdx]^.buttons[j] := @newRegions[i];
+               p^.radioGroups[elemIdx].buttons[j] := @newRegions[i];
                break; // exit inner loop
             end;
           end;
@@ -3917,7 +3913,7 @@ function StringToKind(s: String): GUIElementKind;
     end;// end for
     
     // move the new regions in (copies pointer)
-    p^.regions := @newRegions;    
+    p^.regions := newRegions;    
   end;
   
   procedure AddRegionToPanelWithString(d: string; p: panel);
@@ -3967,7 +3963,7 @@ function StringToKind(s: String): GUIElementKind;
     r.parent        := p;
     SetLength(r.callbacks, 0);
     
-    p^.Regions[addedIdx] := @r;
+    p^.Regions[addedIdx] := r;
     
     case r.kind of
       gkButton:     ;
