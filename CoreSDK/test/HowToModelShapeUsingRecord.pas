@@ -9,14 +9,14 @@ var
   t : Triangle;
   l : LineSegment;
 begin 
-  OpenGraphicsWindow('Model Shape Using Record', 600, 100); 
-
+  OpenGraphicsWindow('Model Shape Using Record', 600, 100);  
+  
+  ClearScreen(ColorWhite);   
+  
   c := CircleAt(50, 50, 30);
   r := RectangleFrom(300, 20, 100, 60);
   t := TriangleFrom(450, 80, 550, 80, 500, 20);
   l := LineFrom(100, 40, 250, 40);
-  
-  ClearScreen(ColorWhite);   
 
   DrawCircle(ColorBlue, c);  
   DrawRectangle(ColorGreen, r);
