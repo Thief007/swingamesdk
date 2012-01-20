@@ -14,7 +14,7 @@ begin
     LoadAnimationScriptNamed('explosionScrpt', 'explosion.txt');
 	
 	explosion := CreateSprite(explosionBmp, AnimationScriptNamed('explosionScrpt'));
-	SpriteStartAnimation(explosion, 'explosion');
+	SpriteStartAnimation(explosion, 'FireExplosion');
 	
 	SpriteSetX(explosion, 400);
     SpriteSetY(explosion, 300);
