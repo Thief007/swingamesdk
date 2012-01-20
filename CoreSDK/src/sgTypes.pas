@@ -213,6 +213,7 @@ interface
       cellIndex:  Longint;          // Which cell of the current bitmap is drawn
       sound:      SoundEffect;      // Which sound should be played on entry
       duration:   Single;           // How long should this animation frame play for
+      movement:   Vector;           // Movement data associated with the frame
       next:       AnimationFrame;   // What is the next frame in this animation
     end;
     
