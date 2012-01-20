@@ -30,7 +30,6 @@ all_units = [
     ('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
     ('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
-    #('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
     ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
     ('sgUserInterface', 'UserInterface', '../../CoreSDK/src/sgUserInterface.pas'),

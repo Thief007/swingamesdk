@@ -62,6 +62,14 @@ _type_switcher = {
         'timer':                'Timer %s',
         'shape':                'Shape %s',
         'sprite':               'Sprite %s',
+        'panel':                'Panel %s',
+        'region':               'Region %s',
+        'guiradiogroup':        'GUIRadioGroup %s',
+        'guilist':              'GUIList %s',
+        'guicheckbox':              'GUICheckbox %s',
+        'guitextbox':              'GUITextbox %s',
+        'guilabel':              'GUILabel %s',
+        
         
         'resourcekind':     'ResourceKind %s',
         'longword':         'uint %s',
@@ -108,9 +116,14 @@ _type_switcher = {
         'fontalignment': 'FontAlignment %s',
         'fontstyle': 'FontStyle %s',
         'mousebutton': 'MouseButton %s',
+        'guielementkind':       'GUIElementKind %s',
+        'eventkind':          'EventKind %s',
+        'filedialogselecttype':          'FileDialogSelectType %s',
+        
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
+        'guieventcallback':  'GUIEventCallback %s',
     },
     'const' : {
         #Data
@@ -145,6 +158,13 @@ _type_switcher = {
         'bitmap':               'Bitmap %s',
         'sprite':               'Sprite %s',
         'map':                  'Map %s',
+        'panel':                'Panel %s',
+        'guiradiogroup':        'GUIRadioGroup %s',
+        'region':               'Region %s',
+        'guilist':              'GUIList %s',
+        'guicheckbox':              'GUICheckbox %s',
+        'guitextbox':              'GUITextbox %s',
+        'guilabel':              'GUILabel %s',
         
         'string':       'ref string %s',
         'longint':      'ref int %s',
@@ -180,6 +200,13 @@ _type_switcher = {
         'color': 'System.Drawing.Color %s',
         'longword': 'uint %s',
         'string': 'String %s',
+        'panel':      'Panel %s',
+        'region':     'Region %s',
+        'guiradiogroup': 'GUIRadioGroup %s',
+        'guilist':              'GUIList %s',
+        'guicheckbox':              'GUICheckbox %s',
+        'guitextbox':              'GUITextbox %s',
+        'guilabel':              'GUILabel %s',
         
         #Data
         'point2d':          'Point2D %s',
@@ -225,6 +252,7 @@ _type_switcher = {
         'trianglearray':'Triangle[] %s',
         'bitmaparray':  'Bitmap[] %s',
         'stringarray':  'string[] %s',
+        'regions':  'Region[] %s',
     }
 }
 
@@ -270,6 +298,7 @@ _data_switcher = {
         'collisionside':        '(CollisionSide)%s',
         'fontalignment':        '(FontAlignment)%s',
         'fontstyle':            '(FontStyle)%s',
+        'eventkind':            '(EventKind)%s'
     },
     #Argument with a parameter value
     'arg_val' : 
@@ -285,7 +314,7 @@ _data_switcher = {
         'resourcekind': '(int)%s',
         'fontalignment': '(int)%s',
         'fontstyle': '(int)%s',
-        
+        'guielementkind': '(int)%s',
         'bitmaparray': 'WrapperUtils.BitmapArrToIntPtrArr(%s)'
     },
     #Argument with a literal value
@@ -319,10 +348,18 @@ _adapter_type_switcher = {
         'timer':                'IntPtr %s',
         'shape':                'IntPtr %s',
         'animation':            'IntPtr %s',
-        'animationscript':    'IntPtr %s',
+        'animationscript':      'IntPtr %s',
         'character':            'IntPtr %s',
         'sprite':               'IntPtr %s',
         'bitmap':               'IntPtr %s',
+        'panel':                'IntPtr %s',
+        'region':               'IntPtr %s',
+        'guiradiogroup':        'IntPtr %s',
+        'guilist':              'IntPtr %s',
+        'guicheckbox':          'IntPtr %s',
+        'guitextbox':           'IntPtr %s',
+        'guilabel':             'IntPtr %s',
+        
         
         #Structs
         'triangle':     'Triangle %s',
@@ -357,9 +394,12 @@ _adapter_type_switcher = {
         'resourcekind': 'int %s',
         'spritekind': 'SpriteKind %s',
         'shapekind': 'ShapeKind %s',
+        'guielementkind': 'GUIEelementKind %s',
+        'filedialogselecttype': 'FileDialogSelectType %s',
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
+        'guieventcallback': 'GUIEventCallback %s',
     },
     #No modifier and for the actual library call
     'lib_': {
@@ -378,10 +418,18 @@ _adapter_type_switcher = {
         'timer':                'IntPtr %s',
         'shape':                'IntPtr %s',
         'animation':            'IntPtr %s',
-        'animationscript':    'IntPtr %s',
+        'animationscript':      'IntPtr %s',
         'character':            'IntPtr %s',
         'sprite':               'IntPtr %s',
+        'panel':                'IntPtr %s',
+        'region':               'IntPtr %s',
+        'guiradiogroup':        'IntPtr %s',
+        'guilist':              'IntPtr %s',
+        'guicheckbox':          'IntPtr %s',
+        'guitextbox':           'IntPtr %s',
+        'guilabel':             'IntPtr %s',
         
+              
         'resourcekind': 'int %s',
         'longword': 'uint %s',
         'bitmap': 'IntPtr %s',
@@ -416,9 +464,12 @@ _adapter_type_switcher = {
         'collisiontestkind':    'CollisionTestKind %s',        
         'spritekind':           'SpriteKind %s',
         'shapekind':            'ShapeKind %s',
+        'guielementkind':       'GUIElementKind %s',
+        'filedialogselecttype': 'FileDialogSelectType %s',
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
+        'guieventcallback': 'GUIEventCallback %s',
     },
     'const' : {
         'point2d':      'ref Point2D %s',
@@ -463,7 +514,7 @@ _adapter_type_switcher = {
     },
     'var': {
         'animation':            'ref IntPtr %s',
-        'animationscript':    'ref IntPtr %s',
+        'animationscript':      'ref IntPtr %s',
         'soundeffect':          'ref IntPtr %s',
         'music':                'ref IntPtr %s',
         'timer':                'ref IntPtr %s',
@@ -474,6 +525,18 @@ _adapter_type_switcher = {
         'shapeprototype':       'ref IntPtr %s',
         'shape':                'ref IntPtr %s',
         'character':            'ref IntPtr %s',
+        'panel':                'ref IntPtr %s',      
+        'region':               'ref IntPtr %s',
+        'guiradiogroup':        'ref IntPtr %s',
+        'guilist':              'ref IntPtr %s',
+        'guicheckbox':          'ref IntPtr %s',
+        'guitextbox':           'ref IntPtr %s',
+        'guilabel':             'ref IntPtr %s',
+        
+        
+        
+        
+        
         
         'string':               'StringBuilder %s',
         
@@ -500,6 +563,14 @@ _adapter_type_switcher = {
         'map':                  'ref IntPtr %s',
         'shapeprototype':       'ref IntPtr %s',
         'shape':                'ref IntPtr %s',
+        'panel':                'ref IntPtr %s',      
+        'region':               'ref IntPtr %s',
+        'guiradiogroup':        'ref IntPtr %s',
+        'guilist':              'ref IntPtr %s',
+        'guicheckbox':          'ref IntPtr %s',
+        'guitextbox':           'ref IntPtr %s',
+        'guilabel':             'ref IntPtr %s',
+              
         
         'single':               'ref float %s',
         'longint':              'ref int %s',
@@ -574,6 +645,14 @@ _adapter_type_switcher = {
         'map':                  'IntPtr %s',
         'sprite':               'IntPtr %s',
         'character':            'IntPtr %s',
+        'panel':                'IntPtr %s',
+        'region':               'IntPtr %s',
+        'guiradiogroup':        'IntPtr %s',
+        'guilist':              'IntPtr %s',
+        'guicheckbox':          'IntPtr %s',
+        'guitextbox':           'IntPtr %s',
+        'guilabel':             'IntPtr %s',
+        
         
         'maptile':              'MapTile %s',
         
@@ -623,6 +702,7 @@ _struct_type_switcher = {
     #Resource types
     'sprite': 'internal Sprite _%s',
     'character': 'internal Character _%s',
+    'guilist': 'internal GuiList _%s',
     
     #Pascal type: what it maps to
     'single': 'internal float _%s',
@@ -663,6 +743,7 @@ _struct_type_switcher = {
     'maptile': 'internal MapTile _%s',
     'circle': 'internal Circle _%s',
     'point2darray': 'internal Point2D[] _%s',
+    'bitmapcell': 'internal BitmapCell _%s',
 }
 
 
@@ -1124,7 +1205,6 @@ def _write_wrapped_property(the_property, other):
 
 def property_visitor(the_property, other):
     writer = other['file writer']
-    
     type_name = _type_switcher['return'][the_property.data_type.name.lower()]
     
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
@@ -1321,10 +1401,11 @@ def write_cs_type_for(member, other):
         if member.is_pointer_wrapper:
             # print member, member.fields
             assert len(member.fields) == 1
+            
             write_sg_class(member, other)
         else:
             logger.error('CREATE Cs : Unknown class type for %s', member.uname)
-            assert false
+            assert False
     elif member.is_struct:
         write_struct(member, other)
     elif member.data_type.is_procedure:

@@ -609,7 +609,7 @@ procedure SelectRadioButton(r: Region); overload;
 /// @lib SelectRadioButtonFromRadioGroupAndRegion
 ///
 /// @class RadioGroup
-/// @getter SelectRadioButton
+/// @method SelectRadioButton
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
 /// Takes a RadioGroup and index and selects the button
@@ -617,7 +617,7 @@ procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 /// @lib SelectRadioButtonFromRadioGroupAndIndex
 ///
 /// @class RadioGroup
-/// @getter SelectRadioButton
+/// @method SelectRadioButton
 procedure SelectRadioButton(rGroup: GUIRadioGroup; idx: LongInt); overload;
 
 /// Takes an ID and returns the active button
@@ -630,7 +630,7 @@ procedure SelectRadioButton(id: String); overload;
 /// @lib SelectRadioButtonFromPanelWithId
 ///
 /// @class Panel
-/// @getter SelectRadioButton
+/// @method SelectRadioButton
 procedure SelectRadioButton(pnl : Panel; id: String); overload;
 
 // ===========
