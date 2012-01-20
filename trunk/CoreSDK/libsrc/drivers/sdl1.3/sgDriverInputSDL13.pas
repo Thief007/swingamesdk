@@ -117,7 +117,7 @@ implementation
     result := SDL_Button(toggle);
   end;  
   
-  procedure WarpMouseProcedure(x,y : Byte);
+  procedure WarpMouseProcedure(x,y : Word);
   begin
     SDL_WarpMouse(x,y);
   end;

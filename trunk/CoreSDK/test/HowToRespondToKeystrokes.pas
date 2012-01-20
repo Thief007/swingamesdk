@@ -1,4 +1,4 @@
-program HowToKeyboardInput;
+program HowToRespondToKeystrokes;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio;
   
@@ -15,25 +15,14 @@ begin
     
     FillRectangle(clr, 0, 0, 240, 180);
     
-    if KeyReleased(vk_a) then 
-    begin
-      DrawText('A Release', ColorBlue, 'Arial', 14, 20, 40);      
-    end;
-    if KeyTyped(vk_a) then 
-    begin
-      DrawText('A Typed', ColorGreen, 'Arial', 14, 20, 70);      
-    end;    
+    if KeyReleased(vk_a) then DrawText('A Release', ColorBlue, 'Arial', 14, 20, 40);
     
-    if KeyDown(vk_a) then
-    begin
-      DrawText('A Down', ColorRed, 'Arial', 14, 20, 100);      
-    end;
+    if KeyTyped(vk_a) then DrawText('A Typed', ColorGreen, 'Arial', 14, 20, 70);         
     
-    if KeyUp(vk_a) then 
-    begin
-      DrawText('A Up', ColorTurquoise, 'Arial', 14, 20, 130);      
-    end;
-    
+    if KeyDown(vk_a) then DrawText('A Down', ColorRed, 'Arial', 14, 20, 100);      
+        
+    if KeyUp(vk_a) then DrawText('A Up', ColorTurquoise, 'Arial', 14, 20, 130);      
+        
     DrawText('KeyBoard Input', ColorRed, 'Arial', 18, 60, 15);
     
     RefreshScreen(60);    
