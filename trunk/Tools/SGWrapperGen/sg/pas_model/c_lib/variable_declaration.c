@@ -1,1 +1,1 @@
-%(type)s%(uname_lower)s;
+%(variables)s

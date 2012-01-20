@@ -16,7 +16,11 @@ class PascalVarDeclaration(object):
         # vars stores the variables declared in this declaration in a dictionary
         # name of the variable is the key, type is the value
         self._vars = dict()
-        self._contents = list()
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def kind(self):
@@ -61,5 +65,19 @@ class PascalVarDeclaration(object):
                 logger.debug("Finished parsing variable declaration")
                 break
 
-            self._contents = self._vars
-                
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        for (key, variable) in self._vars.items():
+            variable.to_code(indentation)
+
+        for (name, module) in converter_helper.converters.items():
+            variables = ""
+            for (key, variable) in self._vars.items():
+                variables += variable.code[name]
+            self._code[name] = module.variable_decl_template % { "variables": variables }
+

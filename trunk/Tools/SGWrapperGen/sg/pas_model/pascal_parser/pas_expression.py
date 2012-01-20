@@ -1,4 +1,3 @@
-from tokeniser.pas_token_kind import TokenKind
 from pas_parser_utils import logger
 
 from pas_function_call import PascalFunctionCall
@@ -17,6 +16,11 @@ class PascalExpression(object):
     def __init__(self, owner_block):
         self._contents = list()
         self._block = owner_block
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def kind(self):
@@ -26,6 +30,7 @@ class PascalExpression(object):
         """
         this method parses the expression
         """
+        from tokeniser.pas_token_kind import TokenKind
         logger.debug('Parsing %s expression' % ('inner' if innerExpr else ''))
         newContent = None
         while (True):
@@ -55,8 +60,8 @@ class PascalExpression(object):
             elif tokens.match_lookahead(TokenKind.Identifier):
                 # function call
                 if tokens.lookahead(2)[1].value == '(':
-                    funcCall = PascalFunctionCall(self._block)
-                    funcCall.parse(tokens, inExpr=True)
+                    funcCall = PascalFunctionCall(self._block, inExpr=True)
+                    funcCall.parse(tokens)
                     newContent = funcCall
                 #variable
                 else:
@@ -86,3 +91,22 @@ class PascalExpression(object):
         for item in self._contents:
             result += str(item)
         return result
+
+    def to_code(self):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        for part in self._contents:
+            part.to_code()
+
+        for (name, module) in converter_helper.converters.items():
+            expression = ""
+            for part in self._contents:
+                if part.kind is 'variable':
+                    expression += part.code[name + '_identifier']   # variable[name] returns variable declaration
+                else:
+                    expression += part.code[name]
+            self._code[name] = module.expression_template % { "expression": expression }

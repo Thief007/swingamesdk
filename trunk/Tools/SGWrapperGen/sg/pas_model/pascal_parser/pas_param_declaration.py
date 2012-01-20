@@ -20,7 +20,7 @@ class PascalParameterDeclaration(object):
 
     @property
     def kind(self):
-        return 'variable declaration'
+        return 'parameter declaration'
 
     @property
     def variables(self):
@@ -37,34 +37,32 @@ class PascalParameterDeclaration(object):
         #look for parameters
         while not tokens.match_lookahead(TokenKind.Symbol, ')'): #consume ) at end
             param_tok, other_tok = tokens.lookahead(2)
-
+            modifier = None
             #Look for modifier
-            if other_tok.kind == TokenKind.Identifier:
+            if param_tok.kind == TokenKind.Identifier:
                 # First value is modifier
-                if param_tok.kind == TokenKind.Identifier: 
-                    modifier = tokens.next_token().value
+                if other_tok.kind == TokenKind.Identifier: 
+                    modifier = tokens.match_token(TokenKind.Identifier).value
                 # No modifier found
                 else:
                     modifier = None
 
-                # get parameter names
-                parameters = [tokens.match_token(TokenKind.Identifier).value]
-                while tokens.match_lookahead(TokenKind.Symbol, ',', True):
-                    #there is a list of parameters
-                    parameters.append(tokens.match_token(TokenKind.Identifier).value)
+            # get parameter names
+            parameters = [tokens.match_token(TokenKind.Identifier).value]
+            while tokens.match_lookahead(TokenKind.Symbol, ',', True):
+                #there is a list of parameters
+                parameters.append(tokens.match_token(TokenKind.Identifier).value)
             
-                # colon seperates identifiers and type
-                tokens.match_token(TokenKind.Symbol, ':')
-                the_type = PascalType.create_type(tokens)   # reads the type and returns PascalType
+            # colon seperates identifiers and type
+            tokens.match_token(TokenKind.Symbol, ':')
+            the_type = PascalType.create_type(tokens)   # reads the type and returns PascalType
             
-                for parameter_name in parameters:
-                    toAdd = PascalVariable(parameter_name, the_type, modifier)
-                    param = method.add_parameter(toAdd)
-                    logger.debug('Parser    : Adding parameter %s (%s) to %s', parameter_name, the_type, method.name)
+            for parameter_name in parameters:
+                toAdd = PascalVariable(parameter_name, the_type, modifier)
+                method.add_parameter(toAdd)
+                logger.debug('Parser    : Adding parameter %s (%s) to %s', parameter_name, the_type, method.name)
             
-                if tokens.match_lookahead(TokenKind.Symbol, ';', consume=True): break
-            else:
-                logger.error('Parser    : Error in parameter list %s', str(tokens.next_token()))
+            if tokens.match_lookahead(TokenKind.Symbol, ';', consume=True): break
         
         tokens.match_token(TokenKind.Symbol, ')')
                 

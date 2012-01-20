@@ -11,6 +11,11 @@ class AssignmentStatement(object):
         self._operator = None       # += *= /= -= := token
         self._expression = None
         self._block = block
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     def parse(self, tokens):
         varName = tokens.match_token(TokenKind.Identifier).value
@@ -41,3 +46,23 @@ class AssignmentStatement(object):
     @property
     def block(self):
         return self._block
+
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        my_data = dict()
+
+        my_data['operand'] = self.operand.name
+        my_data['operand_lower'] = converter_helper.lower_name(self.operand.name)
+
+        self._operator.to_code()
+        self._expression.to_code()
+
+        for (name, module) in converter_helper.converters.items():
+            # operator / expression
+            my_data[name + '_expression'] = self._expression.code[name]
+            my_data[name + '_operator'] = self._operator.code[name]
+            self._code[name] =  module.assignment_template % my_data
