@@ -16,8 +16,11 @@ unit sgDriverAudio;
 //		- Pascal LongWord is equivalent to a Uint32
 //
 //=============================================================================
+
+{$I driver.inc}
+
 interface
-	uses sgDriverAudioSDLMixer, sgTypes;
+	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverAudioSDL13Mixer{$ELSE}sgDriverAudioSDLMixer{$ENDIF};
 	
 	type
 		// These function and procedure pointers are required by the AudioDriverRecord
@@ -91,7 +94,11 @@ implementation
 //=============================================================================
 	procedure LoadDefaultAudioDriver();
 	begin
-		LoadSDLMixerAudioDriver();
+	  {$IFDEF SWINGAME_SDL13}
+	    LoadSDL13MixerAudioDriver();
+	  {$ELSE}
+	    LoadSDLMixerAudioDriver();
+	  {$ENDIF};
 	end;
 
 //=============================================================================

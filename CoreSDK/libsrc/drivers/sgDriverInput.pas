@@ -1,8 +1,10 @@
 unit sgDriverInput;
+
+{$I driver.inc}
+
 interface
-
-uses sgDriverInputSDL, sgTypes;
-
+uses 
+  sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverInputSDL13{$ELSE}sgDriverInputSDL{$ENDIF};
 
 type
 
@@ -36,7 +38,11 @@ var
 implementation
   procedure LoadDefaultInputDriver; 
   begin
-    LoadSDLInputDriver();
+    {$IFDEF SWINGAME_SDL13}
+		  LoadSDL13InputDriver();
+		{$ELSE}
+		  LoadSDLInputDriver();
+		{$ENDIF}
   end;
 
   function DefaultIsKeyPressedProcedure(virtKeyCode : LongInt) : Boolean;

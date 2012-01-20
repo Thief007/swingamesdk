@@ -16,6 +16,9 @@ unit sgDriverImages;
 //		- Pascal SmallInt is equivalent to Sint16
 //
 //=============================================================================
+
+{$I driver.inc}
+
 interface
 	uses sgTypes, sgShared;
 	
@@ -59,11 +62,15 @@ interface
 		
 implementation
   uses
-    sgDriverImagesSDL;
+    {$IFDEF SWINGAME_SDL13}sgDriverImagesSDL13{$ELSE}sgDriverImagesSDL{$ENDIF};
     
 	procedure LoadDefaultDriver();
 	begin
-		LoadSDLImagesDriver();
+	  {$IFDEF SWINGAME_SDL13}
+		  LoadSDL13ImagesDriver();
+		{$ELSE}
+		  LoadSDLImagesDriver();
+		{$ENDIF}
 	end;
 	
 	procedure DefaultSetNonAlphaPixelsProcedure(bmp : Bitmap);

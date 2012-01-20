@@ -11,8 +11,13 @@ unit sgDriverTimer;
 //		- Pascal LongWord is equivalent to a Uint32
 //
 //=============================================================================
+
+{$IFNDEF SWINGAME_SDL13}
+{$DEFINE SWINGAME_SDL13}
+{$ENDIF}
+
 interface
-	uses sgTypes, sgDriverTimerSDL;
+	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverTimerSDL13{$ELSE}sgDriverTimerSDL{$ENDIF};
 	
 	type
 		DelayProcedure = procedure (time : LongWord);
@@ -31,7 +36,11 @@ interface
 implementation
 	procedure LoadDefaultTimerDriver();
 	begin
-		LoadSDLTimerDriver();
+	  {$IFDEF SWINGAME_SDL13}
+		  LoadSDL13TimerDriver();
+		{$ELSE}
+		  LoadSDLTimerDriver();
+		{$ENDIF}
 	end;
 	
 	procedure DefaultDelayProcedure(time : LongWord);
