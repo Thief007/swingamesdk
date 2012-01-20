@@ -15,7 +15,7 @@ type
   GetMouseStateProcedure = function(var x : LongInt; var y : LongInt): Byte;
   ShowCursorProcedure = function (toggle : LongInt) : LongInt;
   ButtonProcedure = function(button : LongInt) : LongInt;
-  WarpMouseProcedure = procedure(x,y : Byte);
+  WarpMouseProcedure = procedure(x,y : Word);
   
   InputDriverRecord = Record
     IsKeyPressed : IsKeyPressedProcedure;
@@ -95,7 +95,7 @@ implementation
     result := InputDriver.Button(button);
   end;
   
-  procedure DefaultWarpMouseProcedure(x,y : Byte); 
+  procedure DefaultWarpMouseProcedure(x,y : Word); 
   begin
     LoadDefaultInputDriver();
     InputDriver.WarpMouse(x,y);

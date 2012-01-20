@@ -1,11 +1,28 @@
 program HowToMouseInput;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio, sysutils;
+  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio, sysutils, sgGeometry;	
+
+type	
+	CrossHair = record		
+		c : Circle;
+		vLine, hLine : LineSegment;
+	end;
+	
+procedure DrawCrossHair(moPos : Point2D);
+begin
+
+end;
+
+procedure HideCrossHair();
+begin
+
+end;
   
 procedure Main();
 var
-	str : String;
+	str : String;	
 	mPos : Point2D;
+	//c		 : CrossHair;
 begin  
   OpenGraphicsWindow('Mouse Input', 400, 240); 
   
@@ -23,29 +40,42 @@ begin
 		if MouseUp(LeftButton) then DrawText('is up', ColorBlue, 'Arial', 14, 200, 140);
 		if MouseDown(RightButton) then DrawText('is down', ColorBlue, 'Arial', 14, 200, 165);
 		if MouseUp(RightButton) then DrawText('is up', ColorBlue, 'Arial', 14, 200, 165);
-		if KeyDown(vk_DOWN) then 
+		if KeyDown(vk_DOWN) then
 		begin
-			mPos := MousePosition();
+			mPos := MousePosition();			
 			mPos.y += 1;
-			MoveMouse(mPos);		
-		end;
+			MoveMouse(mPos);			
+		end;		
 		if KeyDown(vk_UP) then 
 		begin
-			mPos := MousePosition();
+			mPos := MousePosition();		
 			mPos.y -= 1;
 			MoveMouse(mPos);		
 		end;
 		if KeyDown(vk_LEFT) then 
 		begin
 			mPos := MousePosition();
-			mPos.X -= 1;
+			mPos.x -= 1;
 			MoveMouse(mPos);		
 		end;
 		if KeyDown(vk_RIGHT) then 
 		begin
 			mPos := MousePosition();
-			mPos.X += 1;
+			mPos.x += 1;
 			MoveMouse(mPos);		
+		end;
+		if KeyTyped(vk_SPACE) then
+		begin
+			if MouseShown() then
+			begin
+				HideMouse();
+				DrawCrossHair(MousePosition());
+			end
+			else
+			begin
+				ShowMouse();
+				HideCrossHair();
+			end;			
 		end;
     
     DrawText('Mouse Input', ColorRed, 'Arial', 18, 125, 15);
