@@ -65,4 +65,4 @@ class AssignmentStatement(object):
             # operator / expression
             my_data[name + '_expression'] = self._expression.code[name]
             my_data[name + '_operator'] = self._operator.code[name]
-            self._code[name] =  module.assignment_template % my_data
+            self._code[name] =  (indentation * '    ') + module.assignment_template % my_data

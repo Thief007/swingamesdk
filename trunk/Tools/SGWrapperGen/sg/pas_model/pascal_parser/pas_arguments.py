@@ -1,3 +1,4 @@
+from pascal_parser.pas_parser_utils import logger
 class PascalArguments(object):
     """
     Describes a single variable in pascal
@@ -32,14 +33,17 @@ class PascalArguments(object):
         """
         from pas_expression import PascalExpression
         from tokeniser.pas_token_kind import TokenKind
-
+        logger.debug("parsing arguments")
         tokens.match_token(TokenKind.Symbol, '(')
         while True:
-            if tokens.match_lookahead(TokenKind.Symbol, ')', consume=True):
+            if (tokens.match_lookahead(TokenKind.Symbol, ')', consume=True) or tokens.match_lookahead(TokenKind.Symbol, ',', consume=True)):
+                logger.debug("finished parsing arguments")
                 break
             newExpression = PascalExpression(self._block)
             newExpression.parse(tokens)
             self._contents.append(newExpression)
+            if ():
+                break
 
     def to_code(self):
         '''

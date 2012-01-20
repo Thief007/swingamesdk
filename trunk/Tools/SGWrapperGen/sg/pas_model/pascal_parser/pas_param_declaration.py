@@ -15,8 +15,12 @@ class PascalParameterDeclaration(object):
     def __init__(self):
         # vars stores the variables declared in this declaration in a dictionary
         # name of the variable is the key, type is the value
-        self._vars = dict()
-        self._contents = list()
+        self._vars = list()
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def kind(self):
@@ -59,10 +63,36 @@ class PascalParameterDeclaration(object):
             
             for parameter_name in parameters:
                 toAdd = PascalVariable(parameter_name, the_type, modifier)
+                self._vars.append(toAdd)
                 method.add_parameter(toAdd)
                 logger.debug('Parser    : Adding parameter %s (%s) to %s', parameter_name, the_type, method.name)
+
+            tokens.match_lookahead(TokenKind.Symbol, ';', consume=True) # is there a semi-colon seperator? eat it.
             
-            if tokens.match_lookahead(TokenKind.Symbol, ';', consume=True): break
-        
         tokens.match_token(TokenKind.Symbol, ')')
                 
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+
+        for param in self._vars:
+            param.to_code()
+        my_data = dict()
+        # seperators need to be set for every new package
+        #   these could go in the __init__ for each library?
+        my_data['c_lib_seperator'] = ','
+
+        for (name, module) in converter_helper.converters.items():
+            parameters = ""
+            for index in range(len(self._vars)):
+                var_data = dict()
+                var_data['identifier'] = self._vars[index].code[name + '_identifier']
+                var_data['type'] = converter_helper.convert_type(module._type_switcher, self._vars[index].type, self._vars[index]._modifier)
+                parameters += module.parameter_template % (var_data)
+
+                if index < (len(self._vars)-1):
+                    parameters += my_data[name + '_seperator']
+            self._code[name] = parameters

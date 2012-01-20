@@ -10,8 +10,13 @@ class PascalCompoundStatement(object):
     """
 
     def __init__(self, block):
-        self._statements = []
+        self._statements = list()
         self._block = block
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def statements(self):
@@ -47,6 +52,22 @@ class PascalCompoundStatement(object):
                 self._statements.append(parse_statement(tokens, self._block))
 
         logger.debug("Finished parsing compound statement")
+
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        for statement in self._statements:
+            statement.to_code(indentation + 1)  # everything within the statement is indented
+
+        for (name, module) in converter_helper.converters.items():
+            statements = ""
+            for statement in self._statements:
+                statements += statement.code[name]
+            self._code[name] = module.compound_statement_template % { "statements": statements }
 
 
 

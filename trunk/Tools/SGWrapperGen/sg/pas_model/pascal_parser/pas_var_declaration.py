@@ -71,7 +71,7 @@ class PascalVarDeclaration(object):
         for each of the modules
         '''
         import converter_helper
-        
+
         for (key, variable) in self._vars.items():
             variable.to_code(indentation)
 
