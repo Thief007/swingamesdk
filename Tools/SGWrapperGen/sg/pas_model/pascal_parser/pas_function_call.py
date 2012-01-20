@@ -61,10 +61,12 @@ class PascalFunctionCall(object):
 
         my_data['pas_identifier'] = self._identifier 
         my_data['c_lib_identifier'] = converter_helper.lower_name(self._identifier)
-        
+        my_data['c_lib_eos'] = '' if self._inExpr else ';\n'  # C end of statement marker is a semi-colon
         self._arguments.to_code()
 
 
         for (name, module) in converter_helper.converters.items():
             my_data[name + '_args'] = self._arguments.code[name]
-            self._code[name] = ((indentation * '    ') + module.function_call_template % my_data) + (';' if not self._inExpr else '')
+            # TODO: find a better method for adding the semi-colon or similar to the end of a statement
+            # visual basic doesn't have a semi-colon at the end of function calls
+            self._code[name] = ((indentation * '    ') + module.function_call_template % my_data)

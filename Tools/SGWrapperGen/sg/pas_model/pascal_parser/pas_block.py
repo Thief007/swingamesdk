@@ -26,6 +26,11 @@ class PascalBlock(object):
         self._contents = list()
         self._variables = dict()
         self._functions = dict()
+        self._code = dict()     
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def parent(self):
@@ -83,3 +88,24 @@ class PascalBlock(object):
             logger.error("Unable to locate variable in scope: " + name)
             assert False
         return result
+
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        for part in self._contents:
+            part.to_code(indentation)
+        self._compound_statement.to_code(indentation)
+
+        for (name, module) in converter_helper.converters.items():
+            part_code = ""
+            lang_data = dict()
+            for part in self._contents:
+                part_code += part.code[name]
+            lang_data['declarations'] = part_code;
+            lang_data['statement'] = self._compound_statement.code[name]
+            self._code[name] = module.block_template % lang_data
+

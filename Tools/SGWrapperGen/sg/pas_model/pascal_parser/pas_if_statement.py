@@ -11,6 +11,11 @@ class PascalIfStatement(object):
         self._expression = None
         self._statement = None
         self._block = block
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def block(self):
@@ -38,8 +43,23 @@ class PascalIfStatement(object):
         # expression will consume the 'then' delimiter
         logger.debug("Finished parsing if statement")
 
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        self._expression.to_code()
+        if (self._statement.kind == 'compound statement'):
+            self._statement.to_code()
+        else:
+            self._statement.to_code(indentation+1)
 
-                
+        for (name, module) in converter_helper.converters.items():
+            self._code[name] =  (indentation * '    ') + module.if_statement_template % {'expression' : self._expression.code[name], 'statement' : self._statement.code[name] }
+
+
 
 
 

@@ -13,14 +13,20 @@ class PascalFunction(object):
         being initialised from... current block is the function's parent
         """
         from pas_block import PascalBlock
+        from pas_param_declaration import PascalParameterDeclaration
+
         self._parent = parent                 #parent block
         self._result = None    # PascalVariable
-        self._parameters = dict()
+        self._parameters = PascalParameterDeclaration()
         self._block = PascalBlock(parent)
         self._name = ''
         self._return_type = None    #PascalType
         self._isFunction = False
+        self._code = dict()
 
+    @property
+    def code(self):
+        return self._code
     @property
     def name(self):
         return self._name
@@ -30,7 +36,6 @@ class PascalFunction(object):
         return self._parameters
 
     def add_parameter(self, variable):
-        self._parameters[variable.name] = variable
         self._block._variables[variable.name] = variable
 
     @property
@@ -59,7 +64,7 @@ class PascalFunction(object):
 
     def parse(self, tokens):
         from types.pas_type_cache import find_or_add_type
-        from pas_param_declaration import PascalParameterDeclaration
+
         self._result = None
         self._return_type = None
 
@@ -75,12 +80,7 @@ class PascalFunction(object):
         
         # ( parameter declaration )
         
-        declaration = PascalParameterDeclaration()
-        declaration.parse(tokens, self)
-        if tokens.match_lookahead(TokenKind.Identifier):
-            self._parameters = PascalVarDeclaration()
-            self._parameters.parse(tokens, self)
-            self._block._variables.update(self._parameters.variables)
+        self._parameters.parse(tokens, self)
 
         if (self._isFunction):
             # read return type
@@ -96,4 +96,25 @@ class PascalFunction(object):
         tokens.match_token(TokenKind.Symbol, ';')
         self._block.parse(tokens)
         
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
 
+        my_data = dict()
+
+        my_data['pas_lib_identifier'] = self._name 
+        my_data['pas_lib_type'] = self._return_type.name
+        my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
+
+        self._parameters.to_code()
+        self._block.to_code()
+
+        for (name, module) in converter_helper.converters.items():
+            # types need to be evaluated in the loop because they are module specific
+            my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._return_type)
+            my_data[name + '_parameters'] = self._parameters.code[name]
+            my_data[name + '_block'] = self._block.code[name]
+            self._code[name] = (indentation * '    ') + module.function_declaration_template % my_data

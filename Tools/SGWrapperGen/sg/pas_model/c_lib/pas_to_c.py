@@ -28,21 +28,11 @@ def _convert_program(program):
 def _convert_block(block, isFunction=False):
     contents = list()  
 
-    for part in block.contents:
-        if part.kind == 'variable_declaration':
-            contents.extend(_convert_variable_declaration(part))
-        elif part.kind == 'function':
-            contents.extend(_convert_function(part))
-        elif part.kind == 'uses_clause':
-            pass
-        else:
-            logger.error(" Unidentified program part : %s", part.kind)
-            assert False
-
-    # C doesn't have a begin..end. part in the program -> this is replaced by a main() function
-    if (block.parent != None):
-        contents.extend(_convert_compound_statement(block.compound_statement, isFunction))
-
+    block.to_code()
+    print "*****************************************************" 
+    print "**** BLOCK STATEMENT"
+    print block.code['c_lib']
+    print "*****************************************************" 
     return contents
 
 def _convert_variable_declaration(variables, areParams=False):
@@ -141,20 +131,20 @@ def _convert_if_statement(if_statement):
     prints an if statement to the screen
     """
     result = list()
-    if_expression = _expression_to_str(if_statement.expression)
-    result.append( 'if (' + if_expression + ' )')
-    result.append('{')
-    result.extend(_convert_statement(if_statement.statement))
-    result.append('}')
+    if_statement.to_code()
+    print "*****************************************************" 
+    print "**** IF STATEMENT"
+    print if_statement.code['c_lib']
+    print "*****************************************************" 
     return result
 
 def _convert_while_statement(while_statement):
     result = list()
-    expression = _expression_to_str(while_statement.expression)
-    result.append('while (' + expression + ' )')
-    result.append('{')
-    result.extend(_convert_statement(while_statement.statement))
-    result.append('}')
+    while_statement.to_code()
+    print "*****************************************************" 
+    print "**** WHILE STATEMENT"
+    print while_statement.code['c_lib']
+    print "*****************************************************" 
     return result
 
 def _expression_to_str(expression):

@@ -5,6 +5,11 @@ class PascalString(object):
     
     def __init__(self, value):
         self._value = value
+        self._code = dict()     
+
+    @property
+    def code(self):
+        return self._code
                 
     @property
     def kind(self):
@@ -21,4 +26,4 @@ class PascalString(object):
         import converter_helper
         for (name, module) in converter_helper.converters.items():
             variables = ""
-            self._code[name + '_string'] = (identation * '    ') +  (module.string_template % self._value)
+            self._code[name] = (indentation * '    ') +  (module.string_template % {'string' : self._value} )
