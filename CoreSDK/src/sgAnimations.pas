@@ -751,7 +751,7 @@ var
             frames[j]^.duration     := rows[j].dur;
             frames[j]^.movement     := rows[j].mvmt;
             //WriteLn(j, PointToString(frames[j]^.movement));
-            WriteLn('Frame ', HexStr(frames[j]), ' Vector ', PointToString(frames[j]^.movement));
+            //WriteLn('Frame ', HexStr(frames[j]), ' Vector ', PointToString(frames[j]^.movement));
             
             // Get the next id and then 
             nextIdx := rows[j].next;
@@ -1227,8 +1227,8 @@ begin
         anim^.lastFrame := anim^.currentFrame; //store last frame
         anim^.currentFrame := anim^.currentFrame^.next; //get the next frame
         
-        if assigned(anim^.currentFrame) then
-        WriteLn('Frame ', HexStr(anim^.currentFrame), ' Vector ', PointToString(anim^.currentFrame^.movement));
+        //if assigned(anim^.currentFrame) then
+        //WriteLn('Frame ', HexStr(anim^.currentFrame), ' Vector ', PointToString(anim^.currentFrame^.movement));
         
         if assigned(anim^.currentFrame) and assigned(anim^.currentFrame^.sound) and withSound then
         begin

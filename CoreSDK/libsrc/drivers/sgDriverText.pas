@@ -15,10 +15,6 @@ unit sgDriverText;
 // 		- 
 //=============================================================================
 
-{$IFNDEF SWINGAME_SDL13}
-{$DEFINE SWINGAME_SDL13}
-{$ENDIF}
-
 interface
 	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverTextSDL13{$ELSE}sgDriverTextSDL{$ENDIF};
 	

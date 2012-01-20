@@ -12,10 +12,6 @@ unit sgDriverTimer;
 //
 //=============================================================================
 
-{$IFNDEF SWINGAME_SDL13}
-{$DEFINE SWINGAME_SDL13}
-{$ENDIF}
-
 interface
 	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverTimerSDL13{$ELSE}sgDriverTimerSDL{$ENDIF};
 	
