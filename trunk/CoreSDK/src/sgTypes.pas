@@ -925,7 +925,6 @@ interface
     
     /// GUIEventCallback is a callbackfunction for gui eventsin swingame 
     ///
-    /// @class UserInterface
     /// @type GUIEventCallback
     GUIEventCallback = procedure (r: Region; kind: EventKind);
     
