@@ -7,39 +7,36 @@ class PascalFunctionCall(object):
         - Will stop reading a function call if an end brace ')' is encountered
     """
 
-    def __init__(self, block):
+    def __init__(self, block, inExpr):
         self._identifier = None         # identifier of the function
-        self._parameters = list()       # list of expressions
+        self._arguments = None       # list of expressions
         self._block = block
+        self._code = dict()
+        self._inExpr = inExpr
 
-    def parse(self, tokens, inExpr = False):
+    @property
+    def code(self):
+        return self._code
+
+    def parse(self, tokens):
         """
         parses a function call
 
         inExpr = False by default
         if inExpr is True a semi-colon is expected at the end of the function call
         """
-        from pas_expression import PascalExpression
+        from pas_arguments import PascalArguments
+
         logger.debug('Processing function call %s', self._identifier)
         self._identifier = tokens.match_token(TokenKind.Identifier).value
-        tokens.match_token(TokenKind.Symbol, '(')
-        while True:
-            if tokens.match_lookahead(TokenKind.Symbol, ')', consume=True):
-                break
-            newExpression = PascalExpression(self._block)
-            newExpression.parse(tokens)
-            self._parameters.append(newExpression)
-        
-        if (not inExpr) :
+
+        self._arguments = PascalArguments(self._block)
+        self._arguments.parse(tokens)
+
+        if (not self._inExpr) :
             tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
 
         logger.debug('Ended function call %s', self._identifier)
-
-    def __str__(self):
-        result += self._identifier
-        for item in self._parameters:
-            result += str(item)
-        return result
 
     @property
     def kind(self):
@@ -49,6 +46,25 @@ class PascalFunctionCall(object):
     def identifier(self):
         return self._identifier
 
-    @property
-    def parameters(self):
-        return self._parameters
+    def to_code(self, indentation = 0):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+
+        # Need to convert arguments
+        # -> parse arguments into an arguments object?
+        # not always comma seperated (obj-c)
+
+        my_data = dict()
+
+        my_data['pas_identifier'] = self._identifier 
+        my_data['c_lib_identifier'] = converter_helper.lower_name(self._identifier)
+        
+        self._arguments.to_code()
+
+
+        for (name, module) in converter_helper.converters.items():
+            my_data[name + '_args'] = self._arguments.code[name]
+            self._code[name] = ((indentation * '    ') + module.function_call_template % my_data) + (';' if not self._inExpr else '')

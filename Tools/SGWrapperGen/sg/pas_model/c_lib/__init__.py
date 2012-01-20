@@ -10,6 +10,8 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 import sys
 import os
 
+
+
 _val_switcher = {
     'True': 'true',
     'False': 'false'
@@ -297,31 +299,7 @@ _operator_conversion_table = {
     'or' : '||'
     }                     
 
-_templates = dict()
-
-#------------------
-
-def _load_templates():
-    import glob
-    import os
-    path = 'c_lib/'
-    for path in glob.glob(path + '*.c'):
-        file = open(path, "r")
-        template = ''
-        for line in file.readlines():
-            template += line
-        print os.path.basename(path)
-        _templates[os.path.basename(path)] = template
-        file.close()
-
-def get_template(name):
-    if name is None: return None
-
-    if (name in _templates):
-        return _templates[name]
-    else:
-        logger.errer("Error getting template: " + name)
-        assert False 
+#-----------------------------------------------------------------------
 
 def _add_to_dict(into_dict, details_dict, ident_tupple):
     #find all the part
@@ -351,9 +329,19 @@ def _build_type_dictionary(type_dictionary_creation_data, dicts):
 
 #------------------
 
-def main():
-    _load_templates()
-    _build_type_dictionary(_type_dictionary_creation_data, _type_dicts)   
+
+from converter_helper import load_templates, get_template
+
+_build_type_dictionary(_type_dictionary_creation_data, _type_dicts)   
 
 
-main()
+load_templates("c_lib/", ".c")
+# templates must be added to this list otherwise they will be unavailable
+variable_decl_template      = get_template("variable_declaration.c")
+variable_template           = get_template("variable.c")
+expression_template         = get_template("expression.c")
+string_template             = get_template("string.c")
+function_call_template      = get_template("function_call.c")
+assignment_template         = get_template("assignment_statement.c")
+argument_template           = get_template("arguments.c")
+identifier_template         = get_template("identifier.c")

@@ -12,6 +12,11 @@ class PascalProgram(object):
     def __init__(self):
         self._name = None
         self._block = None  # program block
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def name(self):
@@ -33,6 +38,18 @@ class PascalProgram(object):
         # Read block
         self._block = PascalBlock(None)
         self._block.parse(tokens)
+
+    def to_code(self):
+        import converter_helper
+        
+        for (key, part) in self._block.items():
+            part.to_code()
+
+        for (name, module) in converter_helper.converters.items():
+            parts = ""
+            for (key, part) in self._block.items():
+                parts += part.code[name]
+            self._code[name] = module.block_template% { "variables": variables }
       
 
     

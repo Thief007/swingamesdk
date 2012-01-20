@@ -3,9 +3,8 @@ import sys
 import os
 import glob
 
-from pascal_parser.pas_file import PascalFile
+from pas_file import PascalFile
 from pascal_parser.pas_parser_utils import logger
-from c_lib.pas_to_c import convert_pas_to_c
 
 from pas_to_stdout import print_pas_file
 
@@ -41,6 +40,13 @@ def write_file(file_data, path):
     file.close()
 
 if __name__ == '__main__':
+    import c_lib
+    import converter_helper
+    from c_lib.pas_to_c import convert_pas_to_c
+    
+    converter_helper.converters["c_lib"] = c_lib
+
+
     logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     stream=sys.stdout)
@@ -49,12 +55,12 @@ if __name__ == '__main__':
         _files.append(PascalFile.create_pas_file(os.path.basename(file), file))
 
     for file in _files:
-        print '---------- Pascal ----------'
-        print_pas_file(file)
+        #print '---------- Pascal ----------'
+        #print_pas_file(file)
         print '----------    C   ----------'
         c_file = convert_pas_to_c(file)
-        for line in c_file.lines:
-            print line
-        write_file(c_file, 'test\\C\\')
+        #for line in c_file.lines:
+        #    print line
+        #write_file(c_file, 'test\\C\\')
 
     

@@ -97,7 +97,7 @@ def _parse_assignment_statement(tokens, block):
 def _parse_procedure_call_statement(tokens, block):
     from pas_function_call import PascalFunctionCall
 
-    result = PascalFunctionCall(block)
+    result = PascalFunctionCall(block, inExpr = False)
     result.parse(tokens)
     return result
 

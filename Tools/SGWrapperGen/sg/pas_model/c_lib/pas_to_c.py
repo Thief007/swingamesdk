@@ -1,7 +1,5 @@
 from pascal_parser.pas_parser_utils import logger
-from pas_type_switcher import convert_type, convert_operator
-from converted_file import ConvertedFile
-from pas_name_converter import lower_name, upper_name
+import converter_helper
 import string
 import c_lib
 
@@ -12,6 +10,7 @@ def convert_pas_to_c(file):
     """
     returns a list of strings in the c program
     """
+    converter_helper.load_templates('c_lib/', '.c')
     c_program = list()
     print file
     if file._contains_kind == 'program':
@@ -19,7 +18,7 @@ def convert_pas_to_c(file):
         c_program.append('#include <stdio.h>')
         c_program.append('#include "swingame.h"')
         c_program.extend(_convert_program(file.contents))
-    return ConvertedFile(file._filename, c_program)
+    return list()
 
 def _convert_program(program):  
     program_contents = list()
@@ -31,7 +30,7 @@ def _convert_block(block, isFunction=False):
 
     for part in block.contents:
         if part.kind == 'variable_declaration':
-            contents.extend(_convert_variable_list(part.variables))
+            contents.extend(_convert_variable_declaration(part))
         elif part.kind == 'function':
             contents.extend(_convert_function(part))
         elif part.kind == 'uses_clause':
@@ -46,43 +45,40 @@ def _convert_block(block, isFunction=False):
 
     return contents
 
-def _convert_variable_list(variables, areParams=False):
-    result = list()
-    count = len(variables)
-    currentVariable = ''
-    for identifier in variables:
-        c_type = convert_type(c_lib._type_switcher, variables[identifier].type, variables[identifier].modifier)
-        var_declaration = c_lib.get_template('variable_declaration.c')
-        var_declaration = var_declaration % { "type": c_type, "uname_lower" : lower_name(identifier) }
-        result.append(var_declaration)
-    return result
+def _convert_variable_declaration(variables, areParams=False):
+    variables.to_code()
+    print "*****************************************************" 
+    print "**** VAR DECLARATION"
+    print variables.code['c_lib']
+    print "*****************************************************" 
+    return list()
 
 def _convert_function(function):
     result = list()
 
-    if (lower_name(function.name) == 'main'): 
+    if (converter_helper.lower_name(function.name) == 'main'): 
         return_type = 'int'
     else:
-        return_type = convert_type(c_lib._type_switcher, function.return_type)
+        return_type = converter_helper.convert_type(c_lib._type_switcher, function.return_type)
 
-    parameter_declaration = ''
-    parameters = _convert_variable_list(function.parameters, areParams=True)
-    count = len(function.parameters)
-    parameter_declaration += '('
-    for parameter in parameters:
-        parameter_declaration += parameter
-        count -= 1
-        if (count > 1 ):
-            parameter_declaration += ','
+    #parameter_declaration = ''
+    #parameters = _convert_variable_list(function.parameters, areParams=True)
+    #count = len(function.parameters)
+    #parameter_declaration += '('
+    #for parameter in parameters:
+    #    parameter_declaration += parameter
+    #    count -= 1
+    #    if (count > 1 ):
+    #        parameter_declaration += ','
 
-    parameter_declaration += ')'
-    result.append(return_type + ' ' + lower_name(function.name) + parameter_declaration)
+    #parameter_declaration += ')'
+    #result.append(return_type + ' ' + converter_helper.lower_name(function.name) + parameter_declaration)
 
     result.append('{')
-    if (lower_name(function.name) == 'main'):
+    if (converter_helper.lower_name(function.name) == 'main'):
         result.append('load_default_colors();')
     if (function.isFunction) :
-        result.append(convert_type(c_lib._type_switcher, function.return_type) + 'result;')
+        result.append(converter_helper.convert_type(c_lib._type_switcher, function.return_type) + 'result;')
     result.extend(_convert_block(function.block, function.isFunction))  # return result will be added if isFunction
     result.append('}')
     return result
@@ -134,7 +130,11 @@ def _convert_repeat_statement(repeat_statement):
 
 
 def _convert_assignment_statement(statement):
-     return lower_name(statement.operand.name) + " " + convert_operator(c_lib._operator_conversion_table, statement.operator) + " " + _expression_to_str(statement.expression) + ';'
+    statement.to_code()
+    print "*****************************************************" 
+    print "**** ASSIGNMENT STATEMENT"
+    print statement.code['c_lib']
+    print "*****************************************************" 
 
 def _convert_if_statement(if_statement):
     """
@@ -172,7 +172,7 @@ def _expression_to_str(expression):
         elif item.kind == 'string':
             result += '"' + item.value + '"'
         elif item.kind == 'operator':
-            result += ' ' + convert_operator(c_lib._operator_conversion_table, item) + ' '
+            result += ' ' + converter_helper.convert_operator(c_lib._operator_conversion_table, item) + ' '
         else:
             result += item.value
     return result
@@ -183,28 +183,33 @@ def _convert_procedure_call_statement(statement):
 def _variable_to_str(var):
     from pascal_parser.types.pas_type_cache import find_or_add_type
     if var.type is find_or_add_type('enumeration'):     # if the type is an enumeration type...
-        return upper_name(var.name)
+        return converter_helper.upper_name(var.name)
     elif var.type is find_or_add_type('color'):
         return var.name # assuming input is PascalCase
     else:
-        return lower_name(var.name)
+        return converter_helper.lower_name(var.name)
 
 def _function_call_to_str(function_call, inExpr = False):
     """
     returns a string that describes a function call in C
     """
-    count = len(function_call.parameters)
-    result = lower_name(function_call.identifier) + '('
-    for parameter in function_call.parameters:
-        result += _expression_to_str(parameter)
-        count -= 1
-        if (count >= 1 ):
-            result += ','
-    result += ')'
+    function_call.to_code()
+    print '********************************************************'
+    print ' C_LIB FUNCTION CALL'
+    print function_call.code['c_lib']
+    print '********************************************************'
+    #count = len(function_call.parameters)
+    #result = converter_helper.lower_name(function_call.identifier) + '('
+    #for parameter in function_call.parameters:
+    #    result += _expression_to_str(parameter)
+    #    count -= 1
+    #    if (count >= 1 ):
+    #        result += ','
+    #result += ')'
 
-    if (not inExpr):
-        result += ';'
+    #if (not inExpr):
+    #    result += ';'
 
-    return result
+    #return result
 
 
