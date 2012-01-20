@@ -16,8 +16,11 @@ unit sgDriverGraphics;
 //		- Pascal SmallInt is equivalent to Sint16
 //
 //=============================================================================
+
+{$I driver.inc}
+
 interface
-	uses sgTypes, sgDriverGraphicsSDL;
+	uses sgTypes;
 	
 	type
 	  GetPixel32Procedure                   = function (bmp: Bitmap; x, y: Longint) : Color;
@@ -90,9 +93,18 @@ interface
 		GraphicsDriver : GraphicsDriverRecord;
 		
 implementation
+uses 
+  sgDriver, {$IFDEF SWINGAME_SDL13}sgDriverGraphicsSDL13{$ELSE}sgDriverGraphicsSDL{$ENDIF};
+    
 	procedure LoadDefaultGraphicsDriver();
 	begin
-		LoadSDLGraphicsDriver();
+	  {$IFDEF SWINGAME_SDL13}
+		  WriteLn('SDL 1.3 Defined');
+		  LoadSDL13GraphicsDriver();
+		{$ELSE}
+		  WriteLn('SDL 1.3 Not Defined');
+		  LoadSDLGraphicsDriver();
+		{$ENDIF}
 	end;
 	
 	function DefaultGetPixel32Procedure (bmp: Bitmap; x, y: Longint) : Color;

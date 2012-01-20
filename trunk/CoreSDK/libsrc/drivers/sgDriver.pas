@@ -16,7 +16,11 @@ unit sgDriver;
 //		- Pascal SmallInt is equivalent to Sint16
 //
 //=============================================================================
+
+{$I driver.inc}
+
 interface	
+
   type
     GetErrorProcedure = function () : PChar;
     QuitProcedure = procedure();
@@ -28,22 +32,25 @@ interface
   	  Init                    : InitProcedure
 
 	  end;  
-	
-	
+
 	var
 		Driver : DriverRecord;
-
 		
 implementation
-  	uses sgTypes, sgDriverSDL, sgDriverTimer;
+  	uses sgTypes, sgDriverTimer, {$IFDEF SWINGAME_SDL13}sgDriverSDL13{$ELSE}sgDriverSDL{$ENDIF};
 
 	procedure LoadDefaultDriver();
 	begin
-		LoadSDLDriver();
+	  {$IFDEF SWINGAME_SDL13}
+		  LoadSDL13Driver();
+		{$ELSE}
+		  LoadSDLDriver();
+		{$ENDIF}
 	end;
 
 	procedure DefaultInitProcedure();
 	begin
+	  WriteLn('Default Init');
 	 LoadDefaultDriver();
 	 Driver.Init();
 	end;
@@ -58,7 +65,7 @@ implementation
 	begin
 	 LoadDefaultDriver();
 	 Driver.Quit();
-	end;
+	end;  
 
 initialization
 	begin
