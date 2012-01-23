@@ -17,6 +17,7 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 source "${APP_PATH}/inc/base_template_dirs.sh"
 PYTHON_SCRIPT='create_pas_lib.py'
+PYTHON_UNIT_SCRIPT='lang_pas_unit.py'
 
 
 #
@@ -51,7 +52,10 @@ source ${APP_PATH}/inc/dist_dir.sh
 CreatePasCode()
 {
     cd ${PYTHON_SCRIPT_DIR}
+    echo "  Creating SwinGame Library Code"
     python ${PYTHON_SCRIPT}
+    echo "  Creating SwinGame Unit Code"
+    python ${PYTHON_UNIT_SCRIPT}
 }
 
 #

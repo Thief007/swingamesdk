@@ -1,12 +1,12 @@
 program GameMain;
-uses
-  sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
+uses SwinGame;
 
 procedure Main();
 begin
   OpenAudio();
   
   OpenGraphicsWindow('Hello World', 800, 600);
+  LoadDefaultColors();
   
   repeat // The game loop...
     ProcessEvents();

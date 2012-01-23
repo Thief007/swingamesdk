@@ -32,7 +32,7 @@ class SGPasTokeniser(object):
         else:
             logger.debug('Tokenising %s', filename)
             self._filename = filename
-            print filename
+            # print filename
             f = open(filename)
             self.pas_lines = f.readlines()
             f.close()

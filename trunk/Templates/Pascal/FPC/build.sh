@@ -120,7 +120,7 @@ doBasicMacCompile()
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" -k"-Wl-rpath,@loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > "${LOG_FILE}"
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > "${LOG_FILE}"
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
@@ -135,7 +135,7 @@ doMacCompile()
     
     FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" -k"-Wl-rpath,@loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
     
     if [ $? != 0 ]; then DoExitCompile; fi
 }
