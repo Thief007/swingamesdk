@@ -33,6 +33,11 @@ def write_method_code(method, other):
     other['writer'].writeln(method.alias(other['lang_key']).code)
     return other
 
+def write_method_signature(method, other):
+    other['writer'].writeln(method.alias(other['lang_key']).signature)
+    return other
+
+
 def std_type_visitor(the_dict, the_type, modifier = None, dict_name = '_type_switcher'):
     '''
     switch types for the SwinGame library.

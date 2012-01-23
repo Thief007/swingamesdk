@@ -4377,8 +4377,6 @@ begin
     
     CallFreeNotifier(pnl);
     
-    
-    
     FreeNamedIndexCollection(pnl^.regionIds);
     Dispose(pnl);
   end;

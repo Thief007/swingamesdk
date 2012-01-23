@@ -817,18 +817,17 @@ interface
       /// @class GUIList
       /// @pointer_wrapper
       /// @field pointer: pointer
-    
       GUIList = ^GUIListData;
-    
+
       /// Each list item has text and an image
       ///
-
       /// @struct GUIListItem
       GUIListItem = packed record
         text:     String;
         image:    BitmapCell;
         parent:   GUIList;
       end;
+      
       /// @struct GUIListData
       /// @via_pointer
       GUIListData = packed record
