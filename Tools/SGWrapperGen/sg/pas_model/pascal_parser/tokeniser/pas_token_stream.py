@@ -15,8 +15,9 @@ class SGTokenStream(object):
         self._tokeniser.tokenise(filename)
         self._current_file = filename
         
-        # Keep track of the lookahead tokens
+        # Keep track of the lookahead tokens and comments
         self._lookahead_toks = []
+        self._lookbehind_comments = []  # stores the comments encountered since last 'get_comments()' call
     
     def next_token(self):
         current_token = None
@@ -27,9 +28,23 @@ class SGTokenStream(object):
             else:
                 current_token = self._tokeniser.next_token()
             if current_token._kind == TokenKind.Comment:
-                logger.debug('TokenStream   : Skipping comment: %s', current_token._value)
+                self._lookbehind_comments.append(current_token)
+                logger.debug('TokenStream   : Storing comment: %s', current_token._value)
         return current_token
-    
+
+    def get_comments(self):
+        """
+        returns a list of comments as strings that have been encountered since the last time
+        get_comments was called. 
+        """
+        result = list()
+        for tok in self._lookbehind_comments:
+            result.append(tok.value)
+
+        # clear lookbehind tokens
+        self._lookbehind_comments = []  
+        return result
+
     def lookahead(self,count=1):
         """
         lookahead generates a list of Tokens that has count number of members
@@ -39,6 +54,8 @@ class SGTokenStream(object):
         while len(self._lookahead_toks) < count:
             current_token = self._tokeniser.next_token()
             while current_token._kind == TokenKind.Comment:
+                self._lookbehind_comments.append(current_token)
+                logger.debug('TokenStream   : Storing comment: %s', current_token._value)
                 current_token = self._tokeniser.next_token()
             self._lookahead_toks.append(current_token)
         return self._lookahead_toks

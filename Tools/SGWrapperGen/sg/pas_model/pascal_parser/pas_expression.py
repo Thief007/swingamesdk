@@ -13,10 +13,11 @@ class PascalExpression(object):
 
     # stores operators in one queue, and operands in another
     
-    def __init__(self, owner_block):
+    def __init__(self, owner_block, innerExpr = False):
         self._contents = list()
         self._block = owner_block
         self._code = dict()
+        self._innerExpr = innerExpr
 
     @property
     def code(self):
@@ -26,17 +27,17 @@ class PascalExpression(object):
     def kind(self):
         return 'expression'
 
-    def parse(self, tokens, innerExpr = False):
+    def parse(self, tokens):
         """
         this method parses the expression
         """
         from tokeniser.pas_token_kind import TokenKind
-        logger.debug('Parsing %s expression' % ('inner' if innerExpr else ''))
+        logger.debug('Parsing %s expression' % ('inner' if self._innerExpr else ''))
         newContent = None
         while (True):
             # expression over?
             if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do'):
-                if innerExpr:
+                if self._innerExpr:
                     logger.error('Inner expression ended with ; or , : ', tokens.next_token().line_details)
                     assert false
                 tokens.next_token() # consume the delimiter
@@ -44,7 +45,7 @@ class PascalExpression(object):
                 break
             # Inner expression ended
             elif tokens.match_lookahead(TokenKind.Symbol, ')'):
-                if innerExpr:
+                if self._innerExpr:
                     tokens.match_token(TokenKind.Symbol, ')') # consume the delimiter
                     logger.debug('Inner expression ended')
 
@@ -74,8 +75,8 @@ class PascalExpression(object):
 
             elif tokens.match_lookahead(TokenKind.Symbol, '('):
                 tokens.next_token() # consume the delimiter
-                newContent = PascalExpression(self._block)
-                newContent.parse(tokens, innerExpr = True)
+                newContent = PascalExpression(self._block, innerExpr = True)
+                newContent.parse(tokens)
             else:
                 logger.error('Unknown expression token... %s' % str(tokens.next_token().value))
                 assert False
@@ -104,9 +105,14 @@ class PascalExpression(object):
 
         for (name, module) in converter_helper.converters.items():
             expression = ""
+
             for part in self._contents:
-                if part.kind is 'variable':
+                if part.kind == 'variable':
                     expression += part.code[name + '_identifier']   # variable[name] returns variable declaration
                 else:
                     expression += part.code[name]
-            self._code[name] = module.expression_template % { "expression": expression }
+            
+            if (self._innerExpr):
+                self._code[name] = module.inner_expression_template % { "expression": expression }
+            else:
+                self._code[name] = module.expression_template % { "expression": expression }

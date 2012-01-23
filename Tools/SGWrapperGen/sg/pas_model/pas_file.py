@@ -22,7 +22,7 @@ class PascalFile(object):
         return self._contents
 
     @property
-    def name(self):
+    def filename(self):
         return self._filename
 
     @staticmethod

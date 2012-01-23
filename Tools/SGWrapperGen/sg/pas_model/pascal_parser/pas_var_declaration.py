@@ -32,6 +32,7 @@ class PascalVarDeclaration(object):
 
     def parse(self, tokens):
         from types.pas_type_cache import find_or_add_type
+        from types.pas_type import *
         from pas_parser_utils import _parse_identifier_list, reservedWords
         from pas_var import PascalVariable
 
@@ -47,8 +48,7 @@ class PascalVarDeclaration(object):
 
             idList = _parse_identifier_list(tokens)
             tokens.match_token(TokenKind.Symbol, ':')
-            typeName = tokens.match_token(TokenKind.Identifier).value
-            type = find_or_add_type(typeName)
+            type = PascalType.create_type(tokens)
 
             if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
                 tokens.match_token(TokenKind.Symbol, ';')
@@ -65,7 +65,7 @@ class PascalVarDeclaration(object):
                 logger.debug("Finished parsing variable declaration")
                 break
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -73,7 +73,7 @@ class PascalVarDeclaration(object):
         import converter_helper
 
         for (key, variable) in self._vars.items():
-            variable.to_code(indentation)
+            variable.to_code()
 
         for (name, module) in converter_helper.converters.items():
             variables = ""

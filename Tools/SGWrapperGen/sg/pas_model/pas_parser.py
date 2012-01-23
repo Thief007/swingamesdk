@@ -5,8 +5,7 @@ import glob
 
 from pas_file import PascalFile
 from pascal_parser.pas_parser_utils import logger
-
-from pas_to_stdout import print_pas_file
+from pas_converter import run_convert
 
 _files = []
 
@@ -20,31 +19,36 @@ def change_file_extension(fileName, new_extension):
     return (base + new_extension)
 
 def write_file(file_data, path):
-    newPath = change_file_extension(path + file_data.filename, '.c')
-    file = open(newPath, "w")
     tabs = 0
-    for line in file_data.lines:
-        if ('}' in line):
-            tabs -= 1
+    for (name, module) in converter_helper.converters.items():
+        newPath = 'test/' + name + '/'
 
-        string_to_write = ''
-        for count in range(tabs):
-            string_to_write += '\t'
-        string_to_write += line + '\n'
-        file.write(string_to_write)
+        if not os.path.exists(newPath):
+            os.makedirs(newPath)
 
-        if ('{' in line):
-            tabs += 1
+        file = open(change_file_extension(newPath +  file_data.filename, module.extension), "w")
+        for line in file_data.code[name].split('\n'):
+            if ('}' in line):
+                tabs -= 1
 
+            string_to_write = ''
+            for count in range(tabs):
+                string_to_write += '\t'
+            string_to_write += line + '\n'
+            file.write(string_to_write)
+
+            if ('{' in line):
+                tabs += 1
 
     file.close()
 
 if __name__ == '__main__':
     import c_lib
+    import pas_lib
     import converter_helper
-    from c_lib.pas_to_c import convert_pas_to_c
     
     converter_helper.converters["c_lib"] = c_lib
+    converter_helper.converters["pas_lib"] = pas_lib
 
 
     logging.basicConfig(level=logging.DEBUG,
@@ -58,7 +62,8 @@ if __name__ == '__main__':
         #print '---------- Pascal ----------'
         #print_pas_file(file)
         print '----------    C   ----------'
-        c_file = convert_pas_to_c(file)
+        c_file = run_convert(file)
+        write_file(c_file, 'test\\C\\')
         #for line in c_file.lines:
         #    print line
         #write_file(c_file, 'test\\C\\')

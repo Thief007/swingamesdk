@@ -41,15 +41,14 @@ class PascalProgram(object):
 
     def to_code(self):
         import converter_helper
-        
-        for (key, part) in self._block.items():
-            part.to_code()
+
+        self._block.to_code()
 
         for (name, module) in converter_helper.converters.items():
-            parts = ""
-            for (key, part) in self._block.items():
-                parts += part.code[name]
-            self._code[name] = module.block_template% { "variables": variables }
+            my_data = dict()
+            my_data[name + '_name'] = self._name
+            my_data[name + '_block'] = self._block.code[name]
+            self._code[name] = module.program_template % my_data
       
 
     

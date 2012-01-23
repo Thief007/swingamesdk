@@ -332,6 +332,8 @@ def _build_type_dictionary(type_dictionary_creation_data, dicts):
 
 from converter_helper import load_templates, get_template
 
+extension = '.c'
+
 _build_type_dictionary(_type_dictionary_creation_data, _type_dicts)   
 
 
@@ -351,3 +353,7 @@ parameter_template              = get_template("parameters.c")
 if_statement_template           = get_template("if.c")
 block_template                  = get_template("block.c")
 function_declaration_template   = get_template("function_declaration.c")
+procedure_declaration_template  = get_template("procedure_declaration.c")
+program_template                = get_template("program.c")
+inner_expression_template       = get_template("inner_expression.c")
+comment_template                = get_template("comment.c")

@@ -52,9 +52,9 @@ class PascalWhileStatement(object):
         
         self._expression.to_code()
         if (self._statement.kind == 'compound statement'):
-            self._statement.to_code(indentation)
+            self._statement.to_code()
         else:
-            self._statement.to_code(indentation+1)
+            self._statement.to_code()
 
         for (name, module) in converter_helper.converters.items():
             self._code[name] =  (indentation * '    ') + module.while_statement_template % {'expression' : self._expression.code[name], 'statement' : self._statement.code[name] }

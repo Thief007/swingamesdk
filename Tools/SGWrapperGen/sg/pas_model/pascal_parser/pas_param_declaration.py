@@ -84,6 +84,7 @@ class PascalParameterDeclaration(object):
         # seperators need to be set for every new package
         #   these could go in the __init__ for each library?
         my_data['c_lib_seperator'] = ','
+        my_data['pas_lib_seperator'] = ';'
 
         for (name, module) in converter_helper.converters.items():
             parameters = ""

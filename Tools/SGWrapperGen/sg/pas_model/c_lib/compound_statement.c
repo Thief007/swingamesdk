@@ -1,2 +1,1 @@
-{
-%(statements)s}
+%(statements)s
