@@ -1,2 +1,3 @@
 while ( %(expression)s )
-%(statement)s
+{
+%(statement)s}

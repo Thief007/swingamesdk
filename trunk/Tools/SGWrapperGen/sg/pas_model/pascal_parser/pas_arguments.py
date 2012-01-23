@@ -54,6 +54,7 @@ class PascalArguments(object):
         my_data = dict()
 
         my_data['c_lib_seperator'] = ','
+        my_data['pas_lib_seperator'] = ','
 
         for expression in self._contents:
             expression.to_code();

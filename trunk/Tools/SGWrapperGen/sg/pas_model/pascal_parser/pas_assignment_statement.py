@@ -47,7 +47,7 @@ class AssignmentStatement(object):
     def block(self):
         return self._block
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -55,8 +55,8 @@ class AssignmentStatement(object):
         import converter_helper
         my_data = dict()
 
-        my_data['operand'] = self.operand.name
-        my_data['operand_lower'] = converter_helper.lower_name(self.operand.name)
+        my_data['pas_lib_operand'] = self.operand.name
+        my_data['c_lib_operand'] = converter_helper.lower_name(self.operand.name)
 
         self._operator.to_code()
         self._expression.to_code()
@@ -65,4 +65,4 @@ class AssignmentStatement(object):
             # operator / expression
             my_data[name + '_expression'] = self._expression.code[name]
             my_data[name + '_operator'] = self._operator.code[name]
-            self._code[name] =  (indentation * '    ') + module.assignment_template % my_data
+            self._code[name] = module.assignment_template % my_data

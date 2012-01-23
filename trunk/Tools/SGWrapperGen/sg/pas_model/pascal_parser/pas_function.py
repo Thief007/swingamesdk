@@ -23,6 +23,7 @@ class PascalFunction(object):
         self._return_type = None    #PascalType
         self._isFunction = False
         self._code = dict()
+        self._comments = list()
 
     @property
     def code(self):
@@ -68,6 +69,8 @@ class PascalFunction(object):
         self._result = None
         self._return_type = None
 
+        self._comments = tokens.get_comments()
+
         # function / procedure
         if (tokens.match_lookahead(TokenKind.Identifier, 'function')):
             tokens.match_token(TokenKind.Identifier, 'function')
@@ -96,7 +99,7 @@ class PascalFunction(object):
         tokens.match_token(TokenKind.Symbol, ';')
         self._block.parse(tokens)
         
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -106,7 +109,8 @@ class PascalFunction(object):
         my_data = dict()
 
         my_data['pas_lib_identifier'] = self._name 
-        my_data['pas_lib_type'] = self._return_type.name
+        if (self._isFunction):
+            my_data['pas_lib_type'] = self._return_type.name
         my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
 
         self._parameters.to_code()
@@ -114,7 +118,14 @@ class PascalFunction(object):
 
         for (name, module) in converter_helper.converters.items():
             # types need to be evaluated in the loop because they are module specific
-            my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._return_type)
+            comments = ''
+            for current_line in self._comments:
+                comments += module.comment_template % { "comment" : current_line}
+            my_data[name + '_comments'] = comments
             my_data[name + '_parameters'] = self._parameters.code[name]
             my_data[name + '_block'] = self._block.code[name]
-            self._code[name] = (indentation * '    ') + module.function_declaration_template % my_data
+            if (self._isFunction):
+                my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._return_type)
+                self._code[name] = module.function_declaration_template % my_data
+            else:
+                self._code[name] = module.procedure_declaration_template % my_data

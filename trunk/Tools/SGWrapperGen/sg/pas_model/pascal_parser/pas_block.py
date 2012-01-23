@@ -73,6 +73,7 @@ class PascalBlock(object):
                 assert False
             self._contents.append(current_part)
         # at this point we must be at a begin
+
         self._compound_statement = parse_statement(tokens, self)
 
     def get_variable(self, name):
@@ -89,7 +90,7 @@ class PascalBlock(object):
             assert False
         return result
 
-    def to_code(self, indentation = 0):
+    def to_code(self, exportStatements=True):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -97,8 +98,10 @@ class PascalBlock(object):
         import converter_helper
         
         for part in self._contents:
-            part.to_code(indentation)
-        self._compound_statement.to_code(indentation)
+            part.to_code()
+
+        if (self._compound_statement != None):
+            self._compound_statement.to_code()
 
         for (name, module) in converter_helper.converters.items():
             part_code = ""
@@ -106,6 +109,11 @@ class PascalBlock(object):
             for part in self._contents:
                 part_code += part.code[name]
             lang_data['declarations'] = part_code;
-            lang_data['statement'] = self._compound_statement.code[name]
+
+            if (self._compound_statement is None):
+                lang_data['statement'] = ''
+            else:
+                lang_data['statement'] = self._compound_statement.code[name]
+
             self._code[name] = module.block_template % lang_data
 

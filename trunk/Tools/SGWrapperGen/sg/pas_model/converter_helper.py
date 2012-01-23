@@ -101,21 +101,21 @@ def convert_type(the_dict, the_type, modifier = None, dict_name = '_type_switche
      - dict_name:   The name of the dictionary for error reporting
     '''
 
-    if the_type is None: return 'void'  # TODO: work out how to automate this... doesn't work currently
-
-    key = None
-    if (the_type != None):
+    if the_type == None: return 'void'  # TODO: work out how to automate this... doesn't work currently
+    if len(the_dict) > 0: 
         key = the_type.name.lower()
     
-    if modifier == 'result': modifier = 'return'        # C ism? What is this used for?
+        if modifier == 'result': modifier = 'return'        # C ism? What is this used for?
     
-    if key not in the_dict[modifier]:
-        logger.error('HELPER    : Error changing model type %s - %s', modifier, the_type)
-        logger.error('          : Add \'%s[%s]\': \'%s\': \'????\',', dict_name, modifier, the_type.name.lower())
+        if key not in the_dict[modifier]:
+            logger.error('HELPER    : Error changing model type %s - %s', modifier, the_type)
+            logger.error('          : Add \'%s[%s]\': \'%s\': \'????\',', dict_name, modifier, the_type.name.lower())
                 
-        the_dict[modifier][key] = "UNKNOWN"
+            the_dict[modifier][key] = "UNKNOWN"
         
-    return the_dict[modifier][key]
+        return the_dict[modifier][key]
+    else:
+        return the_type
 
 def convert_operator(the_dict, the_operator, dict_name = '_operator_conversion_table'):
     '''

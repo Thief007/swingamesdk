@@ -30,7 +30,7 @@ class PascalType(object):
                     low_idx = tokens.match_token(TokenKind.Number).value
                     tokens.match_token(TokenKind.Symbol, '.')
                     tokens.match_token(TokenKind.Symbol, '.')
-                    low_idx = tokens.match_token(TokenKind.Number).value
+                    high_idx = tokens.match_token(TokenKind.Number).value
                     dimensions.append((low_idx,high_idx))
                     
                     if tokens.match_lookahead(TokenKind.Symbol, ']', consume=True):
@@ -41,7 +41,7 @@ class PascalType(object):
             
             # of type...
             tokens.match_token(TokenKind.Identifier, 'of')
-            nested_type = create_type() #recursive call
+            nested_type = PascalType.create_type(tokens) #recursive call
             
             name = nested_type.name + ''.join(['[%s..%s]' % (low_idx, high_idx) for low_idx, high_idx in dimensions])
             was_new = not name in all_types()

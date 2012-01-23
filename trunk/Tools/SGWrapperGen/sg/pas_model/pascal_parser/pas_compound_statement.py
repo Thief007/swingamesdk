@@ -53,21 +53,27 @@ class PascalCompoundStatement(object):
 
         logger.debug("Finished parsing compound statement")
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
         '''
         import converter_helper
         
+
         for statement in self._statements:
-            statement.to_code(indentation + 1)  # everything within the statement is indented
+            statement.to_code()
 
         for (name, module) in converter_helper.converters.items():
             statements = ""
-            for statement in self._statements:
-                statements += statement.code[name]
-            self._code[name] = module.compound_statement_template % { "statements": statements }
+            # if the statement is the program's statement and it's in pascal convert it
+            # otherwise don't...
+            if (self._block.parent != None) or (self._block.parent == None and name == 'pas_lib') :
+                for statement in self._statements:
+                    statements += statement.code[name]
+                self._code[name] = module.compound_statement_template % { "statements": statements }
+            else:
+                self._code[name] = ''
 
 
 
