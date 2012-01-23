@@ -1,28 +1,29 @@
-program HowToMoveASprite;
-uses sgGraphics, sgText, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources, sgPhysics;
+program HowToDetectCollisionBetweenSprites;
+uses 
+    sgGraphics, sgText, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources, sgPhysics;
 
 procedure Main();
 var
-	ball1, ball2: Sprite;
+    ball1, ball2: Sprite;
 begin
     OpenGraphicsWindow('Detect Collision', 800, 600);
-	
-	LoadBitmapNamed('ball', 'ball_small.png');
-	
-	ball1 := CreateSprite(BitmapNamed('ball'));
+
+    LoadBitmapNamed('ball', 'ball_small.png');
+
+    ball1 := CreateSprite(BitmapNamed('ball'));
     ball2 := CreateSprite(BitmapNamed('ball'));
     
-	SpriteSetX(ball1, 400);
-	SpriteSetY(ball1, 40);
-	SpriteSetDx(ball1, 0);
-	SpriteSetDy(ball1, 0.1);
+    SpriteSetX(ball1, 400);
+    SpriteSetY(ball1, 100);
+    SpriteSetDx(ball1, 0);
+    SpriteSetDy(ball1, 0.1);
     
     SpriteSetX(ball2, 400);
-	SpriteSetY(ball2, 560);
-	SpriteSetDx(ball2, 0);
-	SpriteSetDy(ball2, -0.1);
-	
-	repeat
+    SpriteSetY(ball2, 500);
+    SpriteSetDx(ball2, 0);
+    SpriteSetDy(ball2, -0.1);
+
+    repeat
         ClearScreen(ColorWhite);
 
         if SpriteCollision(ball1, ball2) then
@@ -37,11 +38,11 @@ begin
         
         RefreshScreen();
         ProcessEvents();
-	until WindowCloseRequested();
+    until WindowCloseRequested();
 
-	ReleaseAllResources();  
+    ReleaseAllResources();  
 end;
 
 begin
-	Main();
+    Main();
 end.
