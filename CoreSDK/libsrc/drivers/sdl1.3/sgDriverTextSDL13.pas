@@ -184,7 +184,7 @@ implementation
     	
 		// Draw the text on top of that:
 		rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-		if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
+		if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
 		
 		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
 		SDL_UpperBlit(sText^.surface, @rect, dest^.surface, @SDLrc );
@@ -303,7 +303,7 @@ implementation
 
 	    // Draw the text on top of that:
 	    rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-	    if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
+	    if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
 		  
 		  SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
 	    SDL_UpperBlit(sText^.surface, @rect, dest^.surface, @SDLrc );
@@ -348,7 +348,7 @@ implementation
 	
 	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
 	begin
-	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), GraphicsDriver.ToGfxColor(theColor) );
+	  StringColor(dest^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );
 	end;
 	
 	procedure LoadSDL13TextDriver();

@@ -1,6 +1,6 @@
 unit sgDriverImagesSDL13;
 //=============================================================================
-// sgDriverGraphicsSDL.pas
+// sgDriverImagesSDL13.pas
 //=============================================================================
 //
 //
@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics, sgDriverGraphicsSDL13; // sdl;
+	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -95,7 +95,72 @@ implementation
       end;
     end;
   end;
-	
+  
+  function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
+  var
+    loadedImage: PSDL_Surface;
+    correctedTransColor: Color;
+  begin
+    result := nil; //start at nil to exit cleanly on error
+    
+    //Load the image
+    loadedImage := IMG_Load(PChar(filename));
+
+ 	  CheckAssigned('SDL1.2 ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage);
+
+    //
+    // Image loaded, so create SwinGame bitmap
+    //
+    new(result);
+    result^.surface := New(PSDL13Surface);
+
+    Writeln('Image is not nil: ', filename, ' ', HexStr(@loadedImage)); 
+    if not transparent then 
+    begin
+      // Only move to screen alpha if window is open...
+   //   if PSDL13Surface(screen^.surface)^.surface = nil then
+        PSDL13Surface(result^.surface)^.surface := loadedImage
+  //    else
+    //    PSDL13Surface(result^.surface)^.surface := SDL_DisplayFormatAlpha(loadedImage);
+    end
+    else PSDL13Surface(result^.surface)^.surface := SDL_DisplayFormat(loadedImage);
+      
+    Writeln('Surface Assigned: ', assigned(PSDL13Surface(result^.surface)^.surface));
+    
+    if not assigned(PSDL13Surface(result^.surface)^.surface) then
+    begin      
+      Writeln('Freeing Pointers');
+      SDL_FreeSurface(loadedImage);
+      dispose(PSDL13Surface(result^.surface));
+      dispose(result);
+      result := nil;
+      Writeln('Pointers Freed');
+      RaiseException('Error loading image. Surface is nil');
+    end;
+
+    result^.width     := PSDL13Surface(result^.surface)^.surface^.w;
+    result^.height    := PSDL13Surface(result^.surface)^.surface^.h;
+
+    //Determine pixel level collision data
+    if transparent then
+    begin
+      correctedTransColor := ColorFrom(result, transparentColor);
+      SDL_SetColorKey(PSDL13Surface(result^.surface)^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+      SetNonTransparentPixels(result, transparentColor);
+    end
+    else
+    begin
+      SetNonAlphaPixelsProcedure(result);
+    end;
+
+    // Free the loaded image if its not the result's surface
+    if loadedImage <> result^.surface then 
+      SDL_FreeSurface(loadedImage);
+    
+ //   PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, PSDL13Surface(result^.surface)^.surface);
+    
+	end; 
+	{
 	function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
   var
     loadedImage: PSDL_Surface;
@@ -148,19 +213,24 @@ implementation
     end;
 
     // Free the loaded image if its not the result's surface
-    if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
+    if loadedImage <> result^.surface then 
+      SDL_FreeSurface(loadedImage);
+    
+    
 	end;
-	
+}
 	procedure FreeSurfaceProcedure(bmp : Bitmap);
 	begin
 	  //Free the surface
     if Assigned(bmp^.surface) then
     begin
-      SDL_FreeSurface(bmp^.surface);
+      SDL_FreeSurface(PSDL_Surface(PSDL13Surface(screen^.surface)^.surface));
     end;
     
-    bmp^.surface := nil;
+    PSDL13Surface(screen^.surface)^.surface := nil;
 	end;
+	
+	
 	
 	procedure MakeOpaqueProcedure(bmp : Bitmap);
 	begin
@@ -229,7 +299,8 @@ implementation
   begin
    	CheckAssigned('SDL1.2 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap', dest);
     CheckAssigned('SDL1.2 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap Surface', dest^.surface);
-    SDL_FillRect(dest^.surface, @PSDL_Surface(dest^.surface)^.clip_rect, toColor);
+    //SDL_FillRect(dest^.surface, @PSDL_Surface(dest^.surface)^.clip_rect, toColor);
+       SDL_RenderClear(PSDL13Screen(_screen)^.renderer);
   end;
   
 	procedure OptimiseBitmapProcedure(surface : Bitmap); 
@@ -251,9 +322,7 @@ implementation
    	CheckAssigned('SDL1.2 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap Surface', src^.surface);   
     SDL_SaveBMP(src^.surface, PChar(filepath));
   end;
-  
-
-  
+    
 	procedure LoadSDL13ImagesDriver();
 	begin
 		ImagesDriver.InitBitmapColors                         := @InitBitmapColorsProcedure;
