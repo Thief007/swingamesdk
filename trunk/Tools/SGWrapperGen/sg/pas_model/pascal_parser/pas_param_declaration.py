@@ -32,8 +32,7 @@ class PascalParameterDeclaration(object):
 
     def parse(self, tokens, method):
         """Read in the parameters declared in a function, procedure or operator"""
-        from types.pas_type_cache import find_or_add_type
-        from pas_parser_utils import _parse_identifier_list, reservedWords
+        from pas_parser_utils import _parse_identifier_list, reservedWords, parse_type
         from pas_var import PascalVariable
         from types.pas_type import PascalType
 
@@ -59,7 +58,7 @@ class PascalParameterDeclaration(object):
             
             # colon seperates identifiers and type
             tokens.match_token(TokenKind.Symbol, ':')
-            the_type = PascalType.create_type(tokens)   # reads the type and returns PascalType
+            the_type = parse_type(tokens)   # reads the type and returns PascalType
             
             for parameter_name in parameters:
                 toAdd = PascalVariable(parameter_name, the_type, modifier)

@@ -5,6 +5,7 @@ from pascal_parser.pas_parser_utils import logger, parse_statement
 from pas_var_declaration import PascalVarDeclaration 
 from pas_function import PascalFunction
 from pas_uses_clause import PascalUsesClause
+from pas_type_declaration import PascalTypeDeclaration
 
 class PascalBlock(object):
     """
@@ -66,6 +67,9 @@ class PascalBlock(object):
             elif (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
                 current_part = PascalUsesClause()
                 current_part.parse(tokens)
+            elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
+                current_part = PascalTypeDeclaration(self)
+                current_part.parse(tokens)
             elif tokens.match_lookahead(TokenKind.Identifier, 'begin'):
                 break
             else:
@@ -77,14 +81,11 @@ class PascalBlock(object):
         self._compound_statement = parse_statement(tokens, self)
 
     def get_variable(self, name):
-        from pascal_parser import _global_variables
         result = None
         if (name in self._variables):
             result = self._variables[name]
         elif(self._parent != None and self._parent.get_variable(name) != None):
             result = self._parent.get_variable(name)
-        elif (name in _global_variables):
-            return _global_variables[name]
         else:
             logger.error("Unable to locate variable in scope: " + name)
             assert False

@@ -43,11 +43,10 @@ class PascalVariable(object):
         my_data = dict()
 
         my_data['pas_lib_identifier'] = self._name 
-        my_data['pas_lib_type'] = self._type.name
         my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
 
         for (name, module) in converter_helper.converters.items():
             # types need to be evaluated in the loop because they are module specific
             my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._type, self._modifier)
             self._code[name] = module.variable_template % my_data
-            self._code[name + '_identifier'] = my_data[name + '_identifier']        
+            self._code[name + "_identifier"] = my_data[name + "_identifier"]

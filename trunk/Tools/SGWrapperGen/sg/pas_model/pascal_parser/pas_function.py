@@ -64,8 +64,7 @@ class PascalFunction(object):
         return 'function'
 
     def parse(self, tokens):
-        from types.pas_type_cache import find_or_add_type
-
+        from pas_parser_utils import parse_type
         self._result = None
         self._return_type = None
 
@@ -89,8 +88,7 @@ class PascalFunction(object):
             # read return type
             # : type
             tokens.match_token(TokenKind.Symbol, ':')
-            typeName = tokens.match_token(TokenKind.Identifier).value
-            type = find_or_add_type(typeName)
+            type = parse_type(tokens)
             self._return_type = type
             self._block._variables['result'] = PascalVariable('result', type)
             self._result = self._block.get_variable('result')
