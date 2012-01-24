@@ -1,4 +1,4 @@
-program HowToMoveAnAnimation;
+program HowToMoveSpriteUsingAnimation;
 uses
     sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
 
@@ -14,46 +14,43 @@ end;
 
 procedure Main();
 var
-    walking: Sprite;
-    myFrog: Bitmap;
+    myFrog: Sprite;
 begin
     OpenAudio();
-    OpenGraphicsWindow('Walking Frog', 800, 600);
+    OpenGraphicsWindow('Moving Sprite Using Animation', 800, 600);
+	
+	LoadResourceBundle('dance_bundle.txt');
+	
+    myFrog := CreateSprite(BitmapNamed('FrogBmp'), AnimationScriptNamed('WalkingScript'));
+    SpriteStartAnimation(myFrog, 'StandFront');
 
-    myFrog := LoadBitmapNamed('walking', 'frog.png');
-    BitmapSetCellDetails(myFrog, 73, 105, 4, 4, 16);
-    LoadAnimationScriptNamed('WalkingScrpt', 'kermit.txt');
-
-    walking := CreateSprite(myFrog, AnimationScriptNamed('WalkingScrpt'));
-    SpriteStartAnimation(walking, 'StandFront');
-
-    SpriteSetX(walking, 382);
-    SpriteSetY(walking, 274);
+    SpriteSetX(myFrog, 382);
+    SpriteSetY(myFrog, 274);
 
     repeat
         ClearScreen(ColorWhite);
-        DrawSprite(walking);
+        DrawSprite(myFrog);
         RefreshScreen(60);
-        UpdateSprite(walking);
+        UpdateSprite(myFrog);
 
         ProcessEvents();
-        if SpriteAnimationHasEnded(walking) then
+        if SpriteAnimationHasEnded(myFrog) then
         begin
-            SpriteSetDX(walking, 0);
-            SpriteSetDY(walking, 0);
+            SpriteSetDX(myFrog, 0);
+            SpriteSetDY(myFrog, 0);
             
-            DoWalking(walking, VK_UP, 'WalkBack', 0, -0.25);
-            DoWalking(walking, VK_DOWN, 'WalkFront', 0, +0.25);
-            DoWalking(walking, VK_LEFT, 'WalkLeft', -0.25, 0);
-            DoWalking(walking, VK_RIGHT, 'WalkRight', +0.25, 0);
-
-            DoWalking(walking, VK_W, 'MoonWalkBack', 0, -0.25);
-            DoWalking(walking, VK_S, 'MoonWalkFront', 0, +0.25);
-            DoWalking(walking, VK_A, 'MoonWalkLeft', -0.25, 0);
-            DoWalking(walking, VK_D, 'MoonWalkRight', +0.25, 0);
-
-            DoWalking(walking, VK_SPACE, 'DancingFrog', 0, 0);
-        end;
+			DoWalking(myFrog, VK_UP, 	 'WalkBack',  0, -0.25);
+            DoWalking(myFrog, VK_DOWN,  'WalkFront', 0, +0.25);
+            DoWalking(myFrog, VK_LEFT,  'WalkLeft',  -0.25, 0);
+            DoWalking(myFrog, VK_RIGHT, 'WalkRight',  +0.25, 0);
+			
+			DoWalking(myFrog, VK_W, 	 'MoonWalkBack',  0, -0.25);
+            DoWalking(myFrog, VK_S,  'MoonWalkFront', 0, +0.25);
+            DoWalking(myFrog, VK_A,  'MoonWalkLeft',  -0.25, 0);
+            DoWalking(myFrog, VK_D, 'MoonWalkRight',  +0.25, 0);
+			
+			DoWalking(myFrog, VK_SPACE, 'dance', 0, 0);
+		end;
     until WindowCloseRequested();
 
     CloseAudio();
