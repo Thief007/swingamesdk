@@ -232,7 +232,7 @@ interface
   /// @lib
   ///
   /// @class Panel
-  /// @method Free
+  /// @dispose
   procedure FreePanel(var pnl: Panel);
   
   /// maps panel to name in Hash Table.
@@ -952,7 +952,7 @@ procedure ListSetFont(lst: GUITextbox; f: font);
 /// @lib ListItemTextFromRegion
 ///
 /// @class Region
-/// @getter ListItemText
+/// @method ListItemTextAtIndex
 function ListItemText(r: Region; idx: Longint): String; overload;
 
 /// Returns the text of the item at index idx
@@ -960,7 +960,7 @@ function ListItemText(r: Region; idx: Longint): String; overload;
 /// @lib
 ///
 /// @class GUIList
-/// @getter ItemText
+/// @method ItemTextAtIndex
 function ListItemText(lst: GUIList; idx: Longint): String; overload;
 
 /// Returns the text of the item at index idx
@@ -977,23 +977,30 @@ function ListItemText(pnl : Panel; id : String; idx: Longint): String; overload;
 
 /// Returns the text of the active item in the list of the region
 ///
+/// @lib
+///
+/// @class GUIList
+/// @getter ActiveItemText
+function ListActiveItemText(list: GUIList): String; overload;
+
+
+/// Returns the text of the active item in the list of the region
+///
 /// @lib ListActiveItemTextFromRegion
 ///
 /// @class Region
 /// @getter ListItemText
 function ListActiveItemText(r: Region): String; overload;
+
 /// Returns the active item text of the List in panel, pnl- with ID, ID
 ///
 /// @lib ListActiveItemTextFromPanelWithId
 /// @sn ListActiveItemFromPanel:%s WithId:%s
-///
-/// @class GUIList
-/// @getter activeItemText
 function ListActiveItemText(pnl: Panel; ID: String): String;
 
 /// Returns the active item text of the List in with ID
 ///
-/// @lib
+/// @lib ListWithIdActiveItemText
 function ListActiveItemText(ID: String): String;
                             
 /// Returns the number of items in the list of the region
@@ -1063,17 +1070,11 @@ procedure ListRemoveItem(lst: GUIList; idx: Longint);
 /// Removes item at index idx from the list
 ///
 /// @lib ListRemoveItemFromPanelWithId
-///
-/// @class GUIList
-/// @method RemoveItem
 procedure ListRemoveItem(pnl : Panel; id : String; idx: Longint);
 
 /// Removes item at index idx from the list
 ///
 /// @lib ListRemoveItemFromWithId
-///
-/// @class GUIList
-/// @method RemoveItem
 procedure ListRemoveItem(id : String; idx: Longint);
 
 /// Removes all items from the list.
@@ -1276,7 +1277,7 @@ procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
 /// @lib 
 ///
 /// @class GUIList
-/// @getter activeItem
+/// @method BitmapItemIndex
 function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 
 /// Returns the index of the item with the bitmap and cell.
@@ -1284,15 +1285,15 @@ function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 /// @lib ListBitmapCellIndex
 ///
 /// @class GUIList
-/// @getter activeItem
+/// @method CellItemIndex
 function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
 
-/// Adds an item to the list by text
+/// returns the id of a value in the list.
 ///
 /// @lib
 ///
-/// @class Region
-/// @getter activeItem
+/// @class GUIList
+/// @method IndexOfTextItem
 function ListTextIndex(lst: GUIList; value: String): Longint;
 
 /// Returns the starting point for the list
@@ -1471,7 +1472,7 @@ function LabelAlignment(r: Region): FontAlignment;
 ///
 /// @class Label
 /// @getter FontAlignment
-function LabelAlignment(tb: GUILabel): FontAlignment;
+function LabelAlignment(lbl: GUILabel): FontAlignment;
 
 /// Sets FontAlignment for label given region
 ///
@@ -1530,12 +1531,7 @@ procedure ShowOpenDialog(); overload;
 ///
 /// @lib ShowOpenDialogWithType
 procedure ShowOpenDialog(select: FileDialogSelectType); overload;
-/// Free panel
-///
-/// @lib 
-/// @class panel
-/// @method Free
-procedure DoFreePanel(var pnl: Panel);
+
 
 //Do not use
 //procedure AddPanelToGUI(p: Panel);
@@ -1549,6 +1545,8 @@ implementation
     sgShared, sgResources, sgTrace, sgImages, sgGraphics,
     sgGeometry, sgText, sgInput, sgAudio;
 //=============================================================================
+
+procedure DoFreePanel(var pnl: Panel); forward;
 
 type
   GUIController = record
@@ -2719,17 +2717,17 @@ begin
   result := l^.font;
 end;
 
+function LabelAlignment(lbl: GUILabel): FontAlignment;
+begin
+  result := AlignLeft;
+  if not assigned(lbl) then exit;
+  
+  result := lbl^.alignment;
+end;
+
 function LabelAlignment(r: Region): FontAlignment;
 begin
   result := LabelAlignment(LabelFromRegion(r));
-end;
-
-function LabelAlignment(tb: GUILabel): FontAlignment;
-begin
-  result := AlignLeft;
-  if not assigned(tb) then exit;
-  
-  result := tb^.alignment;
 end;
 
 procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
@@ -2906,12 +2904,12 @@ begin
   GUIC.activeTextBox := nil;
 end;
 
-procedure GUISetActiveTextbox(r: Region);
+procedure GUISetActiveTextbox(r: Region); overload;
 begin
   GUISetActiveTextbox(TextBoxFromRegion(r));
 end;
 
-procedure GUISetActiveTextbox(t: GUITextbox);
+procedure GUISetActiveTextbox(t: GUITextbox); overload;
 begin
   if not assigned(t) then exit;
   
@@ -2926,12 +2924,12 @@ begin
                             InsetRectangle(TextboxTextArea(t^.region), 1)); // Need to inset 1 further to match printing text lines
 end;
 
-function TextboxAlignment(r: Region): FontAlignment;
+function TextboxAlignment(r: Region): FontAlignment; overload;
 begin
   result := TextboxAlignment(TextBoxFromRegion(r));
 end;
 
-function TextboxAlignment(tb: GUITextbox): FontAlignment;
+function TextboxAlignment(tb: GUITextbox): FontAlignment; overload;
 begin
   result := AlignLeft;
   if not assigned(tb) then exit;
@@ -2954,6 +2952,11 @@ end;
 //---------------------------------------------------------------------------------------
 // List Code
 //---------------------------------------------------------------------------------------
+
+function ListActiveItemText(list: GUIList): String; overload;
+begin
+  result := ListItemText(list, ListActiveItemIndex(list));
+end;
 
 function ListActiveItemText(ID: String): String; overload;
 begin
@@ -3062,12 +3065,12 @@ begin
   result := ListItemCount(RegionWithID(pnl,id));
 end;
 
-procedure ListAddItem(lst: GUIList; text: String);
+procedure ListAddItem(lst: GUIList; text: String); overload;
 begin
   ListAddItem(lst, nil, text);
 end;
 
-procedure ListAddItem(lst: GUIList; img:Bitmap);
+procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
 begin
   ListAddItem(lst, img, '');
 end;
@@ -3255,12 +3258,12 @@ begin
   end;
 end;
 
-function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
+function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint; overload;
 begin
   result := ListBitmapIndex(lst, BitmapCellOf(img, -1));
 end;
 
-function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint; overload;
 var
   i: Longint;
 begin
@@ -3340,12 +3343,12 @@ begin
   ListSetStartAt(ListFromRegion(r), idx);
 end;
 
-function ListFontAlignment(r: Region): FontAlignment;
+function ListFontAlignment(r: Region): FontAlignment; overload;
 begin
   result := ListFontAlignment(ListFromRegion(r));
 end;
 
-function ListFontAlignment(lst: GUIList): FontAlignment;
+function ListFontAlignment(lst: GUIList): FontAlignment; overload;
 begin
   result := AlignLeft;
   if not assigned(lst) then exit;
@@ -3353,12 +3356,12 @@ begin
   result := lst^.alignment;
 end;
 
-procedure ListSetFontAlignment(r: Region; align: FontAlignment);
+procedure ListSetFontAlignment(r: Region; align: FontAlignment); overload;
 begin
   ListSetFontAlignment(ListFromRegion(r), align);
 end;
 
-procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
+procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment); overload;
 begin
   if not assigned(lst) then exit;
   
@@ -4375,7 +4378,38 @@ begin
       end;
     end;
     
+    for i:= Low(pnl^.labels) to High(pnl^.labels) do
+    begin
+      CallFreeNotifier(@pnl^.labels[i]);
+    end;
+    
+    for i:= Low(pnl^.checkBoxes) to High(pnl^.checkBoxes) do
+    begin
+      CallFreeNotifier(@pnl^.checkBoxes[i]);
+    end;
+    
+    for i:= Low(pnl^.radioGroups) to High(pnl^.radioGroups) do
+    begin
+      CallFreeNotifier(@pnl^.radioGroups[i]);
+    end;
+    
+    for i:= Low(pnl^.textBoxes) to High(pnl^.textBoxes) do
+    begin
+      CallFreeNotifier(@pnl^.textBoxes[i]);
+    end;
+
+    for i:= Low(pnl^.lists) to High(pnl^.lists) do
+    begin
+      CallFreeNotifier(@pnl^.lists[i]);
+    end;
+    
+    for i:= Low(pnl^.regions) to High(pnl^.regions) do
+    begin
+      CallFreeNotifier(@pnl^.regions[i]);
+    end;
+    
     CallFreeNotifier(pnl);
+    
     
     FreeNamedIndexCollection(pnl^.regionIds);
     Dispose(pnl);

@@ -109,13 +109,9 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
-            ('guilist',         'gui_list'),
-            ('guilabel',        'gui_label'),
-            ('guitextbox',      'gui_textbox'),
-            ('guicheckbox',     'gui_checkbox'),
-            ('panel',           'panel'),
-            ('region',          'region'),
-            ('guiradiogroup',   'gui_radio_group'),
+
+
+
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -129,6 +125,30 @@ _type_dictionary_creation_data = [
             'var-cpp':      '#2# &',
             'return':   '#2#',
         }
+    },
+    #recursive structs
+    {
+      'identifiers': [
+          ('guilist',         'guilist'),
+          ('guilabel',        'guilabel'),
+          ('guitextbox',      'guitextbox'),
+          ('guicheckbox',     'guicheckbox'),
+          ('guiradiogroup',   'guiradio_group'),
+          ('panel',           'panel'),
+          ('region',          'region'),
+      ],
+      '_type_switcher': {
+          None:       '#2# ',
+          'var':      '#2# *',
+          'var-cpp':      '#2# &',
+          'return':   '#2#',
+      },
+      '_adapter_type_switcher': {
+          None:       'void *',
+          'var':      '#2# *',
+          'var-cpp':      '#2# &',
+          'return':   '#2#',
+      }
     },
     # void type
     {
@@ -148,7 +168,7 @@ _type_dictionary_creation_data = [
             ('pointer',         'void *'),
             ('freenotifier',    'free_notifier '),
             ('animationframe',  'animation_frame'),
-            ('guieventcallback',  'gui_event_callback'),
+            ('guieventcallback',  'guievent_callback'),
             
         ],
         '_type_switcher': {
@@ -235,7 +255,7 @@ _type_dictionary_creation_data = [
             ('rectangle',           'rectangle'),
             ('circle',              'circle'),
             ('bitmapcell',          'bitmap_cell'),
-            ('guilistitem',         'gui_list_item'),
+            ('guilistitem',         'guilist_item'),
         ],
         '_type_switcher': {
             None:       '#2# ', #used for _byval methods
@@ -299,14 +319,14 @@ _type_dictionary_creation_data = [
             ('dirstatedata[0..n - 1][0..n - 1]',        'dir_state_data *'),
             ('linesegment[0..n - 1]',                   'line_segment *'),
             ('triangle[0..n - 1]',                      'triangle *'),
-            ('guilistitem[0..n - 1]',                   'gui_list_item *'),
-            ('guieventcallback[0..n - 1]',              'gui_event_callback *'),
+            ('guilistdata[0..n - 1]',                   'guilist_data *'),
+            ('guilistitem[0..n - 1]',                   'guilist_item *'),
+            ('guieventcallback[0..n - 1]',              'guievent_callback *'),
             ('regiondata[0..n - 1]',                    'region_data *'),
-            ('guitextboxdata[0..n - 1]',                'gui_textbox_data *'),
-            ('guicheckboxdata[0..n - 1]',               'gui_checkbox_data *'),
-            ('guilabeldata[0..n - 1]',                  'gui_label_data *'),
-            ('guilistdata[0..n - 1]',                   'gui_list_data *'),
-            ('guiradiogroupdata[0..n - 1]',             'gui_radio_group_data *'),
+            ('guitextboxdata[0..n - 1]',                'guitextbox_data *'),
+            ('guicheckboxdata[0..n - 1]',               'guicheckbox_data *'),
+            ('guilabeldata[0..n - 1]',                  'guilabel_data *'),
+            ('guiradiogroupdata[0..n - 1]',             'guiradio_group_data *'),
             ('region[0..n - 1]',                        'region **'),
           
             ('point2d[0..2]',                           'point2d %s[3]'),

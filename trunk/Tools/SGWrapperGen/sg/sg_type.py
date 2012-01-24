@@ -19,7 +19,7 @@ class SGType(SGMetaDataContainer):
         """Initialise the type, setting its name"""
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
-            'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
+            'pointer_wrapper','no_free_pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
             'struct', 'enum', 'array_wrapper', 'fixed_array_wrapper', 'type', 'via_pointer', 'sameas'])
         self.name = name
         self.set_tag('fields', [])
@@ -27,6 +27,7 @@ class SGType(SGMetaDataContainer):
         self.related_type = None
         self.nested_type = None
         self.pointer_wrapper = False
+        self.no_free_pointer_wrapper = False
         self.data_wrapper = False
         self.array_wrapper = False
         self.fixed_array_wrapper = False
@@ -97,6 +98,10 @@ class SGType(SGMetaDataContainer):
     pointer_wrapper = property(lambda self: self['pointer_wrapper'].other, 
         lambda self, value: self.set_tag('pointer_wrapper', value), 
         None, 'This type wraps a pointer')
+    
+    no_free_pointer_wrapper = property(lambda self: self['no_free_pointer_wrapper'].other, 
+        lambda self, value: self.set_tag('no_free_pointer_wrapper', value), 
+        None, 'This type wraps a pointer that has no free procedure')
     
     data_wrapper = property(lambda self: self['data_wrapper'].other, 
         lambda self, value: self.set_tag('data_wrapper', value), 

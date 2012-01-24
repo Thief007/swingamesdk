@@ -54,6 +54,7 @@ class SGPasParser():
             'returns': self.process_comment_attribute,
             'swingame': self.process_swingame_attribute,
             'pointer_wrapper': self.process_true_attribute,
+            'no_free_pointer_wrapper': self.process_true_attribute,
             'data_wrapper': self.process_true_attribute,
             'array_wrapper': self.process_true_attribute,
             'fixed_array_wrapper': self.process_true_attribute,

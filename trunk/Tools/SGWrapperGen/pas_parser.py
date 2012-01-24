@@ -114,7 +114,7 @@ def visitor(the_file, other):
         print '}'
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.WARNING,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         stream=sys.stdout)
     

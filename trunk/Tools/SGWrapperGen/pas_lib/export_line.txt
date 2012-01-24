@@ -1,1 +1,1 @@
-%(name)s name '%(name)s',
+%(name)s name '_%(name)s',

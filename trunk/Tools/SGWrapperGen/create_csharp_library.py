@@ -39,6 +39,7 @@ _property_class_field = ''
 _property_class_indexer = ''
 
 _pointer_wrapper_class_header = ''
+_no_free_pointer_wrapper_class_header = ''
 
 _type_switcher = {
     None : {    
@@ -200,14 +201,7 @@ _type_switcher = {
         'color': 'System.Drawing.Color %s',
         'longword': 'uint %s',
         'string': 'String %s',
-        'panel':      'Panel %s',
-        'region':     'Region %s',
-        'guiradiogroup': 'GUIRadioGroup %s',
-        'guilist':              'GUIList %s',
-        'guicheckbox':              'GUICheckbox %s',
-        'guitextbox':              'GUITextbox %s',
-        'guilabel':              'GUILabel %s',
-        
+
         #Data
         'point2d':          'Point2D %s',
         'vector':           'Vector %s',
@@ -231,6 +225,14 @@ _type_switcher = {
         'animationscript': 'AnimationScript %s',
         'animation':    'Animation %s',
         'character':    'Character %s',
+        'panel':      'Panel %s',
+        'region':     'Region %s',
+        'guiradiogroup': 'GUIRadioGroup %s',
+        'guilist':       'GUIList %s',
+        'guicheckbox':   'GUICheckbox %s',
+        'guitextbox':    'GUITextbox %s',
+        'guilabel':      'GUILabel %s',
+        
         
         #Enum
         'collisionside':        'CollisionSide %s',
@@ -287,6 +289,16 @@ _data_switcher = {
         'animation':            'Animation.Create(%s)',
         'animationscript':    'AnimationScript.Create(%s)',
         'character':            'Character.Create(%s)',
+        'panel':      'Panel.Create(%s)',
+        'region':     'Region.Create(%s)',
+        'guiradiogroup': 'GUIRadioGroup.Create(%s)',
+        'guilist':              'GUIList.Create(%s)',
+        'guicheckbox':              'GUICheckbox.Create( %s)',
+        'guitextbox':              'GUITextbox.Create( %s)',
+        'guilabel':              'GUILabel.Create( %s)',
+        
+        
+        
         
         'color': 'System.Drawing.Color.FromArgb(%s)',
         
@@ -297,6 +309,7 @@ _data_switcher = {
         'maptag':               '(MapTag)%s',
         'collisionside':        '(CollisionSide)%s',
         'fontalignment':        '(FontAlignment)%s',
+        'guielementkind':       '(GUIElementKind)%s',
         'fontstyle':            '(FontStyle)%s',
         'eventkind':            '(EventKind)%s'
     },
@@ -394,7 +407,7 @@ _adapter_type_switcher = {
         'resourcekind': 'int %s',
         'spritekind': 'SpriteKind %s',
         'shapekind': 'ShapeKind %s',
-        'guielementkind': 'GUIEelementKind %s',
+        'guielementkind': 'int %s',
         'filedialogselecttype': 'FileDialogSelectType %s',
         
         #Functions
@@ -464,7 +477,7 @@ _adapter_type_switcher = {
         'collisiontestkind':    'CollisionTestKind %s',        
         'spritekind':           'SpriteKind %s',
         'shapekind':            'ShapeKind %s',
-        'guielementkind':       'GUIElementKind %s',
+        'guielementkind':       'int %s',
         'filedialogselecttype': 'FileDialogSelectType %s',
         
         #Functions
@@ -702,7 +715,6 @@ _struct_type_switcher = {
     #Resource types
     'sprite': 'internal Sprite _%s',
     'character': 'internal Character _%s',
-    'guilist': 'internal GuiList _%s',
     
     #Pascal type: what it maps to
     'single': 'internal float _%s',
@@ -754,6 +766,7 @@ def load_data():
     global _module_method, _module_header, _module_footer
     global _class_header, _class_footer
     global _pointer_wrapper_class_header
+    global _no_free_pointer_wrapper_class_header
     global _array_property
     global _property_class, _property_class_property, _property_class_field
     global _property_class_indexer
@@ -793,6 +806,10 @@ def load_data():
     
     f = open('./cs_lib/pointer_wrapper_class_header.txt')
     _pointer_wrapper_class_header = f.read()
+    f.close()
+
+    f = open('./cs_lib/no_free_pointer_wrapper_class_header.cs')
+    _no_free_pointer_wrapper_class_header = f.read()
     f.close()
     
     f = open('./cs_lib/property_class.txt')
@@ -1307,7 +1324,10 @@ def write_sg_class(member, other):
     
     details = member.to_keyed_dict(doc_transform=doc_transform)
     
-    file_writer.writeln(_pointer_wrapper_class_header % details);
+    if member.is_no_free_pointer_wrapper:
+      file_writer.writeln(_no_free_pointer_wrapper_class_header % details);
+    else:
+      file_writer.writeln(_pointer_wrapper_class_header % details);
     
     my_other = other.copy()
     my_other['file writer'] = file_writer

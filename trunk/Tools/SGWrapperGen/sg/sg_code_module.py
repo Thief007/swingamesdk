@@ -24,7 +24,7 @@ class SGCodeModule(SGMetaDataContainer):
     def __init__(self, name):
         """Initialise the class, setting its name"""
         super(SGCodeModule,self).__init__(['static','module_kind',
-            'data_wrapper','pointer_wrapper', 'type_name', 'doc_types', 
+            'data_wrapper','pointer_wrapper', 'no_free_pointer_wrapper','type_name', 'doc_types', 
             'values', 'array_wrapper', 'fixed_array_wrapper', 'via_pointer'])
         self.name = name
         self.type_name = name
@@ -37,6 +37,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.is_static = False
         self.module_kind = 'unknown'
         self.is_pointer_wrapper = False
+        self.is_no_free_pointer_wrapper = False;
         self.is_data_wrapper = False
         self.is_array_wrapper = False
         self.is_fixed_array_wrapper = False
@@ -219,6 +220,7 @@ class SGCodeModule(SGMetaDataContainer):
             self.name = the_type['class'].other
             self.uname = self.name
             self.is_pointer_wrapper = the_type.pointer_wrapper
+            self.is_no_free_pointer_wrapper = the_type.no_free_pointer_wrapper
             self.is_data_wrapper = the_type.data_wrapper
             self.is_array_wrapper = the_type.array_wrapper
             self.is_fixed_array_wrapper = the_type.fixed_array_wrapper

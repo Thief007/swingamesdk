@@ -62,6 +62,18 @@ _type_switcher = {
     
     'bitmapcell':       'BitmapCell',
     
+    
+    'panel':                'Panel',
+    'region':               'Region',
+    'guiradiogroup':        'GUIRadioGroup',
+    'guilist':              'GUIList',
+    'guicheckbox':          'GUICheckbox',
+    'guitextbox':           'GUITextbox',
+    'guilabel':             'GUILabel',
+    'guielementkind':       'GUIElementKind',
+    'eventkind':            'EventKind',
+    'filedialogselecttype': 'FileDialogSelectType',
+    'guieventcallback':  'GUIEventCallback',
 }
 
 
