@@ -9,13 +9,13 @@ a: regionPanelActive
 d: False
 v: True
 
-// RadioGroups
-r: 9,  10,  16, 17, RadioGroup, RBButton,       KindRadio
-r: 9,  31,  16, 17, RadioGroup, RBLabel,        KindRadio
-r: 9,  52,  16, 17, RadioGroup, RBCheckBox,     KindRadio
-r: 9,  73,  16, 17, RadioGroup, RBRadioGroup,   KindRadio
-r: 9,  94,  16, 17, RadioGroup, RBTextBox,      KindRadio
-r: 9,  115, 16, 17, RadioGroup, RBList,         KindRadio
+//RadioGroups
+r: 9,  10,  16, 17,RadioGroup, RBButton,       KindRadio
+r: 9,  31,  16, 17,RadioGroup, RBLabel,        KindRadio
+r: 9,  52,  16, 17,RadioGroup, RBCheckBox,     KindRadio
+r: 9,  73,  16, 17,RadioGroup, RBRadioGroup,   KindRadio
+r: 9,  94,  16, 17,RadioGroup, RBTextBox,      KindRadio
+r: 9,  115, 16, 17,RadioGroup, RBList,         KindRadio
 
 // Labels
 r: 35, 8,   90, 17, Label, RBButtonLabel,       GUIMainFont, l,  Button

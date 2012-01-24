@@ -366,7 +366,7 @@ then
             
             #Compile i386 version of library
             FPC_BIN=`which ppc386`
-            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.7.sdk -macosx_version_min 10.7"
             
             mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
         fi

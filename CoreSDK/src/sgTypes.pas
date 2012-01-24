@@ -793,7 +793,7 @@ interface
     /// GUIElementKind is an enum of all the GUI types
     /// 
     ///
-    /// @enum GuiElementKind
+    /// @enum GUIElementKind
     GuiElementKind = ( 
       gkLabel = 1, 
       gkButton = 2, 
@@ -816,12 +816,15 @@ interface
       ///
       /// @class GUIList
       /// @pointer_wrapper
+      /// @no_free_pointer_wrapper
       /// @field pointer: pointer
       GUIList = ^GUIListData;
 
       /// Each list item has text and an image
       ///
       /// @struct GUIListItem
+      ///
+      /// @via_pointer
       GUIListItem = packed record
         text:     String;
         image:    BitmapCell;
@@ -863,6 +866,7 @@ interface
     ///
     /// @class GUILabel
     /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
     /// @field pointer: ^GUILabelData
     GUILabel = ^GUILabelData;
 
@@ -872,7 +876,7 @@ interface
     
 
 
-    /// @struct GUILabelData
+    /// @struct GUICheckboxData
     /// @via_pointer
     GUICheckboxData = packed record
       state:        boolean;
@@ -882,6 +886,7 @@ interface
     ///
     /// @class GUICheckbox
     /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
     /// @field pointer: ^GUICheckboxData
     GUICheckbox = ^GUICheckboxData;
     
@@ -889,7 +894,7 @@ interface
 
     /// The file dialog select type is an enum of how a file dialog displays files/directories
     ///
-    /// @enum EventKind
+    /// @enum FileDialogSelectType
     FileDialogSelectType = ( 
       fdFiles = 1, 
       fdDirectories = 2, 
@@ -910,16 +915,18 @@ interface
     ///
     /// @class Region
     /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
     /// @field pointer: ^RegionData
     Region = ^RegionData;
     
     /// GUITextbox is a textbox gui component in swingame 
     /// it has a string font length limit region and font alignment
     ///
-    /// @class Region
+    /// @class GUITextbox
     /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
     /// @field pointer: ^RegionData
-    GUITextBox = ^GUITextBoxData;
+    GUITextbox = ^GUITextboxData;
     
     
     /// GUIEventCallback is a callbackfunction for gui eventsin swingame 
@@ -956,21 +963,23 @@ interface
     /// GUI radio group is a radio group gui component in swingame.
     ///
     ///
-    /// @class RadioGroup
+    /// @class GUIRadioGroup
     /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
     /// @field pointer : ^GUIRadioGroupData
     GUIRadioGroup = ^GUIRadioGroupData;
     
     
-    /// @struct GUITextBoxData
+    /// @struct GUITextboxData
     /// @via_pointer
-    GUITextBoxData = packed record
+    GUITextboxData = packed record
       contentString:  String;
       font:           Font;
       lengthLimit:    Longint;
       region:         Region;
       alignment:      FontAlignment;
     end;
+    
     ///@struct PanelData
     ///@via_pointer
     PanelData = packed record

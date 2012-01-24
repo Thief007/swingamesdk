@@ -57,6 +57,7 @@ SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 SRC_DIR="${SOURCE_DIST_DIR}/src"
 
+
 SRC_GENERATED_DIR="${GENERATED_DIR}/Source/src"
 
 C_GENERATED_DIR="${GENERATED_DIR}/C"
@@ -138,6 +139,9 @@ find ${SDK_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 find ${SDK_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
+if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
+find ${SDK_LIB_SRC}"/drivers" -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 find ${SDK_LIB_SRC} -maxdepth 3 -path \*.pas ! -path \*.svn\* -exec cp -p {} ${SRC_DIR} \;

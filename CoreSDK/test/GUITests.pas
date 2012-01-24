@@ -29,8 +29,6 @@ begin
   pnla := LoadPanel('panelwithbutton.txt');
   pnlb := LoadPanel('panelwithlabel.txt');
   
-  writeln('panels loaded');
-  
   ShowPanel(pnla);
   HidePanel(pnlb);
   
@@ -79,15 +77,11 @@ begin
   //ToggleFullScreen();
   
   LoadResourceBundle('MainMenu.txt');
-  writeln('hi1');
   InitInterface(pnla,pnlb);
-  writeln('hi2');
   lst := ListFromRegion(regionWithID('List1'));
-  writeln('hi3');
   ListAddItem(lst, BitmapNamed('hat'),'Hat');
   ListAddItem(lst, BitmapNamed('sword'),'Sword');
   ListAddItem(lst, BitmapNamed('cape'),'Cape');
-  writeln('hi4');
   ListAddItem(lst, 'Cheese');
   ListAddItem(lst, 'Cake');
   ListAddItem(lst, 'Mouse');

@@ -9,6 +9,6 @@ a: tabsPanelRegion
 d: False
 v: False
 
-// RadioGroup
-r: 0, 16, 75, 24, RadioGroup, PanelTab, UpperTabs
-r: 75, 16, 75, 24, RadioGroup, RegionTab, UpperTabs
+//RadioGroup
+r: 0, 16, 75, 24,RadioGroup, PanelTab, UpperTabs
+r: 75, 16, 75, 24,RadioGroup, RegionTab, UpperTabs

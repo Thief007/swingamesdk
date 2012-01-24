@@ -28,7 +28,15 @@ namespace SwinGame
         Timer,
         Shape,
         ShapePrototype,
-        Copy
+        Panel,                     
+        Region,               
+        GUIRadioGroup,        
+        GUIList,          
+        GUICheckbox,          
+        GUITextbox,           
+        GUILabel,            
+        Copy,
+		
     }
     
     /// [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
@@ -170,6 +178,19 @@ namespace SwinGame
             if ((object)pw1 == null || (object)pw2 == null) return true;
             return pw1.Pointer != pw2.Pointer;
         }
-        
     }
+
+    /// <summary>
+    /// Wraps a pointer to a SwinGame resource
+    /// </summary>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public abstract class NoFreePointerWrapper : PointerWrapper
+    {
+		internal NoFreePointerWrapper(IntPtr ptr, PtrKind kind): base(ptr, kind)
+	    {
+	    }
+		
+		protected internal override void DoFree()
+		{}
+	}
 }
