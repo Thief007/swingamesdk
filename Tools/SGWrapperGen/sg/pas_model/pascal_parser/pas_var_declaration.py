@@ -31,8 +31,7 @@ class PascalVarDeclaration(object):
         return self._vars
 
     def parse(self, tokens):
-        from types.pas_type_cache import find_or_add_type
-        from types.pas_type import *
+        from pas_parser_utils import parse_type
         from pas_parser_utils import _parse_identifier_list, reservedWords
         from pas_var import PascalVariable
 
@@ -48,7 +47,7 @@ class PascalVarDeclaration(object):
 
             idList = _parse_identifier_list(tokens)
             tokens.match_token(TokenKind.Symbol, ':')
-            type = PascalType.create_type(tokens)
+            type = parse_type(tokens)
 
             if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
                 tokens.match_token(TokenKind.Symbol, ';')

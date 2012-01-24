@@ -17,6 +17,39 @@ operators   =   [   (TokenKind.Operator, '+'), (TokenKind.Operator, '-'), (Token
 
 # Logger object is used to log events to console
 logger = logging.getLogger("sgLogger")
+
+def parse_type(tokens):
+    """
+    parses the type then checks to see if the type already exists in the cache,
+    if it already exists the old type is returned, otherwise the new type
+    is added to the cache and returned.
+    """
+    from types import pas_array, pas_pointer, pas_type, pas_type_cache
+    new_type = None
+    # array...
+    if tokens.match_lookahead(TokenKind.Identifier, 'array'):
+        new_type = pas_array.PascalArray() 
+    # pointer...
+    elif tokens.match_lookahead(TokenKind.Symbol, '^'):
+        new_type = pas_pointer.PascalPointer()
+    # already declared type...
+    elif tokens.match_lookahead(TokenKind.Identifier):
+        new_type = pas_type.PascalType()
+    else:
+        logger.error("Unknown type: ", tokens.next_token())
+        assert False
+
+    # parse new type
+    new_type.parse(tokens)
+
+    # if type does not already exist, add it to the cache
+    # then return it
+    old_type = pas_type_cache.get_type(new_type.name)
+    if old_type is None:
+        pas_type_cache.add_type(new_type)
+        return new_type
+    else:
+        return old_type
           
 def token_has_values(token, list_values):
     """
@@ -119,5 +152,6 @@ def _parse_variable_declaration(tokens):
     result = PascalVarDeclaration()
     result.parse
     return result
+
 
     

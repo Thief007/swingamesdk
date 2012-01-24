@@ -101,7 +101,7 @@ def convert_type(the_dict, the_type, modifier = None, dict_name = '_type_switche
      - dict_name:   The name of the dictionary for error reporting
     '''
 
-    if the_type == None: return 'void'  # TODO: work out how to automate this... doesn't work currently
+    if the_type == None: return 'NONE'  # TODO: work out how to automate this... shouldn't ever happen in reality
     if len(the_dict) > 0: 
         key = the_type.name.lower()
     
@@ -115,7 +115,7 @@ def convert_type(the_dict, the_type, modifier = None, dict_name = '_type_switche
         
         return the_dict[modifier][key]
     else:
-        return the_type
+        return the_type.name
 
 def convert_operator(the_dict, the_operator, dict_name = '_operator_conversion_table'):
     '''
