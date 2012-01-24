@@ -15,11 +15,29 @@ unit sgDriverSDL13;
 //
 //=============================================================================
 interface
+uses
+  sgTypes, SDL;
+  
+  type	  
+    SDL13Surface = record
+      surface : PSDL_Surface;
+      texture : PSDL_Texture;
+      optimised  : Boolean;
+    end;
+
+    
+    SDL13Screen = record
+      window : PSDL_Window;
+      renderer : PSDL_Renderer;
+    end;
+
+    PSDL13Screen = ^SDL13Screen;
+    PSDL13Surface = ^SDL13Surface;
 	
 	procedure LoadSDL13Driver();
 		
 implementation
-	uses SDL, sgDriver, sgShared;
+	uses sgDriver, sgShared;
 	
 	function GetErrorProcedure() : PChar;
 	begin

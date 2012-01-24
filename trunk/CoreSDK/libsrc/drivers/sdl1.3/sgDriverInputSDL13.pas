@@ -7,7 +7,6 @@ interface
       
 implementation
   uses sgDriverInput, sgInputBackend, sgInput, sgShared, sgTypes ;
-  
 
   
   function IsKeyPressedProcedure(virtKeyCode : LongInt) : Boolean;
@@ -49,47 +48,44 @@ implementation
     result := SDL_GetKeyboardState(nil)^;
   end;
   
-  function CheckQuitProcedure() : Boolean;
-    {$IFDEF FPC}
-    var
-      keys: PUInt8;
-    {$ENDIF} 
-  begin
-    {$IFDEF FPC}
-    keys := SDL_GetKeyboardState(nil);
-    // TODO : Figure out if casting to LongInt from char (SDLK_Q) is the correct fix.
-    result := false; {(((keys + SDLK_LMETA)^ + (keys + LongInt(SDLK_Q))^ = 2) or
-      ((keys + SDLK_RMETA)^ + (keys + LongInt(SDLK_Q))^ = 2) or
-       ((keys + SDLK_LALT)^ + (keys + SDLK_F4)^ = 2) or
-       ((keys + SDLK_RALT)^ + (keys + SDLK_F4)^ = 2)); }
+    function CheckQuitProcedure() : Boolean;
+      {$IFDEF FPC}
+      var
+        keys: PUInt8;
+        modS:  SDL_Keymod;
+      {$ENDIF} 
+    begin
+      {$IFDEF FPC}
+      keys := SDL_GetKeyboardState(nil);
+      modS := SDL_GetModState();
+      
+      result := ((keys + LongInt(SDL_SCANCODE_Q))^ = 1) and (LongInt(modS) and LongInt(KMOD_LGUI) = LongInt(KMOD_LGUI)) or 
+                ((keys + LongInt(SDL_SCANCODE_Q))^ = 1) and (LongInt(modS) and LongInt(KMOD_RGUI) = LongInt(KMOD_RGUI)) or 
+                ((keys + LongInt(SDL_SCANCODE_F4))^ = 1) and (LongInt(modS) and LongInt(KMOD_LALT) = LongInt(KMOD_LALT)) or 
+                ((keys + LongInt(SDL_SCANCODE_F4))^ = 1) and (LongInt(modS) and LongInt(KMOD_RALT) = LongInt(KMOD_RALT));
+                  
+      {$ELSE}
+      result := (IsKeyPressed(SDLK_LALT) and IsKeyPressed(SDLK_F4));
+      {$ENDIF}
+    end;
 
-    {$ELSE}
-    result := (IsKeyPressed(SDLK_LALT) and IsKeyPressed(SDLK_F4));
-    {$ENDIF}
-  end;
-  
-  procedure ProcessEventsProcedure(); 
-  var
-    event: SDL_EVENT;
-  begin
-     //http://sdl.beuc.net/sdl.wiki/SDL_PumpEvents
-     SDL_PumpEvents();
-     
-     WriteLn('Processing Events.... in driver');
-     
-     while SDL_PollEvent(@event) > 0 do
-     begin
-       WriteLn('Got an event... ', event._type);
-       case SDL_EventType(event._type) of//SDL_EventType of
-         SDL_QUIT_EVENT:    DoQuit();
-         SDL_KEYDOWN:       HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
-         SDL_KEYUP:         HandleKeyupEvent(event.key.keysym.sym);
-         SDL_MOUSEBUTTONUP: ProcessMouseEvent(event.button.button); 
+    procedure ProcessEventsProcedure(); 
+    var
+      event: SDL_EVENT;
+    begin
+       //http://sdl.beuc.net/sdl.wiki/SDL_PumpEvents
+       SDL_PumpEvents();
+
+       while SDL_PollEvent(@event) > 0 do
+       begin
+         case SDL_EventType(event._type) of
+           SDL_QUIT_EVENT:    DoQuit();
+           SDL_KEYDOWN:       HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
+           SDL_KEYUP:         HandleKeyupEvent(event.key.keysym.sym);
+           SDL_MOUSEBUTTONUP: ProcessMouseEvent(event.button.button); 
+         end;
        end;
-     end;
-     
-     WriteLn('End... Processing Events');
-  end;
+    end;
 
   
   function ShiftDownProcedure(kycode : LongInt) : Boolean;
