@@ -1,6 +1,6 @@
 program HowToDrawSomethingToTheScreen;
 uses
-	sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgPhysics, sgUtils, sgCamera;  
+  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgPhysics, sgUtils, sgCamera;  
 
 procedure Main();
 begin
