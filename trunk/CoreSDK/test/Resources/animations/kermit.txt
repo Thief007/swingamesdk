@@ -57,7 +57,7 @@ i:MoonWalkLeft,20
 i:MoonWalkRight,24
 i:MoonWalkBack,28
 
-i:DancingFrog,32
+i:Dance,32
 
 i:StandFront,16
 i:StandLeft,17
