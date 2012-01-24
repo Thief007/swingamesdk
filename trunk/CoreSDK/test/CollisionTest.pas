@@ -11,7 +11,6 @@ var
   r: Rectangle;
   i: Integer;
 begin
-  
   r := RectangleFrom(50, 50, 50, 50);
   DrawRectangle(ColorWhite, r);
   
