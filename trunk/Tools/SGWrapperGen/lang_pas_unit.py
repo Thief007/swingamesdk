@@ -67,10 +67,10 @@ def _do_create_pas_signature(method, the_file):
     method_data["module_name"] = "sg" + the_file.name
     
     if method_alias.is_function:
-        method_alias.signature = '// %(doc)s\nfunction %(name)s(%(params)s): %(return_type)s;\n' % method_data
+        method_alias.signature = '// %(doc)s\nfunction %(name)s(%(params)s): %(return_type)s; overload;\n' % method_data
         method_alias.code = pas_lib.unit_function_pas % method_data
     else:
-        method_alias.signature = '// %(doc)s\nprocedure %(name)s(%(params)s);\n' % method_data
+        method_alias.signature = '// %(doc)s\nprocedure %(name)s(%(params)s); overload;\n' % method_data
         method_alias.code = pas_lib.unit_procedure_pas % method_data
     
     

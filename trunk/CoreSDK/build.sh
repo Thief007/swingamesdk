@@ -50,6 +50,17 @@ DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src ${DRV_LIB}"
 CLEAN="N"
 
+#
+# Create SwinGame.pas if missing
+#
+if [[ ! -f ./test/SwinGame.pas ]]; then
+  echo " Creating SwinGame.pas"
+  cd ../Tools/SGWrapperGen
+  python lang_pas_unit.py
+  cd "${FULL_APP_PATH}"
+  cp ../Generated/Pascal/lib/SwinGame.pas ./test/SwinGame.pas
+fi
+
 
 #
 # Set game name
@@ -81,12 +92,40 @@ done
 shift $((${OPTIND}-1))
 
 #
+# Locate GameMain.pas
+#
+locateGameMain()
+{
+  cd "${FULL_APP_PATH}/test"
+  fileList=$(find "." -maxdepth 1 -type f -name \*.pas)
+  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  
+  if [[ ${FILE_COUNT} = 1 ]]; then
+    GAME_MAIN=${fileList[0]}
+  else
+    echo "Select the file to compile for your game"
+    PS3="File number: "
+  
+    select fileName in $fileList; do
+        if [ -n "$fileName" ]; then
+            GAME_MAIN=${fileName}
+        fi
+      
+        break
+    done
+  fi
+  
+  cd ${FULL_APP_PATH}
+}
+
+#
 # Get the name of the source file
 #
-SRC_FILE=${1}.pas
+locateGameMain
+SRC_FILE=$GAME_MAIN
 
 if [ ! -f ./test/$SRC_FILE ]; then
-    echo "usage build.sh filename"
+    echo "Unable to locate source file"
     exit 1
 fi
 

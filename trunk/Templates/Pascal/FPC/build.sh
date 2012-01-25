@@ -25,6 +25,8 @@ ICON=SwinGame
 FULL_APP_PATH=$APP_PATH
 APP_PATH="."
 
+GAME_MAIN=""
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
 FULL_OUT_DIR="${FULL_APP_PATH}/bin"
@@ -116,11 +118,11 @@ CleanTmp()
 doBasicMacCompile()
 {
     mkdir -p ${TMP_DIR}
-    echo "  ... Compiling $GAME_NAME"
+    echo "  ... Compiling $GAME_MAIN"
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > "${LOG_FILE}"
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/${GAME_MAIN}" > "${LOG_FILE}"
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
@@ -131,11 +133,11 @@ doBasicMacCompile()
 doMacCompile()
 {
     mkdir -p ${TMP_DIR}/${1}
-    echo "  ... Compiling $GAME_NAME - $1"
+    echo "  ... Compiling $GAME_MAIN - $1"
     
     FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/${GAME_MAIN}" > ${LOG_FILE}
     
     if [ $? != 0 ]; then DoExitCompile; fi
 }
@@ -206,9 +208,9 @@ doMacPackage()
 doLinuxCompile()
 {
     mkdir -p ${TMP_DIR}
-    echo "  ... Compiling $GAME_NAME"
+    echo "  ... Compiling $GAME_MAIN"
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}" ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}" ${SRC_DIR}/${GAME_MAIN} > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
@@ -221,7 +223,7 @@ doWindowsCompile()
 {
     mkdir -p ${TMP_DIR}
     
-    echo "  ... Compiling $GAME_NAME"
+    echo "  ... Compiling $GAME_MAIN"
     
     #
     # If using full path then you need to escape the /c/ used by MSYS
@@ -238,7 +240,7 @@ doWindowsCompile()
     windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res
     if [ $? != 0 ]; then DoExitCompile; fi
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}.exe" ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}.exe" ${SRC_DIR}/${GAME_MAIN} > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     
 }
@@ -278,6 +280,39 @@ doCopyResources()
     copyWithoutSVN "${FULL_APP_PATH}/Resources" "${RESOURCE_DIR}"
 }
 
+#
+# Locate GameMain.pas
+#
+locateGameMain()
+{
+  cd "${SRC_DIR}"
+  fileList=$(find "." -maxdepth 1 -type f -name \*.pas)
+  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  
+  if [[ ${FILE_COUNT} = 1 ]]; then
+    GAME_MAIN=${fileList[0]}
+  else
+    echo "Select the file to compile for your game"
+    PS3="File number: "
+  
+    select fileName in $fileList; do
+        if [ -n "$fileName" ]; then
+            GAME_MAIN=${fileName}
+        fi
+      
+        break
+    done
+  fi
+  
+  cd ${FULL_APP_PATH}
+  
+  if [ ! -f "${SRC_DIR}/${GAME_MAIN}" ]; then
+    echo "Cannot find file to compile, was looking for ${GAME_MAIN}"
+    exit -1
+  fi
+}
+
+locateGameMain
 
 if [ $CLEAN = "N" ]
 then
@@ -294,6 +329,7 @@ then
     echo "  Saving output to $OUT_DIR"
     echo "  Compiler flags ${SG_INC} ${PAS_FLAGS}"
     echo "--------------------------------------------------"
+    
     echo "  ... Creating ${GAME_NAME}"
     
     if [ "$OS" = "$MAC" ]; then
