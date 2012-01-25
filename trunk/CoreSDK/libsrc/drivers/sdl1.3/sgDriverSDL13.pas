@@ -35,6 +35,9 @@ uses
     PSDL13Surface = ^SDL13Surface;
 	
 	procedure LoadSDL13Driver();
+
+var
+  _ScreenDirty : Boolean = False;
 		
 implementation
 	uses sgDriver, sgShared;
