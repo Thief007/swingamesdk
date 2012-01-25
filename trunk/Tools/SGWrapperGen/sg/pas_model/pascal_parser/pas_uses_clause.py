@@ -7,9 +7,10 @@ class PascalUsesClause(object):
     The PascalCompoundStatement object parses a compound statement
     """
 
-    def __init__(self):
+    def __init__(self, file_owner):
         self._units = list()
         self._code = dict()
+        self._file_owner = file_owner
 
     @property
     def code(self):
@@ -35,9 +36,8 @@ class PascalUsesClause(object):
 
             elif (tokens.match_lookahead(TokenKind.Identifier)):
                 new_reference = PascalUnitReference()
-                new_reference.parse(tokens)
+                new_reference.parse(tokens, self._file_owner)
                 self._units.append(new_reference)
-
             else:
                 logger.error('Error reading uses clause: ' + str(tokens.next_token()))
                 assert False

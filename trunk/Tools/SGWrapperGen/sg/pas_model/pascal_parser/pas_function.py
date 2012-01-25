@@ -7,7 +7,7 @@ class PascalFunction(object):
     PascalFunction is a container for a procedure or function in Pascal
     """
    
-    def __init__(self, parent):
+    def __init__(self, parent, isForward=False):
         """
         parent is the current block the function is 
         being initialised from... current block is the function's parent
@@ -24,6 +24,7 @@ class PascalFunction(object):
         self._isFunction = False
         self._code = dict()
         self._comments = list()
+        self._is_forward = isForward
 
     @property
     def code(self):
@@ -31,6 +32,13 @@ class PascalFunction(object):
     @property
     def name(self):
         return self._name
+
+    @property
+    def method_fingerprint(self):
+        result = ' '
+        for var in self._parameters.variables:
+            result += var.type.name + ' '
+        return self._name + "(" + result + ")"
 
     @property
     def parameters(self):
@@ -96,11 +104,11 @@ class PascalFunction(object):
         # ;
         tokens.match_token(TokenKind.Symbol, ';')
 
-        if (not is_forward) and tokens.match_lookahead(TokenKind.Identifier, 'forward', True):
+        if (not self._is_forward) and tokens.match_lookahead(TokenKind.Identifier, 'forward', True):
             tokens.match_token(TokenKind.Symbol, ';')
-            is_forward = True
+            self._is_forward = True
 
-        if not is_forward:
+        if not self._is_forward:
             self._block.parse(tokens)
         
     def to_code(self):
@@ -127,7 +135,12 @@ class PascalFunction(object):
                 comments += module.comment_template % { "comment" : current_line}
             my_data[name + '_comments'] = comments
             my_data[name + '_parameters'] = self._parameters.code[name]
-            my_data[name + '_block'] = self._block.code[name]
+            # if the function isn't a forward declaration then it doesn't have a block
+            if (not self._is_forward):
+                my_data[name + '_block'] = self._block.code[name]
+            else:
+                my_data[name + '_block'] = ''
+
             if (self._isFunction):
                 my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._return_type)
                 self._code[name] = module.function_declaration_template % my_data
