@@ -5,7 +5,7 @@ import logging
 reservedWords = [   (TokenKind.Identifier, 'begin'),      (TokenKind.Identifier, 'const'), 
                     (TokenKind.Identifier, 'type'),       (TokenKind.Identifier, 'var'), 
                     (TokenKind.Identifier, 'procedure'),  (TokenKind.Identifier, 'function'),
-                    (TokenKind.Identifier, 'end')]
+                    (TokenKind.Identifier, 'end'),        (TokenKind.Identifier, 'implementation')]
 
 assignmentOperators = [(TokenKind.Operator, '+='),  (TokenKind.Operator, '-='), 
                         (TokenKind.Operator, '/='),  (TokenKind.Operator, '*='), 
