@@ -1,4 +1,4 @@
-program HowToDrawRandomShape;
+program HowToReadingTextToScreen;
 uses
 sgTypes, sgInput, sgGraphics, sgResources, sgUtils, sgText;
 
@@ -11,10 +11,7 @@ begin
   
     ClearScreen(ColorWhite);
     
-    if NOT ReadingText() THEN
-    begin
-      StartReadingText(ColorRed, 40, LoadFont('Arial',12), 10, 10);            
-    end;
+    if NOT ReadingText() THEN StartReadingText(ColorRed, 40, LoadFont('Arial',12), 10, 10);   
     
     RefreshScreen(60);
   until WindowCloseRequested();
