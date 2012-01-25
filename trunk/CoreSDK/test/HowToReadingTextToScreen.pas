@@ -3,12 +3,9 @@ uses
 sgTypes, sgInput, sgGraphics, sgResources, sgUtils, sgText;
 
 procedure Main();
-var
-  fnt : Font;
 begin  
-  OpenGraphicsWindow('How To Read Text To Screen', 240, 160);  
-
-  fnt := LoadFont('Arial',12);
+  OpenGraphicsWindow('Read Text To Screen', 240, 160);  
+  
   repeat // The game loop...
     ProcessEvents();
   
@@ -16,7 +13,7 @@ begin
     
     if NOT ReadingText() THEN
     begin
-      StartReadingText(ColorRed, 40, fnt, 10, 10);            
+      StartReadingText(ColorRed, 40, LoadFont('Arial',12), 10, 10);            
     end;
     
     RefreshScreen(60);
