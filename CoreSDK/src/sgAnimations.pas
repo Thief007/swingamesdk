@@ -955,11 +955,11 @@ begin
         TraceEnter('sgAnimations', 'MapAnimationFrame', name + ' = ' + filename);
     {$ENDIF}
     
-    WriteLn('Loading Animation Script ', name, ' for ', filename);
+    // WriteLn('Loading Animation Script ', name, ' for ', filename);
     
     if _Animations.containsKey(name) then
     begin
-        WriteLn('  Using existing... ', name, ' for ', filename);
+        // WriteLn('  Using existing... ', name, ' for ', filename);
         result := AnimationScriptNamed(name);
         exit;
     end;
@@ -1023,10 +1023,10 @@ begin
     // WriteLn('Freeing Animation Script ', HexStr(frm), ' = ', frm^.name);
     FreeNamedIndexCollection(frm^.animationIds);
     
+    // WriteLn(frm^.nextAnimIdx);
     // Must use downto as animations are removed from the array in FreeAnimation!
     for i := frm^.nextAnimIdx - 1 downto 0 do
     begin
-        // WriteLn('Freeing ', HexStr(frm^.animObjs[i]));
         FreeAnimation(frm^.animObjs[i]);
     end;
     
@@ -1124,10 +1124,12 @@ procedure FreeAnimation(var ani: Animation);
 var
     toFree: Animation;
 begin
+    // WriteLn('Freeing Anim ', HexStr(ani));
     if assigned(ani) then
     begin
         toFree := ani;
         _RemoveAnimation(ani^.script, ani);
+        // WriteLn('Now Disposing Anim ', HexStr(ani), '=', HexStr(toFree));
         Dispose(toFree); //ani may have been overridden by last call...
         ani := nil;
     end;
@@ -1145,7 +1147,8 @@ begin
     
     new(result);
     _AddAnimation(script, result);
-    AssignAnimation(result, identifier, script, withSound)
+    AssignAnimation(result, identifier, script, withSound);
+    // WriteLn('Created ', HexStr(result));
 end;
 
 function CreateAnimation(identifier: Longint;    script: AnimationScript): Animation; overload;
@@ -1299,7 +1302,7 @@ begin
     else if not AnimationEnded(anim) then
     begin
         result := anim^.currentFrame^.movement;
-        WriteLn(PointToString(result));
+        // WriteLn(PointToString(result));
     end
     else
         result := VectorTo(0,0)

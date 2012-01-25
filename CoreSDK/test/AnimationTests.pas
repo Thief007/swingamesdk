@@ -1,6 +1,5 @@
 program AnimationTests;
-
-uses sgTypes, sgShared, sgSprites, sgAnimations, SysUtils, sgAudio, sgResources, sgImages, sgGraphics, sgGeometry, sgText, sgInput;
+uses SwinGame, sgTypes;
 
 var
   explosions: AnimationScript;

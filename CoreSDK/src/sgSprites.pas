@@ -1717,7 +1717,9 @@ implementation
   
   function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   var
+    nameBase: String;
     i, idx, count, cellCount: Longint;
+    obj: tResourceContainer;
   begin
     result := nil; 
     count := Length(layers);
@@ -1727,15 +1729,18 @@ implementation
     
     // Find a unique name for this sprite
     idx := 0;
+    nameBase := name;
     
     while HasSprite(name) do
     begin
-      name := 'Sprite_' + IntToStr(idx);
+      name := nameBase + IntToStr(idx);
       idx += 1;
     end;
     
     //Allocate the space for the sprite
     New(result);
+    
+    result^.name := name;
     
     //Set lengths of the layer arrays
     SetLength(result^.layers, count);
@@ -1798,6 +1803,15 @@ implementation
     // Setup cache details
     result^.backupCollisionBitmap   := nil;
     result^.cacheImage              := nil;
+    
+    obj := tResourceContainer.Create(result);
+    WriteLn('Adding for ', name, ' ', HexStr(obj));
+    if not _Sprites.setValue(name, obj) then
+    begin
+        RaiseException('** Leaking: Caused by loading Sprite created twice, ' + name);
+        result := nil;
+        exit;
+    end;
   end;
   
   function HasSprite(name: String): Boolean;
@@ -1937,6 +1951,7 @@ implementation
       s^.backupCollisionBitmap := nil;
       
       // Remove from hashtable
+      // WriteLn('Freeing Sprite named: ', s^.name);
       _Sprites.remove(s^.name).Free();
       
       //Dispose sprite
@@ -1950,8 +1965,8 @@ implementation
   
   function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): Longint;
   begin
-    if newLayer = nil then begin RaiseException('Cannot add non-existing bitmap to Sprite'); exit; end;
-    if s = nil then begin RaiseException('No sprite to add to'); exit; end;
+    if newLayer = nil then begin RaiseWarning('Cannot add non-existing bitmap as layer to Sprite'); exit; end;
+    if s = nil then begin RaiseWarning('No sprite to add layer to'); exit; end;
     
     result := AddName(s^.layerIds, layerName);
     if (result <> Length(s^.layers)) then begin RaiseException('Error adding layer ' + layerName); exit; end;
@@ -2020,6 +2035,7 @@ implementation
       AssignAnimation(s^.animationInfo, idx, s^.animationScript, withSound)
     else
       s^.animationInfo := CreateAnimation(idx, s^.animationScript, withSound);
+    // WriteLn('Sprite Animation: ', HexStr(s^.animationInfo));
   end;
   
   procedure UpdateSpriteAnimation(s: Sprite); overload;
@@ -2266,6 +2282,8 @@ implementation
     if not assigned(s) then result := -1
     else
     begin
+      if (id < 0) or (id > Length(s^.layers)) then begin result := -1; RaiseWarning('Cannot show layer ' + IntToStr(id) + ' of sprite.'); exit; end;
+      
       //Scan for the current ID
       result := SpriteVisibleIndexOfLayer(s, id);
       if result >= 0 then exit;
