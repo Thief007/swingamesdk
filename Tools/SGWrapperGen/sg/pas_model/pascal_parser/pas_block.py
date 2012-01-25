@@ -4,7 +4,6 @@ from pascal_parser.pas_parser_utils import logger, parse_statement
 
 from pas_var_declaration import PascalVarDeclaration 
 from pas_function import PascalFunction
-from pas_uses_clause import PascalUsesClause
 from pas_type_declaration import PascalTypeDeclaration
 
 class PascalBlock(object):
@@ -27,6 +26,7 @@ class PascalBlock(object):
         self._contents = list()
         self._variables = dict()
         self._functions = dict()
+        self._types = dict()
         self._code = dict()     
 
     @property
@@ -64,12 +64,10 @@ class PascalBlock(object):
                 current_part = PascalFunction(self)
                 current_part.parse(tokens)
                 self._functions[current_part.name] = current_part
-            elif (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
-                current_part = PascalUsesClause()
-                current_part.parse(tokens)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
                 current_part = PascalTypeDeclaration(self)
                 current_part.parse(tokens)
+                self._types.update(current_part.types)
             elif tokens.match_lookahead(TokenKind.Identifier, 'begin'):
                 break
             else:
