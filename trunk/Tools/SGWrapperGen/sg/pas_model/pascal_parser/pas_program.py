@@ -1,5 +1,6 @@
 from tokeniser.pas_token_kind import TokenKind
 from pas_block import PascalBlock
+from pas_uses_clause import PascalUsesClause
 
 class PascalProgram(object):
     """The model object to represent a pascal program:
@@ -11,6 +12,7 @@ class PascalProgram(object):
     
     def __init__(self):
         self._name = None
+        self._uses = None
         self._block = None  # program block
         self._code = dict()
 
@@ -34,20 +36,27 @@ class PascalProgram(object):
         tokens.match_token(TokenKind.Identifier, 'program');
         self._name = tokens.match_token(TokenKind.Identifier)._value;
         tokens.match_token(TokenKind.Symbol, ';')
-        
+        if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
+            self._uses = PascalUsesClause()
+            self._uses.parse(tokens)
         # Read block
         self._block = PascalBlock(None)
         self._block.parse(tokens)
 
     def to_code(self):
         import converter_helper
-
+        if (self._uses != None):
+            self._uses.to_code()
         self._block.to_code()
 
         for (name, module) in converter_helper.converters.items():
             my_data = dict()
+            if (self._uses != None):
+                my_data[name +'_uses'] = self._uses.code[name]
+
             my_data[name + '_name'] = self._name
             my_data[name + '_block'] = self._block.code[name]
+            
             self._code[name] = module.program_template % my_data
       
 

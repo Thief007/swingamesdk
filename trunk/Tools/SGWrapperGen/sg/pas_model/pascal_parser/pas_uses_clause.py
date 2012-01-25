@@ -1,5 +1,6 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
 from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_unit_reference import PascalUnitReference
 
 class PascalUsesClause(object):
     """
@@ -8,6 +9,11 @@ class PascalUsesClause(object):
 
     def __init__(self):
         self._units = list()
+        self._code = dict()
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def units(self):
@@ -28,12 +34,33 @@ class PascalUsesClause(object):
                 tokens.match_token(TokenKind.Symbol, ',')
 
             elif (tokens.match_lookahead(TokenKind.Identifier)):
-                self._units.append(tokens.match_token(TokenKind.Identifier).value)
+                new_reference = PascalUnitReference()
+                new_reference.parse(tokens)
+                self._units.append(new_reference)
 
             else:
                 logger.error('Error reading uses clause: ' + str(tokens.next_token()))
                 assert False
         logger.debug("Finished parsing uses clause")
+
+    def to_code(self):
+        import converter_helper
+        for reference in self._units:
+            reference.to_code()
+
+        my_data = dict()
+        my_data["c_lib_seperator"] = ''
+        my_data["pas_lib_seperator"] = ","
+
+        for (name, module) in converter_helper.converters.items():
+            unit_references = ""
+            for index in range(len(self._units)):
+
+                unit_references += self._units[index].code[name]
+
+                if index < (len(self._units)-1):
+                    unit_references += my_data[name + '_seperator']
+            self._code[name] = module.uses_clause_template % {"references" : unit_references}
 
 
                 

@@ -14,6 +14,10 @@ class PascalFile(object):
         self._code = dict()
 
     @property
+    def name(self):
+        return  self._filename
+
+    @property
     def code(self):
         return self._code
 

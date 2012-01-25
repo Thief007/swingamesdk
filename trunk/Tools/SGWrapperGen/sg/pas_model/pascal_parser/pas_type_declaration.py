@@ -34,7 +34,7 @@ class PascalTypeDeclaration(object):
 
     @property
     def types(self):
-        return self._type_declaration
+        return self._type_declarations
 
     @property
     def kind(self):

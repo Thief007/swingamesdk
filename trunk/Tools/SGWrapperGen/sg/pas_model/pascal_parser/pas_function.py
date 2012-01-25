@@ -63,7 +63,7 @@ class PascalFunction(object):
     def kind(self):
         return 'function'
 
-    def parse(self, tokens):
+    def parse(self, tokens, is_forward=False):
         from pas_parser_utils import parse_type
         self._result = None
         self._return_type = None
@@ -95,7 +95,13 @@ class PascalFunction(object):
 
         # ;
         tokens.match_token(TokenKind.Symbol, ';')
-        self._block.parse(tokens)
+
+        if (not is_forward) and tokens.match_lookahead(TokenKind.Identifier, 'forward', True):
+            tokens.match_token(TokenKind.Symbol, ';')
+            is_forward = True
+
+        if not is_forward:
+            self._block.parse(tokens)
         
     def to_code(self):
         '''
