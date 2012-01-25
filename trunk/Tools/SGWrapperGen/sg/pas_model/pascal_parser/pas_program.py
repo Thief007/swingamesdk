@@ -29,6 +29,24 @@ class PascalProgram(object):
     def block(self):
         return self._block
     
+    def resolve_function_call(self, function):
+        # for all the units I have included
+        for unit in self._uses._units:
+            # check all the functions that are declared in the unit
+            for (key, declared_function) in unit.points_to.contents.functions.items():
+                if (function.name == declared_function.name):
+                    return declared_function
+        return None
+
+    def resolve_variable(self, var):
+        for unit in self._uses._units:
+            # check all the functions that are declared in the unit
+            for (key, variable) in unit.points_to.contents.variables.items():
+                if (var == variable.name):
+                    return variable
+        return None
+
+
     def parse(self, tokens):
         """
         Parses the entire pascal program
@@ -41,7 +59,7 @@ class PascalProgram(object):
             self._uses = PascalUsesClause(self._file)
             self._uses.parse(tokens)
         # Read block
-        self._block = PascalBlock(None)
+        self._block = PascalBlock(None, self._file)
         self._block.parse(tokens)
 
     def to_code(self):

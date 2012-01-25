@@ -1,6 +1,7 @@
 from tokeniser.pas_token_kind import TokenKind
 from pascal_parser.pas_parser_utils import _parse_compound_statement
 from pas_function import PascalFunction
+from pas_var_declaration import PascalVarDeclaration
 
 class PascalUnit(object):
     """
@@ -10,9 +11,10 @@ class PascalUnit(object):
     def __init__(self, file):
         self._name = None
         self._file = file
-
+        self._uses_clause = None
         self._interface = list()
         self._implementation = list()
+        self._function_forward_declarations = list()
 
         self._variables = dict()
         self._functions = dict()
@@ -25,17 +27,52 @@ class PascalUnit(object):
         return self._code
 
     @property
+    def variables(self):
+        return self._variables
+
+    @property
+    def functions(self):
+        return self._functions
+
+    @property
     def is_parsed(self):
         return self._parsed
 
     @property
     def name(self):
         return self._name
-
-    @property
-    def block(self):
-        return self._block
     
+    def resolve_function_call(self, function):
+        # only check the functions I have declared
+        # in Pascal you cannot chain imports
+        for declared_function in self._functions:
+            if (function.name == declared_function.name):
+                return declared_function
+        # check forward declarations -> recursive calls shouldn't get flagged as un=resolvable
+        for forward_declaration in self._function_forward_declarations:
+            if (function.name == forward_declaration.name):
+                return function
+        # check the units I have included...
+        for unit in self._uses_clause._units:
+            # check all the functions that are declared in the unit
+            for (key, declared_function) in unit.points_to.contents.functions.items():
+                if (function.name == declared_function.name):
+                    return declared_function
+        return None
+
+    def get_variable(self, name):
+        result = None
+        if (name in self._variables):
+            result = self._variables[name]
+                # check the units I have included...
+        if not (self._uses_clause is None):
+            for unit in self._uses_clause._units:
+                # check all the functions that are declared in the unit
+                for (key, global_variable) in unit.points_to.contents.variables.items():
+                    if (name == global_variable.name):
+                        return global_variable
+        return result
+
     def parse(self, tokens):
         """
         Parses the entire pascal program
@@ -51,10 +88,8 @@ class PascalUnit(object):
 
         # if there is a uses clause - read it
         if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
-            uses_clause = PascalUsesClause()
-            self._interface.append(uses_clause)
-
-        function_forward_declarations = list()
+            self._uses_clause = PascalUsesClause()
+            self._interface.append(self._uses_clause)
 
         # read declarations
         while (True):
@@ -69,7 +104,7 @@ class PascalUnit(object):
             elif (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
                 current_part = PascalFunction(self, isForward=True)
                 current_part.parse(tokens)
-                function_forward_declarations.append(current_part.method_fingerprint)
+                self._function_forward_declarations.append(current_part.method_fingerprint)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
                 current_part = PascalTypeDeclaration(self)
                 current_part.parse(tokens)
@@ -88,8 +123,8 @@ class PascalUnit(object):
             if (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
                 current_part = PascalFunction(self)
                 current_part.parse(tokens)
-                if (current_part.method_fingerprint in function_forward_declarations):
-                    function_forward_declarations.remove(current_part.method_fingerprint)
+                if (current_part.method_fingerprint in self._function_forward_declarations):
+                    self._function_forward_declarations.remove(current_part.method_fingerprint)
                 self._functions[current_part.name] = current_part
             elif tokens.match_lookahead(TokenKind.Identifier, 'end'):
                 break
@@ -99,6 +134,10 @@ class PascalUnit(object):
                 logger.error('Unknown unit token...' + str(tokens.next_token()))
                 assert False
             self._implementation.append(current_part)
+
+        if (len(self._function_forward_declarations)) > 0:
+            logger.error("Unable to resolve forward function declarations: ", self._function_forward_declarations)
+            assert False
 
         # read initialization?
         if (init_present):

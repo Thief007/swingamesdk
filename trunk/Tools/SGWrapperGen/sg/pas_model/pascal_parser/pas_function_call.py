@@ -13,6 +13,11 @@ class PascalFunctionCall(object):
         self._block = block
         self._code = dict()
         self._inExpr = inExpr
+        self._points_to = None
+
+    @property
+    def name(self):
+        return self._identifier
 
     @property
     def code(self):
@@ -35,7 +40,15 @@ class PascalFunctionCall(object):
 
         if (not self._inExpr) :
             tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
-
+        
+        self._points_to = self._block.resolve_function_call(self)
+        if self._points_to is self:
+            # recursive call...
+            # need to get the function I'm being called from...
+            self._points_to = self._block.functions[self.name]
+        elif self._points_to is None:
+            logger.error("Unable to resolve function call:  " + self.identifier)
+            assert False
         logger.debug('Ended function call %s', self._identifier)
 
     @property

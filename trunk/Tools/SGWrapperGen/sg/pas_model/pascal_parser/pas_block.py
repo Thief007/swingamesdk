@@ -19,7 +19,7 @@ class PascalBlock(object):
     #statement part
 
     
-    def __init__(self, parent):
+    def __init__(self, parent, file = None):
         self._parent = parent                 #parent block
         self._compound_statement = None
         # list with block contents (in order)
@@ -28,6 +28,7 @@ class PascalBlock(object):
         self._functions = dict()
         self._types = dict()
         self._code = dict()     
+        self._file = file
 
     @property
     def code(self):
@@ -85,9 +86,26 @@ class PascalBlock(object):
         elif(self._parent != None and self._parent.get_variable(name) != None):
             result = self._parent.get_variable(name)
         else:
+            result = self._file.contents.resolve_variable(name) 
+
+        if result is None:
             logger.error("Unable to locate variable in scope: " + name)
             assert False
         return result
+
+    def resolve_function_call(self, function):
+        #check myself
+        for (name, declared_function) in self._functions.items():
+            if (function.name == declared_function.name):
+                return declared_function
+        # check parent
+        if self.parent != None:
+            # recursive call for all parents
+            # will always return the answer if it exists
+            return self.parent.resolve_function_call(function) 
+
+        return self._file.contents.resolve_function_call(function)
+
 
     def to_code(self, exportStatements=True):
         '''
