@@ -10,7 +10,8 @@ class PascalProgram(object):
         block = "begin", { statement }+(";"), "end" ;
     """
     
-    def __init__(self):
+    def __init__(self, file):
+        self._file = file
         self._name = None
         self._uses = None
         self._block = None  # program block
@@ -37,7 +38,7 @@ class PascalProgram(object):
         self._name = tokens.match_token(TokenKind.Identifier)._value;
         tokens.match_token(TokenKind.Symbol, ';')
         if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
-            self._uses = PascalUsesClause()
+            self._uses = PascalUsesClause(self._file)
             self._uses.parse(tokens)
         # Read block
         self._block = PascalBlock(None)

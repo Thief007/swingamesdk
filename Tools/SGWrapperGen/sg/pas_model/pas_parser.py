@@ -53,18 +53,24 @@ if __name__ == '__main__':
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     stream=sys.stdout)
     path = 'test\Pascal'
+
+    print '----------   Adding Files  ----------'
     for file in glob.glob(os.path.join(path, '*.pas')):
-        add_file(PascalFile.create_pas_file(os.path.basename(file), file))
+        add_file(PascalFile(file))
 
+    print '----------     Parsing    ----------'
     for (name, file) in files().items():
-        #print '---------- Pascal ----------'
-        #print_pas_file(file)
-        print '----------    C   ----------'
-        c_file = run_convert(file)
+        if not file.is_parsed:
+            file.parse()
 
-        write_file(c_file)
-        #for line in c_file.lines:
-        #    print line
-        #write_file(c_file, 'test\\C\\')
+    print '----------    Converting   ----------'
+    for (name, file) in files().items():
+        run_convert(file)
+
+    print '----------     Writing    ----------'
+    for (name, file) in files().items():
+        if file.contains_kind == 'program':
+            write_file(file)
+
 
     

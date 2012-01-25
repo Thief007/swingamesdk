@@ -1,4 +1,5 @@
 from tokeniser.pas_token_kind import TokenKind
+from pas_parser_utils import logger
 
 class PascalUnitReference(object):
     """
@@ -22,12 +23,16 @@ class PascalUnitReference(object):
     def points_to(self):
         return self._points_to
     
-    def parse(self, tokens):
+    def parse(self, tokens, file_owner):
         """
         Parses the entire pascal program
         expects: 'program name;' at the start
         """
         self._name = tokens.match_token(TokenKind.Identifier).value;
+        self._points_to = file_owner.resolve_unit_reference(self)
+        if self._points_to is None:
+            logger.error("Unable to resolve unit reference: " + self._name)
+            assert False
 
     def to_code(self):
         import converter_helper
