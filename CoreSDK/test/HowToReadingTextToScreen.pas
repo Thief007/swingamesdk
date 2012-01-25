@@ -3,21 +3,24 @@ uses
 sgTypes, sgInput, sgGraphics, sgResources, sgUtils, sgText;
 
 procedure Main();
+var
+	fnt : Font;
 begin	
-  OpenGraphicsWindow('How To Read Text To Screen', 800, 600);		
+  OpenGraphicsWindow('How To Read Text To Screen', 240, 160);	
 
-  ClearScreen(ColorWhite);
-
+	fnt := LoadFont('Arial',12);
   repeat // The game loop...
     ProcessEvents();
 	
+		ClearScreen(ColorWhite);
+		
 		if NOT ReadingText() THEN
 		begin
-			StartReadingText(ColorRed, 50, 'Arial', 290, 10);
+			StartReadingText(ColorRed, 40, fnt, 10, 10);						
 		end;
 		
     RefreshScreen(60);
-  until WindowCloseRequested() OR KeyTyped(VK_Q);
+  until WindowCloseRequested();
 
   ReleaseAllResources();
 end;
