@@ -46,18 +46,19 @@ class PascalUnit(object):
         # only check the functions I have declared
         # in Pascal you cannot chain imports
         for declared_function in self._functions:
-            if (function.name == declared_function.name):
+            if (function.name == declared_function):
                 return declared_function
-        # check forward declarations -> recursive calls shouldn't get flagged as un=resolvable
+        # check forward declarations -> recursive calls shouldn't get flagged as unresolvable
         for forward_declaration in self._function_forward_declarations:
-            if (function.name == forward_declaration.name):
+            if (function.name == forward_declaration):
                 return function
         # check the units I have included...
-        for unit in self._uses_clause._units:
-            # check all the functions that are declared in the unit
-            for (key, declared_function) in unit.points_to.contents.functions.items():
-                if (function.name == declared_function.name):
-                    return declared_function
+        if self._uses_clause != None:
+            for unit in self._uses_clause._units:
+                # check all the functions that are declared in the unit
+                for (key, declared_function) in unit.points_to.contents.functions.items():
+                    if (function.name == declared_function.name):
+                        return declared_function
         return None
 
     def get_variable(self, name):
@@ -75,8 +76,8 @@ class PascalUnit(object):
 
     def parse(self, tokens):
         """
-        Parses the entire pascal program
-        expects: 'program name;' at the start
+        Parses the entire pascal unit
+        expects: 'unit name;' at the start
         """
         # read unit header
         tokens.match_token(TokenKind.Identifier, 'unit');
@@ -102,9 +103,9 @@ class PascalUnit(object):
                 current_part.parse(tokens)
                 self._variables.update(current_part.variables)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
-                current_part = PascalFunction(self, isForward=True)
-                current_part.parse(tokens)
-                self._function_forward_declarations.append(current_part.method_fingerprint)
+                current_part = PascalFunction(self, tokens)
+                self._function_forward_declarations.append(current_part)
+                current_part.parse(tokens, is_forward = True)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
                 current_part = PascalTypeDeclaration(self)
                 current_part.parse(tokens)
@@ -121,10 +122,13 @@ class PascalUnit(object):
         # read implementation
         while (True):
             if (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
-                current_part = PascalFunction(self)
-                current_part.parse(tokens)
-                if (current_part.method_fingerprint in self._function_forward_declarations):
-                    self._function_forward_declarations.remove(current_part.method_fingerprint)
+                current_part = PascalFunction(self, tokens)
+                for func in self._function_forward_declarations:
+                    if (current_part.name == func.name):
+                        current_part = func
+                        self._function_forward_declarations.remove(func)
+                        self._functions[func.name] = func
+                        func.parse(tokens)
                 self._functions[current_part.name] = current_part
             elif tokens.match_lookahead(TokenKind.Identifier, 'end'):
                 break
@@ -134,7 +138,6 @@ class PascalUnit(object):
                 logger.error('Unknown unit token...' + str(tokens.next_token()))
                 assert False
             self._implementation.append(current_part)
-
         if (len(self._function_forward_declarations)) > 0:
             logger.error("Unable to resolve forward function declarations: ", self._function_forward_declarations)
             assert False

@@ -7,7 +7,7 @@ class PascalFunction(object):
     PascalFunction is a container for a procedure or function in Pascal
     """
    
-    def __init__(self, parent, isForward=False):
+    def __init__(self, parent, tokens):
         """
         parent is the current block the function is 
         being initialised from... current block is the function's parent
@@ -24,7 +24,24 @@ class PascalFunction(object):
         self._isFunction = False
         self._code = dict()
         self._comments = list()
-        self._is_forward = isForward
+        self._tokens = tokens
+        self._is_forward = False
+        self._comments = tokens.get_comments()
+
+        # function / procedure
+        if (tokens.match_lookahead(TokenKind.Identifier, 'function')):
+            tokens.match_token(TokenKind.Identifier, 'function')
+            self._isFunction = True
+        else:
+            tokens.match_token(TokenKind.Identifier, 'procedure')
+
+        # name
+        self._name = tokens.match_token(TokenKind.Identifier).value
+        
+        # ( parameter declaration )
+        
+        self._parameters.parse(tokens, self)
+
 
     @property
     def code(self):
@@ -76,39 +93,24 @@ class PascalFunction(object):
         self._result = None
         self._return_type = None
 
-        self._comments = tokens.get_comments()
-
-        # function / procedure
-        if (tokens.match_lookahead(TokenKind.Identifier, 'function')):
-            tokens.match_token(TokenKind.Identifier, 'function')
-            self._isFunction = True
-        else:
-            tokens.match_token(TokenKind.Identifier, 'procedure')
-
-        # name
-        self._name = tokens.match_token(TokenKind.Identifier).value
-        
-        # ( parameter declaration )
-        
-        self._parameters.parse(tokens, self)
-
         if (self._isFunction):
             # read return type
             # : type
-            tokens.match_token(TokenKind.Symbol, ':')
-            type = parse_type(tokens)
+            self._tokens.match_token(TokenKind.Symbol, ':')
+            type = parse_type(self._tokens)
             self._return_type = type
             self._block._variables['result'] = PascalVariable('result', type)
             self._result = self._block.get_variable('result')
 
         # ;
-        tokens.match_token(TokenKind.Symbol, ';')
+        self._tokens.match_token(TokenKind.Symbol, ';')
 
-        if (not self._is_forward) and tokens.match_lookahead(TokenKind.Identifier, 'forward', True):
-            tokens.match_token(TokenKind.Symbol, ';')
+        if (not is_forward) and tokens.match_lookahead(TokenKind.Identifier, 'forward', True):
+            self._tokens.match_token(TokenKind.Symbol, ';')
+            is_forward = True
             self._is_forward = True
 
-        if not self._is_forward:
+        if not is_forward:
             self._block.parse(tokens)
         
     def to_code(self):
