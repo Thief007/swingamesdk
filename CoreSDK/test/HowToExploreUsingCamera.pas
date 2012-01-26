@@ -1,19 +1,19 @@
 program HowToExploreUsingCamera;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgPhysics, sgUtils, sgCamera;  
+  SwinGame, sgTypes;
   
 procedure Main();
 begin 
   OpenGraphicsWindow('Explore with camera', 800, 600);
-  
+  LoadDefaultColors();
   repeat // The game loop...
     ProcessEvents();      
       
     //Move the camera
-    if(KeyDown(vk_UP)) then MoveCameraBy(0, -1);
-    if(KeyDown(vk_DOWN)) then MoveCameraBy(0, +1);
-    if(KeyDown(vk_LEFT)) then MoveCameraBy(-1, 0);
-    if(KeyDown(vk_RIGHT)) then MoveCameraBy(+1, 0);
+    if KeyDown(vk_UP) then MoveCameraBy(0, -1);
+    if KeyDown(vk_DOWN) then MoveCameraBy(0, +1);
+    if KeyDown(vk_LEFT) then MoveCameraBy(-1, 0);
+    if KeyDown(vk_RIGHT) then MoveCameraBy(+1, 0);
     
     //Draw the scene
     ClearScreen(ColorWhite);
