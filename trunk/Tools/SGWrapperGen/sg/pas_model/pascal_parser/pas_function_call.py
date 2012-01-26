@@ -45,7 +45,7 @@ class PascalFunctionCall(object):
         if self._points_to is self:
             # recursive call...
             # need to get the function I'm being called from...
-            self._points_to = self._block.functions[self.name]
+            self._points_to = self._block._functions[self.name]
         elif self._points_to is None:
             logger.error("Unable to resolve function call:  " + self.identifier)
             assert False

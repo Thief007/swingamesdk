@@ -62,9 +62,9 @@ class PascalBlock(object):
                 current_part.parse(tokens)
                 self._variables.update(current_part.variables)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
-                current_part = PascalFunction(self)
-                current_part.parse(tokens)
+                current_part = PascalFunction(self, tokens)
                 self._functions[current_part.name] = current_part
+                current_part.parse(tokens)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
                 current_part = PascalTypeDeclaration(self)
                 current_part.parse(tokens)
