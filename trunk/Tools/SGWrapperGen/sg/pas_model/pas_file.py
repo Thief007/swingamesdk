@@ -9,6 +9,7 @@ class PascalFile(object):
     """
     def __init__(self, path):
         import os
+        from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
         self._filename = os.path.basename(path)
         self._name = ''
         self._contains_kind = None
@@ -16,6 +17,10 @@ class PascalFile(object):
         self._code = dict()
         self._stream = SGTokenStream(path)
         self._is_parsed = False
+        self._meta_comment = None
+
+        self._meta_comment = PascalMetaComment(self._stream)
+        self._meta_comment.process_meta_comments()
 
         # program?
         if self._stream.match_lookahead(TokenKind.Identifier, 'program'):

@@ -1,7 +1,7 @@
 from pas_tokeniser import SGPasTokeniser
 from pas_token_kind import TokenKind
 from pas_token import Token
-
+from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
 from pascal_parser.pas_parser_utils import logger
 
 class SGTokenStream(object):
@@ -18,6 +18,7 @@ class SGTokenStream(object):
         # Keep track of the lookahead tokens and comments
         self._lookahead_toks = []
         self._lookbehind_comments = []  # stores the comments encountered since last 'get_comments()' call
+        self._lookbehind_meta_comments = []
     
     def next_token(self):
         current_token = None
@@ -27,9 +28,11 @@ class SGTokenStream(object):
                 self._lookahead_toks = self._lookahead_toks[1:]
             else:
                 current_token = self._tokeniser.next_token()
+
             if current_token._kind == TokenKind.Comment:
                 self._lookbehind_comments.append(current_token)
-                logger.debug('TokenStream   : Storing comment: %s', current_token._value)
+                logger.debug('TokenStream   : Storing comment: %s', current_token.value)
+
         return current_token
 
     def get_comments(self):
@@ -55,7 +58,7 @@ class SGTokenStream(object):
             current_token = self._tokeniser.next_token()
             while current_token._kind == TokenKind.Comment:
                 self._lookbehind_comments.append(current_token)
-                logger.debug('TokenStream   : Storing comment: %s', current_token._value)
+                logger.debug('TokenStream   : Storing comment: %s', current_token.value)
                 current_token = self._tokeniser.next_token()
             self._lookahead_toks.append(current_token)
         return self._lookahead_toks

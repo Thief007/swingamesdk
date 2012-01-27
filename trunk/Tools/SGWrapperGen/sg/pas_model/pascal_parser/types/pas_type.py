@@ -7,10 +7,16 @@ class PascalType(object):
     
     def __init__(self):
         self._name = ''
+        self._type = ''
         
     @property
     def name(self):
         return self._name
 
+    @property
+    def kind(self):
+        return self._type
+
     def parse(self, tokens):
         self._name = tokens.match_token(TokenKind.Identifier).value
+        self._type = self._name

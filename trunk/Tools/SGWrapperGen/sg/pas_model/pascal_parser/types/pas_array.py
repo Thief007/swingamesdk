@@ -46,4 +46,5 @@ class PascalArray(object):
         self._nested_type = parse_type(tokens) #recursive call
             
         self._name = self._nested_type.name + ''.join(['[%s..%s]' % (low_idx, high_idx) for low_idx, high_idx in self._dimensions])
+
         

@@ -28,11 +28,10 @@ class PascalEnum(object):
         while not tokens.match_lookahead(TokenKind.Symbol, ')', consume=True):
             name = tokens.match_token(TokenKind.Identifier).value
             if tokens.match_lookahead(TokenKind.Operator, '=', consume=True) or tokens.match_lookahead(TokenKind.Operator, ':=', consume=True): #assigned value
-                current_value = tokens.match_token(TokenKind.Number)
+                current_value = eval(tokens.match_token(TokenKind.Number).value)
             self._values.append(PascalEnumValue(name, current_value))
             current_value += 1
             tokens.match_lookahead(TokenKind.Symbol, ',', consume=True) #consume commas
-        tokens.match_token(TokenKind.Symbol, ';')
 
     def to_code(self):
         import converter_helper

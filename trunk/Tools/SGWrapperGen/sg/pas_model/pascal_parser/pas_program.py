@@ -16,6 +16,7 @@ class PascalProgram(object):
         self._uses = None
         self._block = None  # program block
         self._code = dict()
+        self._meta_comment = None
 
     @property
     def code(self):
@@ -45,7 +46,6 @@ class PascalProgram(object):
                 if (var == variable.name):
                     return variable
         return None
-
 
     def parse(self, tokens):
         """

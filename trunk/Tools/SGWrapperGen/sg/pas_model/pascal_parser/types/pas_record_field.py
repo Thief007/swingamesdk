@@ -5,7 +5,7 @@ class PascalRecordField(object):
     Describes a record field in pascal
     """
     
-    def __init__(self):
+    def __init__(self, name, type, modifier):
         self._name = ''
         self._type = None
         self._code = dict()
@@ -21,14 +21,6 @@ class PascalRecordField(object):
     @property
     def name(self):
         return self._name
-
-    def parse(self, tokens):
-        from pascal_parser.pas_parser_utils import parse_type
-        self._name = tokens.match_token(TokenKind.Identifier).value
-        tokens.match_token(TokenKind.Symbol, ':')
-        self._type = parse_type(tokens)
-        tokens.match_token(TokenKind.Symbol, ';')
-
 
     def to_code(self):
         import converter_helper
