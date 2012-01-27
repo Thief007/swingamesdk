@@ -910,6 +910,7 @@ implementation
     
     finalization
     begin
+      _Bundles.deleteAll();
       FreeAndNil(_Bundles);
     end;
     
