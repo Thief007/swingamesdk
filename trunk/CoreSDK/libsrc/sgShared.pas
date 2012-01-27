@@ -228,6 +228,7 @@ implementation
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
     {$ENDIF}
     
+    if not assigned(Driver.Init) then LoadDefaultDriver();
     Driver.Init();
 
     

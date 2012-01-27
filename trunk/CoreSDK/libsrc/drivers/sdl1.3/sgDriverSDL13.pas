@@ -35,12 +35,24 @@ uses
     PSDL13Surface = ^SDL13Surface;
 	
 	procedure LoadSDL13Driver();
+	function GetSurface(bmp : Bitmap) : PSDL_Surface;
 
 var
   _ScreenDirty : Boolean = False;
 		
 implementation
 	uses sgDriver, sgShared;
+	
+	var
+	  _Initialised : Boolean = False;
+	
+	function GetSurface(bmp : Bitmap) : PSDL_Surface;
+  begin
+    if not Assigned(bmp) or not Assigned(bmp^.surface) then
+      result := nil
+    else 
+      result := PSDL13Surface(bmp^.surface)^.surface;
+  end;
 	
 	function GetErrorProcedure() : PChar;
 	begin
@@ -54,6 +66,9 @@ implementation
   
   procedure InitProcedure(); 
   begin
+    if _Initialised then exit;
+    _Initialised := true;
+    
     if (SDL_INIT(SDL_INIT_VIDEO or SDL_INIT_AUDIO) = -1) then
     begin
       {$IFDEF Trace}

@@ -222,7 +222,7 @@ implementation
     if _readingString then
     begin
       oldStr := _tempString;
-      
+            
       //If the key is not a control character
       if (kyCode = LongInt(vk_BACKSPACE)) and (Length(_tempString) > 0) then
       begin
@@ -245,7 +245,7 @@ implementation
           0..31: ;
           127..High(Byte): ;
           else //Append the character
-            _tempString := _tempString + Char(kyChar);
+            _tempString := _tempString + Char(kyCode);
         end;
       end;
       
@@ -277,6 +277,7 @@ implementation
   var
     outStr: String;
   begin
+    WriteLn('Render Text Surface');
     if Length(text) > 0 then
     begin
       outStr := text + '|';
@@ -306,7 +307,6 @@ implementation
 
     if imagesDriver.SurfaceExists(_cursorBitmap) then FreeBitmap(_cursorBitmap);
     _cursorBitmap := DrawTextTo(_font, newStr, _foreColor,_backgroundColor);
-    writeln(_backgroundColor);
     _textBitmap := _cursorBitmap;
   end;
   
@@ -320,6 +320,7 @@ implementation
     srect, drect: Rectangle;
     textWidth: Longint;
   begin
+    WriteLn('Draw Collected Text');
     if (not imagesDriver.SurfaceExists(dest)) then exit;
 
     if _readingString then
@@ -337,7 +338,6 @@ implementation
           srect.height := _area.height;
 
           drect := _area;
-
           imagesDriver.BlitSurface(_textBitmap,  dest, @srect, @drect);
         end;
   end;
