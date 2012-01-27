@@ -1951,7 +1951,7 @@ implementation
     
     if (x < 0) or (x >= GraphicsDriver.GetSurfaceWidth(dest)) or (y < 0) or (y >= GraphicsDriver.GetSurfaceHeight(dest)) then 
     begin 
-      RaiseWarning('DrawPixel - Coordinate out of range of Bitmap supplied'); 
+      // RaiseWarning('DrawPixel - Coordinate out of range of Bitmap supplied'); 
       exit; 
     end;
     GraphicsDriver.SetPixelColor(dest, x, y, clr);

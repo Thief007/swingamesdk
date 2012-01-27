@@ -823,6 +823,12 @@ interface
   /// @method InCircle
   function PointInCircle(const pt: Point2D; const c: Circle): Boolean;
   
+  /// Returns True if the point ``pt`` is in the circle.
+  ///
+  /// @lib
+  /// @sn pointX:%s y:%s inCircleX:%s y:%s radius:%s
+  function PointInCircle(const ptX, ptY, cX, cY, radius: Single): Boolean;
+  
   /// Returns True if point ``pt`` is on the line segment ``line``.
   ///
   /// @lib PointOnLine
@@ -3583,6 +3589,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'PointInCircle(const pt: Point2D', '');
     {$ENDIF}
+  end;
+  
+  function PointInCircle(const ptX, ptY, cX, cY, radius: Single): Boolean;
+  begin
+    result := PointInCircle(PointAt(ptX, ptY), CircleAt(cX, cY, Round(radius)));
   end;
 
   function TriangleBarycenter(const tri: Triangle): Point2D;
