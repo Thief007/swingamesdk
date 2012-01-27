@@ -1,9 +1,7 @@
 program HelloWorld;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
-  sgTypes, sgAudio, sgText, sgGraphics, sgResources,
-  sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgAnimations,
-  sgSprites, sgTimers, sgUserInterface;
+  SwinGame;
 
 procedure TestLineDraw();
 var
@@ -24,7 +22,7 @@ var
   img: Bitmap;
   i: Integer;
 begin
-  OpenAudio();
+  OpenAudio();  
   
   //LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
@@ -36,7 +34,7 @@ begin
   LoadAnimationScript('test.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);
-  
+  LoadDefaultColors();
   TestLineDraw();
   
   img := CreateBitmap(800, 600);
