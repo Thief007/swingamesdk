@@ -32,7 +32,7 @@ all_units = [
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
     ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
-    # ('sgUserInterface', 'UserInterface', '../../CoreSDK/src/sgUserInterface.pas'),
+    ('sgUserInterface', 'UserInterface', '../../CoreSDK/src/sgUserInterface.pas'),
 ]
 
 

@@ -825,9 +825,9 @@ interface
   
   /// Returns True if the point ``pt`` is in the circle.
   ///
-  /// @lib
+  /// @lib PointXYInCircle
   /// @sn pointX:%s y:%s inCircleX:%s y:%s radius:%s
-  function PointInCircle(const ptX, ptY, cX, cY, radius: Single): Boolean;
+  function PointInCircle(ptX, ptY, cX, cY, radius: Single): Boolean;
   
   /// Returns True if point ``pt`` is on the line segment ``line``.
   ///
@@ -3591,7 +3591,7 @@ implementation
     {$ENDIF}
   end;
   
-  function PointInCircle(const ptX, ptY, cX, cY, radius: Single): Boolean;
+  function PointInCircle(ptX, ptY, cX, cY, radius: Single): Boolean;
   begin
     result := PointInCircle(PointAt(ptX, ptY), CircleAt(cX, cY, Round(radius)));
   end;

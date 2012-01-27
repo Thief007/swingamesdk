@@ -138,16 +138,27 @@ doCompile()
     fi
 }
 
+# $1 = other opts
+doCompileGameMain()
+{
+    name="${SRC_DIR}/${GAME_MAIN}"
+    name=${file##*/} # ## = delete longest match for */... ie all but file name
+    name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+    doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" $1
+}
+
 doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$` ; do
+    for file in `find ${LIB_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
     done
+    
+    doCompileGameMain "-arch i386"
     
     #Assemble all of the .s files
     echo "  ... Creating game"
@@ -166,12 +177,14 @@ doMacCompile()
     mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$` ; do
+    for file in `find ${LIB_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${1}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
+    
+    doCompileGameMain "-arch ${1}"
     
     #Assemble all of the .s files
     echo "  ... Creating game for $1"
@@ -247,11 +260,13 @@ doMacPackage()
 doLinuxCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
+    for file in `find ${LIB_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
+    
+    doCompileGameMain ""
     
     #Assemble all of the .s files
     echo "  ... Creating game"
@@ -268,11 +283,13 @@ doLinuxPackage()
 doWindowsCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
+    for file in `find ${LIB_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
+    
+    doCompileGameMain ""
     
     #Assemble all of the .s files
     echo "  ... Creating game"
@@ -311,6 +328,40 @@ doCopyResources()
     
     copyWithoutSVN "${APP_PATH}/Resources" "${RESOURCE_DIR}"
 }
+
+#
+# Locate GameMain.pas
+#
+locateGameMain()
+{
+  cd "${SRC_DIR}"
+  fileList=$(find "." -maxdepth 1 -type f -name \*.c)
+  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  
+  if [ ${FILE_COUNT} = 1 ]; then
+    GAME_MAIN=${fileList[0]}
+  else
+    echo "Select the file to compile for your game"
+    PS3="File number: "
+  
+    select fileName in $fileList; do
+        if [ -n "$fileName" ]; then
+            GAME_MAIN=${fileName}
+        fi
+      
+        break
+    done
+  fi
+  
+  cd ${FULL_APP_PATH}
+  
+  if [ ! -f "${SRC_DIR}/${GAME_MAIN}" ]; then
+    echo "Cannot find file to compile, was looking for ${GAME_MAIN}"
+    exit -1
+  fi
+}
+
+locateGameMain
 
 
 if [ $CLEAN = "N" ]

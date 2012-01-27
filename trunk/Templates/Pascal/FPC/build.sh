@@ -289,7 +289,7 @@ locateGameMain()
   fileList=$(find "." -maxdepth 1 -type f -name \*.pas)
   FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
-  if [[ ${FILE_COUNT} = 1 ]]; then
+  if [ ${FILE_COUNT} = 1 ]; then
     GAME_MAIN=${fileList[0]}
   else
     echo "Select the file to compile for your game"
