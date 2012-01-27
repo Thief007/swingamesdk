@@ -6,10 +6,10 @@ procedure Main();
 var
   p : Panel;  
 begin    
-  OpenGraphicsWindow('How To Draw A Panel', 600, 400);
+  OpenGraphicsWindow('How To Draw A Panel', 800, 600);
   LoadDefaultColors();  
   
-  p := LoadPanel('SimplePanel.txt');  
+  p := LoadPanel('panelwithlabel.txt');  
   ShowPanel(p);
   
   ClearScreen(ColorWhite);        
@@ -17,7 +17,7 @@ begin
   
 	RefreshScreen();
 	
-	Delay(20000);	
+	Delay(10000);	
   ReleaseAllResources();
 end;
 

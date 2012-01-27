@@ -9,7 +9,7 @@ begin
 	OpenGraphicsWindow('How To Move A Panel', 800, 600);
 	LoadDefaultColors();  
 	
-	p := LoadPanel('panelwithlabel.txt');	
+	p := LoadPanel('panelwithlabel.txt');		
 	ShowPanel(p);
 	
 	repeat // The game loop...
@@ -19,6 +19,8 @@ begin
 		DrawPanels();		
 		
 	  PanelSetDraggable(p, true);
+		//GUISetForegroundColor(ColorYellow);
+		GUISetBackgroundColor(ColorGreen);
 		UpdateInterface();
 		
 		RefreshScreen();    		
