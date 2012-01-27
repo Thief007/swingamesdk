@@ -11,6 +11,7 @@ unit sgDriverTimer;
 //		- Pascal LongWord is equivalent to a Uint32
 //
 //=============================================================================
+{$I driver.inc}
 
 interface
 	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverTimerSDL13{$ELSE}sgDriverTimerSDL{$ENDIF};

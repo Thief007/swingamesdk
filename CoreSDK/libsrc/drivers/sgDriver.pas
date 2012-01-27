@@ -34,7 +34,9 @@ interface
 	  end;  
 
 	var
-		Driver : DriverRecord;
+		Driver : DriverRecord = ( GetError: nil; Quit: nil; Init: nil );
+	
+	procedure LoadDefaultDriver();
 		
 implementation
   	uses sgTypes, sgDriverTimer, {$IFDEF SWINGAME_SDL13}sgDriverSDL13{$ELSE}sgDriverSDL{$ENDIF};
@@ -42,8 +44,10 @@ implementation
 	procedure LoadDefaultDriver();
 	begin
 	  {$IFDEF SWINGAME_SDL13}
+	    WriteLn('Loading 1.3');
 		  LoadSDL13Driver();
 		{$ELSE}
+		  WriteLn('Loading 1.2');
 		  LoadSDLDriver();
 		{$ENDIF}
 	end;
@@ -68,7 +72,9 @@ implementation
 	end;  
 
 initialization
-	begin
+  if not Assigned(Driver.Init) then
+  begin
+	  WriteLn('Loading driver');
 		Driver.GetError               := @DefaultGetErrorProcedure;
 		Driver.Quit                   := @DefaultQuitProcedure;
 		Driver.Init                   := @DefaultInitProcedure;

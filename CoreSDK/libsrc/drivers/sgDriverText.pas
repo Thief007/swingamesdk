@@ -14,6 +14,7 @@ unit sgDriverText;
 // TODO:
 // 		- 
 //=============================================================================
+{$I driver.inc}
 
 interface
 	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverTextSDL13{$ELSE}sgDriverTextSDL{$ENDIF};

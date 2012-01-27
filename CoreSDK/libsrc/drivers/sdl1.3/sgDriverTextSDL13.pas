@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13;
+	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgDriverImages;
 	
 	const EOL = LineEnding; // from sgShared
 
@@ -50,7 +50,7 @@ implementation
   
 	function ToSDLColor(color: Longword): SDL_Color;
   begin
-    if (PSDL13Surface(screen^.surface)^.surface = nil) or (PSDL13Surface(screen^.surface)^.surface^.format = nil) then
+    if (GetSurface(screen) = nil) or (GetSurface(screen)^.format = nil) then
     begin
       RaiseWarning('Estimating color as screen is not created.');
       result.r := color and $00FF0000 shr 16;
@@ -59,7 +59,7 @@ implementation
       exit;
     end;
 
-    SDL_GetRGB(color, PSDL13Surface(screen^.surface)^.surface^.format, @result.r, @result.g, @result.b);
+    SDL_GetRGB(color, GetSurface(screen)^.format, @result.r, @result.g, @result.b);
   end;
 	
 	procedure CloseFontProcedure(fontToClose : font);
@@ -184,14 +184,14 @@ implementation
 
 		// Draw the text on top of that:
 		rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-
-		if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
+		
+		if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(GetSurface(sText), 0, SDL_ALPHA_TRANSPARENT);
 
 		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
 	//	SDL_BlitSurface(sText^.surface, @rect, dest^.surface, @SDLrc );
 		
 		
-    texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, PSDL13Surface(sText^.surface)^.surface);
+    texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(sText));
 	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, texture, @rect, @SDLrc);
 	  
 	  SDL_DestroyTexture(texture);
@@ -209,10 +209,11 @@ implementation
 	    n, w, h, i: Longint;
 	    rect: SDL_Rect;
 	    colorFG: SDL_Color;
-		SDLrc: SDL_Rect;
+		  SDLrc: SDL_Rect;
 	    bgTransparent: Boolean;
+  	  texture : PSDL_Texture;
 	  begin
-	    if dest^.surface = nil then begin RaiseWarning('Error Printing Strings: There was no surface to draw onto.'); exit; end;
+	    if GetSurface(dest) = nil then begin RaiseWarning('Error Printing Strings: There was no surface to draw onto.'); exit; end;
 
 	    colorFG := ToSDLColor(clrFg);
 	    bgTransparent := TransparencyOf(clrBg) < 255;
@@ -302,7 +303,7 @@ implementation
 
 	      // Render the current line. Ignore alpha in this draw
 	      if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
-	      SDL_UpperBlit(temp, nil, sText^.surface, @rect);
+	      SDL_UpperBlit(temp, nil, GetSurface(sText), @rect);
 
 	      // Clean up:
 	      SDL_FreeSurface(temp);
@@ -310,12 +311,18 @@ implementation
 
 	    // Draw the text on top of that:
 	    rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-	    if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);
+	    if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(GetSurface(sText), 0, SDL_ALPHA_TRANSPARENT);
 		  
 		  SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
-	    SDL_UpperBlit(sText^.surface, @rect, dest^.surface, @SDLrc );
+	  //  SDL_UpperBlit(sText^.surface, @rect, dest^.surface, @SDLrc );
+	   
+	   
+     texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(sText));
+ 	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, texture, @rect, @SDLrc);
+
+ 	  SDL_DestroyTexture(texture);
+   	FreeBitmap(sText);
 	    
-	    FreeBitmap(sText);
 	end;
 	
 	procedure SetFontStyleProcedure(fontToSet : Font; value : FontStyle);
@@ -354,15 +361,10 @@ implementation
 	end;
 		
 	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
-	begin
-	  if dest <> screen then
-	  begin
-	    StringColor(PSDL13Surface(dest^.surface)^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );	  
-	    exit;
-	  end;
-    stringColor(PSDL13Surface(screen^.surface)^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );
-    _ScreenDirty := True;
-	  WriteLn('Draw FrameRate');
+	begin  
+	  stringColor(PSDL13Surface(dest^.surface)^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );
+	  if dest = screen then
+      _ScreenDirty := True;
 	end;
 	
 	procedure LoadSDL13TextDriver();
