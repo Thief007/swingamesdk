@@ -1,27 +1,24 @@
 program HowToDrawAPanel;
 uses 
-sgGraphics, sgTypes, sgUtils, sgInput, sgResources, sgUserInterface;		
+ SwinGame, sgTypes, sgUserInterface;
 
 procedure Main();
 var
-	p : Panel;
-	
+  p : Panel;  
 begin    
-    //OpenGraphicsWindow('How To Draw A Panel', 800, 600);    
-
-		p := NewPanel('Test');
-		
-    //repeat
-			//ProcessEvents();
-			
-			ShowPanel(p);
-			
-			//ClearScreen(ColorWhite);			
-			
-			//RefreshScreen();			
-    //until WindowCloseRequested();
-    
-    ReleaseAllResources();
+  OpenGraphicsWindow('How To Draw A Panel', 600, 400);
+  LoadDefaultColors();  
+  
+  p := LoadPanel('SimplePanel.txt');  
+  ShowPanel(p);
+  
+  ClearScreen(ColorWhite);        
+  DrawPanels();
+  
+	RefreshScreen();
+	
+	Delay(20000);	
+  ReleaseAllResources();
 end;
 
 begin
