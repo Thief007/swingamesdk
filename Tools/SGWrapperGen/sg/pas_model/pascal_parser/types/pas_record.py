@@ -1,4 +1,5 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
+from pascal_parser.pas_parser_utils import logger
 class PascalRecord(object):
     """
     Describes a record in pascal
@@ -23,12 +24,22 @@ class PascalRecord(object):
 
     def parse(self, tokens):
         from pascal_parser.types.pas_record_field import PascalRecordField
-        if (tokens.match_lookahead(TokenKind.Identifier, 'packed', consume=True) and tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True)) or tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True):                #packed record field: Type end;
-            while not tokens.match_lookahead(TokenKind.Identifier, 'end', consume=True):
-                field = PascalRecordField()
-                field.parse(tokens)
-                self._fields.append(field)
+        from pascal_parser.pas_parser_utils import _parse_identifier_list, parse_type
+        while not tokens.match_lookahead(TokenKind.Identifier, 'end', consume=True):
+            modifier = None
+            # (modifier) identifier list, ':', type, ';'
+
+            idList = _parse_identifier_list(tokens)
+            tokens.match_token(TokenKind.Symbol, ':')
+            type = parse_type(tokens)
+
             tokens.match_token(TokenKind.Symbol, ';')
+
+            for varName in idList:
+                if not varName in self._fields:
+                    field = PascalRecordField(varName, type, modifier)
+                    self._fields.append(field)
+                    logger.debug("Parsed field : " + varName + " : " + type.name)
 
     def to_code(self):
         import converter_helper

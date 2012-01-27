@@ -8,7 +8,7 @@ from pascal_parser.types.pas_record import PascalRecord
 
 class PascalTypeDeclaration(object):
     """
-    PascalFunction is a container for a procedure or function in Pascal
+    
     """
    
     def __init__(self, parent):
@@ -24,6 +24,7 @@ class PascalTypeDeclaration(object):
         self._type_declarations = dict()       
         self._code = dict()
         self._comments = list()
+        self._meta_comment = None
 
     @property
     def code(self):
@@ -42,10 +43,17 @@ class PascalTypeDeclaration(object):
 
     def parse(self, tokens):
         from pas_parser_utils import parse_type
+        from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
         self._comments = tokens.get_comments()
+
+        self._meta_comment = PascalMetaComment(tokens)
+        self._meta_comment.process_meta_comments()
+
         tokens.match_token(TokenKind.Identifier, 'type')
 
         while not token_has_values(tokens.lookahead()[0], reservedWords):
+            m_comment = PascalMetaComment(tokens)
+            m_comment.process_meta_comments()
             type_name = tokens.match_token(TokenKind.Identifier).value
             new_type = None
             if tokens.match_lookahead(TokenKind.Operator, '=', consume=True):
@@ -53,16 +61,17 @@ class PascalTypeDeclaration(object):
                 if tokens.match_lookahead(TokenKind.Symbol, '('):
                     new_type = PascalEnum(type_name)
                     new_type.parse(tokens)
+                    #tokens.match_token(TokenKind.Symbol, ';')
                 #record...
-                elif (tokens.match_lookahead(TokenKind.Identifier, 'packed') and tokens.match_lookahead(TokenKind.Identifier, 'record')) or tokens.match_lookahead(TokenKind.Identifier, 'record'):
+                elif (tokens.match_lookahead(TokenKind.Identifier, 'packed', consume=True) and tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True)) or tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True):
                     new_type = PascalRecord(type_name)
                     new_type.parse(tokens)
                 # other type...
-                elif (tokens.match_lookahead(TokenKind.Identifier)):
-                    type_temp = parse_type(tokens)
                 else:
-                    logger.error("Type Declaration:     Unknown type in type declaration", tokens.next_token())
-                    assert False
+                    type_temp = parse_type(tokens)
+            
+                if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
+                    tokens.match_token(TokenKind.Symbol, ';')
             # parse new type and add it to the type declaration
             self._type_declarations[type_name] = new_type
         

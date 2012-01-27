@@ -41,7 +41,6 @@ def parse_type(tokens):
 
     # parse new type
     new_type.parse(tokens)
-
     # if type does not already exist, add it to the cache
     # then return it
     old_type = pas_type_cache.get_type(new_type.name)
@@ -58,7 +57,8 @@ def token_has_values(token, list_values):
     """
     for value in list_values:
         if value[1] == token.value:     # value is a tuple, where the second element is a string value
-            return True
+            if value[0] == token.kind:
+                return True
     return False
 
 def parse_statement(tokens, block):

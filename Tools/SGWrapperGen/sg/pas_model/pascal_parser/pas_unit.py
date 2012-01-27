@@ -1,7 +1,8 @@
 from tokeniser.pas_token_kind import TokenKind
-from pascal_parser.pas_parser_utils import _parse_compound_statement
+from pascal_parser.pas_parser_utils import _parse_compound_statement, logger
 from pas_function import PascalFunction
 from pas_var_declaration import PascalVarDeclaration
+from pascal_parser.pas_type_declaration import PascalTypeDeclaration
 
 class PascalUnit(object):
     """
@@ -108,8 +109,8 @@ class PascalUnit(object):
                 current_part.parse(tokens, is_forward = True)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'type')):
                 current_part = PascalTypeDeclaration(self)
-                current_part.parse(tokens)
-                self._types.update(_type_declarations.types)
+                current_part.parse(tokens) 
+                self._types.update(current_part.types)
             elif tokens.match_lookahead(TokenKind.Identifier, 'implementation'):
                 break
             else:
