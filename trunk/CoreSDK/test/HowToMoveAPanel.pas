@@ -4,29 +4,29 @@ uses
 
 procedure Main();
 var
-	p : Panel;	
+  p : Panel;  
 begin    
-	OpenGraphicsWindow('How To Move A Panel', 800, 600);
-	LoadDefaultColors();  
-	
-	p := LoadPanel('panelwithlabel.txt');		
-	ShowPanel(p);
-	
-	repeat // The game loop...
-		ProcessEvents();    
-		
-		ClearScreen(ColorWhite);				
-		DrawPanels();		
-		
-	  PanelSetDraggable(p, true);
-		//GUISetForegroundColor(ColorYellow);
-		GUISetBackgroundColor(ColorGreen);
-		UpdateInterface();
-		
-		RefreshScreen();    		
-	until WindowCloseRequested();
-	
-	ReleaseAllResources();
+  OpenGraphicsWindow('How To Move A Panel', 800, 600);
+  LoadDefaultColors();  
+  
+  p := LoadPanel('panelwithlabel.txt');    
+  ShowPanel(p);
+  
+  repeat // The game loop...
+    ProcessEvents();    
+    
+    ClearScreen(ColorWhite);        
+    DrawPanels();    
+    
+    PanelSetDraggable(p, true);
+    //GUISetForegroundColor(ColorYellow);
+    GUISetBackgroundColor(ColorGreen);
+    UpdateInterface();
+    
+    RefreshScreen();        
+  until WindowCloseRequested();
+  
+  ReleaseAllResources();
 end;
 
 begin

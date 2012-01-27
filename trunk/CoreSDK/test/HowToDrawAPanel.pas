@@ -15,9 +15,9 @@ begin
   ClearScreen(ColorWhite);        
   DrawPanels();
   
-	RefreshScreen();
-	
-	Delay(10000);	
+  RefreshScreen();
+  
+  Delay(10000);  
   ReleaseAllResources();
 end;
 
