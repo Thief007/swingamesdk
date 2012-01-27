@@ -4,23 +4,21 @@ uses
 
 procedure Main();
 var
-	p : Panel;	
+	cp : Panel;	
 begin    
-	OpenGraphicsWindow('How To Radio Button with Multiple Panel', 800, 600);
+	OpenGraphicsWindow('How To Radio Button ', 400, 300);
 	LoadDefaultColors();  
 	
-	p := LoadPanel('panelwithlabel.txt');		
-	ShowPanel(p);
+	cp := LoadPanel('checkBoxPanel.txt');	
+	ShowPanel(cp);
+	PanelSetDraggable(cp, false);
 	
 	repeat // The game loop...
 		ProcessEvents();    
 		
 		ClearScreen(ColorWhite);				
-		DrawPanels();		
+		DrawPanels();  
 		
-	  PanelSetDraggable(p, true);
-		//GUISetForegroundColor(ColorYellow);
-		GUISetBackgroundColor(ColorGreen);
 		UpdateInterface();
 		
 		RefreshScreen();    		
