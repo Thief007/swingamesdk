@@ -1,4 +1,4 @@
-program HowToMoveAPanel;
+program HowToUseRadioButtonWithMultiplePanel;
 uses 
  SwinGame, sgTypes, sgUserInterface;
 
@@ -6,7 +6,7 @@ procedure Main();
 var
 	p : Panel;	
 begin    
-	OpenGraphicsWindow('How To Move A Panel', 800, 600);
+	OpenGraphicsWindow('How To Radio Button with Multiple Panel', 800, 600);
 	LoadDefaultColors();  
 	
 	p := LoadPanel('panelwithlabel.txt');		
