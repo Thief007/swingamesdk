@@ -5,30 +5,28 @@ uses
 procedure Main();
 var
     explosion: Sprite;
-    explosionBmp: Bitmap;
 begin
     OpenAudio();
-    OpenGraphicsWindow('Exploding a Sprite', 800, 600);
+    OpenGraphicsWindow('Create Animation', 200, 200);
+	
+	LoadResourceBundle('explosion_bundle.txt');
+	
+    explosion := CreateSprite(BitmapNamed('explosionBmp'), AnimationScriptNamed('explosionScrpt'));
 
-    explosionBmp := LoadBitmapNamed('explosion', 'explosion_pro.png');
-    BitmapSetCellDetails(explosionBmp, 72, 72, 6, 7, 45);
-    LoadAnimationScriptNamed('explosionScrpt', 'explosion.txt');
+    SpriteStartAnimation(explosion, 'explosion_loop');
 
-    explosion := CreateSprite(explosionBmp, AnimationScriptNamed('explosionScrpt'));
-    SpriteStartAnimation(explosion, 'FireExplosion');
-
-    SpriteSetX(explosion, 400);
-    SpriteSetY(explosion, 300);
+    SpriteSetX(explosion, 64);
+    SpriteSetY(explosion, 64);
 
     repeat
         ClearScreen(ColorWhite);
         DrawSprite(explosion);
-        RefreshScreen();
+        RefreshScreen(60);
 
         UpdateSprite(explosion);
 
         ProcessEvents();
-    until SpriteAnimationHasEnded(explosion);
+    until WindowCloseRequested();
 
     Delay(800);
 

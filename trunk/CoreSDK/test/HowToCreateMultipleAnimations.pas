@@ -5,20 +5,17 @@ uses
 procedure Main();
 var
     explosion: Sprite;
-    explosionBmp: Bitmap;
 begin
     OpenAudio();
-    OpenGraphicsWindow('Miltiple Animations', 200, 200);
-
-    explosionBmp := LoadBitmapNamed('explosion', 'explosion_pro.png');
-    BitmapSetCellDetails(explosionBmp, 72, 72, 6, 7, 45);
-    LoadAnimationScriptNamed('explosionScrpt', 'explosion.txt');
-
-    explosion := CreateSprite(explosionBmp, AnimationScriptNamed('explosionScrpt'));
+    OpenGraphicsWindow('Create Animation', 200, 200);
+	
+	LoadResourceBundle('explosion_bundle.txt');
+	
+    explosion := CreateSprite(BitmapNamed('explosionBmp'), AnimationScriptNamed('explosionScrpt'));
 
     SpriteSetX(explosion, 64);
     SpriteSetY(explosion, 64);
-
+	
     repeat
         ClearScreen(ColorWhite);
         DrawText('[E]xplosion', ColorBlack, 0, 0);
