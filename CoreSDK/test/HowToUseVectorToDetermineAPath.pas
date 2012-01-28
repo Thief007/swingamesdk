@@ -31,12 +31,6 @@ begin
   DrawLine(ColorRed, originVector, ufoVector);
   DrawLine(ColorGreen, distance);
   RefreshScreen();
-  {
-  if KeyTyped(VK_SPACE)
-  begin
-    
-  end;
-  }
   until WindowcloseRequested();
 
   ReleaseAllResources();
