@@ -1,0 +1,4 @@
+BITMAP,background,backgroundImage.png
+FONT,harabaraText,hara.ttf,36
+SOUND,danceMusic,breakdance.wav
+ANIM,fire,RedExplosion.txt
