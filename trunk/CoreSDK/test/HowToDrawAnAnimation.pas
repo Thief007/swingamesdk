@@ -9,12 +9,12 @@ begin
     OpenAudio();
     OpenGraphicsWindow('Create Animation', 200, 200);
 	
-	LoadResourceBundle('explosion_bundle.txt');
-	
+    LoadResourceBundle('explosion_bundle.txt');
+
     explosion := CreateAnimation('explosion_loop', AnimationScriptNamed('explosionScrpt'));
 	
     repeat
-	    ProcessEvents();
+        ProcessEvents();
         ClearScreen(ColorWhite);
         DrawAnimation(explosion, BitmapNamed('explosionBmp'), 64, 64);
         RefreshScreen();

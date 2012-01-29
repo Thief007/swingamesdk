@@ -8,14 +8,14 @@ var
 begin
     OpenAudio();
     OpenGraphicsWindow('Create Animation', 200, 200);
-	
-	LoadResourceBundle('explosion_bundle.txt');
-	
+
+    LoadResourceBundle('explosion_bundle.txt');
+
     explosion := CreateSprite(BitmapNamed('explosionBmp'), AnimationScriptNamed('explosionScrpt'));
 
     SpriteSetX(explosion, 64);
     SpriteSetY(explosion, 64);
-	
+
     repeat
         ClearScreen(ColorWhite);
         DrawText('[E]xplosion', ColorBlack, 0, 0);
