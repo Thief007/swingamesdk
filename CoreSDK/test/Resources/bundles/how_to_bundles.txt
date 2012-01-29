@@ -1,4 +1,6 @@
-BITMAP,background,backgroundImage.png
-FONT,harabaraText,hara.ttf,36
-SOUND,danceMusic,breakdance.wav
+BITMAP,fireBmp,red_explosion.png
 ANIM,fire,RedExplosion.txt
+FONT,harabaraText,hara.ttf,36
+SOUND,danceBeat, breakdance.wav
+TIMER,myTimer
+MUSIC,danceMusic,dancingFrog.wav
