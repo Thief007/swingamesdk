@@ -1,4 +1,4 @@
-program HowToDrawText;
+program HowToDrawSimpleText;
 uses 
     sgText, sgGraphics, sgUtils, sgResources, sgTypes;
 

@@ -1,5 +1,6 @@
 program HowToMoveASprite;
-uses sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources;
+uses 
+    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources;
 
 procedure Main();
 var

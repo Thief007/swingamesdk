@@ -1,26 +1,25 @@
 program HowToOpenHelloWorldWindowWithFramerate;
 uses
-  sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
+    sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
 
 procedure Main();
 begin
-  OpenAudio();
+    OpenAudio();
   
-  OpenGraphicsWindow('Hello World', 800, 600);
+    OpenGraphicsWindow('Hello World', 800, 600);
   
-  repeat // The game loop...
-    ProcessEvents();
-    
-    ClearScreen();
-    DrawFramerate(0,0);
-    
-    RefreshScreen();
-  until WindowCloseRequested();
+    repeat // The game loop...
+        ProcessEvents();
+        ClearScreen();
+        DrawFramerate(0,0);
+
+        RefreshScreen();
+    until WindowCloseRequested();
   
-  CloseAudio();
-  ReleaseAllResources();
+    CloseAudio();
+    ReleaseAllResources();
 end;
 
 begin
-  Main();
+    Main();
 end.

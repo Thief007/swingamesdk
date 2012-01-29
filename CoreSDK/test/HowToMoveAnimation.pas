@@ -42,18 +42,18 @@ begin
             SpriteSetDX(walking, 0);
             SpriteSetDY(walking, 0);
             
-			DoWalking(walking, VK_UP, 	 'WalkBack',  0, -0.25);
+            DoWalking(walking, VK_UP, 	 'WalkBack',  0, -0.25);
             DoWalking(walking, VK_DOWN,  'WalkFront', 0, +0.25);
             DoWalking(walking, VK_LEFT,  'WalkLeft',  -0.25, 0);
             DoWalking(walking, VK_RIGHT, 'WalkRight',  +0.25, 0);
-			
-			DoWalking(walking, VK_W, 	 'MoonWalkBack',  0, -0.25);
+
+            DoWalking(walking, VK_W, 	 'MoonWalkBack',  0, -0.25);
             DoWalking(walking, VK_S,  'MoonWalkFront', 0, +0.25);
             DoWalking(walking, VK_A,  'MoonWalkLeft',  -0.25, 0);
             DoWalking(walking, VK_D, 'MoonWalkRight',  +0.25, 0);
-			
-			DoWalking(walking, VK_SPACE, 'DancingFrog', 0, 0);
-		end;
+
+            DoWalking(walking, VK_SPACE, 'DancingFrog', 0, 0);
+        end;
     until WindowCloseRequested();
 
     CloseAudio();

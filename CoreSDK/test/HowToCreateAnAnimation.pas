@@ -8,9 +8,9 @@ var
 begin
     OpenAudio();
     OpenGraphicsWindow('Create Animation', 200, 200);
-	
-	LoadResourceBundle('explosion_bundle.txt');
-	
+
+    LoadResourceBundle('explosion_bundle.txt');
+
     explosion := CreateSprite(BitmapNamed('explosionBmp'), AnimationScriptNamed('explosionScrpt'));
 
     SpriteStartAnimation(explosion, 'explosion_loop');

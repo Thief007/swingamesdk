@@ -1,4 +1,4 @@
-program HowToCreateASprite;
+program HowToMoveSpriteWithKeyboardInput;
 uses
     sgGraphics, sgInput, sgPhysics, sgSprites, sgTypes, sgImages, sgUtils, sgResources;
 
@@ -16,43 +16,43 @@ begin
     SpriteSetX(ball, 385);
     SpriteSetY(ball, 285);
 
-	repeat
-	ProcessEvents();
-	SpriteSetDx(ball, 0);
+    repeat
+    ProcessEvents();
+    SpriteSetDx(ball, 0);
     SpriteSetDy(ball, 0.02);
-	
-	ClearScreen();
-	
-	if KeyDown(VK_RIGHT) then
-	begin
+
+    ClearScreen();
+
+    if KeyDown(VK_RIGHT) then
+    begin
         SpriteSetDx(ball, 0.2);
         SpriteSetDy(ball, 0);
-	end
-	
-	else if KeyDown(VK_LEFT) then
-	begin
+    end
+
+    else if KeyDown(VK_LEFT) then
+    begin
         SpriteSetDx(ball, -0.2);
         SpriteSetDy(ball, 0);
-	end
+    end
 
     else if KeyDown(VK_UP) then
-	begin
+    begin
         SpriteSetDx(ball, 0);
         SpriteSetDy(ball, -0.2);
-	end
-	
-	else if KeyDown(VK_DOWN) then
-	begin
+    end
+
+    else if KeyDown(VK_DOWN) then
+    begin
         SpriteSetDx(ball, 0);
         SpriteSetDy(ball, 0.2);
-	end
-	
-	else
-	begin
-	    SpriteSetDx(ball, 0);
+    end
+
+    else
+    begin
+        SpriteSetDx(ball, 0);
         SpriteSetDy(ball, 0);
-	end;
-		
+    end;
+
     DrawSprite(ball);
     UpdateSprite(ball);
     RefreshScreen();
