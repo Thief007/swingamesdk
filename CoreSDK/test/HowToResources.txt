@@ -1,18 +1,12 @@
-* HelloWorld
-bundles/splash.txt
-bundles/bundle.txt
-sounds/blah
-sounds/blah
-animations/blah
-animations/test.txt
 * HowToAllowTheUserToCloseTheWindow
 * HowToCenterCameraOnASprite
+images/SwinGame.jpg
 * HowToControlMusic
 sounds/game.ogg
-sounds/turtle.mp3
+sounds/diving-turtle.mp3
 sounds/fast.mp3
-sounds/1.mp3
-sounds/workout.mp3
+sounds/gentle-thoughts-1.mp3
+sounds/morning-workout.mp3
 sounds/saber.ogg
 * HowToControlSound
 sounds/chipmunk.ogg
@@ -23,15 +17,26 @@ sounds/dinosaur.ogg
 sounds/dog_bark.ogg
 * HowToCreateAnAnimation
 bundles/explosion_bundle.txt
+images/explosion_pro.png
+animations/explosion.txt
 * HowToCreateASprite
+images/ball_small.png
 * HowToCreateMultipleAnimations
 bundles/explosion_bundle.txt
+images/explosion_pro.png
+animations/explosion.txt
 * HowToCreateProgressBar
+images/progress_empty.png
+images/progress_full.png
 * HowToDetectCollisionBetweenSprites
+images/ball_small.png
 * HowToDetectShapeCollision
 * HowToDrawABitmap
+images/rocket_large.png
 * HowToDrawAnAnimation
 bundles/explosion_bundle.txt
+images/explosion_pro.png
+animations/explosion.txt
 * HowToDrawAPanel
 * HowToDrawCustomText
 * HowToDrawFramesPerSecond
@@ -42,41 +47,45 @@ bundles/explosion_bundle.txt
 * HowToExploreUsingCamera
 * HowToModelShapeUsingRecord
 * HowToMoveAnimation
+images/frog.png
 animations/kermit.txt
 * HowToMoveAPanel
 * HowToMoveAShape
 * HowToMoveASprite
+images/ball_small.png
 * HowToMoveCameraToDifferentPoint
 * HowToMoveSpriteUsingAnimation
 bundles/dance_bundle.txt
+images/Frog.png
+images/Lizard.png
+animations/kermit.txt
+animations/startup.txt
 * HowToMoveSpriteWithKeyboardInput
+images/ball_small.png
 * HowToOpenHelloWorldWindowWithFramerate
 * HowToPlayMusic
-sounds/turtle.mp3
-sounds/turtle.mp3
-* HowToPlayMusic
-sounds/turtle.mp3
-* HowToPlayMusic
-sounds/turtle.mp3
-* HowToPlayMusic
-sounds/turtle.mp3
+sounds/diving-turtle.mp3
 * HowToPlaySoundEffect
 sounds/chipmunk.ogg
-sounds/files
-* HowToPlaySoundEffect
-sounds/chipmunk.ogg
-* HowToPlaySoundEffect
-sounds/files
-* HowToPlaySoundEffect
-sounds/files
 * HowToReadingTextToScreen
 * HowToResources
 * HowToRespondToKeystrokes
 * HowToRespondToMouseClickAndPosition
 * HowToUseAnimationWithMultipleSprites
 bundles/dance_bundle.txt
+images/Frog.png
+images/Lizard.png
+animations/kermit.txt
+animations/startup.txt
 * HowToUseBundles
 bundles/how_to_bundles.txt
+images/red_explosion.png
+animations/RedExplosion.txt
+fonts/hara.ttf
+sounds/breakdance.wav
+sounds/dancingFrog.wav
 * HowToUseGameTimer
 * HowToUseRadioButton
 * HowToUseVectorToDetermineAPath
+images/planet.png
+images/ufo.png
