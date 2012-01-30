@@ -5,9 +5,8 @@ class PascalType(object):
     That does not need to record any additional information 
     """
     
-    def __init__(self):
-        self._name = ''
-        self._type = ''
+    def __init__(self, name=''):
+        self._name = name
         
     @property
     def name(self):
@@ -15,7 +14,7 @@ class PascalType(object):
 
     @property
     def kind(self):
-        return self._type
+        return self._name
 
     def parse(self, tokens):
         self._name = tokens.match_token(TokenKind.Identifier).value

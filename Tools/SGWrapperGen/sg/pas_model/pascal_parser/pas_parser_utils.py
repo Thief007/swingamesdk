@@ -18,7 +18,7 @@ operators   =   [   (TokenKind.Operator, '+'), (TokenKind.Operator, '-'), (Token
 # Logger object is used to log events to console
 logger = logging.getLogger("sgLogger")
 
-def parse_type(tokens):
+def parse_type(tokens, block):
     """
     parses the type then checks to see if the type already exists in the cache,
     if it already exists the old type is returned, otherwise the new type
@@ -28,27 +28,24 @@ def parse_type(tokens):
     new_type = None
     # array...
     if tokens.match_lookahead(TokenKind.Identifier, 'array'):
-        new_type = pas_array.PascalArray() 
-    # pointer...
-    elif tokens.match_lookahead(TokenKind.Symbol, '^'):
+        new_type = pas_array.PascalArray(block)
+        new_type.parse(tokens)
+    # pointer to type or function/procedure...
+    elif tokens.match_lookahead(TokenKind.Symbol, '^') or tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function'):
         new_type = pas_pointer.PascalPointer()
+        new_type.parse(tokens)
     # already declared type...
+    # every composite type will consist of a previously declared type...
     elif tokens.match_lookahead(TokenKind.Identifier):
-        new_type = pas_type.PascalType()
+        new_type = block.resolve_type(tokens.match_token(TokenKind.Identifier).value)
     else:
         logger.error("Unknown type: ", tokens.next_token())
         assert False
 
-    # parse new type
-    new_type.parse(tokens)
-    # if type does not already exist, add it to the cache
-    # then return it
-    old_type = pas_type_cache.get_type(new_type.name)
-    if old_type is None:
-        pas_type_cache.add_type(new_type)
-        return new_type
-    else:
-        return old_type
+    if (new_type is None):
+        logger.error("Unable to resolve type, line: %s", tokens.next_token().line)
+        assert False
+    return new_type
           
 def token_has_values(token, list_values):
     """

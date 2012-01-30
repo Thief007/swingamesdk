@@ -6,35 +6,53 @@ class PascalFile(object):
     """
     Describes a pascal source file.
     The PascalFile can be parsed.
+
+    Can be specified to be virtual, a virtual file refers to a file that does not exist
+    therefore no TokenStream is created for it, and so it cannot be parsed.
+    The virtual file is used to create system libraries that contain the base types.
     """
-    def __init__(self, path):
+    def __init__(self, path=None, is_virtual=False):
         import os
         from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
-        self._filename = os.path.basename(path)
+        self._filename = ''
         self._name = ''
         self._contains_kind = None
         self._contents = None       # PascalProgram or PascalLibrary
         self._code = dict()
-        self._stream = SGTokenStream(path)
         self._is_parsed = False
         self._meta_comment = None
+        self._is_virtual = is_virtual
+        self._meta_comment = None
+        self._tokens = None
+        self._stream = None
+        if not self._is_virtual:
+            self._stream = SGTokenStream(path)
+            self._meta_comment = PascalMetaComment(self._stream)
+            self._meta_comment.process_meta_comments()
+            self._filename = os.path.basename(path)
+            # program?
+            if self._stream.match_lookahead(TokenKind.Identifier, 'program'):
+                self._contains_kind = 'program';
+                self._contents = PascalProgram(self)
+            # unit?
+            elif self._stream.match_lookahead(TokenKind.Identifier, 'unit'):
+                self._contains_kind = 'unit';
+                self._contents = PascalUnit(self)   
+            else:
+                #logger
+                assert False
 
-        self._meta_comment = PascalMetaComment(self._stream)
-        self._meta_comment.process_meta_comments()
-
-        # program?
-        if self._stream.match_lookahead(TokenKind.Identifier, 'program'):
-            self._contains_kind = 'program';
-            self._contents = PascalProgram(self)
-        # unit?
-        elif self._stream.match_lookahead(TokenKind.Identifier, 'unit'):
-            self._contains_kind = 'unit';
-            self._contents = PascalUnit(self)   
+            self._name = self._stream.lookahead(2)[1].value     # file's 'name' is after the kind of file is stated
         else:
-            #logger
-            assert False
+            self._is_parsed = True
 
-        self._name = self._stream.lookahead(2)[1].value     # file's 'name' is after the kind of file is stated
+    @staticmethod
+    def create_unit_from(name, variable_names = [()], type_names = [], function_names = []):
+        result = PascalFile(None, is_virtual=True)
+        result._name = name
+        result._contents = PascalUnit.create_from(result, variable_names, type_names, function_names)
+        result._contains_kind = 'unit'
+        return result
 
     @property
     def name(self):
@@ -73,6 +91,42 @@ class PascalFile(object):
             if (not unit.is_parsed):
                 unit.parse()
             return unit
+
+    def resolve_function_call(self, function):
+        """
+        Assumes the file has checked itself for the function before calling this
+        """
+        from pas_file_cache import get_unit_named
+        for unit_reference in self._contents.uses.units:
+            unit = unit_reference.points_to.contents
+            for unit_function in unit.functions:
+                if unit_function.name.lower() == function.name.lower():
+                    return unit_function
+            for unit_declared_function in unit.function_declarations:
+                if unit_declared_function.name.lower() == function.name.lower():
+                    return unit_declared_function 
+        # check the System unit...
+        system = get_unit_named('System')
+        if (system != None):
+            for unit_function in system.contents.functions:
+                if unit_function.name.lower() == function.name.lower():
+                    return unit_function
+        return None
+
+    def resolve_type(self, type):
+        from pas_file_cache import get_unit_named
+        for unit_reference in self._contents.uses:
+            unit = unit_reference.points_to.contents
+            for unit_type in unit.types:
+                if unit_type.name.lower() == type.name.lower():
+                    return unit_type
+        # check the System unit...
+        system = get_unit_named('System')
+        if (system != None):
+            for name, unit_type in system.contents.types.items():
+                if name.lower() == type.lower():
+                    return unit_type
+        return None
 
     def parse(self):
         """

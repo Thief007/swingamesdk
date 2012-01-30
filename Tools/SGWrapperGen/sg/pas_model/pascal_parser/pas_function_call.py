@@ -23,12 +23,9 @@ class PascalFunctionCall(object):
     def code(self):
         return self._code
 
-    def parse(self, tokens):
+    def parse(self, tokens, do_resolve=True):
         """
         parses a function call
-
-        inExpr = False by default
-        if inExpr is True a semi-colon is expected at the end of the function call
         """
         from pas_arguments import PascalArguments
 
@@ -40,15 +37,17 @@ class PascalFunctionCall(object):
 
         if (not self._inExpr) :
             tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
-        
-        self._points_to = self._block.resolve_function_call(self)
-        if self._points_to is self:
-            # recursive call...
-            # need to get the function I'm being called from...
-            self._points_to = self._block._functions[self.name]
-        elif self._points_to is None:
-            logger.error("Unable to resolve function call:  " + self.identifier)
-            assert False
+
+        if do_resolve:
+            self._points_to = self._block.resolve_function_call(self)
+            if self._points_to is self:
+                # recursive call...
+                # need to get the function I'm being called from...
+                self._points_to = self._block._functions[self.name]
+            elif self._points_to is None:
+                logger.error("Unable to resolve function call:  " + self.identifier)
+                assert False
+
         logger.debug('Ended function call %s', self._identifier)
 
     @property

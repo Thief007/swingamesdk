@@ -19,7 +19,7 @@ class PascalBlock(object):
     #statement part
 
     
-    def __init__(self, parent, file = None):
+    def __init__(self, parent, file=None):
         self._parent = parent                 #parent block
         self._compound_statement = None
         # list with block contents (in order)
@@ -96,15 +96,26 @@ class PascalBlock(object):
     def resolve_function_call(self, function):
         #check myself
         for (name, declared_function) in self._functions.items():
-            if (function.name == declared_function.name):
+            if (function.name.lower == declared_function.name.lower):
                 return declared_function
         # check parent
         if self.parent != None:
             # recursive call for all parents
             # will always return the answer if it exists
             return self.parent.resolve_function_call(function) 
+        return self._file.resolve_function_call(function)
 
-        return self._file.contents.resolve_function_call(function)
+    def resolve_type(self, type_name):
+        #check myself
+        for (name, type) in self._types.items():
+            if (type_name.lower() == name.lower()):
+                return type
+        # check parent
+        if self.parent != None:
+            # recursive call for all parents
+            # will always return the answer if it exists
+            return self.parent.resolve_type(type_name) 
+        return self._file.resolve_type(type_name)
 
 
     def to_code(self, exportStatements=True):

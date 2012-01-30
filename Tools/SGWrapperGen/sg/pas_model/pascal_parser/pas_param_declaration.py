@@ -12,9 +12,10 @@ class PascalParameterDeclaration(object):
     # 'identifier' : 'type' ;
 
     
-    def __init__(self):
+    def __init__(self, parent):
         # vars stores the variables declared in this declaration in a dictionary
         # name of the variable is the key, type is the value
+        self._block = parent
         self._vars = list()
         self._code = dict()
 
@@ -58,7 +59,7 @@ class PascalParameterDeclaration(object):
             
             # colon seperates identifiers and type
             tokens.match_token(TokenKind.Symbol, ':')
-            the_type = parse_type(tokens)   # reads the type and returns PascalType
+            the_type = parse_type(tokens, self._block.file)   # reads the type and returns PascalType
             
             for parameter_name in parameters:
                 toAdd = PascalVariable(parameter_name, the_type, modifier)

@@ -12,11 +12,12 @@ class PascalVarDeclaration(object):
     # 'identifier' : 'type' ;
 
     
-    def __init__(self):
+    def __init__(self, block):
         # vars stores the variables declared in this declaration in a dictionary
         # name of the variable is the key, type is the value
         self._vars = dict()
         self._code = dict()
+        self._block = block
 
     @property
     def code(self):
@@ -47,7 +48,7 @@ class PascalVarDeclaration(object):
 
             idList = _parse_identifier_list(tokens)
             tokens.match_token(TokenKind.Symbol, ':')
-            type = parse_type(tokens)
+            type = parse_type(tokens, self._block)
 
             if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
                 tokens.match_token(TokenKind.Symbol, ';')

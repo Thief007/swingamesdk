@@ -24,7 +24,7 @@ class PascalUsesClause(object):
     def kind(self):
         return 'uses_clause'
 
-    def parse(self, tokens):
+    def parse(self, tokens, do_resolve=True):
         logger.debug("Parsing uses clause")
         tokens.match_token(TokenKind.Identifier, 'uses')
         while (True):
@@ -36,7 +36,7 @@ class PascalUsesClause(object):
 
             elif (tokens.match_lookahead(TokenKind.Identifier)):
                 new_reference = PascalUnitReference()
-                new_reference.parse(tokens, self._file_owner)
+                new_reference.parse(tokens, self._file_owner, do_resolve)
                 self._units.append(new_reference)
             else:
                 logger.error('Error reading uses clause: ' + str(tokens.next_token()))

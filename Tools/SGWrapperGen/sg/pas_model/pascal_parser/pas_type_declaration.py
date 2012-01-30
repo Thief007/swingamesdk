@@ -59,21 +59,21 @@ class PascalTypeDeclaration(object):
             if tokens.match_lookahead(TokenKind.Operator, '=', consume=True):
                 # enumeration...
                 if tokens.match_lookahead(TokenKind.Symbol, '('):
-                    new_type = PascalEnum(type_name)
+                    new_type = PascalEnum(type_name, self._parent)
                     new_type.parse(tokens)
-                    #tokens.match_token(TokenKind.Symbol, ';')
+                    tokens.match_token(TokenKind.Symbol, ';')
                 #record...
                 elif (tokens.match_lookahead(TokenKind.Identifier, 'packed', consume=True) and tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True)) or tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True):
-                    new_type = PascalRecord(type_name)
+                    new_type = PascalRecord(type_name, self._parent)
                     new_type.parse(tokens)
+                    tokens.match_token(TokenKind.Symbol, ';')
                 # other type...
                 else:
-                    type_temp = parse_type(tokens)
-            
-                if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
+                    type_temp = parse_type(tokens, self._parent)
                     tokens.match_token(TokenKind.Symbol, ';')
             # parse new type and add it to the type declaration
             self._type_declarations[type_name] = new_type
+            self._parent._types[type_name] = new_type
         
     def to_code(self):
         '''

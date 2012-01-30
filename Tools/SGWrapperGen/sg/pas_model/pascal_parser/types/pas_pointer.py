@@ -7,6 +7,7 @@ class PascalPointer(object):
     def __init__(self):
         self._points_to = None      # PascalType  
         self._name = ''
+        self._function_pointer = False
         
     @property
     def name(self):
@@ -18,6 +19,13 @@ class PascalPointer(object):
 
     def parse(self, tokens):
         from pascal_parser.pas_parser_utils import parse_type
-        tokens.match_token(TokenKind.Symbol, '^')
-        self._points_to = parse_type(tokens)
-        self._name = '^' + self._points_to.name
+        from pascal_parser.pas_function import PascalFunction
+        if tokens.match_lookahead(TokenKind.Symbol, '^', consume=True):
+            self._points_to = parse_type(tokens)
+            self._name = '^' + self._points_to.name
+        elif tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function'):
+            self._points_to = PascalFunction(None, tokens, func_pointer = True)
+            self._points_to.parse(tokens, is_forward=True)
+        else:
+            logger.error("Invalid pointer declaration: ", tokens.next_token())
+            assert False
