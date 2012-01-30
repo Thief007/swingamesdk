@@ -18,23 +18,24 @@ begin
     SpriteSetY(explosion, 131);
 
     Repeat
-    ClearScreen(ColorWhite);
-    DrawText('[A]nimation', ColorBlack, 0, 0);
-    DrawText('[T]ext', ColorBlack, 0, 10);
-    DrawText('[S]ound Effect', ColorBlack, 0, 20);
-    DrawText('[M]usic', ColorBlack, 0, 30);
-    DrawText('[G]ame Time', ColorBlack, 0, 40);
-    DrawSprite(explosion);
+		ClearScreen(ColorWhite);
+		DrawText('[A]nimation', ColorBlack, 0, 0);
+		DrawText('[T]ext', ColorBlack, 0, 10);
+		DrawText('[S]ound Effect', ColorBlack, 0, 20);
+		DrawText('[M]usic', ColorBlack, 0, 30);
+		DrawText('[G]ame Time', ColorBlack, 0, 40);
+		DrawSprite(explosion);
 
-    RefreshScreen(60);
-    UpdateSprite(explosion);
+		UpdateSprite(explosion);
 
-    ProcessEvents();
-    if KeyTyped(VK_A) then SpriteStartAnimation(explosion, 'FireExplosion')
-    else if KeyTyped(VK_T) then DrawTextLines('OR DO YOU???', ColorRed, ColorBlue, FontNamed('harabaraText'), 18, AlignCenter, 400, 400, 160, 100);
-    else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))
-    else if KeyTyped(VK_M) then PlayMusic(MusicNamed('danceMusic'));
-    //timer;
+		ProcessEvents();
+		if KeyTyped(VK_A) then SpriteStartAnimation(explosion, 'FireExplosion')
+		else if KeyDown(VK_T) then DrawText('Hi!!!', ColorRed, FontNamed('harabaraText'), 0, 200)
+		else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))
+		else if KeyTyped(VK_M) then PlayMusic(MusicNamed('danceMusic'), 1);
+		
+		//timer;
+	    RefreshScreen(60);
     until WindowCloseRequested();
 
     CloseAudio();

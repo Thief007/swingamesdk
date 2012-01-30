@@ -4,14 +4,15 @@ uses
   
 procedure Main();
 var
-    originVector, planetVector, ufoVector, resultant: Vector;
+    origin: Point2D;
+	planetVector, ufoVector, resultant: Vector;
     distance: LineSegment;
 begin    
     OpenGraphicsWindow('How to draw a bitmap', 800, 600);
     
     ClearScreen(ColorWhite);
   
-    originVector := VectorTo(0, 0);
+    origin := PointAt(0, 0);
     planetVector := VectorTo(700, 100);
     ufoVector := VectorTo(150, 520);
   
@@ -23,12 +24,12 @@ begin
     ClearScreen(ColorWhite);
   
     resultant := SubtractVectors(planetVector, ufoVector);
-    distance := LineFromVector(resultant);
+    distance := LineFromVector(ufoVector, resultant);
   
     DrawBitmap ('planet', planetVector);
     DrawBitmap ('ufo', ufoVector);
-    DrawLine(ColorBlue, originVector, planetVector);
-    DrawLine(ColorRed, originVector, ufoVector);
+    DrawLine(ColorBlue, origin, planetVector);
+    DrawLine(ColorRed, origin, ufoVector);
     DrawLine(ColorGreen, distance);
     RefreshScreen();
     until WindowcloseRequested();
