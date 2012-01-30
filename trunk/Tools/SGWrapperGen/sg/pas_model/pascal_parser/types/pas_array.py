@@ -4,10 +4,11 @@ class PascalArray(object):
     Describes an array
     """
     
-    def __init__(self):
+    def __init__(self, owner):
         self._dimensions = list()   # list of tuple (low_idx, high_idx)
         self._nested_type = None    #PascalType...
         self._name = ''
+        self._owner = owner
         
     @property
     def name(self):
@@ -43,7 +44,7 @@ class PascalArray(object):
             
         # of type...
         tokens.match_token(TokenKind.Identifier, 'of')
-        self._nested_type = parse_type(tokens) #recursive call
+        self._nested_type = parse_type(tokens, self._owner) #recursive call
             
         self._name = self._nested_type.name + ''.join(['[%s..%s]' % (low_idx, high_idx) for low_idx, high_idx in self._dimensions])
 

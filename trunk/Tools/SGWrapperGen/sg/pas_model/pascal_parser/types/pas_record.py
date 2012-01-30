@@ -5,10 +5,11 @@ class PascalRecord(object):
     Describes a record in pascal
     """
     
-    def __init__(self, name):
+    def __init__(self, name, block):
         self._name = name
         self._fields = list()   # list of tuples
         self._code = dict()
+        self._block = block
 
     @property
     def code(self):
@@ -31,7 +32,7 @@ class PascalRecord(object):
 
             idList = _parse_identifier_list(tokens)
             tokens.match_token(TokenKind.Symbol, ':')
-            type = parse_type(tokens)
+            type = parse_type(tokens, self._block)
 
             tokens.match_token(TokenKind.Symbol, ';')
 

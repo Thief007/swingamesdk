@@ -23,6 +23,10 @@ class PascalProgram(object):
         return self._code
 
     @property
+    def uses(self):
+        return self._uses
+
+    @property
     def name(self):
         return self._name
 
@@ -34,9 +38,12 @@ class PascalProgram(object):
         # for all the units I have included
         for unit in self._uses._units:
             # check all the functions that are declared in the unit
-            for (key, declared_function) in unit.points_to.contents.functions.items():
-                if (function.name == declared_function.name):
-                    return declared_function
+            result = unit.points_to.contents.resolve_function_call(function)
+            if result != None:
+                return result
+            #for (key, declared_function) in unit.points_to.contents.functions.items():
+            #    if (function.name == declared_function.name):
+            #        return declared_function
         return None
 
     def resolve_variable(self, var):
