@@ -29,7 +29,7 @@ begin
     until WindowCloseRequested();
 
     Delay(800);
-
+    FreeSprite(explosion);
     CloseAudio();
     ReleaseAllResources();
 end;
