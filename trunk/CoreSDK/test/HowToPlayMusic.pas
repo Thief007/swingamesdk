@@ -13,11 +13,11 @@ begin
     PlayMusic(LoadMusic('diving-turtle.mp3')); 
     DrawText('How To Play Music!!!', ColorRed, 40, 120);	
 
-    RefreshScreen();
-
-    Delay(5000);	
-    CloseAudio();
-    ReleaseAllResources();  
+  RefreshScreen();
+	
+  Delay(5000);	
+  CloseAudio();
+  ReleaseAllResources();  
 end;
 
 begin

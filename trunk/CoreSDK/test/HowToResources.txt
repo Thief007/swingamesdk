@@ -1,0 +1,82 @@
+* HelloWorld
+bundles/splash.txt
+bundles/bundle.txt
+sounds/blah
+sounds/blah
+animations/blah
+animations/test.txt
+* HowToAllowTheUserToCloseTheWindow
+* HowToCenterCameraOnASprite
+* HowToControlMusic
+sounds/game.ogg
+sounds/turtle.mp3
+sounds/fast.mp3
+sounds/1.mp3
+sounds/workout.mp3
+sounds/saber.ogg
+* HowToControlSound
+sounds/chipmunk.ogg
+sounds/bells.ogg
+sounds/camera.ogg
+sounds/comedy_boing.ogg
+sounds/dinosaur.ogg
+sounds/dog_bark.ogg
+* HowToCreateAnAnimation
+bundles/explosion_bundle.txt
+* HowToCreateASprite
+* HowToCreateMultipleAnimations
+bundles/explosion_bundle.txt
+* HowToCreateProgressBar
+* HowToDetectCollisionBetweenSprites
+* HowToDetectShapeCollision
+* HowToDrawABitmap
+* HowToDrawAnAnimation
+bundles/explosion_bundle.txt
+* HowToDrawAPanel
+* HowToDrawCustomText
+* HowToDrawFramesPerSecond
+* HowToDrawPrimitiveShapes
+* HowToDrawRandomShapes
+* HowToDrawSimpleText
+* HowToDrawSomethingToTheScreen
+* HowToExploreUsingCamera
+* HowToModelShapeUsingRecord
+* HowToMoveAnimation
+animations/kermit.txt
+* HowToMoveAPanel
+* HowToMoveAShape
+* HowToMoveASprite
+* HowToMoveCameraToDifferentPoint
+* HowToMoveSpriteUsingAnimation
+bundles/dance_bundle.txt
+* HowToMoveSpriteWithKeyboardInput
+* HowToOpenHelloWorldWindowWithFramerate
+* HowToPlayMusic
+sounds/turtle.mp3
+sounds/turtle.mp3
+* HowToPlayMusic
+sounds/turtle.mp3
+* HowToPlayMusic
+sounds/turtle.mp3
+* HowToPlayMusic
+sounds/turtle.mp3
+* HowToPlaySoundEffect
+sounds/chipmunk.ogg
+sounds/files
+* HowToPlaySoundEffect
+sounds/chipmunk.ogg
+* HowToPlaySoundEffect
+sounds/files
+* HowToPlaySoundEffect
+sounds/files
+* HowToReadingTextToScreen
+* HowToResources
+* HowToRespondToKeystrokes
+* HowToRespondToMouseClickAndPosition
+* HowToUseAnimationWithMultipleSprites
+bundles/dance_bundle.txt
+* HowToUseBundles
+bundles/how_to_bundles.txt
+* HowToUseGameTimer
+* HowToUseRadioButton
+* HowToUseVectorToDetermineAPath
