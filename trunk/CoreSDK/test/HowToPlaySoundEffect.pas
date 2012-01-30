@@ -9,8 +9,8 @@ begin
     OpenGraphicsWindow('How To Play Sound Effect', 320, 240);
 
     ClearScreen(ColorWhite);
-
-    PlaySoundEffect(LoadSoundEffect('chipmunk.ogg')); // load sound effect in ogg, wave audio files	
+		LoadSoundEffect('chipmunk.ogg');    
+		PlaySoundEffect('chipmunk.ogg');
     DrawText('How To Play Sound Effect!!!', ColorRed, 10, 120);	
 	
     RefreshScreen();
