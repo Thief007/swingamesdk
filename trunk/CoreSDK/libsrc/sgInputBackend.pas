@@ -176,7 +176,6 @@ implementation
   begin
     if (kyCode = LongInt(vk_LSHIFT)) or (kyCode = LongInt(vk_RSHIFT)) then exit;
     
-    // WriteLn(kyCode, ' ', kyChar);
     for i := 0 to High(_KeyDown) do
     begin
       if _KeyDown[i].code = kyCode then exit;
@@ -277,7 +276,6 @@ implementation
   var
     outStr: String;
   begin
-    WriteLn('Render Text Surface');
     if Length(text) > 0 then
     begin
       outStr := text + '|';
@@ -320,7 +318,6 @@ implementation
     srect, drect: Rectangle;
     textWidth: Longint;
   begin
-    WriteLn('Draw Collected Text');
     if (not imagesDriver.SurfaceExists(dest)) then exit;
 
     if _readingString then
