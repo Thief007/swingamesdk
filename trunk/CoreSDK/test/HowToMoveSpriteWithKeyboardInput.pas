@@ -6,7 +6,7 @@ procedure Main();
 var
     ball: Sprite;
 begin
-    OpenGraphicsWindow('Create a Sprite', 800, 600);
+    OpenGraphicsWindow('Move a Sprite with Keyboard Input', 800, 600);
 
     ClearScreen(ColorWhite);
 
