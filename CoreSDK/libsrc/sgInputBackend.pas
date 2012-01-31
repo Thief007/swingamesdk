@@ -58,7 +58,7 @@ interface
     _readingString:         Boolean;
     _ButtonsClicked: Array [MouseButton] of Boolean;
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sdl, sdl_gfx, sgGraphics;
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics;
   
   procedure _InitGlobalVars(); 
   begin

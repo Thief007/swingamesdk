@@ -15,16 +15,18 @@ unit sgDriverGraphicsSDL13;
 //
 //=============================================================================
 interface
-uses sgTypes, SDL;
+uses sgTypes, SDL13;
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
 	
 	procedure LoadSDL13GraphicsDriver();
 	function ToGfxColorProcedure(val : Color): Color;
+	procedure DrawSurfaceToRenderer();
+	procedure DrawDirtyScreen();
 	
 implementation
 	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry, 
-		SDL_gfx, SDL_Image, sgSavePNG, sgInputBackend, sgDriverSDL13, sgDriverImages, sgUtils;	
+		SDL13_gfx, SDL13_Image, sgSavePNG, sgInputBackend, sgDriverSDL13, sgDriverImages, sgUtils;	
 	{
 	procedure DisposeScreen(scrn : Pointer);
 	begin
@@ -38,6 +40,16 @@ implementation
 	  end;
 	end;
 }
+
+
+  procedure DrawDirtyScreen();
+  begin  
+	  if _ScreenDirty then
+    begin
+      DrawSurfaceToRenderer();
+    end;
+  end;
+
   procedure DisposeSurface(surface : Pointer);
   begin
     if Assigned(surface) then
@@ -61,18 +73,12 @@ implementation
   var
     surf : PSDL_Surface;
     offset : Rectangle;
-  begin
+  begin  
+    _ScreenDirty := False;
     offset := RectangleFrom(0, 0, screen^.width, screen^.height); 
+    SDL_SetSurfaceAlphaMod(GetSurface(screen), 255);
     ImagesDriver.BlitSurface(screen, nil, nil, @offset);
-    _ScreenDirty := False; 
-    
-    SDL_FreeSurface(PSDL13Surface(screen^.surface)^.surface);
-    
-    PSDL13Surface(screen^.surface)^.surface := SDL_CreateRGBSurface(SDL_HWSURFACE, screen^.width, screen^.height, 32, 0, 0, 0, 0);
-    //SDL_FillRect(GetSurface(screen), nil, RGBAColorProcedure(0, 0, 0, 0));   
-    SDL_SetColorKey(GetSurface(screen), SDL_SRCCOLORKEY, SDL_MapRGBA(GetSurface(screen)^.format, 0, 0, 0, 0));
- //   SDL_FillRect(GetSurface(screen), nil, RGBAColorProcedure(0, 0, 0, 0));   
- //   SDL_SetSurfaceAlphaMod(GetSurface(screen), 255);
+    SDL_FillRect(GetSurface(screen), nil, RGBAColorProcedure(0, 0, 0, 0));   
   end;
 	
 	function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
@@ -86,7 +92,7 @@ implementation
   {$ENDIF}
     surface : PSDL_Surface;
 	begin
-		if not Assigned(bmp) then begin RaiseWarning('SDL1.2 Driver - GetPixel32Procedure recieved empty Bitmap'); exit; end;
+		if not Assigned(bmp) then begin RaiseWarning('SDL1.3 Graphics Driver - GetPixel32Procedure recieved empty Bitmap'); exit; end;
 		
 	  if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
     begin
@@ -138,7 +144,7 @@ implementation
       p:    ^Color;
       bpp:  Longint;
   begin
-      if not assigned(bmp) then begin RaiseWarning('SDL1.2 Driver - PutPixelProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(bmp) then begin RaiseWarning('SDL1.3 Graphics Driver - PutPixelProcedure recieved empty Bitmap'); exit; end;
         
       bpp := PSDL_Surface(bmp^.surface)^.format^.BytesPerPixel;
       // Here p is the address to the pixel we want to set
@@ -191,7 +197,7 @@ implementation
 	begin
 	  if dest <> screen then
 	  begin
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - DrawTriangleProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - DrawTriangleProcedure recieved empty Bitmap'); exit; end;
       trigonColor(GetSurface(dest), Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
 	    exit;
 	  end;
@@ -206,7 +212,7 @@ implementation
   begin
     if dest <> screen then
 	  begin
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillTriangleProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - FillTriangleProcedure recieved empty Bitmap'); exit; end;
       filledTrigonColor(GetSurface(dest), Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), clr);
       exit;
     end;  
@@ -218,7 +224,7 @@ implementation
   begin
     if dest <> screen then
 	  begin
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
       circleColor(GetSurface(dest), Round(xc), Round(yc), Abs(radius), ToGfxColorProcedure(clr));
     end;
      circleColor(GetSurface(screen), Round(xc), Round(yc), Abs(radius), ToGfxColorProcedure(clr));
@@ -227,13 +233,9 @@ implementation
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
   begin
-    if dest <> screen then
-	  begin
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
-      filledCircleColor(GetSurface(dest), Round(xc), Round(yc), Abs(radius), ToGfxColorProcedure(clr));
-    end;
-    filledCircleColor(GetSurface(screen), Round(xc), Round(yc), Abs(radius), ToGfxColorProcedure(clr));
-    _ScreenDirty := True;
+    if dest = screen then
+      _ScreenDirty := True;
+	  filledCircleColor(GetSurface(dest), Round(xc), Round(yc), Abs(radius), ToGfxColorProcedure(clr));
   end;
   
 	// This procedure draws an Ellipse to a bitmap
@@ -241,7 +243,7 @@ implementation
 	begin	  
     if dest <> screen then
 	  begin
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
       filledEllipseColor(GetSurface(dest), xPos , yPos, halfWidth, halfHeight, ToGfxColorProcedure(clr));
       exit;
     end;
@@ -254,7 +256,7 @@ implementation
 	begin
     if dest <> screen then
 	  begin  
-      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
+      if not assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - FillCircleProcedure recieved empty Bitmap'); exit; end;
       ellipseColor(GetSurface(dest), xPos , yPos, halfWidth, halfHeight, ToGfxColorProcedure(clr));
       exit;
     end;
@@ -267,10 +269,12 @@ implementation
 	var
 	  sdlrect : SDL_Rect;
     r, g, b, a : Uint8;
-	begin	  
+	begin	
+	  if clr = $00000000 then
+	    exit;
 	  if dest <> screen then
 	  begin
-    	if not Assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.2 Driver - FillRectangleProcedure recieved empty Bitmap'); exit; end;
+    	if not Assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - FillRectangleProcedure recieved empty Bitmap'); exit; end;
 	    boxColor(GetSurface(dest),  RoundInt(rect.x), RoundInt(rect.y),  RoundInt(rect.x + rect.width - 1), RoundInt(rect.y + rect.height - 1), ToGfxColorProcedure(clr));	  
       exit;
     end;
@@ -287,8 +291,8 @@ implementation
 	begin
 	  if dest <> screen then
 	  begin    
-  		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawRectangleProcedure recieved empty Bitmap'); exit; end;
-      rectangleColor(dest^.surface, RoundInt(rect.x), RoundInt(rect.y), RoundInt(rect.x + rect.width - 1), RoundInt(rect.y + rect.height - 1), ToGfxColorProcedure(clr));
+  		if not Assigned(GetSurface(dest)) then begin RaiseWarning('SDL1.3 Graphics Driver - DrawRectangleProcedure recieved empty Bitmap'); exit; end;
+      rectangleColor(GetSurface(dest),  RoundInt(rect.x), RoundInt(rect.y),  RoundInt(rect.x + rect.width - 1), RoundInt(rect.y + rect.height - 1), ToGfxColorProcedure(clr));	  
 	    exit;
 	  end;
 	  sdlrect := NewSDLRect(rect);
@@ -304,7 +308,7 @@ implementation
 	begin
 	  if dest <> screen then
 	  begin
-  		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - DrawLineProcedure recieved empty Bitmap'); exit; end;
+  		if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.3 Graphics Driver - DrawLineProcedure recieved empty Bitmap'); exit; end;
   		// Add check to ensure points are less than 32,767
   		aalineColor(dest^.surface, x1, y1, x2, y2, ToGfxColorProcedure(clr));
 	    exit;
@@ -322,7 +326,7 @@ implementation
 	  ColorComponentsProcedure(clr, r, g, b, a);
     SDL_SetRenderDrawColor(PSDL13Screen(_screen)^.renderer, r, g, b, a);
 	  SDL_RenderDrawPoint(PSDL13Screen(_screen)^.renderer, x, y);
-	//	if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.2 Driver - SetPixelColorProcedure recieved empty Bitmap'); exit; end;
+	//	if not Assigned(dest^.surface) then begin RaiseWarning('SDL1.3 Graphics Driver - SetPixelColorProcedure recieved empty Bitmap'); exit; end;
 	//	pixelColor(dest^.surface, x, y, ToGfxColorProcedure(clr));
 	end;
   
@@ -330,7 +334,7 @@ implementation
   var
     SDLrect: SDL_Rect;
   begin
-    if dest = nil then begin RaiseWarning('SDL1.2 Driver - SetClipRectangle recieved empty Bitmap'); exit; end;
+    if dest = nil then begin RaiseWarning('SDL1.3 Graphics Driver - SetClipRectangle recieved empty Bitmap'); exit; end;
     
     SDLrect := NewSDLRect(Round(rect.x), Round(rect.y), rect.width, rect.height);
     SDL_SetClipRect(dest^.surface, @SDLrect);
@@ -338,7 +342,7 @@ implementation
   
   procedure ResetClipProcedure(bmp : Bitmap);
   begin
-    if bmp = nil then begin RaiseWarning('SDL1.2 Driver - ResetClip recieved empty Bitmap'); exit; end;
+    if bmp = nil then begin RaiseWarning('SDL1.3 Graphics Driver - ResetClip recieved empty Bitmap'); exit; end;
     
     SetLength(bmp^.clipStack, 0);
     SDL_SetClipRect(bmp^.surface, nil);
@@ -382,11 +386,26 @@ implementation
     
     PSDL13Surface(screen^.surface)^.surface :=  SDL_CreateRGBSurface(SDL_HWSURFACE, screenWidth, screenHeight, 32, 
                                                                     rMask, gMask, bMask, 
-                                                                    $ffffffff and not RMask and not GMask and not BMask); 
-
+                                                                    $ffffffff and not RMask and not GMask and not BMask);                                                         
     screen^.width := screenWidth;
     screen^.height := screenHeight;
+    
     screenRect := RectangleFrom(0,0, screenWidth, screenHeight);
+    
+    if (Assigned(PSDL13Screen(_screen)^.renderer)) then
+      SDL_DestroyRenderer(PSDL13Screen(_screen)^.renderer);
+    
+    // We must call SDL_CreateRenderer in order for draw calls to affect this window.
+    PSDL13Screen(_screen)^.renderer := SDL_CreateRenderer(PSDL13Screen(_screen)^.window, -1, LongWord(SDL_RENDERER_ACCELERATED) {or LongWord(SDL_RENDERER_PRESENTVSYNC)});
+    
+    // Select the color for drawing. It is set to red here.
+    SDL_SetRenderDrawColor(PSDL13Screen(_screen)^.renderer, 0, 0, 0, 255);
+
+    // Clear the entire screen to our selected color.
+    SDL_RenderClear(PSDL13Screen(_screen)^.renderer);
+    // Up until now everything was drawn behind the scenes.
+    // This will show the new, red contents of the window.
+    SDL_RenderPresent(PSDL13Screen(_screen)^.renderer);
   end;
   
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
@@ -401,7 +420,7 @@ implementation
     
     // Create the window where we will draw.
     PSDL13Screen(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, Uint32(SDL_WINDOW_SHOWN));
-
+{
     // We must call SDL_CreateRenderer in order for draw calls to affect this window.
     PSDL13Screen(_screen)^.renderer := SDL_CreateRenderer(PSDL13Screen(_screen)^.window, -1, LongWord(SDL_RENDERER_ACCELERATED) or LongWord(SDL_RENDERER_PRESENTVSYNC));
     
@@ -412,7 +431,7 @@ implementation
     SDL_RenderClear(PSDL13Screen(_screen)^.renderer);
     // Up until now everything was drawn behind the scenes.
     // This will show the new, red contents of the window.
-    SDL_RenderPresent(PSDL13Screen(_screen)^.renderer);
+    SDL_RenderPresent(PSDL13Screen(_screen)^.renderer); }
 
     _SetupScreen(screenWidth, screenHeight);
   end;
@@ -420,14 +439,15 @@ implementation
   // This resizes the graphics window used by SwinGame
 	procedure InitializeScreenProcedure( screen: Bitmap; width, height : LongInt; bgColor, strColor : Color; msg : String);
   begin      
-  	if not Assigned(GetSurface(screen)) then begin RaiseWarning('SDL1.2 Driver - SetPixelColorProcedure recieved empty Bitmap'); exit; end;
-  	WriteLn('Whats this ? ', msg);
-    stringColor(GetSurface(screen), width div 2 - 30, height div 2, PChar(msg), ToGfxColorProcedure(strColor));
+  	if not Assigned(GetSurface(screen)) then begin RaiseWarning('SDL1.3 Graphics Driver - SetPixelColorProcedure recieved empty Bitmap'); exit; end;
+  //	  _SetupScreen(width, height);
+ //   stringColor(GetSurface(screen), width div 2 - 30, height div 2, PChar(msg), ToGfxColorProcedure(strColor));
   end;
   
   // This resizes the graphics window used by SwinGame
 	procedure ResizeGraphicsWindowProcedure(newWidth, newHeight : LongInt);
   begin
+    WriteLn('Resizing Screen');
     SDL_SetWindowSize(PSDL_Window(PSDL13Screen(_screen)^.window), newWidth, newHeight);
     _SetupScreen(newWidth, newHeight);
   end;
@@ -436,12 +456,13 @@ implementation
   // returns true if the save is successful, and false if it is not
   function SaveImageProcedure(bmpToSave : Bitmap; path : String) : Boolean;
   begin
-		if not Assigned(GetSurface(bmpToSave)) then begin RaiseWarning('SDL1.2 Driver - SaveImageProcedure recieved empty Bitmap'); exit; end;
+		if not Assigned(GetSurface(bmpToSave)) then begin RaiseWarning('SDL1.3 Graphics Driver - SaveImageProcedure recieved empty Bitmap'); exit; end;
     result := png_save_surface(path, GetSurface(bmpToSave));
   end;
   
   procedure RefreshScreenProcedure(screen : Bitmap);
-  begin
+  begin  
+    DrawCollectedText(screen);
     if _ScreenDirty then
     begin
       DrawSurfaceToRenderer();
@@ -451,7 +472,7 @@ implementation
   
   function ColorFromProcedure(bmp : Bitmap; r, g, b, a : byte) : Color;
   begin
-		if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.2 Driver - ColorFromProcedure recieved empty Bitmap'); exit; end;
+		if not Assigned(bmp^.surface) then begin RaiseWarning('SDL1.3 Graphics Driver - ColorFromProcedure recieved empty Bitmap'); exit; end;
     result := SDL_MapRGBA(GetSurface(screen)^.format, r, g, b, a);
   end;
 

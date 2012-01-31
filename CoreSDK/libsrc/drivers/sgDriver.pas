@@ -18,26 +18,29 @@ unit sgDriver;
 //=============================================================================
 
 interface	
+uses
+  sgTypes;
 
   type
     GetErrorProcedure = function () : PChar;
     QuitProcedure = procedure();
     InitProcedure = procedure();
+    GetKeyCodeProcedure = function(val : KeyCode) : LongInt;
     
   	DriverRecord = record
   	  GetError                : GetErrorProcedure;
   	  Quit                    : QuitProcedure;
-  	  Init                    : InitProcedure
-
+  	  Init                    : InitProcedure;
+      GetKeyCode              : GetKeyCodeProcedure;
 	  end;  
 
 	var
-		Driver : DriverRecord = ( GetError: nil; Quit: nil; Init: nil );
+		Driver : DriverRecord = ( GetError: nil; Quit: nil; Init: nil ; GetKeyCode: nil);
 	
 	procedure LoadDefaultDriver();
 		
 implementation
-  	uses sgTypes, sgDriverTimer, {$IFDEF SWINGAME_SDL13}sgDriverSDL13{$ELSE}sgDriverSDL{$ENDIF};
+  	uses sgDriverTimer, {$IFDEF SWINGAME_SDL13}sgDriverSDL13{$ELSE}sgDriverSDL{$ENDIF};
 
 	procedure LoadDefaultDriver();
 	begin
@@ -62,6 +65,12 @@ implementation
 		LoadDefaultDriver();
 		result := Driver.GetError();
 	end;
+	
+	function DefaultGetKeyCodeProcedure (val : KeyCode) : LongInt;
+	begin
+		LoadDefaultDriver();
+		result := Driver.GetKeyCode(val);
+	end;
 
 	procedure DefaultQuitProcedure();
 	begin
@@ -75,6 +84,7 @@ initialization
 	  WriteLn('Loading driver');
 		Driver.GetError               := @DefaultGetErrorProcedure;
 		Driver.Quit                   := @DefaultQuitProcedure;
+		Driver.GetKeyCode             := @DefaultGetKeyCodeProcedure;
 		Driver.Init                   := @DefaultInitProcedure;
 	end;
 end.

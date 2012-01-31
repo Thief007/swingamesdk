@@ -1,7 +1,7 @@
 unit sgDriverInputSDL13;
 
 interface
-  uses sdl, sdl_ttf;
+  uses sdl13, sdl13_ttf;
   procedure LoadSDL13InputDriver();
 
       
