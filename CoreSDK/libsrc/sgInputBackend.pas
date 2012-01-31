@@ -1,7 +1,7 @@
 unit sgInputBackend;
 
 interface
-  uses sgTypes;
+  uses sgTypes, sgDriver;
     procedure DoQuit();
     procedure CheckQuit();
     procedure HandleKeydownEvent(kyCode, kyChar : LongInt);
@@ -375,8 +375,8 @@ implementation
   function WasKeyReleased(kyCode: Longint): Boolean;
   var i: Longint;
   begin
-    result := false;
-  
+    result := false;    
+    kyCode := Driver.GetKeyCode(kyCode);
     for i := 0 to High(_KeyReleased) do
     begin
       if _KeyReleased[i] = kyCode then
@@ -391,6 +391,7 @@ implementation
   i : Integer;
   begin
     result := false;
+    kyCode := Driver.GetKeyCode(kyCode);
     for i := 0 to High(_KeyJustTyped) do
     begin
       if _KeyJustTyped[i] = kyCode then
@@ -406,6 +407,7 @@ implementation
   i : Integer;
   begin
     result := false;
+    kyCode := Driver.GetKeyCode(kyCode);
     for i := 0 to High(_KeyDown) do
     begin
       if _KeyDown[i].code = kyCode then
