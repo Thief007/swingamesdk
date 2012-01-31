@@ -1353,7 +1353,10 @@ var
 begin
   if (not assigned(dest)) or (not assigned(src)) then exit;
   
-  offset := RectangleFrom(x, y, 0, 0);
+  //TODO: Check if this is right
+  // Offset was previously 0 width 0 height which caused a bitmap from a simple draw 
+  // bitmap method to not draw (because of the dimensions)
+  offset := RectangleFrom(x, y, src^.width, src^.height);
   ImagesDriver.BlitSurface(src, dest, nil, @offset);
 end;
 
@@ -1365,7 +1368,7 @@ begin
   if (srcW <= 0) or (srcH <= 0) then begin {RaiseException('Width and Height must be >= 0');} exit; end;
   
   
-  offset := RectangleFrom(x, y, 0, 0);
+  offset := RectangleFrom(x, y, srcW, srcH);
   source := RectangleFrom(srcX, srcY, srcW, srcH);
   
   ImagesDriver.BlitSurface(src, dest, @source, @offset);

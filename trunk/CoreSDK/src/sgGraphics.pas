@@ -1369,7 +1369,7 @@ implementation
   uses Math, Classes, SysUtils, // system
        sgSavePNG, 
        sgTrace, 
-       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics, sgDriver;
+       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics, sgDriver, sgDriverImages;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -2141,10 +2141,7 @@ implementation
 
     if Length(bmp^.clipStack) > 1 then
     begin
-      // WriteLn('Adding clip ', RectangleToString(r));
-      // WriteLn('Was         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack) - 1]));
       bmp^.clipStack[high(bmp^.clipStack)] := Intersection(r, bmp^.clipStack[High(bmp^.clipStack) - 1]);
-      // WriteLn('Now         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack)]));
     end
     else
       bmp^.clipStack[high(bmp^.clipStack)] := r;
@@ -2490,7 +2487,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ColorComponents');
     {$ENDIF}
-    if screen^.surface = nil then
+    if not ImagesDriver.SurfaceExists(screen) then
     begin
       RaiseWarning('Estimating color components as Windows has not been opened.');
       a := (c and $FF000000) shr 24;
@@ -2650,7 +2647,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ColorFrom');
     {$ENDIF}
-    if (bmp = nil) or (bmp^.surface = nil) then
+    if (bmp = nil) or not ImagesDriver.SurfaceExists(screen) then
     begin
       RaiseException('Unable to get color as bitmap not specified');
       exit;
@@ -2669,7 +2666,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'RGBAColor');
     {$ENDIF}
-    if (screen^.surface = nil) or (not GraphicsDriver.SurfaceFormatAssigned(screen)) then
+    if not ImagesDriver.SurfaceExists(screen) or (not GraphicsDriver.SurfaceFormatAssigned(screen)) then
     begin
       RaiseWarning('Estimating RGBAColor as the window is not open');
       result := (alpha shl 24) or (red shl 16) or (green shl 8) or (blue);

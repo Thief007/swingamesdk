@@ -203,7 +203,8 @@ implementation
 
     uses SysUtils, StrUtils, Classes, // system
              stringhash, sgSharedUtils,          // libsrc
-             SDL, SDL_Mixer, SDL_ttf, SDL_Image,
+             {$IFDEF SWINGAME_SDL13}SDL13, SDL13_Mixer, SDL13_ttf, SDL13_Image,{$ELSE}SDL, SDL_Mixer, SDL_ttf, SDL_Image,{$ENDIF}
+           //  SDL, SDL_Mixer, SDL_ttf, SDL_Image,
              {$ifdef WINDOWS} Windows, 
 			 {$else}
 				{$ifndef DARWIN}

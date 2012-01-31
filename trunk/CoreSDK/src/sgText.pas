@@ -635,7 +635,7 @@ interface
 implementation
   uses SysUtils, Classes, 
        stringhash, sgTrace,         // libsrc
-       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages, sgDriverText, sdl, sdl_gfx;
+       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages, sgDriverText;
 //=============================================================================
 
   const EOL = LineEnding; // from sgShared
