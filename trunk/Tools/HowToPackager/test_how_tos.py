@@ -10,30 +10,27 @@
 import os
 import shutil
 import subprocess
+import readline
+import sys
 
 _lang = [ {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"} ]
-_enumLoad = [ {"load": "BitmapNamed",
+_enumLoad = [ {"load": "BitmapNamed"}]
 _base_path = "../../Dist/HowTo"
+_base_path_Source_Code = "../../Dist/HowTo/Source_Code"
 
 def open_how_to():
-    f = open("../../CoreSDK/test/HowToResources.txt")
-    how_to_file_lines = f.readlines()
-    f.close()
-    
-    current_how_to = None
-    for line in how_to_file_lines:
-        # if line starts with *... its a new how to...
-        if line[0] == "*":
-            current_how_to = line[1:].strip()
-        for lang in _lang:
-            current_how_to_resource = line.strip()      
-            buildSH = "%s/%s/%s/%s" % (_base_path, lang["lang"],current_how_to,"build.sh")
-            runSH = "%s/%s/%s/%s" % (_base_path, lang["lang"],current_how_to,"run.sh")
+    dirList = os.listdir(_base_path_Source_Code)
+    for fname in dirList:
+        current_how_to = fname.split('.')
+        for lang in _lang:     
+            buildSH = "%s/%s/%s/%s" % (_base_path, lang["lang"],current_how_to[0],"build.sh")
+            print "path "+buildSH
+            runSH = "%s/%s/%s/%s" % (_base_path, lang["lang"],current_how_to[0],"run.sh")
             subprocess.call([buildSH])
-            subprocess.call([runSH])
-    
+            # uncomment below to run every SwinGame
+            #subprocess.call([runSH])
+  
 def main():
-    print "Hello Wayne"
     open_how_to();
 if __name__ == '__main__':
     main()
