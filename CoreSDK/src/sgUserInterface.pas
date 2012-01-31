@@ -326,7 +326,12 @@ interface
   /// @getter Height
   function PanelHeight(p: Panel): Longint;
   
-  /// Returns panel width value
+  /// Returns height of the panel
+  ///
+  /// @lib PanelHeightNamed
+  function PanelHeight(name: String): Longint;
+
+  /// Returns the panel's width
   ///
   /// @lib
   ///
@@ -334,6 +339,10 @@ interface
   /// @getter Width
   function PanelWidth(p: Panel): Longint;
   
+  /// Returns the panel's width
+  ///
+  /// @lib PanelWidthNamed
+  function PanelWidth(name: String): Longint;
 
 // ===========
 // = Buttons =
@@ -3523,12 +3532,22 @@ begin
   p^.area.Y := nY;
 end;
 
+function PanelWidth(name: String): Longint;
+begin
+    result := PanelWidth(PanelNamed(name));
+end;
+
 function PanelWidth(p: Panel): Longint;
 begin
   result := -1;
   if not(assigned(p)) then exit;
   
   result := p^.area.width;
+end;
+
+function PanelHeight(name: String): Longint;
+begin
+    result := PanelHeight(PanelNamed(name));
 end;
 
 function PanelHeight(p: Panel): Longint;

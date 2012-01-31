@@ -27,20 +27,20 @@ COPY_LIST=( "Command line FPC,${FPC_PAS_TEMPLATE_DIR},${FPC_PAS_DIST_DIR}" )
 
 if [ "$OS" = "$MAC" ]; then
     # build framework if needed
-    if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
+    # if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
         source ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
         echo
         echo
-    fi
+    # fi
 elif [ "$OS" = "$WIN" ]; then
     # build dll if needed
-    if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
+    # if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
         source ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK library"; exit 1; fi
         echo
         echo
-    fi
+    # fi
 fi
 
 #
