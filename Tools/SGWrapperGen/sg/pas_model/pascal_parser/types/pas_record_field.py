@@ -6,8 +6,8 @@ class PascalRecordField(object):
     """
     
     def __init__(self, name, type, modifier):
-        self._name = ''
-        self._type = None
+        self._name = name
+        self._type = type
         self._code = dict()
 
     @property

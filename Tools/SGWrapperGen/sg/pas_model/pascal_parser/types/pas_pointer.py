@@ -9,11 +9,14 @@ class PascalPointer(object):
         self._points_to_identifier = ''
         self._function_pointer = False
         self._block = block
-
+        self._name = ''
 
     @property
     def name(self):
         return self._points_to_identifier
+
+    def set_name(self, name):
+        self._name = name
 
     @property
     def kind(self):

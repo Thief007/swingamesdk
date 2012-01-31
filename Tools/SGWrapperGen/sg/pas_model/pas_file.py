@@ -97,7 +97,7 @@ class PascalFile(object):
         Assumes the file has checked itself for the function before calling this
         """
         from pas_file_cache import get_unit_named
-        for unit_reference in self._contents.uses.units:
+        for unit_reference in self._contents.uses:
             unit = unit_reference.points_to.contents
             for unit_function in unit.functions:
                 if unit_function.name.lower() == function.name.lower():
@@ -117,8 +117,8 @@ class PascalFile(object):
         from pas_file_cache import get_unit_named
         for unit_reference in self._contents.uses:
             unit = unit_reference.points_to.contents
-            for unit_type in unit.types:
-                if unit_type.name.lower() == type.name.lower():
+            for unit_name, unit_type in unit.types.items():
+                if unit_name.lower() == type.lower():
                     return unit_type
         # check the System unit...
         system = get_unit_named('System')

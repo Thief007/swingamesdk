@@ -116,7 +116,6 @@ class PascalFunction(object):
                 self._modifiers.append(self._tokens.match_token(TokenKind.Identifier).value)
             else:
                 break;
-
         if not self._func_pointer:
             self._tokens.match_token(TokenKind.Symbol, ';')
         if not is_forward:

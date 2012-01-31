@@ -96,7 +96,7 @@ class PascalBlock(object):
     def resolve_function_call(self, function):
         #check myself
         for (name, declared_function) in self._functions.items():
-            if (function.name.lower == declared_function.name.lower):
+            if (function.name.lower() == declared_function.name.lower()):
                 return declared_function
         # check parent
         if self.parent != None:
