@@ -1,7 +1,5 @@
 unit sgDriverInput;
 
-{$I driver.inc}
-
 interface
 uses 
   sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverInputSDL13{$ELSE}sgDriverInputSDL{$ENDIF};

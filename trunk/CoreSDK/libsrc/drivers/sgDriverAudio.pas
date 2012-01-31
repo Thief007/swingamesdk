@@ -17,8 +17,6 @@ unit sgDriverAudio;
 //
 //=============================================================================
 
-{$I driver.inc}
-
 interface
 	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriverAudioSDL13Mixer{$ELSE}sgDriverAudioSDLMixer{$ENDIF};
 	

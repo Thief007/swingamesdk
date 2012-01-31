@@ -17,8 +17,6 @@ unit sgDriverGraphics;
 //
 //=============================================================================
 
-{$I driver.inc}
-
 interface
 	uses sgTypes;
 	
