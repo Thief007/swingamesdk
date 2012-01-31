@@ -83,7 +83,6 @@ interface
   ///
   /// @class Panel
   /// @method ShowDialog
-  
   procedure ShowPanelDialog(p: Panel);
   
   /// Display the panel on screen at panel's co-ordinates.
@@ -94,6 +93,11 @@ interface
   /// @method Show
   procedure ShowPanel(p: Panel);
   
+  /// Display the panel on screen at panel's co-ordinates.
+  ///
+  /// @lib ShowPanelNamed
+  procedure ShowPanel(name: String);
+  
   /// Hide the panel, stop drawing it. Panels which are not being draw can not be interacted with by the user.
   ///
   /// @lib
@@ -101,6 +105,11 @@ interface
   /// @class Panel
   /// @method Hide
   procedure HidePanel(p: Panel);
+  
+  /// Hide the panel, stop drawing it. Panels which are not being draw can not be interacted with by the user.
+  ///
+  /// @lib HidePanelNamed
+  procedure HidePanel(name: String);
   
   /// Toggles whether the panel is being shown or not.
   ///
@@ -325,7 +334,20 @@ interface
   /// @getter Width
   function PanelWidth(p: Panel): Longint;
   
+
+// ===========
+// = Buttons =
+// ===========
+
+  /// Returns true when the region has been clicked.
+  ///
+  /// @lib
+  function ButtonClicked(r: Region) : Boolean;
   
+  /// Returns true when the region has been clicked.
+  ///
+  /// @lib ButtonClickedNamed
+  function ButtonClicked(name: String) : Boolean;
   
 //---------------------------------------------------------------------------
 // Regions
@@ -584,10 +606,12 @@ function ActiveRadioButtonIndex(pnl:Panel; id: String): LongInt;
 /// @class RadioGroup
 /// @getter ActiveButton
 function ActiveRadioButton(grp: GUIRadioGroup): Region; overload;
+
 /// Takes an ID and returns the active button
 ///
 /// @lib ActiveRadioButtonWithID
 function ActiveRadioButton(id: String): Region; overload;
+
 /// Takes a panel and an ID and returns the active button
 ///
 /// @lib ActiveRadioButtonFromPanelWithId
@@ -777,12 +801,17 @@ procedure TextboxSetText(pnl : Panel; id : String; single: Single); overload;
 function TextBoxFromRegion(r: Region): GUITextBox;
 
 
-
-
 /// Sets the active textbox from region
 /// 
 /// @lib GUISetActiveTextboxFromRegion
 procedure GUISetActiveTextbox(r: Region); overload;
+
+/// Sets the active textbox to the one with the
+/// indicated name.
+/// 
+/// @lib GUISetActiveTextboxNamed
+procedure GUISetActiveTextbox(name: String); overload;
+
 
 /// Sets the active textbox
 /// 
@@ -2909,6 +2938,11 @@ begin
   GUISetActiveTextbox(TextBoxFromRegion(r));
 end;
 
+procedure GUISetActiveTextbox(name: String); overload;
+begin
+  GUISetActiveTextbox(TextBoxFromRegion(RegionWithId(name)));
+end;
+
 procedure GUISetActiveTextbox(t: GUITextbox); overload;
 begin
   if not assigned(t) then exit;
@@ -3631,10 +3665,21 @@ begin
   if assigned(p) and (not p^.visible) then ToggleShowPanel(p);
 end;
 
+procedure ShowPanel(name: String);
+begin
+  ShowPanel(PanelNamed(name));
+end;
+
 procedure HidePanel(p: Panel);
 begin
   if assigned(p) and (p^.visible) then ToggleShowPanel(p);
 end;
+
+procedure HidePanel(name: String);
+begin
+  HidePanel(PanelNamed(name));
+end;
+
 
 procedure ToggleShowPanel(p: Panel);
 var
@@ -4257,6 +4302,16 @@ begin
   if not assigned(p) then exit;
   
   p^.area := RectangleOffset(p^.area, mvmt);
+end;
+
+function ButtonClicked(r: Region) : Boolean;
+begin
+  result := RegionClicked() = r;
+end;
+
+function ButtonClicked(name: String) : Boolean;
+begin
+  result := ButtonClicked(RegionWithId(name));
 end;
 
 // function DoLoadPanel(filename, name: String): Panel;

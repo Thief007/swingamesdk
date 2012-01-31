@@ -1805,7 +1805,7 @@ implementation
     result^.cacheImage              := nil;
     
     obj := tResourceContainer.Create(result);
-    WriteLn('Adding for ', name, ' ', HexStr(obj));
+    // WriteLn('Adding for ', name, ' ', HexStr(obj));
     if not _Sprites.setValue(name, obj) then
     begin
         RaiseException('** Leaking: Caused by loading Sprite created twice, ' + name);

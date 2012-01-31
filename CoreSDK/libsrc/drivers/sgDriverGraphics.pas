@@ -97,10 +97,10 @@ uses
 	procedure LoadDefaultGraphicsDriver();
 	begin
 	  {$IFDEF SWINGAME_SDL13}
-		  WriteLn('SDL 1.3 Defined');
+      // WriteLn('SDL 1.3 Defined');
 		  LoadSDL13GraphicsDriver();
 		{$ELSE}
-		  WriteLn('SDL 1.3 Not Defined');
+      // WriteLn('SDL 1.3 Not Defined');
 		  LoadSDLGraphicsDriver();
 		{$ENDIF}
 	end;

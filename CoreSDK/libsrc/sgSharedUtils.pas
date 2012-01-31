@@ -489,6 +489,8 @@ implementation
     path := FilenameToResource(filename, kind);
     line.lineNo := 0;
     
+    if not FileExists(path) then begin RaiseWarning('Unable to load bundle.'); exit; end;
+    
     Assign(input, path);
     Reset(input);
     

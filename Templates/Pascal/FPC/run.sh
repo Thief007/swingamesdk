@@ -52,3 +52,11 @@ fi
 
 echo "Running ${VERSION}"
 "$EXE_PATH"
+
+if [ "$OS" = "$MAC" ]; then
+osascript <<EOF
+  tell application "${GAME_NAME}"
+    activate
+  end tell
+EOF
+fi
