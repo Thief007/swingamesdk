@@ -77,7 +77,7 @@ class PascalUnit(object):
     def resolve_type(self, type_name):
         #check myself
         for (name, type) in self._types.items():
-            if (type_name == name):
+            if (type_name.lower() == name.lower()):
                 return type
         return self._file.resolve_type(type_name)
 

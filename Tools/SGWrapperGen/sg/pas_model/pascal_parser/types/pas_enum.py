@@ -5,14 +5,19 @@ class PascalEnum(object):
     Describes a number used in expressions
     """
     
-    def __init__(self, name):
+    def __init__(self, name, block):
         self._values = list()   # list of tuples
         self._code = dict()
         self._name = name
+        self._block = block
 
     @property
     def code(self):
         return self._code
+
+    @property
+    def values(self):
+        return self._values
         
     @property
     def kind(self):

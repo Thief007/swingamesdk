@@ -39,6 +39,8 @@ class PascalFunction(object):
         # name
         if not func_pointer:
             self._name = tokens.match_token(TokenKind.Identifier).value
+        else:
+            self._name = 'function' if self._isFunction else 'procedure'
         
         # ( parameter declaration )
         
