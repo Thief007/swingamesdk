@@ -321,6 +321,9 @@ implementation
   
   procedure QuitProcedure(); 
   begin
+    SDL_DestroyRenderer(PSDL13Screen(_screen)^.renderer);
+    SDL_DestroyWindow(PSDL13Screen(_screen)^.window);
+    Dispose(PSDL13Screen(_screen));
     SDL_Quit();
   end;
   

@@ -419,18 +419,6 @@ implementation
     
     // Create the window where we will draw.
     PSDL13Screen(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, Uint32(SDL_WINDOW_SHOWN));
-{
-    // We must call SDL_CreateRenderer in order for draw calls to affect this window.
-    PSDL13Screen(_screen)^.renderer := SDL_CreateRenderer(PSDL13Screen(_screen)^.window, -1, LongWord(SDL_RENDERER_ACCELERATED) or LongWord(SDL_RENDERER_PRESENTVSYNC));
-    
-    // Select the color for drawing. It is set to red here.
-    SDL_SetRenderDrawColor(PSDL13Screen(_screen)^.renderer, 0, 0, 0, 255);
-
-    // Clear the entire screen to our selected color.
-    SDL_RenderClear(PSDL13Screen(_screen)^.renderer);
-    // Up until now everything was drawn behind the scenes.
-    // This will show the new, red contents of the window.
-    SDL_RenderPresent(PSDL13Screen(_screen)^.renderer); }
 
     _SetupScreen(screenWidth, screenHeight);
   end;
