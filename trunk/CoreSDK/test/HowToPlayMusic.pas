@@ -1,6 +1,6 @@
 program HowToPlayMusic;
 uses
-    sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils;
+    SwinGame;    
 
 procedure Main();
 begin
@@ -8,14 +8,16 @@ begin
 
     OpenGraphicsWindow('How To Play Music', 320, 240);
 
+    LoadDefaultColors();
+
     ClearScreen(ColorWhite);
 
     PlayMusic(LoadMusic('diving-turtle.mp3')); 
-    DrawText('How To Play Music!!!', ColorRed, 40, 120);	
+    DrawText('How To Play Music!!!', ColorRed, 40, 120);  
 
   RefreshScreen();
-	
-  Delay(5000);	
+  
+  Delay(5000);  
   CloseAudio();
   ReleaseAllResources();  
 end;

@@ -1,6 +1,7 @@
 program HowToCenterCameraOnASprite;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgUtils, sgCamera, sgImages, sgSprites;  
+  SwinGame, sgTypes;
+  
   
 procedure Main();
 var    
@@ -8,6 +9,7 @@ var
 begin 
   OpenGraphicsWindow('Center Camera On A Sprite', 800, 600);
   
+  LoadDefaultColors();  
   LoadBitmapNamed('image', 'SwinGame.jpg');
   
   sSprite := CreateSprite(BitmapNamed('image'));

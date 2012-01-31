@@ -1,6 +1,6 @@
 program HowToModelShapeUsingRecord;
 uses
-  sgTypes, sgInput, sgGraphics, sgResources, sgUtils, sgGeometry;
+  SwinGame;
   
 procedure Main();
 var
@@ -10,7 +10,8 @@ var
   l : LineSegment;
 begin 
   OpenGraphicsWindow('Model Shape Using Record', 600, 100);  
-  
+  LoadDefaultColors();
+
   ClearScreen(ColorWhite);   
   
   c := CircleAt(50, 50, 30);

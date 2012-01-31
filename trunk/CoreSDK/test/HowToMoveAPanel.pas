@@ -18,8 +18,7 @@ begin
     ClearScreen(ColorWhite);        
     DrawPanels();    
     
-    PanelSetDraggable(p, true);
-    //GUISetForegroundColor(ColorYellow);
+    PanelSetDraggable(p, true);    
     GUISetBackgroundColor(ColorGreen);
     UpdateInterface();
     

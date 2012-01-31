@@ -1,11 +1,12 @@
 program HowToDrawPrimitiveShapes;
 uses
-  sgTypes, sgGraphics, sgResources, sgUtils;
+  SwinGame, sgTypes;
 
 procedure Main();
 begin 
 
   OpenGraphicsWindow('Primitive shapes', 800, 250);
+  LoadDefaultColors();
 
   ClearScreen(ColorWhite);
   DrawCircle(ColorBlack, 50, 50, 30);

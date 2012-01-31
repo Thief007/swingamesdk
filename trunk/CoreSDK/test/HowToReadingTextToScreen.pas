@@ -1,11 +1,11 @@
 program HowToReadingTextToScreen;
 uses
-sgTypes, sgInput, sgGraphics, sgResources, sgUtils, sgText;
+  SwinGame;
 
 procedure Main();
 begin  
   OpenGraphicsWindow('Read Text To Screen', 240, 160);  
-  
+  LoadDefaultColors();
   repeat // The game loop...
     ProcessEvents();
   
