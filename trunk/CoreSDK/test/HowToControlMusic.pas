@@ -1,9 +1,7 @@
 program HowToControlMusic;
 uses
   sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils, sgTypes;
-procedure Main();
-var
-  mus : Music;  
+procedure Main();  
 begin
   OpenAudio();
 
