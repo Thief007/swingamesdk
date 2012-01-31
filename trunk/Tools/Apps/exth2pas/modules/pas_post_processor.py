@@ -341,6 +341,7 @@ class PasPostProcessor:
             line = self._advance_to_nextline()
         
         while self.line_no < len(self.pas_lines):
+            line = line.replace("(X(-(1)))", "(X-1)")
             self._write_output(line)
             line = self._advance_to_nextline()
     
@@ -393,12 +394,14 @@ def main():
         ("Uint8",               "    Uint8 = Byte;\n"),
         ("PUint8",             "     PUint8 = ^Uint8;\n"),
         ("PPUint8",             "    PPUint8 = ^PUint8;\n"),
+        ("PSInt16",             "    PSInt16 = ^SInt16;\n"),
         ("wchar_t",             "    wchar_t = WideChar;\n"),
         ("PSDL_Finger",         "    PSDL_Finger = ^SDL_Finger;\n"),
         ("PPSDL_Finger",        "    PPSDL_Finger = ^PSDL_Finger;\n"),
         ("PSDL_SysWMmsg",       "    PSDL_SysWMmsg = Pointer;\n"),
         ("PSDL_VideoInfo",       "    PSDL_VideoInfo = ^SDL_VideoInfo;\n"),
         ("PPSDL_Rect",       "    PPSDL_Rect = ^PSDL_Rect;\n"),
+        
         # ("PSDL_assert_data",    "    PSDL_assert_data = ^SDL_assert_data;\n"),
         # ("PSDL_PixelFormat",    "    PSDL_PixelFormat = ^SDL_PixelFormat;\n"),
     ]
@@ -407,6 +410,7 @@ def main():
     ]
     proc = [
         lambda line: line.replace("mod : Uint16;", "kmod : Uint16;"),
+        lambda line: re.sub("file ", "_file ", line),
         lambda line: line.replace("^^SDL_Finger", "PPSDL_Finger"),
         lambda line: re.sub(": \^(private_yuvhwdata|private_yuvhwfuncs|SDL_BlitMap|SDL_SysWMmsg|SDL_Cursor|SDL_Window|_SDL_iconv_t)", ": Pointer", line), # replace with pointers...
         lambda line: re.sub("= \^(_SDL_iconv_t|SDL_Cursor|SDL_Window)", "= Pointer", line), # replace with pointers...
