@@ -13,7 +13,7 @@ def get_Resources(word,f, _pkg):
     f.write(_pkg[word[0]]+'/'+word[-1]+'\n')
     
     if _pkg[word[0]] == 'bundles':
-        print "BUndled word "+_pkg[word[0]]
+        print "Bundled word "+_pkg[word[0]]
         load_Bundled_Resources(word, f, _pkg)
 
 def get_Resources_Next(word, f, _pkg):
