@@ -180,7 +180,9 @@ implementation
   
   {$ifdef DARWIN}
     {$linklib libobjc.dylib}
-    procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
+    {$IFNDEF IOS}
+      procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}  
+    {$endif}
     function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
     function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
     function class_respondsToSelector(cls, sel: Pointer): boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
@@ -203,7 +205,6 @@ implementation
   begin
     if is_initialised then exit;
     is_initialised := True;
-    
     {$IFDEF TRACE}
       TraceEnter('sgShared', 'InitialiseSwinGame', '');
     {$ENDIF}
@@ -221,14 +222,15 @@ implementation
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
       pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
       pool := objc_msgSend(pool, sel_registerName('init'));
-      NSApplicationLoad();
+      {$IFNDEF IOS}
+        NSApplicationLoad();
+      {$endif}
     {$endif}
     
     {$IFDEF Trace}
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
     {$ENDIF}
     
-    if not assigned(Driver.Init) then LoadDefaultDriver();
     Driver.Init();
 
     
