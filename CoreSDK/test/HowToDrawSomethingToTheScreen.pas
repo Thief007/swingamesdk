@@ -1,10 +1,11 @@
 program HowToDrawSomethingToTheScreen;
 uses
-    sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgPhysics, sgUtils, sgCamera;  
+    SwinGame, sgTypes;    
 
 procedure Main();
 begin
-    OpenGraphicsWindow('How To Draw Something To The Screen', 320, 240);  
+    OpenGraphicsWindow('How To Draw Something To The Screen', 320, 240); 
+    LoadDefaultColors();
   
     ClearScreen();    // clear the background canvas (black by default)
     RefreshScreen();  // make it appear on screen...

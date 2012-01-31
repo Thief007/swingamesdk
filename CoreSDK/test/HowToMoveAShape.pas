@@ -1,6 +1,7 @@
 program HowToMoveAShape;
 uses
-  sgInput, sgGraphics, sgGeometry, sgResources, sgText, sgTypes;
+  SwinGame, sgTypes;
+  
 
 procedure Main();
 var 
@@ -9,6 +10,7 @@ begin
   r := RectangleFrom(140, 110, 40, 20);
 
   OpenGraphicsWindow('How To Move A Shape', 320, 240);
+  LoadDefaultColors();
 
   repeat // The game loop...
     // Update the game

@@ -1,6 +1,6 @@
 program HowToControlSound;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils, sgTypes;
+  SwinGame, sgTypes;  
 procedure Main();
 var
   sndEffect : SoundEffect;	
@@ -8,7 +8,8 @@ begin
   OpenAudio();
   
   OpenGraphicsWindow('How To Control Sound', 320, 240);
-  
+  LoadDefaultColors();  
+
   sndEffect := LoadSoundEffect('chipmunk.ogg');
   LoadSoundEffect('bells.ogg');
   LoadSoundEffect('camera.ogg');      

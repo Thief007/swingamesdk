@@ -1,13 +1,15 @@
 program HowToRespondToMouseClickAndPosition;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio, sysutils, sgGeometry;  
+  SwinGame, sgTypes, sysutils;
+  //sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio, sysutils, sgGeometry;  
   
 procedure Main();
 var
   str : String;  
   mPos : Point2D;  
 begin  
-  OpenGraphicsWindow('Mouse Click And Position', 400, 220); 
+  OpenGraphicsWindow('Mouse Click And Position', 400, 220);
+  LoadDefaultColors();  	
   
   repeat // The game loop...
     ProcessEvents();

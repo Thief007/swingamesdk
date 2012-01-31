@@ -1,10 +1,11 @@
-program HowToSetMultiplePositon;
+program HowToMoveCameraToDifferentPoints;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgGeometry, sgUtils, sgCamera, sgImages, sgSprites;  
+  SwinGame, sgTypes;  
   
 procedure Main();
 begin 
-  OpenGraphicsWindow('Move Camera To Different Points', 320, 240);
+  OpenGraphicsWindow('Move Camera To Different Points', 800, 600);
+  LoadDefaultColors();
   
   repeat // The game loop...
     ProcessEvents();  

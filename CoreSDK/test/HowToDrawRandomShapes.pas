@@ -1,19 +1,20 @@
 program HowToDrawRandomShape;
 uses
-sgTypes, sgInput, sgGraphics, sgResources, sgUtils;
+  SwinGame, sgTypes;
 
 procedure Main();
 var 
   i : Integer;
-begin	
-  OpenGraphicsWindow('How To Draw Random Shape', 800, 600);		
+begin  
+  OpenGraphicsWindow('How To Draw Random Shape', 800, 600);    
+  LoadDefaultColors();
 
   ClearScreen(ColorWhite);
 
   repeat // The game loop...
-    ProcessEvents();		
+    ProcessEvents();    
 
-    i := Rnd(7);		
+    i := Rnd(7);    
     case i of
       0: DrawCircle(RandomColor(), Rnd(800), Rnd(600), Rnd(300));
       1: DrawEllipse(RandomColor(), Rnd(800), Rnd(600), Rnd(800), Rnd(600));
@@ -23,7 +24,7 @@ begin
       5: DrawTriangle(RandomColor(), Rnd(800), Rnd(600), Rnd(800), Rnd(600), Rnd(800), Rnd(600));
       6: DrawVerticalLine(RandomColor(), Rnd(800), Rnd(600), Rnd(600));
     end;
-	
+  
     RefreshScreen(60);
   until WindowCloseRequested() OR KeyTyped(vk_ESCAPE) OR KeyTyped(VK_Q);
 

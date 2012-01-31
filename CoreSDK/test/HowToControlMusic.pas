@@ -1,11 +1,13 @@
 program HowToControlMusic;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgAudio, sgUtils, sgTypes;
+  SwinGame, sgTypes;
+  
 procedure Main();  
 begin
   OpenAudio();
 
   OpenGraphicsWindow('How To Control Music', 320, 240);
+  LoadDefaultColors();
   LoadMusic('game.ogg');
   LoadMusic('diving-turtle.mp3');
   LoadMusic('fast.mp3');

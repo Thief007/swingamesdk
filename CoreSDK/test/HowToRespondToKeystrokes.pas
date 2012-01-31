@@ -1,13 +1,15 @@
 program HowToRespondToKeystrokes;
 uses
-  sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio;
+  SwinGame, sgTypes;
+  //sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio;
   
 procedure Main();
 var
   clr: Color;  
 begin  
   OpenGraphicsWindow('Keyboard Input', 240, 180);    
-  
+  LoadDefaultColors();  
+
   clr := RGBAColor(255, 255, 255, 64);
   ClearScreen(ColorWhite);
   repeat // The game loop...
