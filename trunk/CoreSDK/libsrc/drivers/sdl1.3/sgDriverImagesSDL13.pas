@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL_gfx, SDL, SDL_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13; // sdl;
+	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -117,9 +117,8 @@ implementation
 
     result^.width     := loadedImage^.w;
     result^.height    := loadedImage^.h;
-    
+        
     PSDL13Surface(result^.surface)^.surface := loadedImage;
-    PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(result));
 
     //Determine pixel level collision data
     if transparent then
@@ -133,6 +132,7 @@ implementation
       SetNonAlphaPixelsProcedure(result);
     end;
     
+    PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(result));
     // Free the loaded image; if its not the result's surface
     PSDL13Surface(result^.surface)^.surface := nil;
     SDL_FreeSurface(loadedImage);
@@ -145,8 +145,14 @@ implementation
     begin
       SDL_FreeSurface(GetSurface(bmp));
     end;
+    if Assigned(PSDL13Surface(bmp^.surface)^.texture) then
+    begin
+      SDL_DestroyTexture(PSDL13Surface(bmp^.surface)^.texture);
+    end;
     
     PSDL13Surface(bmp^.surface)^.surface := nil;
+    PSDL13Surface(bmp^.surface)^.texture := nil;
+    bmp^.surface := nil;    
 	end;	
 	
 	procedure MakeOpaqueProcedure(bmp : Bitmap);
@@ -193,11 +199,27 @@ implementation
 	  pDRect : ^SDL_Rect = nil;
 	  pSRect : ^SDL_Rect = nil;
 	  clearTexture : Boolean = False;
+	  srcW : LongInt;
 	begin
   // 	CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Source Bitmap', srcBmp);
   //  CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Source Bitmap Surface', srcBmp^.surface);
   //  CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp);
-  //  CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface);    
+  //  CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface);  
+  //  if Assigned(GetSurface(srcBmp)) then
+    srcW := srcBmp^.width;
+    if Assigned(GetSurface(srcBmp)) and Assigned(srcRect) then
+    begin
+      srcW := GetSurface(srcBmp)^.w;
+      if (srcRect^.x + srcRect^.width) > srcW then
+      begin  
+        srcRect^.width := srcW - LongInt(srcRect^.x);
+        if (destRect^.width > srcW) then
+          destRect^.width := srcW;
+      end;
+    end;
+    
+    if Assigned(destRect) and (destRect^.width > srcW) then
+      destRect^.width := srcW;
     
 	  if assigned(srcRect) then
 	  begin
@@ -209,6 +231,7 @@ implementation
 	    dRect := NewSDLRect(destRect^);
   	  pDRect := @dRect;
 	  end;
+	  
 	  if not Assigned(PSDL13Surface(srcbmp^.surface)^.texture) then
 	  begin
 	    PSDL13Surface(srcbmp^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, PSDL13Surface(srcbmp^.surface)^.surface);
@@ -222,6 +245,8 @@ implementation
 	    SDL_DestroyTexture(PSDL13Surface(srcbmp^.surface)^.texture);
 	    PSDL13Surface(srcbmp^.surface)^.texture:= nil;
 	  end;
+	  
+	  
 	end;
 	
 	procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 

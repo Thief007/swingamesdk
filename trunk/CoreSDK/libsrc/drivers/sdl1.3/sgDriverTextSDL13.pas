@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgDriverText, sdl_ttf, sgTypes, sgShared, sdl, sgGraphics, sgImages, sdl_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgDriverImages;
+	uses sgDriverText, sdl13_ttf, sgTypes, sgGeometry, sgShared, sdl13, sgGraphics, sgImages, sdl13_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgDriverImages;
 	
 	const EOL = LineEnding; // from sgShared
 
@@ -102,6 +102,8 @@ implementation
 
 		// Break the String into its lines:
 		n := -1; i := 0;
+		width:= rc.width;
+		height := rc.height;
 		while n <> 0 do
 		begin
 		  // Get until either "\n" or "\0":
@@ -173,7 +175,6 @@ implementation
 		    rect := NewSDLRect(rc.width - w, i * lineSkip, 0, 0);
 		  end
 		  else begin RaiseWarning('Invalid font alignment'); exit; end;
-
 		  // Render the current line. Ignore alpha in this draw
 		  if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
 		  SDL_UpperBlit(temp, nil, PSDL13Surface(sText^.surface)^.surface, @rect);
@@ -184,12 +185,30 @@ implementation
 
 		// Draw the text on top of that:
 		rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-		
-		if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(GetSurface(sText), 0, SDL_ALPHA_TRANSPARENT);
+		if (not bgTransparent) or (Screen <> dest) then 
+		begin
+		  SDL_SetAlpha(GetSurface(sText), 0, 255);
+		end;
 
 		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
-	//	SDL_BlitSurface(sText^.surface, @rect, dest^.surface, @SDLrc );
-		
+	
+	
+	
+	  if (Screen <> dest) then 
+	  begin
+	    
+		  SDL_UpperBlit(GetSurface(sText), @SDLrc, GetSurface(dest), @rect );
+    	  WriteLn('Original W', width);
+      	WriteLn('SDLrc W', sdlrc.w);
+        WriteLn('Rect W', rect.w);
+        WriteLn('sText W', GetSurface(sText)^.w);
+        WriteLn('sText BMP W', sText^.width);
+        WriteLn('rc W',rc.width);
+		  _ScreenDirty := True;
+		  FreeBitmap(sText);
+		  exit;
+		end;
+	
 		
     texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(sText));
 	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, texture, @rect, @SDLrc);
@@ -320,7 +339,7 @@ implementation
      texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(sText));
  	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, texture, @rect, @SDLrc);
 
- 	  SDL_DestroyTexture(texture);
+ 	 // SDL_DestroyTexture(texture);
    	FreeBitmap(sText);
 	    
 	end;
@@ -361,10 +380,25 @@ implementation
 	end;
 		
 	procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
-	begin  
-	  stringColor(PSDL13Surface(dest^.surface)^.surface, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(theColor) );
-	  if dest = screen then
-      _ScreenDirty := True;
+	var
+	  surf : PSDL_Surface;
+	  texture : PSDL_Texture;
+    offset : Rectangle;
+    r, g, b, a: Byte;
+	begin
+    GraphicsDriver.ColorComponents(theColor, r, g, b, a);
+    if (r = 0) and (g = 0) and (b = 0) then r := r + 1;
+	  DrawDirtyScreen();
+	  
+    offset := RectangleFrom(0, 0, screen^.width, screen^.height);
+    surf := SDL_CreateRGBSurface(SDL_SWSURFACE, screen^.width, screen^.height, 32, 0, 0, 0, 0);
+    SDL_SetColorKey(surf, SDL_SRCCOLORKEY, GraphicsDriver.RGBAColor(0, 0, 0, 0));
+	  stringColor(surf, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(GraphicsDriver.RGBAColor(r, g, b, a)) );
+    texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, surf);
+	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, texture, @offset, @offset);
+	  
+	  SDL_DestroyTexture(texture);
+	  SDL_FreeSurface(surf);
 	end;
 	
 	procedure LoadSDL13TextDriver();

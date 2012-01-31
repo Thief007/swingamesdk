@@ -16,7 +16,7 @@ unit sgDriverSDL13;
 //=============================================================================
 interface
 uses
-  sgTypes, SDL;
+  sgTypes, SDL13;
   
   type	  
     SDL13Surface = record
@@ -52,6 +52,11 @@ implementation
       result := nil
     else 
       result := PSDL13Surface(bmp^.surface)^.surface;
+  end;
+ 
+  function GetKeyCodeProcedure(val : KeyCode) : LongInt;
+  begin
+    result := 0;
   end;
 	
 	function GetErrorProcedure() : PChar;
@@ -90,6 +95,7 @@ implementation
 	procedure LoadSDL13Driver();
 	begin
 		Driver.GetError           := @GetErrorProcedure;
+		Driver.GetKeyCode         := @GetKeyCodeProcedure;
 		Driver.Quit               := @QuitProcedure;
 		Driver.Init               := @InitProcedure;
 	end;
