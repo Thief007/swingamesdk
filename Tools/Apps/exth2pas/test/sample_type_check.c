@@ -61,6 +61,7 @@ void PascalCheckRecord_SDL_TouchFingerEvent(int *ptr);
 void PascalCheckRecord_SDL_TouchButtonEvent(int *ptr);
 void PascalCheckRecord_SDL_MultiGestureEvent(int *ptr);
 void PascalCheckRecord_SDL_DollarGestureEvent(int *ptr);
+void PascalCheckRecord_SDL_DropEvent(int *ptr);
 void PascalCheckRecord_SDL_QuitEvent(int *ptr);
 void PascalCheckRecord_SDL_UserEvent(int *ptr);
 void PascalCheckRecord_SDL_SysWMEvent(int *ptr);
@@ -517,7 +518,7 @@ void c_check_enum_SDL_Keymod()
 }
 void c_check_enum_SDL_EventType()
 {
-   int data[38];
+   int data[39];
    
    data[0] = sizeof(SDL_EventType);
    data[1] = SDL_FIRSTEVENT;
@@ -552,11 +553,12 @@ void c_check_enum_SDL_EventType()
    data[30] = SDL_DOLLARRECORD;
    data[31] = SDL_MULTIGESTURE;
    data[32] = SDL_CLIPBOARDUPDATE;
-   data[33] = SDL_EVENT_COMPAT1;
-   data[34] = SDL_EVENT_COMPAT2;
-   data[35] = SDL_EVENT_COMPAT3;
-   data[36] = SDL_USEREVENT;
-   data[37] = SDL_LASTEVENT;
+   data[33] = SDL_DROPFILE;
+   data[34] = SDL_EVENT_COMPAT1;
+   data[35] = SDL_EVENT_COMPAT2;
+   data[36] = SDL_EVENT_COMPAT3;
+   data[37] = SDL_USEREVENT;
+   data[38] = SDL_LASTEVENT;
 
    printf("Checking SDL_EventType...\n");
    PascalCheckEnum_SDL_EventType(data);
@@ -1001,19 +1003,20 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_WindowEvent() 
     {
         SDL_WindowEvent _SDL_WindowEvent;
-        int data[9];
+        int data[10];
         void *start = &_SDL_WindowEvent;
         data[0] = sizeof(SDL_WindowEvent);
         
         printf("Checking SDL_WindowEvent...\n");
         data[1] = ((long)&_SDL_WindowEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_WindowEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_WindowEvent.event) - ((long)start);
-        data[4] = ((long)&_SDL_WindowEvent.padding1) - ((long)start);
-        data[5] = ((long)&_SDL_WindowEvent.padding2) - ((long)start);
-        data[6] = ((long)&_SDL_WindowEvent.padding3) - ((long)start);
-        data[7] = ((long)&_SDL_WindowEvent.data1) - ((long)start);
-        data[8] = ((long)&_SDL_WindowEvent.data2) - ((long)start);
+        data[2] = ((long)&_SDL_WindowEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_WindowEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_WindowEvent.event) - ((long)start);
+        data[5] = ((long)&_SDL_WindowEvent.padding1) - ((long)start);
+        data[6] = ((long)&_SDL_WindowEvent.padding2) - ((long)start);
+        data[7] = ((long)&_SDL_WindowEvent.padding3) - ((long)start);
+        data[8] = ((long)&_SDL_WindowEvent.data1) - ((long)start);
+        data[9] = ((long)&_SDL_WindowEvent.data2) - ((long)start);
 
         PascalCheckRecord_SDL_WindowEvent(data);
         printf("    Done... SDL_WindowEvent\n");
@@ -1022,18 +1025,19 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_KeyboardEvent() 
     {
         SDL_KeyboardEvent _SDL_KeyboardEvent;
-        int data[8];
+        int data[9];
         void *start = &_SDL_KeyboardEvent;
         data[0] = sizeof(SDL_KeyboardEvent);
         
         printf("Checking SDL_KeyboardEvent...\n");
         data[1] = ((long)&_SDL_KeyboardEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_KeyboardEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_KeyboardEvent.state) - ((long)start);
-        data[4] = ((long)&_SDL_KeyboardEvent.repeat) - ((long)start);
-        data[5] = ((long)&_SDL_KeyboardEvent.padding2) - ((long)start);
-        data[6] = ((long)&_SDL_KeyboardEvent.padding3) - ((long)start);
-        data[7] = ((long)&_SDL_KeyboardEvent.keysym) - ((long)start);
+        data[2] = ((long)&_SDL_KeyboardEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_KeyboardEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_KeyboardEvent.state) - ((long)start);
+        data[5] = ((long)&_SDL_KeyboardEvent.repeat) - ((long)start);
+        data[6] = ((long)&_SDL_KeyboardEvent.padding2) - ((long)start);
+        data[7] = ((long)&_SDL_KeyboardEvent.padding3) - ((long)start);
+        data[8] = ((long)&_SDL_KeyboardEvent.keysym) - ((long)start);
 
         PascalCheckRecord_SDL_KeyboardEvent(data);
         printf("    Done... SDL_KeyboardEvent\n");
@@ -1042,16 +1046,17 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_TextEditingEvent() 
     {
         SDL_TextEditingEvent _SDL_TextEditingEvent;
-        int data[6];
+        int data[7];
         void *start = &_SDL_TextEditingEvent;
         data[0] = sizeof(SDL_TextEditingEvent);
         
         printf("Checking SDL_TextEditingEvent...\n");
         data[1] = ((long)&_SDL_TextEditingEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_TextEditingEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_TextEditingEvent.text) - ((long)start);
-        data[4] = ((long)&_SDL_TextEditingEvent.start) - ((long)start);
-        data[5] = ((long)&_SDL_TextEditingEvent.length) - ((long)start);
+        data[2] = ((long)&_SDL_TextEditingEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_TextEditingEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_TextEditingEvent.text) - ((long)start);
+        data[5] = ((long)&_SDL_TextEditingEvent.start) - ((long)start);
+        data[6] = ((long)&_SDL_TextEditingEvent.length) - ((long)start);
 
         PascalCheckRecord_SDL_TextEditingEvent(data);
         printf("    Done... SDL_TextEditingEvent\n");
@@ -1060,14 +1065,15 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_TextInputEvent() 
     {
         SDL_TextInputEvent _SDL_TextInputEvent;
-        int data[4];
+        int data[5];
         void *start = &_SDL_TextInputEvent;
         data[0] = sizeof(SDL_TextInputEvent);
         
         printf("Checking SDL_TextInputEvent...\n");
         data[1] = ((long)&_SDL_TextInputEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_TextInputEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_TextInputEvent.text) - ((long)start);
+        data[2] = ((long)&_SDL_TextInputEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_TextInputEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_TextInputEvent.text) - ((long)start);
 
         PascalCheckRecord_SDL_TextInputEvent(data);
         printf("    Done... SDL_TextInputEvent\n");
@@ -1076,21 +1082,22 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_MouseMotionEvent() 
     {
         SDL_MouseMotionEvent _SDL_MouseMotionEvent;
-        int data[11];
+        int data[12];
         void *start = &_SDL_MouseMotionEvent;
         data[0] = sizeof(SDL_MouseMotionEvent);
         
         printf("Checking SDL_MouseMotionEvent...\n");
         data[1] = ((long)&_SDL_MouseMotionEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_MouseMotionEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_MouseMotionEvent.state) - ((long)start);
-        data[4] = ((long)&_SDL_MouseMotionEvent.padding1) - ((long)start);
-        data[5] = ((long)&_SDL_MouseMotionEvent.padding2) - ((long)start);
-        data[6] = ((long)&_SDL_MouseMotionEvent.padding3) - ((long)start);
-        data[7] = ((long)&_SDL_MouseMotionEvent.x) - ((long)start);
-        data[8] = ((long)&_SDL_MouseMotionEvent.y) - ((long)start);
-        data[9] = ((long)&_SDL_MouseMotionEvent.xrel) - ((long)start);
-        data[10] = ((long)&_SDL_MouseMotionEvent.yrel) - ((long)start);
+        data[2] = ((long)&_SDL_MouseMotionEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_MouseMotionEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_MouseMotionEvent.state) - ((long)start);
+        data[5] = ((long)&_SDL_MouseMotionEvent.padding1) - ((long)start);
+        data[6] = ((long)&_SDL_MouseMotionEvent.padding2) - ((long)start);
+        data[7] = ((long)&_SDL_MouseMotionEvent.padding3) - ((long)start);
+        data[8] = ((long)&_SDL_MouseMotionEvent.x) - ((long)start);
+        data[9] = ((long)&_SDL_MouseMotionEvent.y) - ((long)start);
+        data[10] = ((long)&_SDL_MouseMotionEvent.xrel) - ((long)start);
+        data[11] = ((long)&_SDL_MouseMotionEvent.yrel) - ((long)start);
 
         PascalCheckRecord_SDL_MouseMotionEvent(data);
         printf("    Done... SDL_MouseMotionEvent\n");
@@ -1099,19 +1106,20 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_MouseButtonEvent() 
     {
         SDL_MouseButtonEvent _SDL_MouseButtonEvent;
-        int data[9];
+        int data[10];
         void *start = &_SDL_MouseButtonEvent;
         data[0] = sizeof(SDL_MouseButtonEvent);
         
         printf("Checking SDL_MouseButtonEvent...\n");
         data[1] = ((long)&_SDL_MouseButtonEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_MouseButtonEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_MouseButtonEvent.button) - ((long)start);
-        data[4] = ((long)&_SDL_MouseButtonEvent.state) - ((long)start);
-        data[5] = ((long)&_SDL_MouseButtonEvent.padding1) - ((long)start);
-        data[6] = ((long)&_SDL_MouseButtonEvent.padding2) - ((long)start);
-        data[7] = ((long)&_SDL_MouseButtonEvent.x) - ((long)start);
-        data[8] = ((long)&_SDL_MouseButtonEvent.y) - ((long)start);
+        data[2] = ((long)&_SDL_MouseButtonEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_MouseButtonEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_MouseButtonEvent.button) - ((long)start);
+        data[5] = ((long)&_SDL_MouseButtonEvent.state) - ((long)start);
+        data[6] = ((long)&_SDL_MouseButtonEvent.padding1) - ((long)start);
+        data[7] = ((long)&_SDL_MouseButtonEvent.padding2) - ((long)start);
+        data[8] = ((long)&_SDL_MouseButtonEvent.x) - ((long)start);
+        data[9] = ((long)&_SDL_MouseButtonEvent.y) - ((long)start);
 
         PascalCheckRecord_SDL_MouseButtonEvent(data);
         printf("    Done... SDL_MouseButtonEvent\n");
@@ -1120,15 +1128,16 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_MouseWheelEvent() 
     {
         SDL_MouseWheelEvent _SDL_MouseWheelEvent;
-        int data[5];
+        int data[6];
         void *start = &_SDL_MouseWheelEvent;
         data[0] = sizeof(SDL_MouseWheelEvent);
         
         printf("Checking SDL_MouseWheelEvent...\n");
         data[1] = ((long)&_SDL_MouseWheelEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_MouseWheelEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_MouseWheelEvent.x) - ((long)start);
-        data[4] = ((long)&_SDL_MouseWheelEvent.y) - ((long)start);
+        data[2] = ((long)&_SDL_MouseWheelEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_MouseWheelEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_MouseWheelEvent.x) - ((long)start);
+        data[5] = ((long)&_SDL_MouseWheelEvent.y) - ((long)start);
 
         PascalCheckRecord_SDL_MouseWheelEvent(data);
         printf("    Done... SDL_MouseWheelEvent\n");
@@ -1137,17 +1146,18 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_JoyAxisEvent() 
     {
         SDL_JoyAxisEvent _SDL_JoyAxisEvent;
-        int data[7];
+        int data[8];
         void *start = &_SDL_JoyAxisEvent;
         data[0] = sizeof(SDL_JoyAxisEvent);
         
         printf("Checking SDL_JoyAxisEvent...\n");
         data[1] = ((long)&_SDL_JoyAxisEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_JoyAxisEvent.which) - ((long)start);
-        data[3] = ((long)&_SDL_JoyAxisEvent.axis) - ((long)start);
-        data[4] = ((long)&_SDL_JoyAxisEvent.padding1) - ((long)start);
-        data[5] = ((long)&_SDL_JoyAxisEvent.padding2) - ((long)start);
-        data[6] = ((long)&_SDL_JoyAxisEvent.value) - ((long)start);
+        data[2] = ((long)&_SDL_JoyAxisEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_JoyAxisEvent.which) - ((long)start);
+        data[4] = ((long)&_SDL_JoyAxisEvent.axis) - ((long)start);
+        data[5] = ((long)&_SDL_JoyAxisEvent.padding1) - ((long)start);
+        data[6] = ((long)&_SDL_JoyAxisEvent.padding2) - ((long)start);
+        data[7] = ((long)&_SDL_JoyAxisEvent.value) - ((long)start);
 
         PascalCheckRecord_SDL_JoyAxisEvent(data);
         printf("    Done... SDL_JoyAxisEvent\n");
@@ -1156,18 +1166,19 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_JoyBallEvent() 
     {
         SDL_JoyBallEvent _SDL_JoyBallEvent;
-        int data[8];
+        int data[9];
         void *start = &_SDL_JoyBallEvent;
         data[0] = sizeof(SDL_JoyBallEvent);
         
         printf("Checking SDL_JoyBallEvent...\n");
         data[1] = ((long)&_SDL_JoyBallEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_JoyBallEvent.which) - ((long)start);
-        data[3] = ((long)&_SDL_JoyBallEvent.ball) - ((long)start);
-        data[4] = ((long)&_SDL_JoyBallEvent.padding1) - ((long)start);
-        data[5] = ((long)&_SDL_JoyBallEvent.padding2) - ((long)start);
-        data[6] = ((long)&_SDL_JoyBallEvent.xrel) - ((long)start);
-        data[7] = ((long)&_SDL_JoyBallEvent.yrel) - ((long)start);
+        data[2] = ((long)&_SDL_JoyBallEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_JoyBallEvent.which) - ((long)start);
+        data[4] = ((long)&_SDL_JoyBallEvent.ball) - ((long)start);
+        data[5] = ((long)&_SDL_JoyBallEvent.padding1) - ((long)start);
+        data[6] = ((long)&_SDL_JoyBallEvent.padding2) - ((long)start);
+        data[7] = ((long)&_SDL_JoyBallEvent.xrel) - ((long)start);
+        data[8] = ((long)&_SDL_JoyBallEvent.yrel) - ((long)start);
 
         PascalCheckRecord_SDL_JoyBallEvent(data);
         printf("    Done... SDL_JoyBallEvent\n");
@@ -1176,16 +1187,17 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_JoyHatEvent() 
     {
         SDL_JoyHatEvent _SDL_JoyHatEvent;
-        int data[6];
+        int data[7];
         void *start = &_SDL_JoyHatEvent;
         data[0] = sizeof(SDL_JoyHatEvent);
         
         printf("Checking SDL_JoyHatEvent...\n");
         data[1] = ((long)&_SDL_JoyHatEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_JoyHatEvent.which) - ((long)start);
-        data[3] = ((long)&_SDL_JoyHatEvent.hat) - ((long)start);
-        data[4] = ((long)&_SDL_JoyHatEvent.value) - ((long)start);
-        data[5] = ((long)&_SDL_JoyHatEvent.padding1) - ((long)start);
+        data[2] = ((long)&_SDL_JoyHatEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_JoyHatEvent.which) - ((long)start);
+        data[4] = ((long)&_SDL_JoyHatEvent.hat) - ((long)start);
+        data[5] = ((long)&_SDL_JoyHatEvent.value) - ((long)start);
+        data[6] = ((long)&_SDL_JoyHatEvent.padding1) - ((long)start);
 
         PascalCheckRecord_SDL_JoyHatEvent(data);
         printf("    Done... SDL_JoyHatEvent\n");
@@ -1194,16 +1206,17 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_JoyButtonEvent() 
     {
         SDL_JoyButtonEvent _SDL_JoyButtonEvent;
-        int data[6];
+        int data[7];
         void *start = &_SDL_JoyButtonEvent;
         data[0] = sizeof(SDL_JoyButtonEvent);
         
         printf("Checking SDL_JoyButtonEvent...\n");
         data[1] = ((long)&_SDL_JoyButtonEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_JoyButtonEvent.which) - ((long)start);
-        data[3] = ((long)&_SDL_JoyButtonEvent.button) - ((long)start);
-        data[4] = ((long)&_SDL_JoyButtonEvent.state) - ((long)start);
-        data[5] = ((long)&_SDL_JoyButtonEvent.padding1) - ((long)start);
+        data[2] = ((long)&_SDL_JoyButtonEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_JoyButtonEvent.which) - ((long)start);
+        data[4] = ((long)&_SDL_JoyButtonEvent.button) - ((long)start);
+        data[5] = ((long)&_SDL_JoyButtonEvent.state) - ((long)start);
+        data[6] = ((long)&_SDL_JoyButtonEvent.padding1) - ((long)start);
 
         PascalCheckRecord_SDL_JoyButtonEvent(data);
         printf("    Done... SDL_JoyButtonEvent\n");
@@ -1212,24 +1225,25 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_TouchFingerEvent() 
     {
         SDL_TouchFingerEvent _SDL_TouchFingerEvent;
-        int data[14];
+        int data[15];
         void *start = &_SDL_TouchFingerEvent;
         data[0] = sizeof(SDL_TouchFingerEvent);
         
         printf("Checking SDL_TouchFingerEvent...\n");
         data[1] = ((long)&_SDL_TouchFingerEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_TouchFingerEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_TouchFingerEvent.touchId) - ((long)start);
-        data[4] = ((long)&_SDL_TouchFingerEvent.fingerId) - ((long)start);
-        data[5] = ((long)&_SDL_TouchFingerEvent.state) - ((long)start);
-        data[6] = ((long)&_SDL_TouchFingerEvent.padding1) - ((long)start);
-        data[7] = ((long)&_SDL_TouchFingerEvent.padding2) - ((long)start);
-        data[8] = ((long)&_SDL_TouchFingerEvent.padding3) - ((long)start);
-        data[9] = ((long)&_SDL_TouchFingerEvent.x) - ((long)start);
-        data[10] = ((long)&_SDL_TouchFingerEvent.y) - ((long)start);
-        data[11] = ((long)&_SDL_TouchFingerEvent.dx) - ((long)start);
-        data[12] = ((long)&_SDL_TouchFingerEvent.dy) - ((long)start);
-        data[13] = ((long)&_SDL_TouchFingerEvent.pressure) - ((long)start);
+        data[2] = ((long)&_SDL_TouchFingerEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_TouchFingerEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_TouchFingerEvent.touchId) - ((long)start);
+        data[5] = ((long)&_SDL_TouchFingerEvent.fingerId) - ((long)start);
+        data[6] = ((long)&_SDL_TouchFingerEvent.state) - ((long)start);
+        data[7] = ((long)&_SDL_TouchFingerEvent.padding1) - ((long)start);
+        data[8] = ((long)&_SDL_TouchFingerEvent.padding2) - ((long)start);
+        data[9] = ((long)&_SDL_TouchFingerEvent.padding3) - ((long)start);
+        data[10] = ((long)&_SDL_TouchFingerEvent.x) - ((long)start);
+        data[11] = ((long)&_SDL_TouchFingerEvent.y) - ((long)start);
+        data[12] = ((long)&_SDL_TouchFingerEvent.dx) - ((long)start);
+        data[13] = ((long)&_SDL_TouchFingerEvent.dy) - ((long)start);
+        data[14] = ((long)&_SDL_TouchFingerEvent.pressure) - ((long)start);
 
         PascalCheckRecord_SDL_TouchFingerEvent(data);
         printf("    Done... SDL_TouchFingerEvent\n");
@@ -1238,18 +1252,19 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_TouchButtonEvent() 
     {
         SDL_TouchButtonEvent _SDL_TouchButtonEvent;
-        int data[8];
+        int data[9];
         void *start = &_SDL_TouchButtonEvent;
         data[0] = sizeof(SDL_TouchButtonEvent);
         
         printf("Checking SDL_TouchButtonEvent...\n");
         data[1] = ((long)&_SDL_TouchButtonEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_TouchButtonEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_TouchButtonEvent.touchId) - ((long)start);
-        data[4] = ((long)&_SDL_TouchButtonEvent.state) - ((long)start);
-        data[5] = ((long)&_SDL_TouchButtonEvent.button) - ((long)start);
-        data[6] = ((long)&_SDL_TouchButtonEvent.padding1) - ((long)start);
-        data[7] = ((long)&_SDL_TouchButtonEvent.padding2) - ((long)start);
+        data[2] = ((long)&_SDL_TouchButtonEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_TouchButtonEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_TouchButtonEvent.touchId) - ((long)start);
+        data[5] = ((long)&_SDL_TouchButtonEvent.state) - ((long)start);
+        data[6] = ((long)&_SDL_TouchButtonEvent.button) - ((long)start);
+        data[7] = ((long)&_SDL_TouchButtonEvent.padding1) - ((long)start);
+        data[8] = ((long)&_SDL_TouchButtonEvent.padding2) - ((long)start);
 
         PascalCheckRecord_SDL_TouchButtonEvent(data);
         printf("    Done... SDL_TouchButtonEvent\n");
@@ -1258,20 +1273,21 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_MultiGestureEvent() 
     {
         SDL_MultiGestureEvent _SDL_MultiGestureEvent;
-        int data[10];
+        int data[11];
         void *start = &_SDL_MultiGestureEvent;
         data[0] = sizeof(SDL_MultiGestureEvent);
         
         printf("Checking SDL_MultiGestureEvent...\n");
         data[1] = ((long)&_SDL_MultiGestureEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_MultiGestureEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_MultiGestureEvent.touchId) - ((long)start);
-        data[4] = ((long)&_SDL_MultiGestureEvent.dTheta) - ((long)start);
-        data[5] = ((long)&_SDL_MultiGestureEvent.dDist) - ((long)start);
-        data[6] = ((long)&_SDL_MultiGestureEvent.x) - ((long)start);
-        data[7] = ((long)&_SDL_MultiGestureEvent.y) - ((long)start);
-        data[8] = ((long)&_SDL_MultiGestureEvent.numFingers) - ((long)start);
-        data[9] = ((long)&_SDL_MultiGestureEvent.padding) - ((long)start);
+        data[2] = ((long)&_SDL_MultiGestureEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_MultiGestureEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_MultiGestureEvent.touchId) - ((long)start);
+        data[5] = ((long)&_SDL_MultiGestureEvent.dTheta) - ((long)start);
+        data[6] = ((long)&_SDL_MultiGestureEvent.dDist) - ((long)start);
+        data[7] = ((long)&_SDL_MultiGestureEvent.x) - ((long)start);
+        data[8] = ((long)&_SDL_MultiGestureEvent.y) - ((long)start);
+        data[9] = ((long)&_SDL_MultiGestureEvent.numFingers) - ((long)start);
+        data[10] = ((long)&_SDL_MultiGestureEvent.padding) - ((long)start);
 
         PascalCheckRecord_SDL_MultiGestureEvent(data);
         printf("    Done... SDL_MultiGestureEvent\n");
@@ -1280,31 +1296,49 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_DollarGestureEvent() 
     {
         SDL_DollarGestureEvent _SDL_DollarGestureEvent;
-        int data[7];
+        int data[8];
         void *start = &_SDL_DollarGestureEvent;
         data[0] = sizeof(SDL_DollarGestureEvent);
         
         printf("Checking SDL_DollarGestureEvent...\n");
         data[1] = ((long)&_SDL_DollarGestureEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_DollarGestureEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_DollarGestureEvent.touchId) - ((long)start);
-        data[4] = ((long)&_SDL_DollarGestureEvent.gestureId) - ((long)start);
-        data[5] = ((long)&_SDL_DollarGestureEvent.numFingers) - ((long)start);
-        data[6] = ((long)&_SDL_DollarGestureEvent.error) - ((long)start);
+        data[2] = ((long)&_SDL_DollarGestureEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_DollarGestureEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_DollarGestureEvent.touchId) - ((long)start);
+        data[5] = ((long)&_SDL_DollarGestureEvent.gestureId) - ((long)start);
+        data[6] = ((long)&_SDL_DollarGestureEvent.numFingers) - ((long)start);
+        data[7] = ((long)&_SDL_DollarGestureEvent.error) - ((long)start);
 
         PascalCheckRecord_SDL_DollarGestureEvent(data);
         printf("    Done... SDL_DollarGestureEvent\n");
     }
     
+    void c_check_Record_SDL_DropEvent() 
+    {
+        SDL_DropEvent _SDL_DropEvent;
+        int data[4];
+        void *start = &_SDL_DropEvent;
+        data[0] = sizeof(SDL_DropEvent);
+        
+        printf("Checking SDL_DropEvent...\n");
+        data[1] = ((long)&_SDL_DropEvent.type) - ((long)start);
+        data[2] = ((long)&_SDL_DropEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_DropEvent.file) - ((long)start);
+
+        PascalCheckRecord_SDL_DropEvent(data);
+        printf("    Done... SDL_DropEvent\n");
+    }
+    
     void c_check_Record_SDL_QuitEvent() 
     {
         SDL_QuitEvent _SDL_QuitEvent;
-        int data[2];
+        int data[3];
         void *start = &_SDL_QuitEvent;
         data[0] = sizeof(SDL_QuitEvent);
         
         printf("Checking SDL_QuitEvent...\n");
         data[1] = ((long)&_SDL_QuitEvent.type) - ((long)start);
+        data[2] = ((long)&_SDL_QuitEvent.timestamp) - ((long)start);
 
         PascalCheckRecord_SDL_QuitEvent(data);
         printf("    Done... SDL_QuitEvent\n");
@@ -1313,16 +1347,17 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_UserEvent() 
     {
         SDL_UserEvent _SDL_UserEvent;
-        int data[6];
+        int data[7];
         void *start = &_SDL_UserEvent;
         data[0] = sizeof(SDL_UserEvent);
         
         printf("Checking SDL_UserEvent...\n");
         data[1] = ((long)&_SDL_UserEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_UserEvent.windowID) - ((long)start);
-        data[3] = ((long)&_SDL_UserEvent.code) - ((long)start);
-        data[4] = ((long)&_SDL_UserEvent.data1) - ((long)start);
-        data[5] = ((long)&_SDL_UserEvent.data2) - ((long)start);
+        data[2] = ((long)&_SDL_UserEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_UserEvent.windowID) - ((long)start);
+        data[4] = ((long)&_SDL_UserEvent.code) - ((long)start);
+        data[5] = ((long)&_SDL_UserEvent.data1) - ((long)start);
+        data[6] = ((long)&_SDL_UserEvent.data2) - ((long)start);
 
         PascalCheckRecord_SDL_UserEvent(data);
         printf("    Done... SDL_UserEvent\n");
@@ -1331,13 +1366,14 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_SysWMEvent() 
     {
         SDL_SysWMEvent _SDL_SysWMEvent;
-        int data[3];
+        int data[4];
         void *start = &_SDL_SysWMEvent;
         data[0] = sizeof(SDL_SysWMEvent);
         
         printf("Checking SDL_SysWMEvent...\n");
         data[1] = ((long)&_SDL_SysWMEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_SysWMEvent.msg) - ((long)start);
+        data[2] = ((long)&_SDL_SysWMEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_SysWMEvent.msg) - ((long)start);
 
         PascalCheckRecord_SDL_SysWMEvent(data);
         printf("    Done... SDL_SysWMEvent\n");
@@ -1346,14 +1382,15 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_ActiveEvent() 
     {
         SDL_ActiveEvent _SDL_ActiveEvent;
-        int data[4];
+        int data[5];
         void *start = &_SDL_ActiveEvent;
         data[0] = sizeof(SDL_ActiveEvent);
         
         printf("Checking SDL_ActiveEvent...\n");
         data[1] = ((long)&_SDL_ActiveEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_ActiveEvent.gain) - ((long)start);
-        data[3] = ((long)&_SDL_ActiveEvent.state) - ((long)start);
+        data[2] = ((long)&_SDL_ActiveEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_ActiveEvent.gain) - ((long)start);
+        data[4] = ((long)&_SDL_ActiveEvent.state) - ((long)start);
 
         PascalCheckRecord_SDL_ActiveEvent(data);
         printf("    Done... SDL_ActiveEvent\n");
@@ -1362,14 +1399,15 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_ResizeEvent() 
     {
         SDL_ResizeEvent _SDL_ResizeEvent;
-        int data[4];
+        int data[5];
         void *start = &_SDL_ResizeEvent;
         data[0] = sizeof(SDL_ResizeEvent);
         
         printf("Checking SDL_ResizeEvent...\n");
         data[1] = ((long)&_SDL_ResizeEvent.type) - ((long)start);
-        data[2] = ((long)&_SDL_ResizeEvent.w) - ((long)start);
-        data[3] = ((long)&_SDL_ResizeEvent.h) - ((long)start);
+        data[2] = ((long)&_SDL_ResizeEvent.timestamp) - ((long)start);
+        data[3] = ((long)&_SDL_ResizeEvent.w) - ((long)start);
+        data[4] = ((long)&_SDL_ResizeEvent.h) - ((long)start);
 
         PascalCheckRecord_SDL_ResizeEvent(data);
         printf("    Done... SDL_ResizeEvent\n");
@@ -1378,7 +1416,7 @@ void c_check_enum_SDL_GrabMode()
     void c_check_Record_SDL_Event() 
     {
         SDL_Event _SDL_Event;
-        int data[22];
+        int data[23];
         void *start = &_SDL_Event;
         data[0] = sizeof(SDL_Event);
         
@@ -1402,8 +1440,9 @@ void c_check_enum_SDL_GrabMode()
         data[17] = ((long)&_SDL_Event.tbutton) - ((long)start);
         data[18] = ((long)&_SDL_Event.mgesture) - ((long)start);
         data[19] = ((long)&_SDL_Event.dgesture) - ((long)start);
-        data[20] = ((long)&_SDL_Event.active) - ((long)start);
-        data[21] = ((long)&_SDL_Event.resize) - ((long)start);
+        data[20] = ((long)&_SDL_Event.drop) - ((long)start);
+        data[21] = ((long)&_SDL_Event.active) - ((long)start);
+        data[22] = ((long)&_SDL_Event.resize) - ((long)start);
 
         PascalCheckRecord_SDL_Event(data);
         printf("    Done... SDL_Event\n");
@@ -1537,6 +1576,7 @@ int main()
    c_check_Record_SDL_TouchButtonEvent();
    c_check_Record_SDL_MultiGestureEvent();
    c_check_Record_SDL_DollarGestureEvent();
+   c_check_Record_SDL_DropEvent();
    c_check_Record_SDL_QuitEvent();
    c_check_Record_SDL_UserEvent();
    c_check_Record_SDL_SysWMEvent();

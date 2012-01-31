@@ -1509,6 +1509,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_WindowEvent for SDL_WindowEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_WindowEvent.timestamp) - Cardinal(@_SDL_WindowEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_WindowEvent for SDL_WindowEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_WindowEvent.windowID) - Cardinal(@_SDL_WindowEvent);
   cPtr +=1;
   
@@ -1571,6 +1577,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_KeyboardEvent for SDL_KeyboardEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_KeyboardEvent.timestamp) - Cardinal(@_SDL_KeyboardEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_KeyboardEvent for SDL_KeyboardEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_KeyboardEvent.windowID) - Cardinal(@_SDL_KeyboardEvent);
   cPtr +=1;
   
@@ -1627,6 +1639,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_TextEditingEvent for SDL_TextEditingEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_TextEditingEvent.timestamp) - Cardinal(@_SDL_TextEditingEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_TextEditingEvent for SDL_TextEditingEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_TextEditingEvent.windowID) - Cardinal(@_SDL_TextEditingEvent);
   cPtr +=1;
   
@@ -1671,6 +1689,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_TextInputEvent for SDL_TextInputEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_TextInputEvent.timestamp) - Cardinal(@_SDL_TextInputEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_TextInputEvent for SDL_TextInputEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_TextInputEvent.windowID) - Cardinal(@_SDL_TextInputEvent);
   cPtr +=1;
   
@@ -1702,6 +1726,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_MouseMotionEvent for SDL_MouseMotionEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_MouseMotionEvent.timestamp) - Cardinal(@_SDL_MouseMotionEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_MouseMotionEvent for SDL_MouseMotionEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_MouseMotionEvent.windowID) - Cardinal(@_SDL_MouseMotionEvent);
   cPtr +=1;
@@ -1777,6 +1807,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_MouseButtonEvent for SDL_MouseButtonEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_MouseButtonEvent.timestamp) - Cardinal(@_SDL_MouseButtonEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_MouseButtonEvent for SDL_MouseButtonEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_MouseButtonEvent.windowID) - Cardinal(@_SDL_MouseButtonEvent);
   cPtr +=1;
   
@@ -1839,6 +1875,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_MouseWheelEvent for SDL_MouseWheelEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_MouseWheelEvent.timestamp) - Cardinal(@_SDL_MouseWheelEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_MouseWheelEvent for SDL_MouseWheelEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_MouseWheelEvent.windowID) - Cardinal(@_SDL_MouseWheelEvent);
   cPtr +=1;
   
@@ -1876,6 +1918,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_JoyAxisEvent for SDL_JoyAxisEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_JoyAxisEvent.timestamp) - Cardinal(@_SDL_JoyAxisEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_JoyAxisEvent for SDL_JoyAxisEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_JoyAxisEvent.which) - Cardinal(@_SDL_JoyAxisEvent);
   cPtr +=1;
@@ -1926,6 +1974,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_JoyBallEvent for SDL_JoyBallEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_JoyBallEvent.timestamp) - Cardinal(@_SDL_JoyBallEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_JoyBallEvent for SDL_JoyBallEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_JoyBallEvent.which) - Cardinal(@_SDL_JoyBallEvent);
   cPtr +=1;
@@ -1983,6 +2037,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_JoyHatEvent for SDL_JoyHatEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_JoyHatEvent.timestamp) - Cardinal(@_SDL_JoyHatEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_JoyHatEvent for SDL_JoyHatEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_JoyHatEvent.which) - Cardinal(@_SDL_JoyHatEvent);
   cPtr +=1;
   
@@ -2027,6 +2087,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_JoyButtonEvent for SDL_JoyButtonEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_JoyButtonEvent.timestamp) - Cardinal(@_SDL_JoyButtonEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_JoyButtonEvent for SDL_JoyButtonEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_JoyButtonEvent.which) - Cardinal(@_SDL_JoyButtonEvent);
   cPtr +=1;
   
@@ -2070,6 +2136,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_TouchFingerEvent for SDL_TouchFingerEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_TouchFingerEvent.timestamp) - Cardinal(@_SDL_TouchFingerEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_TouchFingerEvent for SDL_TouchFingerEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_TouchFingerEvent.windowID) - Cardinal(@_SDL_TouchFingerEvent);
   cPtr +=1;
@@ -2163,6 +2235,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_TouchButtonEvent for SDL_TouchButtonEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_TouchButtonEvent.timestamp) - Cardinal(@_SDL_TouchButtonEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_TouchButtonEvent for SDL_TouchButtonEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_TouchButtonEvent.windowID) - Cardinal(@_SDL_TouchButtonEvent);
   cPtr +=1;
   
@@ -2218,6 +2296,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_MultiGestureEvent for SDL_MultiGestureEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_MultiGestureEvent.timestamp) - Cardinal(@_SDL_MultiGestureEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_MultiGestureEvent for SDL_MultiGestureEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_MultiGestureEvent.windowID) - Cardinal(@_SDL_MultiGestureEvent);
   cPtr +=1;
@@ -2287,6 +2371,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_DollarGestureEvent for SDL_DollarGestureEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_DollarGestureEvent.timestamp) - Cardinal(@_SDL_DollarGestureEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_DollarGestureEvent for SDL_DollarGestureEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_DollarGestureEvent.windowID) - Cardinal(@_SDL_DollarGestureEvent);
   cPtr +=1;
   
@@ -2318,6 +2408,38 @@ begin
     WriteLn('Offset Differs in SDL_DollarGestureEvent for SDL_DollarGestureEvent.error, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 end;
 
+procedure PascalCheckRecord_SDL_DropEvent(ptr : IntPtr); cdecl; export; 
+var
+  _SDL_DropEvent : SDL_DropEvent;
+  cptr : IntPtr;
+  cSize : Cardinal = 0;
+  offset : Cardinal = 0;
+begin
+  cptr := ptr;
+  cSize := cptr^;
+  
+  if cSize <> sizeof(SDL_DropEvent) then WriteLn('Different size for SDL_DropEvent! c: ',cSize, ' pascal: ',sizeof(SDL_DropEvent));
+  
+      
+  offset := Cardinal(@_SDL_DropEvent._type) - Cardinal(@_SDL_DropEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_DropEvent for SDL_DropEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_DropEvent.timestamp) - Cardinal(@_SDL_DropEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_DropEvent for SDL_DropEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_DropEvent._file) - Cardinal(@_SDL_DropEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_DropEvent for SDL_DropEvent._file, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+end;
+
 procedure PascalCheckRecord_SDL_QuitEvent(ptr : IntPtr); cdecl; export; 
 var
   _SDL_QuitEvent : SDL_QuitEvent;
@@ -2336,6 +2458,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_QuitEvent for SDL_QuitEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_QuitEvent.timestamp) - Cardinal(@_SDL_QuitEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_QuitEvent for SDL_QuitEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 end;
 
 procedure PascalCheckRecord_SDL_UserEvent(ptr : IntPtr); cdecl; export; 
@@ -2356,6 +2484,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_UserEvent for SDL_UserEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_UserEvent.timestamp) - Cardinal(@_SDL_UserEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_UserEvent for SDL_UserEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_UserEvent.windowID) - Cardinal(@_SDL_UserEvent);
   cPtr +=1;
@@ -2401,6 +2535,12 @@ begin
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_SysWMEvent for SDL_SysWMEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
+  offset := Cardinal(@_SDL_SysWMEvent.timestamp) - Cardinal(@_SDL_SysWMEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_SysWMEvent for SDL_SysWMEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
   offset := Cardinal(@_SDL_SysWMEvent.msg) - Cardinal(@_SDL_SysWMEvent);
   cPtr +=1;
   
@@ -2426,6 +2566,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_ActiveEvent for SDL_ActiveEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_ActiveEvent.timestamp) - Cardinal(@_SDL_ActiveEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_ActiveEvent for SDL_ActiveEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_ActiveEvent.gain) - Cardinal(@_SDL_ActiveEvent);
   cPtr +=1;
@@ -2458,6 +2604,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_ResizeEvent for SDL_ResizeEvent._type, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_ResizeEvent.timestamp) - Cardinal(@_SDL_ResizeEvent);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_ResizeEvent for SDL_ResizeEvent.timestamp, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_ResizeEvent.w) - Cardinal(@_SDL_ResizeEvent);
   cPtr +=1;
@@ -2598,6 +2750,12 @@ begin
   
   if Cardinal(cPtr^) <> offset then
     WriteLn('Offset Differs in SDL_Event for SDL_Event.dgesture, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
+
+  offset := Cardinal(@_SDL_Event.drop) - Cardinal(@_SDL_Event);
+  cPtr +=1;
+  
+  if Cardinal(cPtr^) <> offset then
+    WriteLn('Offset Differs in SDL_Event for SDL_Event.drop, C Offset : ', Cardinal(cPtr^), ' Pascal Offset : ',    IntToStr(offset));
 
   offset := Cardinal(@_SDL_Event.active) - Cardinal(@_SDL_Event);
   cPtr +=1;
@@ -2856,6 +3014,7 @@ end;exports
      PascalCheckRecord_SDL_TouchButtonEvent,
      PascalCheckRecord_SDL_MultiGestureEvent,
      PascalCheckRecord_SDL_DollarGestureEvent,
+     PascalCheckRecord_SDL_DropEvent,
      PascalCheckRecord_SDL_QuitEvent,
      PascalCheckRecord_SDL_UserEvent,
      PascalCheckRecord_SDL_SysWMEvent,

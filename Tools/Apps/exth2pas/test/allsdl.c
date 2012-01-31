@@ -2,24 +2,24 @@
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "test.c"
-# 1 "SDL.h" 1
-# 72 "SDL.h"
-# 1 "SDL_main.h" 1
-# 25 "SDL_main.h"
-# 1 "SDL_stdinc.h" 1
-# 31 "SDL_stdinc.h"
-# 1 "SDL_config.h" 1
-# 25 "SDL_config.h"
-# 1 "SDL_platform.h" 1
-# 75 "SDL_platform.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL.h" 1
+# 72 "../Frameworks/SDL.framework/Headers/SDL.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_main.h" 1
+# 25 "../Frameworks/SDL.framework/Headers/SDL_main.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 1
+# 31 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_config.h" 1
+# 25 "../Frameworks/SDL.framework/Headers/SDL_config.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_platform.h" 1
+# 75 "../Frameworks/SDL.framework/Headers/SDL_platform.h"
 # 1 "/usr/include/AvailabilityMacros.h" 1 3 4
-# 76 "SDL_platform.h" 2
+# 76 "../Frameworks/SDL.framework/Headers/SDL_platform.h" 2
 # 1 "/usr/include/TargetConditionals.h" 1 3 4
-# 77 "SDL_platform.h" 2
-# 128 "SDL_platform.h"
-# 1 "begin_code.h" 1
-# 129 "SDL_platform.h" 2
-# 139 "SDL_platform.h"
+# 77 "../Frameworks/SDL.framework/Headers/SDL_platform.h" 2
+# 128 "../Frameworks/SDL.framework/Headers/SDL_platform.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 129 "../Frameworks/SDL.framework/Headers/SDL_platform.h" 2
+# 139 "../Frameworks/SDL.framework/Headers/SDL_platform.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetPlatform (void);
 
 
@@ -28,16 +28,16 @@ extern __attribute__ ((visibility("default"))) const char * SDL_GetPlatform (voi
 
 
 
-# 1 "close_code.h" 1
-# 148 "SDL_platform.h" 2
-# 26 "SDL_config.h" 2
-# 37 "SDL_config.h"
-# 1 "SDL_config_macosx.h" 1
-# 28 "SDL_config_macosx.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 148 "../Frameworks/SDL.framework/Headers/SDL_platform.h" 2
+# 26 "../Frameworks/SDL.framework/Headers/SDL_config.h" 2
+# 37 "../Frameworks/SDL.framework/Headers/SDL_config.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_config_macosx.h" 1
+# 28 "../Frameworks/SDL.framework/Headers/SDL_config_macosx.h"
 # 1 "/usr/include/AvailabilityMacros.h" 1 3 4
-# 29 "SDL_config_macosx.h" 2
-# 38 "SDL_config.h" 2
-# 32 "SDL_stdinc.h" 2
+# 29 "../Frameworks/SDL.framework/Headers/SDL_config_macosx.h" 2
+# 38 "../Frameworks/SDL.framework/Headers/SDL_config.h" 2
+# 32 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 
@@ -502,7 +502,7 @@ typedef __darwin_fsblkcnt_t fsblkcnt_t;
 
 
 typedef __darwin_fsfilcnt_t fsfilcnt_t;
-# 36 "SDL_stdinc.h" 2
+# 36 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 # 1 "/usr/include/stdio.h" 1 3 4
@@ -770,7 +770,7 @@ extern int __vsnprintf_chk (char * , size_t, int, size_t,
        const char * , va_list)
   ;
 # 500 "/usr/include/stdio.h" 2 3 4
-# 39 "SDL_stdinc.h" 2
+# 39 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 # 1 "/usr/include/stdlib.h" 1 3 4
@@ -1616,16 +1616,16 @@ void *valloc(size_t);
 
 
 
-# 42 "SDL_stdinc.h" 2
+# 42 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 # 1 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h" 1 3 4
 # 152 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h" 3 4
 typedef long int ptrdiff_t;
-# 43 "SDL_stdinc.h" 2
+# 43 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 # 1 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stdarg.h" 1 3 4
 # 43 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stdarg.h" 3 4
 typedef __builtin_va_list __gnuc_va_list;
-# 44 "SDL_stdinc.h" 2
-# 61 "SDL_stdinc.h"
+# 44 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
+# 61 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 # 1 "/usr/include/string.h" 1 3 4
 # 79 "/usr/include/string.h" 3 4
 
@@ -1824,7 +1824,7 @@ __inline_strncat_chk (char * __dest, const char * __src,
   return __builtin___strncat_chk (__dest, __src, __len, __builtin_object_size (__dest, 2 > 1));
 }
 # 191 "/usr/include/string.h" 2 3 4
-# 62 "SDL_stdinc.h" 2
+# 62 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 
@@ -1904,7 +1904,7 @@ typedef long unsigned int uintmax_t;
 
 
 
-# 68 "SDL_stdinc.h" 2
+# 68 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 
@@ -2168,7 +2168,7 @@ isspecial(int _c)
 {
  return (__istype(_c, 0x00100000L));
 }
-# 73 "SDL_stdinc.h" 2
+# 73 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
 
 
 # 1 "/usr/include/math.h" 1 3 4
@@ -2521,8 +2521,8 @@ extern double significand ( double );
 
 extern double drem ( double, double );
 # 29 "/usr/include/math.h" 2 3 4
-# 76 "SDL_stdinc.h" 2
-# 115 "SDL_stdinc.h"
+# 76 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
+# 115 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 typedef enum
 {
     SDL_FALSE = 0,
@@ -2562,7 +2562,7 @@ typedef int64_t Sint64;
 
 
 typedef uint64_t Uint64;
-# 162 "SDL_stdinc.h"
+# 162 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 typedef int SDL_dummy_uint8[(sizeof(Uint8) == 1) * 2 - 1];
 typedef int SDL_dummy_sint8[(sizeof(Sint8) == 1) * 2 - 1];
 typedef int SDL_dummy_uint16[(sizeof(Uint16) == 2) * 2 - 1];
@@ -2571,7 +2571,7 @@ typedef int SDL_dummy_uint32[(sizeof(Uint32) == 4) * 2 - 1];
 typedef int SDL_dummy_sint32[(sizeof(Sint32) == 4) * 2 - 1];
 typedef int SDL_dummy_uint64[(sizeof(Uint64) == 8) * 2 - 1];
 typedef int SDL_dummy_sint64[(sizeof(Sint64) == 8) * 2 - 1];
-# 187 "SDL_stdinc.h"
+# 187 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 typedef enum
 {
     DUMMY_ENUM_VALUE
@@ -2582,9 +2582,9 @@ typedef int SDL_dummy_enum[(sizeof(SDL_DUMMY_ENUM) == sizeof(int)) * 2 - 1];
 
 
 
-# 1 "begin_code.h" 1
-# 198 "SDL_stdinc.h" 2
-# 418 "SDL_stdinc.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 198 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
+# 418 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) size_t SDL_wcslen(const wchar_t * string);
 
 
@@ -2598,10 +2598,10 @@ extern __attribute__ ((visibility("default"))) size_t SDL_wcslcpy(wchar_t *dst, 
 
 
 extern __attribute__ ((visibility("default"))) size_t SDL_wcslcat(wchar_t *dst, const wchar_t *src, size_t maxlen);
-# 441 "SDL_stdinc.h"
+# 441 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) size_t SDL_utf8strlcpy(char *dst, const char *src,
                                             size_t dst_bytes);
-# 460 "SDL_stdinc.h"
+# 460 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) char * SDL_strrev(char *string);
 
 
@@ -2615,12 +2615,12 @@ extern __attribute__ ((visibility("default"))) char * SDL_strupr(char *string);
 
 
 extern __attribute__ ((visibility("default"))) char * SDL_strlwr(char *string);
-# 507 "SDL_stdinc.h"
+# 507 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) char * SDL_ltoa(long value, char *string, int radix);
-# 519 "SDL_stdinc.h"
+# 519 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) char * SDL_ultoa(unsigned long value, char *string,
                                         int radix);
-# 540 "SDL_stdinc.h"
+# 540 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 extern __attribute__ ((visibility("default"))) char * SDL_lltoa(Sint64 value, char *string,
                                         int radix);
 
@@ -2630,7 +2630,7 @@ extern __attribute__ ((visibility("default"))) char * SDL_lltoa(Sint64 value, ch
 
 extern __attribute__ ((visibility("default"))) char * SDL_ulltoa(Uint64 value, char *string,
                                          int radix);
-# 734 "SDL_stdinc.h"
+# 734 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
 typedef struct _SDL_iconv_t *SDL_iconv_t;
 extern __attribute__ ((visibility("default"))) SDL_iconv_t SDL_iconv_open(const char *tocode,
                                                    const char *fromcode);
@@ -2647,26 +2647,26 @@ extern __attribute__ ((visibility("default"))) char * SDL_iconv_string(const cha
                                                const char *fromcode,
                                                const char *inbuf,
                                                size_t inbytesleft);
-# 760 "SDL_stdinc.h"
-# 1 "close_code.h" 1
-# 761 "SDL_stdinc.h" 2
-# 26 "SDL_main.h" 2
-# 67 "SDL_main.h"
+# 760 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 761 "../Frameworks/SDL.framework/Headers/SDL_stdinc.h" 2
+# 26 "../Frameworks/SDL.framework/Headers/SDL_main.h" 2
+# 67 "../Frameworks/SDL.framework/Headers/SDL_main.h"
 extern int SDL_main(int argc, char *argv[]);
 
 
-# 1 "begin_code.h" 1
-# 71 "SDL_main.h" 2
-# 94 "SDL_main.h"
-# 1 "close_code.h" 1
-# 95 "SDL_main.h" 2
-# 73 "SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 71 "../Frameworks/SDL.framework/Headers/SDL_main.h" 2
+# 94 "../Frameworks/SDL.framework/Headers/SDL_main.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 95 "../Frameworks/SDL.framework/Headers/SDL_main.h" 2
+# 73 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
-# 1 "SDL_assert.h" 1
-# 27 "SDL_assert.h"
-# 1 "begin_code.h" 1
-# 28 "SDL_assert.h" 2
-# 96 "SDL_assert.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_assert.h" 1
+# 27 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 28 "../Frameworks/SDL.framework/Headers/SDL_assert.h" 2
+# 96 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
 typedef enum
 {
     SDL_ASSERTION_RETRY,
@@ -2691,16 +2691,16 @@ typedef struct SDL_assert_data
 extern __attribute__ ((visibility("default"))) SDL_assert_state SDL_ReportAssertion(SDL_assert_data *,
                                                              const char *,
                                                              const char *, int);
-# 171 "SDL_assert.h"
+# 171 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
 typedef SDL_assert_state ( *SDL_AssertionHandler)(
                                  const SDL_assert_data* data, void* userdata);
-# 194 "SDL_assert.h"
+# 194 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetAssertionHandler(
                                             SDL_AssertionHandler handler,
                                             void *userdata);
-# 220 "SDL_assert.h"
+# 220 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
 extern __attribute__ ((visibility("default"))) const SDL_assert_data * SDL_GetAssertionReport(void);
-# 229 "SDL_assert.h"
+# 229 "../Frameworks/SDL.framework/Headers/SDL_assert.h"
 extern __attribute__ ((visibility("default"))) void SDL_ResetAssertionReport(void);
 
 
@@ -2709,16 +2709,16 @@ extern __attribute__ ((visibility("default"))) void SDL_ResetAssertionReport(voi
 
 
 
-# 1 "close_code.h" 1
-# 238 "SDL_assert.h" 2
-# 75 "SDL.h" 2
-# 1 "SDL_atomic.h" 1
-# 64 "SDL_atomic.h"
-# 1 "begin_code.h" 1
-# 65 "SDL_atomic.h" 2
-# 97 "SDL_atomic.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 238 "../Frameworks/SDL.framework/Headers/SDL_assert.h" 2
+# 75 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_atomic.h" 1
+# 64 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 65 "../Frameworks/SDL.framework/Headers/SDL_atomic.h" 2
+# 97 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 typedef int SDL_SpinLock;
-# 106 "SDL_atomic.h"
+# 106 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_AtomicTryLock(SDL_SpinLock *lock);
 
 
@@ -2734,7 +2734,7 @@ extern __attribute__ ((visibility("default"))) void SDL_AtomicLock(SDL_SpinLock 
 
 
 extern __attribute__ ((visibility("default"))) void SDL_AtomicUnlock(SDL_SpinLock *lock);
-# 161 "SDL_atomic.h"
+# 161 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 # 1 "/usr/include/libkern/OSAtomic.h" 1 3 4
 # 27 "/usr/include/libkern/OSAtomic.h" 3 4
 # 1 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/stddef.h" 1 3 4
@@ -2894,10 +2894,10 @@ void* OSAtomicFifoDequeue( OSFifoQueueHead *__list, size_t __offset) __attribute
 void OSMemoryBarrier( void );
 
 
-# 162 "SDL_atomic.h" 2
-# 188 "SDL_atomic.h"
+# 162 "../Frameworks/SDL.framework/Headers/SDL_atomic.h" 2
+# 188 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 typedef struct { int value; } SDL_atomic_t;
-# 201 "SDL_atomic.h"
+# 201 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_AtomicCAS_(SDL_atomic_t *a, int oldval, int newval);
 
 
@@ -2926,7 +2926,7 @@ static __inline__ int SDL_AtomicGet(SDL_atomic_t *a)
     __asm__ __volatile__ ("" : : : "memory");
     return value;
 }
-# 239 "SDL_atomic.h"
+# 239 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 static __inline__ int SDL_AtomicAdd(SDL_atomic_t *a, int v)
 {
     int value;
@@ -2935,7 +2935,7 @@ static __inline__ int SDL_AtomicAdd(SDL_atomic_t *a, int v)
     } while (!OSAtomicCompareAndSwap32Barrier((value), ((value + v)), &(a)->value));
     return value;
 }
-# 276 "SDL_atomic.h"
+# 276 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_AtomicCASPtr_(void* *a, void *oldval, void *newval);
 
 
@@ -2964,21 +2964,21 @@ static __inline__ void* SDL_AtomicGetPtr(void* *a)
     __asm__ __volatile__ ("" : : : "memory");
     return value;
 }
-# 314 "SDL_atomic.h"
-# 1 "close_code.h" 1
-# 315 "SDL_atomic.h" 2
-# 76 "SDL.h" 2
-# 1 "SDL_audio.h" 1
-# 32 "SDL_audio.h"
-# 1 "SDL_error.h" 1
-# 33 "SDL_error.h"
-# 1 "begin_code.h" 1
-# 34 "SDL_error.h" 2
-# 42 "SDL_error.h"
+# 314 "../Frameworks/SDL.framework/Headers/SDL_atomic.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 315 "../Frameworks/SDL.framework/Headers/SDL_atomic.h" 2
+# 76 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 1
+# 32 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_error.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_error.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_error.h" 2
+# 42 "../Frameworks/SDL.framework/Headers/SDL_error.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetError(const char *fmt, ...);
 extern __attribute__ ((visibility("default"))) const char * SDL_GetError(void);
 extern __attribute__ ((visibility("default"))) void SDL_ClearError(void);
-# 55 "SDL_error.h"
+# 55 "../Frameworks/SDL.framework/Headers/SDL_error.h"
 typedef enum
 {
     SDL_ENOMEM,
@@ -2989,36 +2989,36 @@ typedef enum
     SDL_LASTERROR
 } SDL_errorcode;
 extern __attribute__ ((visibility("default"))) void SDL_Error(SDL_errorcode code);
-# 73 "SDL_error.h"
-# 1 "close_code.h" 1
-# 74 "SDL_error.h" 2
-# 33 "SDL_audio.h" 2
-# 1 "SDL_endian.h" 1
-# 59 "SDL_endian.h"
-# 1 "begin_code.h" 1
-# 60 "SDL_endian.h" 2
-# 84 "SDL_endian.h"
+# 73 "../Frameworks/SDL.framework/Headers/SDL_error.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 74 "../Frameworks/SDL.framework/Headers/SDL_error.h" 2
+# 33 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_endian.h" 1
+# 59 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 60 "../Frameworks/SDL.framework/Headers/SDL_endian.h" 2
+# 84 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
 static __inline__ Uint16
 SDL_Swap16(Uint16 x)
 {
   __asm__("xchgb %b0,%h0": "=Q"(x):"0"(x));
     return x;
 }
-# 122 "SDL_endian.h"
+# 122 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
 static __inline__ Uint32
 SDL_Swap32(Uint32 x)
 {
   __asm__("bswapl %0": "=r"(x):"0"(x));
     return x;
 }
-# 174 "SDL_endian.h"
+# 174 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
 static __inline__ Uint64
 SDL_Swap64(Uint64 x)
 {
   __asm__("bswapq %0": "=r"(x):"0"(x));
     return x;
 }
-# 198 "SDL_endian.h"
+# 198 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
 static __inline__ float
 SDL_SwapFloat(float x)
 {
@@ -3031,15 +3031,15 @@ SDL_SwapFloat(float x)
     swapper.ui32 = SDL_Swap32(swapper.ui32);
     return swapper.f;
 }
-# 244 "SDL_endian.h"
-# 1 "close_code.h" 1
-# 245 "SDL_endian.h" 2
-# 34 "SDL_audio.h" 2
-# 1 "SDL_mutex.h" 1
-# 34 "SDL_mutex.h"
-# 1 "begin_code.h" 1
-# 35 "SDL_mutex.h" 2
-# 60 "SDL_mutex.h"
+# 244 "../Frameworks/SDL.framework/Headers/SDL_endian.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 245 "../Frameworks/SDL.framework/Headers/SDL_endian.h" 2
+# 34 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_mutex.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_mutex.h" 2
+# 60 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 struct SDL_mutex;
 typedef struct SDL_mutex SDL_mutex;
 
@@ -3055,14 +3055,14 @@ extern __attribute__ ((visibility("default"))) SDL_mutex * SDL_CreateMutex(void)
 
 
 extern __attribute__ ((visibility("default"))) int SDL_mutexP(SDL_mutex * mutex);
-# 85 "SDL_mutex.h"
+# 85 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 extern __attribute__ ((visibility("default"))) int SDL_mutexV(SDL_mutex * mutex);
 
 
 
 
 extern __attribute__ ((visibility("default"))) void SDL_DestroyMutex(SDL_mutex * mutex);
-# 101 "SDL_mutex.h"
+# 101 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 struct SDL_semaphore;
 typedef struct SDL_semaphore SDL_sem;
 
@@ -3090,7 +3090,7 @@ extern __attribute__ ((visibility("default"))) int SDL_SemWait(SDL_sem * sem);
 
 
 extern __attribute__ ((visibility("default"))) int SDL_SemTryWait(SDL_sem * sem);
-# 138 "SDL_mutex.h"
+# 138 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 extern __attribute__ ((visibility("default"))) int SDL_SemWaitTimeout(SDL_sem * sem, Uint32 ms);
 
 
@@ -3104,10 +3104,10 @@ extern __attribute__ ((visibility("default"))) int SDL_SemPost(SDL_sem * sem);
 
 
 extern __attribute__ ((visibility("default"))) Uint32 SDL_SemValue(SDL_sem * sem);
-# 161 "SDL_mutex.h"
+# 161 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 struct SDL_cond;
 typedef struct SDL_cond SDL_cond;
-# 192 "SDL_mutex.h"
+# 192 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 extern __attribute__ ((visibility("default"))) SDL_cond * SDL_CreateCond(void);
 
 
@@ -3128,20 +3128,20 @@ extern __attribute__ ((visibility("default"))) int SDL_CondSignal(SDL_cond * con
 
 
 extern __attribute__ ((visibility("default"))) int SDL_CondBroadcast(SDL_cond * cond);
-# 222 "SDL_mutex.h"
+# 222 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 extern __attribute__ ((visibility("default"))) int SDL_CondWait(SDL_cond * cond, SDL_mutex * mutex);
-# 232 "SDL_mutex.h"
+# 232 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
 extern __attribute__ ((visibility("default"))) int SDL_CondWaitTimeout(SDL_cond * cond,
                                                 SDL_mutex * mutex, Uint32 ms);
-# 244 "SDL_mutex.h"
-# 1 "close_code.h" 1
-# 245 "SDL_mutex.h" 2
-# 35 "SDL_audio.h" 2
-# 1 "SDL_thread.h" 1
-# 37 "SDL_thread.h"
-# 1 "begin_code.h" 1
-# 38 "SDL_thread.h" 2
-# 46 "SDL_thread.h"
+# 244 "../Frameworks/SDL.framework/Headers/SDL_mutex.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 245 "../Frameworks/SDL.framework/Headers/SDL_mutex.h" 2
+# 35 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_thread.h" 1
+# 37 "../Frameworks/SDL.framework/Headers/SDL_thread.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 38 "../Frameworks/SDL.framework/Headers/SDL_thread.h" 2
+# 46 "../Frameworks/SDL.framework/Headers/SDL_thread.h"
 struct SDL_Thread;
 typedef struct SDL_Thread SDL_Thread;
 
@@ -3162,10 +3162,10 @@ typedef enum {
 
 
 typedef int ( * SDL_ThreadFunction) (void *data);
-# 144 "SDL_thread.h"
+# 144 "../Frameworks/SDL.framework/Headers/SDL_thread.h"
 extern __attribute__ ((visibility("default"))) SDL_Thread *
 SDL_CreateThread(SDL_ThreadFunction fn, const char *name, void *data);
-# 156 "SDL_thread.h"
+# 156 "../Frameworks/SDL.framework/Headers/SDL_thread.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetThreadName(SDL_Thread *thread);
 
 
@@ -3192,15 +3192,15 @@ extern __attribute__ ((visibility("default"))) int SDL_SetThreadPriority(SDL_Thr
 
 
 extern __attribute__ ((visibility("default"))) void SDL_WaitThread(SDL_Thread * thread, int *status);
-# 190 "SDL_thread.h"
-# 1 "close_code.h" 1
-# 191 "SDL_thread.h" 2
-# 36 "SDL_audio.h" 2
-# 1 "SDL_rwops.h" 1
-# 35 "SDL_rwops.h"
-# 1 "begin_code.h" 1
-# 36 "SDL_rwops.h" 2
-# 46 "SDL_rwops.h"
+# 190 "../Frameworks/SDL.framework/Headers/SDL_thread.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 191 "../Frameworks/SDL.framework/Headers/SDL_thread.h" 2
+# 36 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_rwops.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 36 "../Frameworks/SDL.framework/Headers/SDL_rwops.h" 2
+# 46 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
 typedef struct SDL_RWops
 {
 
@@ -3240,7 +3240,7 @@ typedef struct SDL_RWops
     Uint32 type;
     union
     {
-# 113 "SDL_rwops.h"
+# 113 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
         struct
         {
             SDL_bool autoclose;
@@ -3260,7 +3260,7 @@ typedef struct SDL_RWops
     } hidden;
 
 } SDL_RWops;
-# 141 "SDL_rwops.h"
+# 141 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
 extern __attribute__ ((visibility("default"))) SDL_RWops * SDL_RWFromFile(const char *file,
                                                   const char *mode);
 
@@ -3281,30 +3281,30 @@ extern __attribute__ ((visibility("default"))) SDL_RWops * SDL_RWFromConstMem(co
 
 extern __attribute__ ((visibility("default"))) SDL_RWops * SDL_AllocRW(void);
 extern __attribute__ ((visibility("default"))) void SDL_FreeRW(SDL_RWops * area);
-# 186 "SDL_rwops.h"
+# 186 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
 extern __attribute__ ((visibility("default"))) Uint16 SDL_ReadLE16(SDL_RWops * src);
 extern __attribute__ ((visibility("default"))) Uint16 SDL_ReadBE16(SDL_RWops * src);
 extern __attribute__ ((visibility("default"))) Uint32 SDL_ReadLE32(SDL_RWops * src);
 extern __attribute__ ((visibility("default"))) Uint32 SDL_ReadBE32(SDL_RWops * src);
 extern __attribute__ ((visibility("default"))) Uint64 SDL_ReadLE64(SDL_RWops * src);
 extern __attribute__ ((visibility("default"))) Uint64 SDL_ReadBE64(SDL_RWops * src);
-# 200 "SDL_rwops.h"
+# 200 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteLE16(SDL_RWops * dst, Uint16 value);
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteBE16(SDL_RWops * dst, Uint16 value);
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteLE32(SDL_RWops * dst, Uint32 value);
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteBE32(SDL_RWops * dst, Uint32 value);
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteLE64(SDL_RWops * dst, Uint64 value);
 extern __attribute__ ((visibility("default"))) size_t SDL_WriteBE64(SDL_RWops * dst, Uint64 value);
-# 215 "SDL_rwops.h"
-# 1 "close_code.h" 1
-# 216 "SDL_rwops.h" 2
-# 37 "SDL_audio.h" 2
+# 215 "../Frameworks/SDL.framework/Headers/SDL_rwops.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 216 "../Frameworks/SDL.framework/Headers/SDL_rwops.h" 2
+# 37 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
 
-# 1 "begin_code.h" 1
-# 39 "SDL_audio.h" 2
-# 66 "SDL_audio.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 39 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 66 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 typedef Uint16 SDL_AudioFormat;
-# 165 "SDL_audio.h"
+# 165 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 typedef void ( * SDL_AudioCallback) (void *userdata, Uint8 * stream,
                                             int len);
 
@@ -3346,10 +3346,10 @@ typedef struct SDL_AudioCVT
     SDL_AudioFilter filters[10];
     int filter_index;
 } SDL_AudioCVT;
-# 217 "SDL_audio.h"
+# 217 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetNumAudioDrivers(void);
 extern __attribute__ ((visibility("default"))) const char * SDL_GetAudioDriver(int index);
-# 229 "SDL_audio.h"
+# 229 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_AudioInit(const char *driver_name);
 extern __attribute__ ((visibility("default"))) void SDL_AudioQuit(void);
 
@@ -3359,17 +3359,17 @@ extern __attribute__ ((visibility("default"))) void SDL_AudioQuit(void);
 
 
 extern __attribute__ ((visibility("default"))) const char * SDL_GetCurrentAudioDriver(void);
-# 281 "SDL_audio.h"
+# 281 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_OpenAudio(SDL_AudioSpec * desired,
                                           SDL_AudioSpec * obtained);
-# 293 "SDL_audio.h"
+# 293 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 typedef Uint32 SDL_AudioDeviceID;
-# 307 "SDL_audio.h"
+# 307 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetNumAudioDevices(int iscapture);
-# 322 "SDL_audio.h"
+# 322 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetAudioDeviceName(int index,
                                                            int iscapture);
-# 339 "SDL_audio.h"
+# 339 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) SDL_AudioDeviceID SDL_OpenAudioDevice(const char
                                                               *device,
                                                               int iscapture,
@@ -3380,7 +3380,7 @@ extern __attribute__ ((visibility("default"))) SDL_AudioDeviceID SDL_OpenAudioDe
                                                               obtained,
                                                               int
                                                               allowed_changes);
-# 358 "SDL_audio.h"
+# 358 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 typedef enum
 {
     SDL_AUDIO_STOPPED = 0,
@@ -3391,19 +3391,19 @@ extern __attribute__ ((visibility("default"))) SDL_AudioStatus SDL_GetAudioStatu
 
 extern __attribute__ ((visibility("default"))) SDL_AudioStatus
 SDL_GetAudioDeviceStatus(SDL_AudioDeviceID dev);
-# 380 "SDL_audio.h"
+# 380 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) void SDL_PauseAudio(int pause_on);
 extern __attribute__ ((visibility("default"))) void SDL_PauseAudioDevice(SDL_AudioDeviceID dev,
                                                   int pause_on);
-# 404 "SDL_audio.h"
+# 404 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) SDL_AudioSpec * SDL_LoadWAV_RW(SDL_RWops * src,
                                                       int freesrc,
                                                       SDL_AudioSpec * spec,
                                                       Uint8 ** audio_buf,
                                                       Uint32 * audio_len);
-# 420 "SDL_audio.h"
+# 420 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) void SDL_FreeWAV(Uint8 * audio_buf);
-# 431 "SDL_audio.h"
+# 431 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_BuildAudioCVT(SDL_AudioCVT * cvt,
                                               SDL_AudioFormat src_format,
                                               Uint8 src_channels,
@@ -3411,9 +3411,9 @@ extern __attribute__ ((visibility("default"))) int SDL_BuildAudioCVT(SDL_AudioCV
                                               SDL_AudioFormat dst_format,
                                               Uint8 dst_channels,
                                               int dst_rate);
-# 449 "SDL_audio.h"
+# 449 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) int SDL_ConvertAudio(SDL_AudioCVT * cvt);
-# 459 "SDL_audio.h"
+# 459 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) void SDL_MixAudio(Uint8 * dst, const Uint8 * src,
                                           Uint32 len, int volume);
 
@@ -3426,7 +3426,7 @@ extern __attribute__ ((visibility("default"))) void SDL_MixAudioFormat(Uint8 * d
                                                 const Uint8 * src,
                                                 SDL_AudioFormat format,
                                                 Uint32 len, int volume);
-# 481 "SDL_audio.h"
+# 481 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
 extern __attribute__ ((visibility("default"))) void SDL_LockAudio(void);
 extern __attribute__ ((visibility("default"))) void SDL_LockAudioDevice(SDL_AudioDeviceID dev);
 extern __attribute__ ((visibility("default"))) void SDL_UnlockAudio(void);
@@ -3443,15 +3443,15 @@ extern __attribute__ ((visibility("default"))) void SDL_CloseAudioDevice(SDL_Aud
 
 
 extern __attribute__ ((visibility("default"))) int SDL_AudioDeviceConnected(SDL_AudioDeviceID dev);
-# 505 "SDL_audio.h"
-# 1 "close_code.h" 1
-# 506 "SDL_audio.h" 2
-# 77 "SDL.h" 2
-# 1 "SDL_clipboard.h" 1
-# 33 "SDL_clipboard.h"
-# 1 "begin_code.h" 1
-# 34 "SDL_clipboard.h" 2
-# 48 "SDL_clipboard.h"
+# 505 "../Frameworks/SDL.framework/Headers/SDL_audio.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 506 "../Frameworks/SDL.framework/Headers/SDL_audio.h" 2
+# 77 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h" 2
+# 48 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetClipboardText(const char *text);
 
 
@@ -3467,12 +3467,12 @@ extern __attribute__ ((visibility("default"))) char * SDL_GetClipboardText(void)
 
 
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_HasClipboardText(void);
-# 71 "SDL_clipboard.h"
-# 1 "close_code.h" 1
-# 72 "SDL_clipboard.h" 2
-# 78 "SDL.h" 2
-# 1 "SDL_cpuinfo.h" 1
-# 53 "SDL_cpuinfo.h"
+# 71 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 72 "../Frameworks/SDL.framework/Headers/SDL_clipboard.h" 2
+# 78 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h" 1
+# 53 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h"
 # 1 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/mmintrin.h" 1 3 4
 # 41 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/mmintrin.h" 3 4
 typedef long long __m64 __attribute__ ((__vector_size__ (8), __may_alias__));
@@ -4632,7 +4632,7 @@ _mm_set1_pi8 (char __b)
 {
   return _mm_set_pi8 (__b, __b, __b, __b, __b, __b, __b, __b);
 }
-# 54 "SDL_cpuinfo.h" 2
+# 54 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h" 2
 
 
 
@@ -7831,16 +7831,16 @@ _mm_set1_epi8 (char __A)
     return temp4;
 }
 # 1580 "/usr/llvm-gcc-4.2/bin/../lib/gcc/i686-apple-darwin11/4.2.1/include/xmmintrin.h" 2 3 4
-# 60 "SDL_cpuinfo.h" 2
+# 60 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h" 2
 
 
 
 
 
 
-# 1 "begin_code.h" 1
-# 67 "SDL_cpuinfo.h" 2
-# 84 "SDL_cpuinfo.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 67 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h" 2
+# 84 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetCPUCount(void);
 
 
@@ -7895,21 +7895,21 @@ extern __attribute__ ((visibility("default"))) SDL_bool SDL_HasSSE41(void);
 
 
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_HasSSE42(void);
-# 146 "SDL_cpuinfo.h"
-# 1 "close_code.h" 1
-# 147 "SDL_cpuinfo.h" 2
-# 79 "SDL.h" 2
+# 146 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 147 "../Frameworks/SDL.framework/Headers/SDL_cpuinfo.h" 2
+# 79 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
 
-# 1 "SDL_events.h" 1
-# 33 "SDL_events.h"
-# 1 "SDL_video.h" 1
-# 32 "SDL_video.h"
-# 1 "SDL_pixels.h" 1
-# 31 "SDL_pixels.h"
-# 1 "begin_code.h" 1
-# 32 "SDL_pixels.h" 2
-# 50 "SDL_pixels.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_events.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_events.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_video.h" 1
+# 32 "../Frameworks/SDL.framework/Headers/SDL_video.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_pixels.h" 1
+# 31 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 32 "../Frameworks/SDL.framework/Headers/SDL_pixels.h" 2
+# 50 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 enum
 {
     SDL_PIXELTYPE_UNKNOWN,
@@ -7973,7 +7973,7 @@ enum
     SDL_PACKEDLAYOUT_2101010,
     SDL_PACKEDLAYOUT_1010102
 };
-# 147 "SDL_pixels.h"
+# 147 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 enum
 {
     SDL_PIXELFORMAT_UNKNOWN,
@@ -8042,8 +8042,14 @@ enum
     SDL_PIXELFORMAT_RGB888 =
         ((1 << 31) | ((SDL_PIXELTYPE_PACKED32) << 24) | ((SDL_PACKEDORDER_XRGB) << 20) | ((SDL_PACKEDLAYOUT_8888) << 16) | ((24) << 8) | ((4) << 0)),
 
+    SDL_PIXELFORMAT_RGBX8888 =
+        ((1 << 31) | ((SDL_PIXELTYPE_PACKED32) << 24) | ((SDL_PACKEDORDER_RGBX) << 20) | ((SDL_PACKEDLAYOUT_8888) << 16) | ((24) << 8) | ((4) << 0)),
+
     SDL_PIXELFORMAT_BGR888 =
         ((1 << 31) | ((SDL_PIXELTYPE_PACKED32) << 24) | ((SDL_PACKEDORDER_XBGR) << 20) | ((SDL_PACKEDLAYOUT_8888) << 16) | ((24) << 8) | ((4) << 0)),
+
+    SDL_PIXELFORMAT_BGRX8888 =
+        ((1 << 31) | ((SDL_PIXELTYPE_PACKED32) << 24) | ((SDL_PACKEDORDER_BGRX) << 20) | ((SDL_PACKEDLAYOUT_8888) << 16) | ((24) << 8) | ((4) << 0)),
 
     SDL_PIXELFORMAT_ARGB8888 =
         ((1 << 31) | ((SDL_PIXELTYPE_PACKED32) << 24) | ((SDL_PACKEDORDER_ARGB) << 20) | ((SDL_PACKEDLAYOUT_8888) << 16) | ((32) << 8) | ((4) << 0)),
@@ -8120,14 +8126,14 @@ typedef struct SDL_PixelFormat
 
 
 extern __attribute__ ((visibility("default"))) const char* SDL_GetPixelFormatName(Uint32 format);
-# 301 "SDL_pixels.h"
+# 307 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_PixelFormatEnumToMasks(Uint32 format,
                                                             int *bpp,
                                                             Uint32 * Rmask,
                                                             Uint32 * Gmask,
                                                             Uint32 * Bmask,
                                                             Uint32 * Amask);
-# 316 "SDL_pixels.h"
+# 322 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 extern __attribute__ ((visibility("default"))) Uint32 SDL_MasksToPixelFormatEnum(int bpp,
                                                           Uint32 Rmask,
                                                           Uint32 Gmask,
@@ -8143,7 +8149,7 @@ extern __attribute__ ((visibility("default"))) SDL_PixelFormat * SDL_AllocFormat
 
 
 extern __attribute__ ((visibility("default"))) void SDL_FreeFormat(SDL_PixelFormat *format);
-# 342 "SDL_pixels.h"
+# 348 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 extern __attribute__ ((visibility("default"))) SDL_Palette * SDL_AllocPalette(int ncolors);
 
 
@@ -8151,7 +8157,7 @@ extern __attribute__ ((visibility("default"))) SDL_Palette * SDL_AllocPalette(in
 
 extern __attribute__ ((visibility("default"))) int SDL_SetPixelFormatPalette(SDL_PixelFormat * format,
                                                       SDL_Palette *palette);
-# 360 "SDL_pixels.h"
+# 366 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetPaletteColors(SDL_Palette * palette,
                                                  const SDL_Color * colors,
                                                  int firstcolor, int ncolors);
@@ -8203,27 +8209,27 @@ extern __attribute__ ((visibility("default"))) void SDL_GetRGBA(Uint32 pixel,
 
 
 extern __attribute__ ((visibility("default"))) void SDL_CalculateGammaRamp(float gamma, Uint16 * ramp);
-# 419 "SDL_pixels.h"
-# 1 "close_code.h" 1
-# 420 "SDL_pixels.h" 2
-# 33 "SDL_video.h" 2
-# 1 "SDL_rect.h" 1
-# 36 "SDL_rect.h"
-# 1 "begin_code.h" 1
-# 37 "SDL_rect.h" 2
-# 49 "SDL_rect.h"
+# 425 "../Frameworks/SDL.framework/Headers/SDL_pixels.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 426 "../Frameworks/SDL.framework/Headers/SDL_pixels.h" 2
+# 33 "../Frameworks/SDL.framework/Headers/SDL_video.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_rect.h" 1
+# 36 "../Frameworks/SDL.framework/Headers/SDL_rect.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 37 "../Frameworks/SDL.framework/Headers/SDL_rect.h" 2
+# 49 "../Frameworks/SDL.framework/Headers/SDL_rect.h"
 typedef struct
 {
     int x;
     int y;
 } SDL_Point;
-# 65 "SDL_rect.h"
+# 65 "../Frameworks/SDL.framework/Headers/SDL_rect.h"
 typedef struct SDL_Rect
 {
     int x, y;
     int w, h;
 } SDL_Rect;
-# 88 "SDL_rect.h"
+# 88 "../Frameworks/SDL.framework/Headers/SDL_rect.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_HasIntersection(const SDL_Rect * A,
                                                      const SDL_Rect * B);
 
@@ -8269,16 +8275,16 @@ extern __attribute__ ((visibility("default"))) SDL_bool SDL_IntersectRectAndLine
 
 
 
-# 1 "close_code.h" 1
-# 134 "SDL_rect.h" 2
-# 34 "SDL_video.h" 2
-# 1 "SDL_surface.h" 1
-# 34 "SDL_surface.h"
-# 1 "SDL_blendmode.h" 1
-# 31 "SDL_blendmode.h"
-# 1 "begin_code.h" 1
-# 32 "SDL_blendmode.h" 2
-# 42 "SDL_blendmode.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 134 "../Frameworks/SDL.framework/Headers/SDL_rect.h" 2
+# 34 "../Frameworks/SDL.framework/Headers/SDL_video.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_surface.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_blendmode.h" 1
+# 31 "../Frameworks/SDL.framework/Headers/SDL_blendmode.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 32 "../Frameworks/SDL.framework/Headers/SDL_blendmode.h" 2
+# 42 "../Frameworks/SDL.framework/Headers/SDL_blendmode.h"
 typedef enum
 {
     SDL_BLENDMODE_NONE = 0x00000000,
@@ -8293,14 +8299,14 @@ typedef enum
 
 
 
-# 1 "close_code.h" 1
-# 57 "SDL_blendmode.h" 2
-# 35 "SDL_surface.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 57 "../Frameworks/SDL.framework/Headers/SDL_blendmode.h" 2
+# 35 "../Frameworks/SDL.framework/Headers/SDL_surface.h" 2
 
 
-# 1 "begin_code.h" 1
-# 38 "SDL_surface.h" 2
-# 70 "SDL_surface.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 38 "../Frameworks/SDL.framework/Headers/SDL_surface.h" 2
+# 70 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 typedef struct SDL_Surface
 {
     Uint32 flags;
@@ -8331,7 +8337,7 @@ typedef struct SDL_Surface
 
 typedef int (*SDL_blit) (struct SDL_Surface * src, SDL_Rect * srcrect,
                          struct SDL_Surface * dst, SDL_Rect * dstrect);
-# 112 "SDL_surface.h"
+# 112 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_CreateRGBSurface
     (Uint32 flags, int width, int height, int depth,
      Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
@@ -8345,48 +8351,48 @@ extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_CreateRGBSurfac
                                                               Uint32 Bmask,
                                                               Uint32 Amask);
 extern __attribute__ ((visibility("default"))) void SDL_FreeSurface(SDL_Surface * surface);
-# 133 "SDL_surface.h"
+# 133 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetSurfacePalette(SDL_Surface * surface,
                                                   SDL_Palette * palette);
-# 155 "SDL_surface.h"
+# 155 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_LockSurface(SDL_Surface * surface);
 
 extern __attribute__ ((visibility("default"))) void SDL_UnlockSurface(SDL_Surface * surface);
-# 168 "SDL_surface.h"
+# 168 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_LoadBMP_RW(SDL_RWops * src,
                                                     int freesrc);
-# 185 "SDL_surface.h"
+# 185 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SaveBMP_RW
     (SDL_Surface * surface, SDL_RWops * dst, int freedst);
-# 204 "SDL_surface.h"
+# 204 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetSurfaceRLE(SDL_Surface * surface,
                                               int flag);
-# 216 "SDL_surface.h"
+# 216 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetColorKey(SDL_Surface * surface,
                                             int flag, Uint32 key);
-# 229 "SDL_surface.h"
+# 229 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetColorKey(SDL_Surface * surface,
                                             Uint32 * key);
-# 244 "SDL_surface.h"
+# 244 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetSurfaceColorMod(SDL_Surface * surface,
                                                    Uint8 r, Uint8 g, Uint8 b);
-# 260 "SDL_surface.h"
+# 260 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetSurfaceColorMod(SDL_Surface * surface,
                                                    Uint8 * r, Uint8 * g,
                                                    Uint8 * b);
-# 274 "SDL_surface.h"
+# 274 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetSurfaceAlphaMod(SDL_Surface * surface,
                                                    Uint8 alpha);
-# 287 "SDL_surface.h"
+# 287 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetSurfaceAlphaMod(SDL_Surface * surface,
                                                    Uint8 * alpha);
-# 300 "SDL_surface.h"
+# 300 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetSurfaceBlendMode(SDL_Surface * surface,
                                                     SDL_BlendMode blendMode);
-# 313 "SDL_surface.h"
+# 313 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetSurfaceBlendMode(SDL_Surface * surface,
                                                     SDL_BlendMode *blendMode);
-# 329 "SDL_surface.h"
+# 329 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_SetClipRect(SDL_Surface * surface,
                                                  const SDL_Rect * rect);
 
@@ -8398,7 +8404,7 @@ extern __attribute__ ((visibility("default"))) SDL_bool SDL_SetClipRect(SDL_Surf
 
 extern __attribute__ ((visibility("default"))) void SDL_GetClipRect(SDL_Surface * surface,
                                              SDL_Rect * rect);
-# 351 "SDL_surface.h"
+# 351 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_ConvertSurface
     (SDL_Surface * src, SDL_PixelFormat * fmt, Uint32 flags);
 extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_ConvertSurfaceFormat
@@ -8414,12 +8420,12 @@ extern __attribute__ ((visibility("default"))) int SDL_ConvertPixels(int width, 
                                               const void * src, int src_pitch,
                                               Uint32 dst_format,
                                               void * dst, int dst_pitch);
-# 377 "SDL_surface.h"
+# 377 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_FillRect
     (SDL_Surface * dst, const SDL_Rect * rect, Uint32 color);
 extern __attribute__ ((visibility("default"))) int SDL_FillRects
     (SDL_Surface * dst, const SDL_Rect * rects, int count, Uint32 color);
-# 447 "SDL_surface.h"
+# 447 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
 extern __attribute__ ((visibility("default"))) int SDL_UpperBlit
     (SDL_Surface * src, const SDL_Rect * srcrect,
      SDL_Surface * dst, SDL_Rect * dstrect);
@@ -8460,14 +8466,14 @@ extern __attribute__ ((visibility("default"))) int SDL_UpperBlitScaled
 extern __attribute__ ((visibility("default"))) int SDL_LowerBlitScaled
     (SDL_Surface * src, SDL_Rect * srcrect,
     SDL_Surface * dst, SDL_Rect * dstrect);
-# 495 "SDL_surface.h"
-# 1 "close_code.h" 1
-# 496 "SDL_surface.h" 2
-# 35 "SDL_video.h" 2
+# 495 "../Frameworks/SDL.framework/Headers/SDL_surface.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 496 "../Frameworks/SDL.framework/Headers/SDL_surface.h" 2
+# 35 "../Frameworks/SDL.framework/Headers/SDL_video.h" 2
 
-# 1 "begin_code.h" 1
-# 37 "SDL_video.h" 2
-# 55 "SDL_video.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 37 "../Frameworks/SDL.framework/Headers/SDL_video.h" 2
+# 55 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 typedef struct
 {
     Uint32 format;
@@ -8476,7 +8482,7 @@ typedef struct
     int refresh_rate;
     void *driverdata;
 } SDL_DisplayMode;
-# 90 "SDL_video.h"
+# 90 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 typedef struct SDL_Window SDL_Window;
 
 
@@ -8499,7 +8505,7 @@ typedef enum
     SDL_WINDOW_MOUSE_FOCUS = 0x00000400,
     SDL_WINDOW_FOREIGN = 0x00000800
 } SDL_WindowFlags;
-# 134 "SDL_video.h"
+# 134 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 typedef enum
 {
     SDL_WINDOWEVENT_NONE,
@@ -8553,15 +8559,15 @@ typedef enum
     SDL_GL_CONTEXT_MAJOR_VERSION,
     SDL_GL_CONTEXT_MINOR_VERSION
 } SDL_GLattr;
-# 196 "SDL_video.h"
+# 196 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetNumVideoDrivers(void);
-# 206 "SDL_video.h"
+# 206 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetVideoDriver(int index);
-# 222 "SDL_video.h"
+# 222 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_VideoInit(const char *driver_name);
-# 231 "SDL_video.h"
+# 231 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void SDL_VideoQuit(void);
-# 242 "SDL_video.h"
+# 242 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetCurrentVideoDriver(void);
 
 
@@ -8570,7 +8576,7 @@ extern __attribute__ ((visibility("default"))) const char * SDL_GetCurrentVideoD
 
 
 extern __attribute__ ((visibility("default"))) int SDL_GetNumVideoDisplays(void);
-# 259 "SDL_video.h"
+# 259 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetDisplayBounds(int displayIndex, SDL_Rect * rect);
 
 
@@ -8579,7 +8585,7 @@ extern __attribute__ ((visibility("default"))) int SDL_GetDisplayBounds(int disp
 
 
 extern __attribute__ ((visibility("default"))) int SDL_GetNumDisplayModes(int displayIndex);
-# 279 "SDL_video.h"
+# 279 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetDisplayMode(int displayIndex, int modeIndex,
                                                SDL_DisplayMode * mode);
 
@@ -8592,7 +8598,7 @@ extern __attribute__ ((visibility("default"))) int SDL_GetDesktopDisplayMode(int
 
 
 extern __attribute__ ((visibility("default"))) int SDL_GetCurrentDisplayMode(int displayIndex, SDL_DisplayMode * mode);
-# 313 "SDL_video.h"
+# 313 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_DisplayMode * SDL_GetClosestDisplayMode(int displayIndex, const SDL_DisplayMode * mode, SDL_DisplayMode * closest);
 
 
@@ -8602,11 +8608,11 @@ extern __attribute__ ((visibility("default"))) SDL_DisplayMode * SDL_GetClosestD
 
 
 extern __attribute__ ((visibility("default"))) int SDL_GetWindowDisplay(SDL_Window * window);
-# 336 "SDL_video.h"
+# 336 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetWindowDisplayMode(SDL_Window * window,
                                                      const SDL_DisplayMode
                                                          * mode);
-# 347 "SDL_video.h"
+# 347 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetWindowDisplayMode(SDL_Window * window,
                                                      SDL_DisplayMode * mode);
 
@@ -8614,11 +8620,11 @@ extern __attribute__ ((visibility("default"))) int SDL_GetWindowDisplayMode(SDL_
 
 
 extern __attribute__ ((visibility("default"))) Uint32 SDL_GetWindowPixelFormat(SDL_Window * window);
-# 375 "SDL_video.h"
+# 375 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_Window * SDL_CreateWindow(const char *title,
                                                       int x, int y, int w,
                                                       int h, Uint32 flags);
-# 388 "SDL_video.h"
+# 388 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_Window * SDL_CreateWindowFrom(const void *data);
 
 
@@ -8658,14 +8664,14 @@ extern __attribute__ ((visibility("default"))) const char * SDL_GetWindowTitle(S
 
 extern __attribute__ ((visibility("default"))) void SDL_SetWindowIcon(SDL_Window * window,
                                                SDL_Surface * icon);
-# 441 "SDL_video.h"
+# 441 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void* SDL_SetWindowData(SDL_Window * window,
                                                 const char *name,
                                                 void *userdata);
-# 455 "SDL_video.h"
+# 455 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void * SDL_GetWindowData(SDL_Window * window,
                                                 const char *name);
-# 471 "SDL_video.h"
+# 471 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetWindowPosition(SDL_Window * window,
                                                    int x, int y);
 
@@ -8676,7 +8682,7 @@ extern __attribute__ ((visibility("default"))) void SDL_SetWindowPosition(SDL_Wi
 
 extern __attribute__ ((visibility("default"))) void SDL_GetWindowPosition(SDL_Window * window,
                                                    int *x, int *y);
-# 490 "SDL_video.h"
+# 490 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetWindowSize(SDL_Window * window, int w,
                                                int h);
 
@@ -8728,32 +8734,32 @@ extern __attribute__ ((visibility("default"))) void SDL_MinimizeWindow(SDL_Windo
 
 
 extern __attribute__ ((visibility("default"))) void SDL_RestoreWindow(SDL_Window * window);
-# 550 "SDL_video.h"
+# 550 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetWindowFullscreen(SDL_Window * window,
                                                     SDL_bool fullscreen);
-# 566 "SDL_video.h"
+# 566 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_Surface * SDL_GetWindowSurface(SDL_Window * window);
-# 576 "SDL_video.h"
+# 576 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_UpdateWindowSurface(SDL_Window * window);
-# 586 "SDL_video.h"
+# 586 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_UpdateWindowSurfaceRects(SDL_Window * window,
                                                          SDL_Rect * rects,
                                                          int numrects);
-# 597 "SDL_video.h"
+# 597 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetWindowGrab(SDL_Window * window,
                                                SDL_bool grabbed);
-# 607 "SDL_video.h"
+# 607 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_GetWindowGrab(SDL_Window * window);
-# 617 "SDL_video.h"
+# 617 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetWindowBrightness(SDL_Window * window, float brightness);
-# 626 "SDL_video.h"
+# 626 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) float SDL_GetWindowBrightness(SDL_Window * window);
-# 645 "SDL_video.h"
+# 645 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetWindowGammaRamp(SDL_Window * window,
                                                    const Uint16 * red,
                                                    const Uint16 * green,
                                                    const Uint16 * blue);
-# 664 "SDL_video.h"
+# 664 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetWindowGammaRamp(SDL_Window * window,
                                                    Uint16 * red,
                                                    Uint16 * green,
@@ -8763,7 +8769,7 @@ extern __attribute__ ((visibility("default"))) int SDL_GetWindowGammaRamp(SDL_Wi
 
 
 extern __attribute__ ((visibility("default"))) void SDL_DestroyWindow(SDL_Window * window);
-# 681 "SDL_video.h"
+# 681 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_IsScreenSaverEnabled(void);
 
 
@@ -8781,7 +8787,7 @@ extern __attribute__ ((visibility("default"))) void SDL_EnableScreenSaver(void);
 
 
 extern __attribute__ ((visibility("default"))) void SDL_DisableScreenSaver(void);
-# 723 "SDL_video.h"
+# 723 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GL_LoadLibrary(const char *path);
 
 
@@ -8829,9 +8835,9 @@ extern __attribute__ ((visibility("default"))) SDL_GLContext SDL_GL_CreateContex
 
 extern __attribute__ ((visibility("default"))) int SDL_GL_MakeCurrent(SDL_Window * window,
                                                SDL_GLContext context);
-# 781 "SDL_video.h"
+# 781 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GL_SetSwapInterval(int interval);
-# 792 "SDL_video.h"
+# 792 "../Frameworks/SDL.framework/Headers/SDL_video.h"
 extern __attribute__ ((visibility("default"))) int SDL_GL_GetSwapInterval(void);
 
 
@@ -8846,20 +8852,20 @@ extern __attribute__ ((visibility("default"))) void SDL_GL_SwapWindow(SDL_Window
 
 
 extern __attribute__ ((visibility("default"))) void SDL_GL_DeleteContext(SDL_GLContext context);
-# 816 "SDL_video.h"
-# 1 "close_code.h" 1
-# 817 "SDL_video.h" 2
-# 34 "SDL_events.h" 2
-# 1 "SDL_keyboard.h" 1
-# 33 "SDL_keyboard.h"
-# 1 "SDL_keycode.h" 1
-# 32 "SDL_keycode.h"
-# 1 "SDL_scancode.h" 1
-# 43 "SDL_scancode.h"
+# 816 "../Frameworks/SDL.framework/Headers/SDL_video.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 817 "../Frameworks/SDL.framework/Headers/SDL_video.h" 2
+# 34 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_keycode.h" 1
+# 32 "../Frameworks/SDL.framework/Headers/SDL_keycode.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_scancode.h" 1
+# 43 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
 typedef enum
 {
     SDL_SCANCODE_UNKNOWN = 0,
-# 54 "SDL_scancode.h"
+# 54 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_A = 4,
     SDL_SCANCODE_B = 5,
     SDL_SCANCODE_C = 6,
@@ -8909,13 +8915,13 @@ typedef enum
     SDL_SCANCODE_LEFTBRACKET = 47,
     SDL_SCANCODE_RIGHTBRACKET = 48,
     SDL_SCANCODE_BACKSLASH = 49,
-# 116 "SDL_scancode.h"
+# 116 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_NONUSHASH = 50,
-# 128 "SDL_scancode.h"
+# 128 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_SEMICOLON = 51,
     SDL_SCANCODE_APOSTROPHE = 52,
     SDL_SCANCODE_GRAVE = 53,
-# 147 "SDL_scancode.h"
+# 147 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_COMMA = 54,
     SDL_SCANCODE_PERIOD = 55,
     SDL_SCANCODE_SLASH = 56,
@@ -8970,7 +8976,7 @@ typedef enum
     SDL_SCANCODE_KP_PERIOD = 99,
 
     SDL_SCANCODE_NONUSBACKSLASH = 100,
-# 210 "SDL_scancode.h"
+# 210 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_APPLICATION = 101,
     SDL_SCANCODE_POWER = 102,
 
@@ -9099,7 +9105,7 @@ typedef enum
     SDL_SCANCODE_RGUI = 231,
 
     SDL_SCANCODE_MODE = 257,
-# 351 "SDL_scancode.h"
+# 351 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_AUDIONEXT = 258,
     SDL_SCANCODE_AUDIOPREV = 259,
     SDL_SCANCODE_AUDIOSTOP = 260,
@@ -9117,7 +9123,7 @@ typedef enum
     SDL_SCANCODE_AC_STOP = 272,
     SDL_SCANCODE_AC_REFRESH = 273,
     SDL_SCANCODE_AC_BOOKMARKS = 274,
-# 378 "SDL_scancode.h"
+# 378 "../Frameworks/SDL.framework/Headers/SDL_scancode.h"
     SDL_SCANCODE_BRIGHTNESSDOWN = 275,
     SDL_SCANCODE_BRIGHTNESSUP = 276,
     SDL_SCANCODE_DISPLAYSWITCH = 277,
@@ -9135,8 +9141,8 @@ typedef enum
     SDL_NUM_SCANCODES = 512
 
 } SDL_Scancode;
-# 33 "SDL_keycode.h" 2
-# 42 "SDL_keycode.h"
+# 33 "../Frameworks/SDL.framework/Headers/SDL_keycode.h" 2
+# 42 "../Frameworks/SDL.framework/Headers/SDL_keycode.h"
 typedef Sint32 SDL_Keycode;
 
 
@@ -9428,12 +9434,12 @@ typedef enum
     KMOD_MODE = 0x4000,
     KMOD_RESERVED = 0x8000
 } SDL_Keymod;
-# 34 "SDL_keyboard.h" 2
+# 34 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h" 2
 
 
-# 1 "begin_code.h" 1
-# 37 "SDL_keyboard.h" 2
-# 47 "SDL_keyboard.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 37 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h" 2
+# 47 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 typedef struct SDL_Keysym
 {
     SDL_Scancode scancode;
@@ -9448,7 +9454,7 @@ typedef struct SDL_Keysym
 
 
 extern __attribute__ ((visibility("default"))) SDL_Window * SDL_GetKeyboardFocus(void);
-# 77 "SDL_keyboard.h"
+# 77 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) Uint8 * SDL_GetKeyboardState(int *numkeys);
 
 
@@ -9462,17 +9468,17 @@ extern __attribute__ ((visibility("default"))) SDL_Keymod SDL_GetModState(void);
 
 
 extern __attribute__ ((visibility("default"))) void SDL_SetModState(SDL_Keymod modstate);
-# 99 "SDL_keyboard.h"
+# 99 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) SDL_Keycode SDL_GetKeyFromScancode(SDL_Scancode scancode);
-# 109 "SDL_keyboard.h"
+# 109 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) SDL_Scancode SDL_GetScancodeFromKey(SDL_Keycode key);
-# 120 "SDL_keyboard.h"
+# 120 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetScancodeName(SDL_Scancode scancode);
-# 129 "SDL_keyboard.h"
+# 129 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) SDL_Scancode SDL_GetScancodeFromName(const char *name);
-# 141 "SDL_keyboard.h"
+# 141 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetKeyName(SDL_Keycode key);
-# 150 "SDL_keyboard.h"
+# 150 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
 extern __attribute__ ((visibility("default"))) SDL_Keycode SDL_GetKeyFromName(const char *name);
 
 
@@ -9496,14 +9502,14 @@ extern __attribute__ ((visibility("default"))) void SDL_StopTextInput(void);
 
 
 extern __attribute__ ((visibility("default"))) void SDL_SetTextInputRect(SDL_Rect *rect);
-# 181 "SDL_keyboard.h"
-# 1 "close_code.h" 1
-# 182 "SDL_keyboard.h" 2
-# 35 "SDL_events.h" 2
-# 1 "SDL_mouse.h" 1
-# 51 "SDL_mouse.h"
-# 1 "begin_code.h" 1
-# 52 "SDL_mouse.h" 2
+# 181 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 182 "../Frameworks/SDL.framework/Headers/SDL_keyboard.h" 2
+# 35 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_mouse.h" 1
+# 51 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 52 "../Frameworks/SDL.framework/Headers/SDL_mouse.h" 2
 
 
 
@@ -9520,14 +9526,14 @@ typedef struct SDL_Cursor SDL_Cursor;
 
 
 extern __attribute__ ((visibility("default"))) SDL_Window * SDL_GetMouseFocus(void);
-# 77 "SDL_mouse.h"
+# 77 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) Uint8 SDL_GetMouseState(int *x, int *y);
-# 86 "SDL_mouse.h"
+# 86 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) Uint8 SDL_GetRelativeMouseState(int *x, int *y);
-# 97 "SDL_mouse.h"
+# 97 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) void SDL_WarpMouseInWindow(SDL_Window * window,
                                                    int x, int y);
-# 116 "SDL_mouse.h"
+# 116 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetRelativeMouseMode(SDL_bool enabled);
 
 
@@ -9536,7 +9542,7 @@ extern __attribute__ ((visibility("default"))) int SDL_SetRelativeMouseMode(SDL_
 
 
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_GetRelativeMouseMode(void);
-# 143 "SDL_mouse.h"
+# 143 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) SDL_Cursor * SDL_CreateCursor(const Uint8 * data,
                                                      const Uint8 * mask,
                                                      int w, int h, int hot_x,
@@ -9567,17 +9573,17 @@ extern __attribute__ ((visibility("default"))) SDL_Cursor * SDL_GetCursor(void);
 
 
 extern __attribute__ ((visibility("default"))) void SDL_FreeCursor(SDL_Cursor * cursor);
-# 182 "SDL_mouse.h"
+# 182 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
 extern __attribute__ ((visibility("default"))) int SDL_ShowCursor(int toggle);
-# 209 "SDL_mouse.h"
-# 1 "close_code.h" 1
-# 210 "SDL_mouse.h" 2
-# 36 "SDL_events.h" 2
-# 1 "SDL_joystick.h" 1
-# 34 "SDL_joystick.h"
-# 1 "begin_code.h" 1
-# 35 "SDL_joystick.h" 2
-# 51 "SDL_joystick.h"
+# 209 "../Frameworks/SDL.framework/Headers/SDL_mouse.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 210 "../Frameworks/SDL.framework/Headers/SDL_mouse.h" 2
+# 36 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_joystick.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_joystick.h" 2
+# 51 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 struct _SDL_Joystick;
 typedef struct _SDL_Joystick SDL_Joystick;
 
@@ -9594,7 +9600,7 @@ extern __attribute__ ((visibility("default"))) int SDL_NumJoysticks(void);
 
 
 extern __attribute__ ((visibility("default"))) const char * SDL_JoystickName(int device_index);
-# 76 "SDL_joystick.h"
+# 76 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 extern __attribute__ ((visibility("default"))) SDL_Joystick * SDL_JoystickOpen(int device_index);
 
 
@@ -9637,15 +9643,15 @@ extern __attribute__ ((visibility("default"))) int SDL_JoystickNumButtons(SDL_Jo
 
 
 extern __attribute__ ((visibility("default"))) void SDL_JoystickUpdate(void);
-# 128 "SDL_joystick.h"
+# 128 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 extern __attribute__ ((visibility("default"))) int SDL_JoystickEventState(int state);
-# 137 "SDL_joystick.h"
+# 137 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 extern __attribute__ ((visibility("default"))) Sint16 SDL_JoystickGetAxis(SDL_Joystick * joystick,
                                                    int axis);
-# 171 "SDL_joystick.h"
+# 171 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 extern __attribute__ ((visibility("default"))) Uint8 SDL_JoystickGetHat(SDL_Joystick * joystick,
                                                  int hat);
-# 181 "SDL_joystick.h"
+# 181 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
 extern __attribute__ ((visibility("default"))) int SDL_JoystickGetBall(SDL_Joystick * joystick,
                                                 int ball, int *dx, int *dy);
 
@@ -9661,19 +9667,19 @@ extern __attribute__ ((visibility("default"))) Uint8 SDL_JoystickGetButton(SDL_J
 
 
 extern __attribute__ ((visibility("default"))) void SDL_JoystickClose(SDL_Joystick * joystick);
-# 204 "SDL_joystick.h"
-# 1 "close_code.h" 1
-# 205 "SDL_joystick.h" 2
-# 37 "SDL_events.h" 2
-# 1 "SDL_quit.h" 1
-# 38 "SDL_events.h" 2
-# 1 "SDL_gesture.h" 1
-# 35 "SDL_gesture.h"
-# 1 "SDL_touch.h" 1
-# 35 "SDL_touch.h"
-# 1 "begin_code.h" 1
-# 36 "SDL_touch.h" 2
-# 44 "SDL_touch.h"
+# 204 "../Frameworks/SDL.framework/Headers/SDL_joystick.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 205 "../Frameworks/SDL.framework/Headers/SDL_joystick.h" 2
+# 37 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_quit.h" 1
+# 38 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_gesture.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_gesture.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_touch.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_touch.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 36 "../Frameworks/SDL.framework/Headers/SDL_touch.h" 2
+# 44 "../Frameworks/SDL.framework/Headers/SDL_touch.h"
 typedef Sint64 SDL_TouchID;
 typedef Sint64 SDL_FingerID;
 
@@ -9722,9 +9728,9 @@ struct SDL_Touch {
 
   void *driverdata;
 };
-# 102 "SDL_touch.h"
+# 102 "../Frameworks/SDL.framework/Headers/SDL_touch.h"
   extern __attribute__ ((visibility("default"))) SDL_Touch* SDL_GetTouch(SDL_TouchID id);
-# 111 "SDL_touch.h"
+# 111 "../Frameworks/SDL.framework/Headers/SDL_touch.h"
   extern
   __attribute__ ((visibility("default"))) SDL_Finger* SDL_GetFinger(SDL_Touch *touch, SDL_FingerID id);
 
@@ -9734,13 +9740,13 @@ struct SDL_Touch {
 
 
 
-# 1 "close_code.h" 1
-# 121 "SDL_touch.h" 2
-# 36 "SDL_gesture.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 121 "../Frameworks/SDL.framework/Headers/SDL_touch.h" 2
+# 36 "../Frameworks/SDL.framework/Headers/SDL_gesture.h" 2
 
 
-# 1 "begin_code.h" 1
-# 39 "SDL_gesture.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 39 "../Frameworks/SDL.framework/Headers/SDL_gesture.h" 2
 
 
 
@@ -9749,7 +9755,7 @@ struct SDL_Touch {
 
 
 typedef Sint64 SDL_GestureID;
-# 55 "SDL_gesture.h"
+# 55 "../Frameworks/SDL.framework/Headers/SDL_gesture.h"
 extern __attribute__ ((visibility("default"))) int SDL_RecordGesture(SDL_TouchID touchId);
 
 
@@ -9774,15 +9780,15 @@ extern __attribute__ ((visibility("default"))) int SDL_SaveDollarTemplate(SDL_Ge
 
 
 extern __attribute__ ((visibility("default"))) int SDL_LoadDollarTemplates(SDL_TouchID touchId, SDL_RWops *src);
-# 87 "SDL_gesture.h"
-# 1 "close_code.h" 1
-# 88 "SDL_gesture.h" 2
-# 39 "SDL_events.h" 2
+# 87 "../Frameworks/SDL.framework/Headers/SDL_gesture.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 88 "../Frameworks/SDL.framework/Headers/SDL_gesture.h" 2
+# 39 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
 
 
-# 1 "begin_code.h" 1
-# 42 "SDL_events.h" 2
-# 56 "SDL_events.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 42 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 56 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 typedef enum
 {
     SDL_FIRSTEVENT = 0,
@@ -9834,8 +9840,10 @@ typedef enum
     SDL_MULTIGESTURE,
 
 
-
     SDL_CLIPBOARDUPDATE = 0x900,
+
+
+    SDL_DROPFILE = 0x1000,
 
 
     SDL_EVENT_COMPAT1 = 0x7000,
@@ -9860,6 +9868,7 @@ typedef enum
 typedef struct SDL_WindowEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     Uint8 event;
     Uint8 padding1;
@@ -9875,6 +9884,7 @@ typedef struct SDL_WindowEvent
 typedef struct SDL_KeyboardEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     Uint8 state;
     Uint8 repeat;
@@ -9890,6 +9900,7 @@ typedef struct SDL_KeyboardEvent
 typedef struct SDL_TextEditingEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     char text[(32)];
     int start;
@@ -9904,6 +9915,7 @@ typedef struct SDL_TextEditingEvent
 typedef struct SDL_TextInputEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     char text[(32)];
 } SDL_TextInputEvent;
@@ -9914,6 +9926,7 @@ typedef struct SDL_TextInputEvent
 typedef struct SDL_MouseMotionEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     Uint8 state;
     Uint8 padding1;
@@ -9931,6 +9944,7 @@ typedef struct SDL_MouseMotionEvent
 typedef struct SDL_MouseButtonEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     Uint8 button;
     Uint8 state;
@@ -9946,6 +9960,7 @@ typedef struct SDL_MouseButtonEvent
 typedef struct SDL_MouseWheelEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     int x;
     int y;
@@ -9957,6 +9972,7 @@ typedef struct SDL_MouseWheelEvent
 typedef struct SDL_JoyAxisEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint8 which;
     Uint8 axis;
     Uint8 padding1;
@@ -9970,6 +9986,7 @@ typedef struct SDL_JoyAxisEvent
 typedef struct SDL_JoyBallEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint8 which;
     Uint8 ball;
     Uint8 padding1;
@@ -9984,6 +10001,7 @@ typedef struct SDL_JoyBallEvent
 typedef struct SDL_JoyHatEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint8 which;
     Uint8 hat;
     Uint8 value;
@@ -10002,6 +10020,7 @@ typedef struct SDL_JoyHatEvent
 typedef struct SDL_JoyButtonEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint8 which;
     Uint8 button;
     Uint8 state;
@@ -10016,6 +10035,7 @@ typedef struct SDL_TouchFingerEvent
 {
     Uint32 type;
 
+    Uint32 timestamp;
     Uint32 windowID;
     SDL_TouchID touchId;
     SDL_FingerID fingerId;
@@ -10037,6 +10057,7 @@ typedef struct SDL_TouchFingerEvent
 typedef struct SDL_TouchButtonEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     SDL_TouchID touchId;
     Uint8 state;
@@ -10052,6 +10073,7 @@ typedef struct SDL_TouchButtonEvent
 typedef struct SDL_MultiGestureEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     SDL_TouchID touchId;
     float dTheta;
@@ -10066,6 +10088,7 @@ typedef struct SDL_MultiGestureEvent
 typedef struct SDL_DollarGestureEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     SDL_TouchID touchId;
     SDL_GestureID gestureId;
@@ -10082,9 +10105,23 @@ typedef struct SDL_DollarGestureEvent
 
 
 
+
+
+typedef struct SDL_DropEvent
+{
+    Uint32 type;
+    Uint32 timestamp;
+    char *file;
+} SDL_DropEvent;
+
+
+
+
+
 typedef struct SDL_QuitEvent
 {
     Uint32 type;
+    Uint32 timestamp;
 } SDL_QuitEvent;
 
 
@@ -10094,6 +10131,7 @@ typedef struct SDL_QuitEvent
 typedef struct SDL_UserEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint32 windowID;
     int code;
     void *data1;
@@ -10109,15 +10147,18 @@ typedef struct SDL_SysWMmsg SDL_SysWMmsg;
 
 
 
+
 typedef struct SDL_SysWMEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     SDL_SysWMmsg *msg;
 } SDL_SysWMEvent;
-# 398 "SDL_events.h"
+# 432 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 typedef struct SDL_ActiveEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     Uint8 gain;
     Uint8 state;
 } SDL_ActiveEvent;
@@ -10125,10 +10166,11 @@ typedef struct SDL_ActiveEvent
 typedef struct SDL_ResizeEvent
 {
     Uint32 type;
+    Uint32 timestamp;
     int w;
     int h;
 } SDL_ResizeEvent;
-# 419 "SDL_events.h"
+# 455 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 typedef union SDL_Event
 {
     Uint32 type;
@@ -10150,6 +10192,7 @@ typedef union SDL_Event
     SDL_TouchButtonEvent tbutton;
     SDL_MultiGestureEvent mgesture;
     SDL_DollarGestureEvent dgesture;
+    SDL_DropEvent drop;
 
 
 
@@ -10159,7 +10202,7 @@ typedef union SDL_Event
 
 
 } SDL_Event;
-# 460 "SDL_events.h"
+# 497 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) void SDL_PumpEvents(void);
 
 
@@ -10169,7 +10212,7 @@ typedef enum
     SDL_PEEKEVENT,
     SDL_GETEVENT
 } SDL_eventaction;
-# 488 "SDL_events.h"
+# 525 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) int SDL_PeepEvents(SDL_Event * events, int numevents,
                                            SDL_eventaction action,
                                            Uint32 minType, Uint32 maxType);
@@ -10186,11 +10229,11 @@ extern __attribute__ ((visibility("default"))) SDL_bool SDL_HasEvents(Uint32 min
 
 extern __attribute__ ((visibility("default"))) void SDL_FlushEvent(Uint32 type);
 extern __attribute__ ((visibility("default"))) void SDL_FlushEvents(Uint32 minType, Uint32 maxType);
-# 513 "SDL_events.h"
+# 550 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) int SDL_PollEvent(SDL_Event * event);
-# 523 "SDL_events.h"
+# 560 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) int SDL_WaitEvent(SDL_Event * event);
-# 534 "SDL_events.h"
+# 571 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) int SDL_WaitEventTimeout(SDL_Event * event,
                                                  int timeout);
 
@@ -10203,7 +10246,7 @@ extern __attribute__ ((visibility("default"))) int SDL_WaitEventTimeout(SDL_Even
 extern __attribute__ ((visibility("default"))) int SDL_PushEvent(SDL_Event * event);
 
 typedef int ( * SDL_EventFilter) (void *userdata, SDL_Event * event);
-# 572 "SDL_events.h"
+# 609 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) void SDL_SetEventFilter(SDL_EventFilter filter,
                                                 void *userdata);
 
@@ -10232,9 +10275,9 @@ extern __attribute__ ((visibility("default"))) void SDL_DelEventWatch(SDL_EventF
 
 extern __attribute__ ((visibility("default"))) void SDL_FilterEvents(SDL_EventFilter filter,
                                               void *userdata);
-# 616 "SDL_events.h"
+# 653 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) Uint8 SDL_EventState(Uint32 type, int state);
-# 627 "SDL_events.h"
+# 664 "../Frameworks/SDL.framework/Headers/SDL_events.h"
 extern __attribute__ ((visibility("default"))) Uint32 SDL_RegisterEvents(int numevents);
 
 
@@ -10243,21 +10286,21 @@ extern __attribute__ ((visibility("default"))) Uint32 SDL_RegisterEvents(int num
 
 
 
-# 1 "close_code.h" 1
-# 636 "SDL_events.h" 2
-# 82 "SDL.h" 2
-# 1 "SDL_hints.h" 1
-# 44 "SDL_hints.h"
-# 1 "begin_code.h" 1
-# 45 "SDL_hints.h" 2
-# 151 "SDL_hints.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 673 "../Frameworks/SDL.framework/Headers/SDL_events.h" 2
+# 82 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_hints.h" 1
+# 44 "../Frameworks/SDL.framework/Headers/SDL_hints.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 45 "../Frameworks/SDL.framework/Headers/SDL_hints.h" 2
+# 151 "../Frameworks/SDL.framework/Headers/SDL_hints.h"
 typedef enum
 {
     SDL_HINT_DEFAULT,
     SDL_HINT_NORMAL,
     SDL_HINT_OVERRIDE
 } SDL_HintPriority;
-# 168 "SDL_hints.h"
+# 168 "../Frameworks/SDL.framework/Headers/SDL_hints.h"
 extern __attribute__ ((visibility("default"))) SDL_bool SDL_SetHintWithPriority(const char *name,
                                                          const char *value,
                                                          SDL_HintPriority priority);
@@ -10284,15 +10327,15 @@ extern __attribute__ ((visibility("default"))) const char * SDL_GetHint(const ch
 
 
 extern __attribute__ ((visibility("default"))) void SDL_ClearHints(void);
-# 202 "SDL_hints.h"
-# 1 "close_code.h" 1
-# 203 "SDL_hints.h" 2
-# 83 "SDL.h" 2
-# 1 "SDL_loadso.h" 1
-# 47 "SDL_loadso.h"
-# 1 "begin_code.h" 1
-# 48 "SDL_loadso.h" 2
-# 60 "SDL_loadso.h"
+# 202 "../Frameworks/SDL.framework/Headers/SDL_hints.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 203 "../Frameworks/SDL.framework/Headers/SDL_hints.h" 2
+# 83 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_loadso.h" 1
+# 47 "../Frameworks/SDL.framework/Headers/SDL_loadso.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 48 "../Frameworks/SDL.framework/Headers/SDL_loadso.h" 2
+# 60 "../Frameworks/SDL.framework/Headers/SDL_loadso.h"
 extern __attribute__ ((visibility("default"))) void * SDL_LoadObject(const char *sofile);
 
 
@@ -10314,14 +10357,14 @@ extern __attribute__ ((visibility("default"))) void SDL_UnloadObject(void *handl
 
 
 
-# 1 "close_code.h" 1
-# 82 "SDL_loadso.h" 2
-# 84 "SDL.h" 2
-# 1 "SDL_log.h" 1
-# 42 "SDL_log.h"
-# 1 "begin_code.h" 1
-# 43 "SDL_log.h" 2
-# 64 "SDL_log.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 82 "../Frameworks/SDL.framework/Headers/SDL_loadso.h" 2
+# 84 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_log.h" 1
+# 42 "../Frameworks/SDL.framework/Headers/SDL_log.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 43 "../Frameworks/SDL.framework/Headers/SDL_log.h" 2
+# 64 "../Frameworks/SDL.framework/Headers/SDL_log.h"
 enum
 {
     SDL_LOG_CATEGORY_APPLICATION,
@@ -10343,7 +10386,7 @@ enum
     SDL_LOG_CATEGORY_RESERVED8,
     SDL_LOG_CATEGORY_RESERVED9,
     SDL_LOG_CATEGORY_RESERVED10,
-# 94 "SDL_log.h"
+# 94 "../Frameworks/SDL.framework/Headers/SDL_log.h"
     SDL_LOG_CATEGORY_CUSTOM
 };
 
@@ -10449,16 +10492,16 @@ extern __attribute__ ((visibility("default"))) void SDL_LogGetOutputFunction(SDL
 
 
 extern __attribute__ ((visibility("default"))) void SDL_LogSetOutputFunction(SDL_LogOutputFunction callback, void *userdata);
-# 207 "SDL_log.h"
-# 1 "close_code.h" 1
-# 208 "SDL_log.h" 2
-# 85 "SDL.h" 2
+# 207 "../Frameworks/SDL.framework/Headers/SDL_log.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 208 "../Frameworks/SDL.framework/Headers/SDL_log.h" 2
+# 85 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
-# 1 "SDL_power.h" 1
-# 33 "SDL_power.h"
-# 1 "begin_code.h" 1
-# 34 "SDL_power.h" 2
-# 44 "SDL_power.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_power.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_power.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_power.h" 2
+# 44 "../Frameworks/SDL.framework/Headers/SDL_power.h"
 typedef enum
 {
     SDL_POWERSTATE_UNKNOWN,
@@ -10467,7 +10510,7 @@ typedef enum
     SDL_POWERSTATE_CHARGING,
     SDL_POWERSTATE_CHARGED
 } SDL_PowerState;
-# 67 "SDL_power.h"
+# 67 "../Frameworks/SDL.framework/Headers/SDL_power.h"
 extern __attribute__ ((visibility("default"))) SDL_PowerState SDL_GetPowerInfo(int *secs, int *pct);
 
 
@@ -10476,14 +10519,14 @@ extern __attribute__ ((visibility("default"))) SDL_PowerState SDL_GetPowerInfo(i
 
 
 
-# 1 "close_code.h" 1
-# 76 "SDL_power.h" 2
-# 87 "SDL.h" 2
-# 1 "SDL_render.h" 1
-# 52 "SDL_render.h"
-# 1 "begin_code.h" 1
-# 53 "SDL_render.h" 2
-# 63 "SDL_render.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 76 "../Frameworks/SDL.framework/Headers/SDL_power.h" 2
+# 87 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_render.h" 1
+# 52 "../Frameworks/SDL.framework/Headers/SDL_render.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 53 "../Frameworks/SDL.framework/Headers/SDL_render.h" 2
+# 63 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 typedef enum
 {
     SDL_RENDERER_SOFTWARE = 0x00000001,
@@ -10536,15 +10579,15 @@ typedef struct SDL_Renderer SDL_Renderer;
 
 struct SDL_Texture;
 typedef struct SDL_Texture SDL_Texture;
-# 130 "SDL_render.h"
+# 130 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetNumRenderDrivers(void);
-# 144 "SDL_render.h"
+# 144 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetRenderDriverInfo(int index,
                                                     SDL_RendererInfo * info);
-# 161 "SDL_render.h"
+# 161 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) SDL_Renderer * SDL_CreateRenderer(SDL_Window * window,
                                                int index, Uint32 flags);
-# 174 "SDL_render.h"
+# 174 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) SDL_Renderer * SDL_CreateSoftwareRenderer(SDL_Surface * surface);
 
 
@@ -10557,41 +10600,41 @@ extern __attribute__ ((visibility("default"))) SDL_Renderer * SDL_GetRenderer(SD
 
 extern __attribute__ ((visibility("default"))) int SDL_GetRendererInfo(SDL_Renderer * renderer,
                                                 SDL_RendererInfo * info);
-# 203 "SDL_render.h"
+# 203 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) SDL_Texture * SDL_CreateTexture(SDL_Renderer * renderer,
                                                         Uint32 format,
                                                         int access, int w,
                                                         int h);
-# 220 "SDL_render.h"
+# 220 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) SDL_Texture * SDL_CreateTextureFromSurface(SDL_Renderer * renderer, SDL_Surface * surface);
-# 235 "SDL_render.h"
+# 235 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_QueryTexture(SDL_Texture * texture,
                                              Uint32 * format, int *access,
                                              int *w, int *h);
-# 252 "SDL_render.h"
+# 252 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetTextureColorMod(SDL_Texture * texture,
                                                    Uint8 r, Uint8 g, Uint8 b);
-# 268 "SDL_render.h"
+# 268 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetTextureColorMod(SDL_Texture * texture,
                                                    Uint8 * r, Uint8 * g,
                                                    Uint8 * b);
-# 283 "SDL_render.h"
+# 283 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetTextureAlphaMod(SDL_Texture * texture,
                                                    Uint8 alpha);
-# 296 "SDL_render.h"
+# 296 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetTextureAlphaMod(SDL_Texture * texture,
                                                    Uint8 * alpha);
-# 313 "SDL_render.h"
+# 313 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetTextureBlendMode(SDL_Texture * texture,
                                                     SDL_BlendMode blendMode);
-# 326 "SDL_render.h"
+# 326 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetTextureBlendMode(SDL_Texture * texture,
                                                     SDL_BlendMode *blendMode);
-# 342 "SDL_render.h"
+# 342 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_UpdateTexture(SDL_Texture * texture,
                                               const SDL_Rect * rect,
                                               const void *pixels, int pitch);
-# 361 "SDL_render.h"
+# 361 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_LockTexture(SDL_Texture * texture,
                                             const SDL_Rect * rect,
                                             void **pixels, int *pitch);
@@ -10602,7 +10645,7 @@ extern __attribute__ ((visibility("default"))) int SDL_LockTexture(SDL_Texture *
 
 
 extern __attribute__ ((visibility("default"))) void SDL_UnlockTexture(SDL_Texture * texture);
-# 382 "SDL_render.h"
+# 382 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderSetViewport(SDL_Renderer * renderer,
                                                   const SDL_Rect * rect);
 
@@ -10611,18 +10654,18 @@ extern __attribute__ ((visibility("default"))) int SDL_RenderSetViewport(SDL_Ren
 
 extern __attribute__ ((visibility("default"))) void SDL_RenderGetViewport(SDL_Renderer * renderer,
                                                    SDL_Rect * rect);
-# 402 "SDL_render.h"
+# 402 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetRenderDrawColor(SDL_Renderer * renderer,
                                            Uint8 r, Uint8 g, Uint8 b,
                                            Uint8 a);
-# 417 "SDL_render.h"
+# 417 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetRenderDrawColor(SDL_Renderer * renderer,
                                            Uint8 * r, Uint8 * g, Uint8 * b,
                                            Uint8 * a);
-# 433 "SDL_render.h"
+# 433 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_SetRenderDrawBlendMode(SDL_Renderer * renderer,
                                                        SDL_BlendMode blendMode);
-# 445 "SDL_render.h"
+# 445 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetRenderDrawBlendMode(SDL_Renderer * renderer,
                                                        SDL_BlendMode *blendMode);
 
@@ -10632,40 +10675,40 @@ extern __attribute__ ((visibility("default"))) int SDL_GetRenderDrawBlendMode(SD
 
 
 extern __attribute__ ((visibility("default"))) int SDL_RenderClear(SDL_Renderer * renderer);
-# 463 "SDL_render.h"
+# 463 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawPoint(SDL_Renderer * renderer,
                                                 int x, int y);
-# 474 "SDL_render.h"
+# 474 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawPoints(SDL_Renderer * renderer,
                                                  const SDL_Point * points,
                                                  int count);
-# 488 "SDL_render.h"
+# 488 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawLine(SDL_Renderer * renderer,
                                                int x1, int y1, int x2, int y2);
-# 499 "SDL_render.h"
+# 499 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawLines(SDL_Renderer * renderer,
                                                 const SDL_Point * points,
                                                 int count);
-# 510 "SDL_render.h"
+# 510 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawRect(SDL_Renderer * renderer,
                                                const SDL_Rect * rect);
-# 521 "SDL_render.h"
+# 521 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderDrawRects(SDL_Renderer * renderer,
                                                 const SDL_Rect * rects,
                                                 int count);
-# 533 "SDL_render.h"
+# 533 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderFillRect(SDL_Renderer * renderer,
                                                const SDL_Rect * rect);
-# 544 "SDL_render.h"
+# 544 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderFillRects(SDL_Renderer * renderer,
                                                 const SDL_Rect * rects,
                                                 int count);
-# 559 "SDL_render.h"
+# 559 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderCopy(SDL_Renderer * renderer,
                                            SDL_Texture * texture,
                                            const SDL_Rect * srcrect,
                                            const SDL_Rect * dstrect);
-# 578 "SDL_render.h"
+# 578 "../Frameworks/SDL.framework/Headers/SDL_render.h"
 extern __attribute__ ((visibility("default"))) int SDL_RenderReadPixels(SDL_Renderer * renderer,
                                                  const SDL_Rect * rect,
                                                  Uint32 format,
@@ -10691,17 +10734,17 @@ extern __attribute__ ((visibility("default"))) void SDL_DestroyTexture(SDL_Textu
 
 
 extern __attribute__ ((visibility("default"))) void SDL_DestroyRenderer(SDL_Renderer * renderer);
-# 611 "SDL_render.h"
-# 1 "close_code.h" 1
-# 612 "SDL_render.h" 2
-# 88 "SDL.h" 2
+# 611 "../Frameworks/SDL.framework/Headers/SDL_render.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 612 "../Frameworks/SDL.framework/Headers/SDL_render.h" 2
+# 88 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
 
-# 1 "SDL_timer.h" 1
-# 34 "SDL_timer.h"
-# 1 "begin_code.h" 1
-# 35 "SDL_timer.h" 2
-# 47 "SDL_timer.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_timer.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_timer.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 35 "../Frameworks/SDL.framework/Headers/SDL_timer.h" 2
+# 47 "../Frameworks/SDL.framework/Headers/SDL_timer.h"
 extern __attribute__ ((visibility("default"))) Uint32 SDL_GetTicks(void);
 
 
@@ -10718,7 +10761,7 @@ extern __attribute__ ((visibility("default"))) Uint64 SDL_GetPerformanceFrequenc
 
 
 extern __attribute__ ((visibility("default"))) void SDL_Delay(Uint32 ms);
-# 72 "SDL_timer.h"
+# 72 "../Frameworks/SDL.framework/Headers/SDL_timer.h"
 typedef Uint32 ( * SDL_TimerCallback) (Uint32 interval, void *param);
 
 
@@ -10734,39 +10777,39 @@ typedef int SDL_TimerID;
 extern __attribute__ ((visibility("default"))) SDL_TimerID SDL_AddTimer(Uint32 interval,
                                                  SDL_TimerCallback callback,
                                                  void *param);
-# 95 "SDL_timer.h"
-extern __attribute__ ((visibility("default"))) SDL_bool SDL_RemoveTimer(SDL_TimerID t);
-# 104 "SDL_timer.h"
-# 1 "close_code.h" 1
-# 105 "SDL_timer.h" 2
-# 91 "SDL.h" 2
-# 1 "SDL_version.h" 1
-# 33 "SDL_version.h"
-# 1 "begin_code.h" 1
-# 34 "SDL_version.h" 2
-# 53 "SDL_version.h"
+# 95 "../Frameworks/SDL.framework/Headers/SDL_timer.h"
+extern __attribute__ ((visibility("default"))) SDL_bool SDL_RemoveTimer(SDL_TimerID id);
+# 104 "../Frameworks/SDL.framework/Headers/SDL_timer.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 105 "../Frameworks/SDL.framework/Headers/SDL_timer.h" 2
+# 91 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "../Frameworks/SDL.framework/Headers/SDL_version.h" 1
+# 33 "../Frameworks/SDL.framework/Headers/SDL_version.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 34 "../Frameworks/SDL.framework/Headers/SDL_version.h" 2
+# 53 "../Frameworks/SDL.framework/Headers/SDL_version.h"
 typedef struct SDL_version
 {
     Uint8 major;
     Uint8 minor;
     Uint8 patch;
 } SDL_version;
-# 135 "SDL_version.h"
+# 135 "../Frameworks/SDL.framework/Headers/SDL_version.h"
 extern __attribute__ ((visibility("default"))) void SDL_GetVersion(SDL_version * ver);
-# 144 "SDL_version.h"
+# 144 "../Frameworks/SDL.framework/Headers/SDL_version.h"
 extern __attribute__ ((visibility("default"))) const char * SDL_GetRevision(void);
-# 153 "SDL_version.h"
+# 153 "../Frameworks/SDL.framework/Headers/SDL_version.h"
 extern __attribute__ ((visibility("default"))) int SDL_GetRevisionNumber(void);
-# 162 "SDL_version.h"
-# 1 "close_code.h" 1
-# 163 "SDL_version.h" 2
-# 92 "SDL.h" 2
+# 162 "../Frameworks/SDL.framework/Headers/SDL_version.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 163 "../Frameworks/SDL.framework/Headers/SDL_version.h" 2
+# 92 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
-# 1 "SDL_compat.h" 1
-# 53 "SDL_compat.h"
-# 1 "begin_code.h" 1
-# 54 "SDL_compat.h" 2
-# 134 "SDL_compat.h"
+# 1 "../Frameworks/SDL.framework/Headers/SDL_compat.h" 1
+# 53 "../Frameworks/SDL.framework/Headers/SDL_compat.h"
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 54 "../Frameworks/SDL.framework/Headers/SDL_compat.h" 2
+# 134 "../Frameworks/SDL.framework/Headers/SDL_compat.h"
 typedef struct SDL_VideoInfo
 {
     Uint32 hw_available:1;
@@ -10788,7 +10831,7 @@ typedef struct SDL_VideoInfo
     int current_w;
     int current_h;
 } SDL_VideoInfo;
-# 178 "SDL_compat.h"
+# 178 "../Frameworks/SDL.framework/Headers/SDL_compat.h"
 typedef struct SDL_Overlay
 {
     Uint32 format;
@@ -10822,7 +10865,7 @@ typedef enum
 } SDL_GrabMode;
 
 struct SDL_SysWMinfo;
-# 278 "SDL_compat.h"
+# 278 "../Frameworks/SDL.framework/Headers/SDL_compat.h"
 extern __attribute__ ((visibility("default"))) const SDL_version * SDL_Linked_Version(void);
 extern __attribute__ ((visibility("default"))) const char * SDL_AudioDriverName(char *namebuf, int maxlen);
 extern __attribute__ ((visibility("default"))) const char * SDL_VideoDriverName(char *namebuf, int maxlen);
@@ -10897,39 +10940,25 @@ typedef Uint32 ( * SDL_OldTimerCallback) (Uint32 interval);
 extern __attribute__ ((visibility("default"))) int SDL_SetTimer(Uint32 interval, SDL_OldTimerCallback callback);
 
 extern __attribute__ ((visibility("default"))) int SDL_putenv(const char *variable);
-# 361 "SDL_compat.h"
-# 1 "close_code.h" 1
-# 362 "SDL_compat.h" 2
-# 94 "SDL.h" 2
+# 361 "../Frameworks/SDL.framework/Headers/SDL_compat.h"
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 362 "../Frameworks/SDL.framework/Headers/SDL_compat.h" 2
+# 94 "../Frameworks/SDL.framework/Headers/SDL.h" 2
 
-# 1 "begin_code.h" 1
-# 96 "SDL.h" 2
-# 126 "SDL.h"
-extern int SDL_Init(Uint32 flags);
-
-
-
-
-extern int SDL_InitSubSystem(Uint32 flags);
+# 1 "../Frameworks/SDL.framework/Headers/begin_code.h" 1
+# 96 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 126 "../Frameworks/SDL.framework/Headers/SDL.h"
+extern __attribute__ ((visibility("default"))) int SDL_Init(Uint32 flags);
 
 
 
 
-extern void SDL_QuitSubSystem(Uint32 flags);
+extern __attribute__ ((visibility("default"))) int SDL_InitSubSystem(Uint32 flags);
 
 
 
 
-
-
-
-extern Uint32 SDL_WasInit(Uint32 flags);
-
-
-
-
-
-extern void SDL_Quit(void);
+extern __attribute__ ((visibility("default"))) void SDL_QuitSubSystem(Uint32 flags);
 
 
 
@@ -10937,11 +10966,20 @@ extern void SDL_Quit(void);
 
 
 
-# 1 "close_code.h" 1
-# 159 "SDL.h" 2
-# 2 "test.c" 2
+extern __attribute__ ((visibility("default"))) Uint32 SDL_WasInit(Uint32 flags);
 
-int main()
-{
 
-}
+
+
+
+extern __attribute__ ((visibility("default"))) void SDL_Quit(void);
+
+
+
+
+
+
+
+# 1 "../Frameworks/SDL.framework/Headers/close_code.h" 1
+# 159 "../Frameworks/SDL.framework/Headers/SDL.h" 2
+# 1 "test.c" 2

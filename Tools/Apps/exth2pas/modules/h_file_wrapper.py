@@ -44,6 +44,7 @@ class HFileWrapper(object):
         This code attempts to add these back in...
         '''
         fullname = self.path + filename.replace('"', '')
+        # print fullname
         if os.path.exists(fullname):
             # print "Opening ", fullname
             hfile = open(fullname)
@@ -80,7 +81,7 @@ class HFileWrapper(object):
             parts = line.split(' ')
             
             if self.skip_standard_libs and '3' in parts:
-                print ' * Skipping ', parts[2]
+                # print ' * Skipping ', parts[2]
                 self._skip_standard_library()
                 # print ' *** -----'
                 return self._test_and_process_line_info()
@@ -90,6 +91,7 @@ class HFileWrapper(object):
             
             if '1' in parts[1]:
                 # scan file for #defines and reimport them
+                # print 'Adding defines for ', parts[2]
                 self._export_defines_from(parts[2])
             
             return True
@@ -209,7 +211,7 @@ class HFileWrapper(object):
         self.define_file.close()
         
 def main():
-    fproc = HFileWrapper('/Users/acain/Downloads/SDL-1.3.0-6050/include/');
+    fproc = HFileWrapper('');
     
     defines = """
         #define SDL_INIT_TIMER          0x00000001
@@ -270,6 +272,23 @@ def main():
         #define SDL_YUY2_OVERLAY  0x32595559    /**< Packed mode: Y0+U0+Y1+V0 (1 plane) */
         #define SDL_UYVY_OVERLAY  0x59565955    /**< Packed mode: U0+Y0+V0+Y1 (1 plane) */
         #define SDL_YVYU_OVERLAY  0x55595659    /**< Packed mode: Y0+V0+Y1+U0 (1 plane) */
+        #define AUDIO_S16LSB	0x8010  /**< Signed 16-bit samples */
+        #define SDL_ALPHA_TRANSPARENT 0
+        #define SDL_ENABLE	 1
+        #define SDL_RLEACCEL        0x00000002  /**< Surface is RLE encoded */
+        #define SDLK_LMETA SDLK_LGUI
+        #define SDLK_RMETA SDLK_RGUI
+        #define KMOD_LMETA KMOD_LGUI
+        #define KMOD_RMETA KMOD_RGUI
+        #define SDLK_LSUPER SDLK_LMETA
+        #define SDLK_RSUPER SDLK_RMETA
+        #define SDL_WINDOWPOS_UNDEFINED_MASK    0x1FFF0000
+        #define SDL_WINDOWPOS_UNDEFINED_DISPLAY(X)  (SDL_WINDOWPOS_UNDEFINED_MASK|(X))
+        #define SDL_WINDOWPOS_UNDEFINED         SDL_WINDOWPOS_UNDEFINED_DISPLAY(0)
+                
+        #define SDL_WINDOWPOS_CENTERED_MASK    0x2FFF0000
+        #define SDL_WINDOWPOS_CENTERED_DISPLAY(X)  (SDL_WINDOWPOS_CENTERED_MASK|(X))
+        #define SDL_WINDOWPOS_CENTERED         SDL_WINDOWPOS_CENTERED_DISPLAY(0)
     """
     
     fproc.process_file("../test/allsdl.c", "../test/sdl.h", "../test/sdl_inline.c", "../test/sdl_define.c", defines=defines)

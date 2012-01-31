@@ -25,6 +25,7 @@ switch_fields = {
   "_function": "function",
   "_type": "type",
   "_repeat": "repeat",
+  "_file": "file",
   "kmod": "mod",
   "flag0": "!!!! SELECT FLAG OPTION MANUALLY !!!! HACK :( "
 }
