@@ -49,7 +49,7 @@ if __name__ == '__main__':
     converter_helper.converters["c_lib"] = c_lib
     converter_helper.converters["pas_lib"] = pas_lib
 
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
                     stream=sys.stdout)
     path = 'test\Pascal'

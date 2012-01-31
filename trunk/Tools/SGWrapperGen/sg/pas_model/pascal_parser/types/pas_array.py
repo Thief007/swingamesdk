@@ -13,6 +13,9 @@ class PascalArray(object):
     @property
     def name(self):
         return self._name
+
+    def set_name(self, name):
+        self._name = name
               
     @property
     def kind(self):

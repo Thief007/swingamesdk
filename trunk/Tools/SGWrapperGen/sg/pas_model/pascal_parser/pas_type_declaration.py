@@ -72,6 +72,7 @@ class PascalTypeDeclaration(object):
             # other type...
             else:
                 new_type = parse_type(tokens, self._parent)
+                new_type.set_name(type_name)
                 tokens.match_token(TokenKind.Symbol, ';')
 
             # forward declarations... 

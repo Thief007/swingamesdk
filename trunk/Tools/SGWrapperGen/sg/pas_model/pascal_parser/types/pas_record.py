@@ -15,6 +15,9 @@ class PascalRecord(object):
     def code(self):
         return self._code
         
+    def set_name(self, name):
+        self._name = name
+
     @property
     def kind(self):
         return 'record'
