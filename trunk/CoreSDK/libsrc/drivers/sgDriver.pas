@@ -45,17 +45,17 @@ implementation
 	procedure LoadDefaultDriver();
 	begin
 	  {$IFDEF SWINGAME_SDL13}
-	    WriteLn('Loading 1.3');
+      // WriteLn('Loading 1.3');
 		  LoadSDL13Driver();
 		{$ELSE}
-		  WriteLn('Loading 1.2');
+      // WriteLn('Loading 1.2');
 		  LoadSDLDriver();
 		{$ENDIF}
 	end;
 
 	procedure DefaultInitProcedure();
 	begin
-	  WriteLn('Default Init');
+    // WriteLn('Default Init');
 	 LoadDefaultDriver();
 	 Driver.Init();
 	end;
@@ -81,7 +81,7 @@ implementation
 initialization
   if not Assigned(Driver.Init) then
   begin
-	  WriteLn('Loading driver');
+    // WriteLn('Loading driver');
 		Driver.GetError               := @DefaultGetErrorProcedure;
 		Driver.Quit                   := @DefaultQuitProcedure;
 		Driver.GetKeyCode             := @DefaultGetKeyCodeProcedure;
