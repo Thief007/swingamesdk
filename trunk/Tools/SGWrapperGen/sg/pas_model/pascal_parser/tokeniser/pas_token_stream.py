@@ -133,4 +133,7 @@ class SGTokenStream(object):
             assert False
         return tok
 
+    def read_to_end_of_comment(self):
+        return self._tokeniser.read_to_end_of_comment()
+
         

@@ -59,7 +59,7 @@ class PascalParameterDeclaration(object):
             
             # colon seperates identifiers and type
             tokens.match_token(TokenKind.Symbol, ':')
-            the_type = parse_type(tokens, self._block.file)   # reads the type and returns PascalType
+            the_type = parse_type(tokens, self._block)   # reads the type and returns PascalType
             
             for parameter_name in parameters:
                 toAdd = PascalVariable(parameter_name, the_type, modifier)

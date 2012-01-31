@@ -21,7 +21,8 @@ class PascalTypeDeclaration(object):
         self._parent = parent       
         self._name = ''
         # stores the type name (key) and type declaration
-        self._type_declarations = dict()       
+        self._type_declarations = dict()    
+        self._forward_pointer_declarations = dict()
         self._code = dict()
         self._comments = list()
         self._meta_comment = None
@@ -54,26 +55,36 @@ class PascalTypeDeclaration(object):
         while not token_has_values(tokens.lookahead()[0], reservedWords):
             m_comment = PascalMetaComment(tokens)
             m_comment.process_meta_comments()
-            type_name = tokens.match_token(TokenKind.Identifier).value
             new_type = None
-            if tokens.match_lookahead(TokenKind.Operator, '=', consume=True):
-                # enumeration...
-                if tokens.match_lookahead(TokenKind.Symbol, '('):
-                    new_type = PascalEnum(type_name, self._parent)
-                    new_type.parse(tokens)
-                    tokens.match_token(TokenKind.Symbol, ';')
-                #record...
-                elif (tokens.match_lookahead(TokenKind.Identifier, 'packed', consume=True) and tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True)) or tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True):
-                    new_type = PascalRecord(type_name, self._parent)
-                    new_type.parse(tokens)
-                    tokens.match_token(TokenKind.Symbol, ';')
-                # other type...
-                else:
-                    type_temp = parse_type(tokens, self._parent)
-                    tokens.match_token(TokenKind.Symbol, ';')
+
+            type_name = tokens.match_token(TokenKind.Identifier).value
+            tokens.match_token(TokenKind.Operator, '=')
+            # enumeration...
+            if tokens.match_lookahead(TokenKind.Symbol, '('):
+                new_type = PascalEnum(type_name, self._parent)
+                new_type.parse(tokens)
+                tokens.match_token(TokenKind.Symbol, ';')
+            #record...
+            elif (tokens.match_lookahead(TokenKind.Identifier, 'packed', consume=True) and tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True)) or tokens.match_lookahead(TokenKind.Identifier, 'record', consume=True):
+                new_type = PascalRecord(type_name, self._parent)
+                new_type.parse(tokens)
+                tokens.match_token(TokenKind.Symbol, ';')
+            # other type...
+            else:
+                new_type = parse_type(tokens, self._parent)
+                tokens.match_token(TokenKind.Symbol, ';')
+
+            # forward declarations... 
+            if (new_type.kind is 'pointer') and (not new_type.is_function_pointer):
+                self._forward_pointer_declarations[new_type.name] = new_type
             # parse new type and add it to the type declaration
             self._type_declarations[type_name] = new_type
             self._parent._types[type_name] = new_type
+
+        # resolve any pointer declarations
+        for name, type in self._forward_pointer_declarations.items():
+            pointer_type = self._parent.resolve_type(type._points_to_identifier)
+            type.assign_type(pointer_type)
         
     def to_code(self):
         '''

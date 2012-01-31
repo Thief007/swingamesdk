@@ -24,7 +24,7 @@ class PascalProgram(object):
 
     @property
     def uses(self):
-        return self._uses
+        return self._uses.units
 
     @property
     def name(self):
