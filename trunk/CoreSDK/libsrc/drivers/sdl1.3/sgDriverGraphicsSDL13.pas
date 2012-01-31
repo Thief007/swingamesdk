@@ -92,7 +92,7 @@ implementation
   {$ENDIF}
     surface : PSDL_Surface;
 	begin
-		if not Assigned(bmp) then begin RaiseWarning('SDL1.3 Graphics Driver - GetPixel32Procedure recieved empty Bitmap'); exit; end;
+		if not Assigned(GetSurface(bmp)) then begin RaiseWarning('SDL1.3 Graphics Driver - GetPixel32Procedure recieved empty Bitmap'); exit; end;
 		
 	  if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
     begin
@@ -100,8 +100,7 @@ implementation
       exit;
     end;  
 		 
-		surface := GetSurface(bmp);
-		
+		surface := GetSurface(bmp);		
 		
     //Convert the pixels to 32 bit
     pixels := surface^.pixels;

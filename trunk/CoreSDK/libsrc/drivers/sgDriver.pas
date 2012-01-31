@@ -25,7 +25,7 @@ uses
     GetErrorProcedure = function () : PChar;
     QuitProcedure = procedure();
     InitProcedure = procedure();
-    GetKeyCodeProcedure = function(val : KeyCode) : LongInt;
+    GetKeyCodeProcedure = function(val : LongInt) : LongInt;
     
   	DriverRecord = record
   	  GetError                : GetErrorProcedure;
@@ -66,7 +66,7 @@ implementation
 		result := Driver.GetError();
 	end;
 	
-	function DefaultGetKeyCodeProcedure (val : KeyCode) : LongInt;
+	function DefaultGetKeyCodeProcedure (val : LongInt) : LongInt;
 	begin
 		LoadDefaultDriver();
 		result := Driver.GetKeyCode(val);

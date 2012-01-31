@@ -15,7 +15,8 @@ unit sgDriverSDL;
 //
 //=============================================================================
 interface
-	
+uses
+  sgTypes;
 	procedure LoadSDLDriver();
 		
 implementation
@@ -25,6 +26,11 @@ implementation
 	begin
 		result := SDL_GetError();
 	end;
+	
+	function GetKeyCodeProcedure(val : LongInt) : LongInt;
+  begin
+    result := val;
+  end;
   
   procedure QuitProcedure(); 
   begin
@@ -55,6 +61,7 @@ implementation
 	begin
 		Driver.GetError           := @GetErrorProcedure;
 		Driver.Quit               := @QuitProcedure;
+		Driver.GetKeyCode         := @GetKeyCodeProcedure;
 		Driver.Init               := @InitProcedure;
 	end;
 end.
