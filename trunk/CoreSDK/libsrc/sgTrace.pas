@@ -44,6 +44,7 @@ interface
 //=============================================================================
 implementation
 uses 
+  Math,
   SysUtils,
   {$IFDEF UNIX}
   BaseUnix,
@@ -237,6 +238,7 @@ uses
   
   initialization
   begin
+    SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
     TRACE_UNITS := TStringHash.Create(False, 32);
     ConfigureTrace();
     
