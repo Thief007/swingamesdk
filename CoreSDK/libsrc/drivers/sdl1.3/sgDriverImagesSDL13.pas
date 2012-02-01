@@ -102,7 +102,8 @@ implementation
   function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
   var
     loadedImage: PSDL_Surface;
-    correctedTransColor: Color;
+    surf : PSDL_Surface;
+    offset : Rectangle;
   begin
     result := nil; //start at nil to exit cleanly on error
     
@@ -116,23 +117,30 @@ implementation
     result^.surface := New(PSDL13Surface);
 
     result^.width     := loadedImage^.w;
-    result^.height    := loadedImage^.h;
-        
+    result^.height    := loadedImage^.h;    
     PSDL13Surface(result^.surface)^.surface := loadedImage;
-
+    
     //Determine pixel level collision data
     if transparent then
     begin
-      correctedTransColor := ColorFrom(result, transparentColor);
-      SDL_SetColorKey(PSDL13Surface(result^.surface)^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+      offset.x := 0;
+      offset.y := 0;
+      offset.width := result^.width;
+      offset.height := result^.height;
+      
       SetNonTransparentPixels(result, transparentColor);
-    end
-    else
-    begin
+      PSDL13Surface(result^.surface)^.surface := SDL_CreateRGBSurface(SDL_SWSURFACE, result^.width, result^.height, 32, 0, 0, 0, 0);
+      WriteLn('Color');
+      SDL_SetColorKey(GetSurface(result), SDL_SRCCOLORKEY, transparentColor);
+      WriteLn('Key Done');
+      SDL_UpperBlit(loadedImage, @offset, GetSurface(result), @offset);
+      PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(result));
+  	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, PSDL13Surface(result^.surface)^.texture, @offset, @offset);
+  	  SDL_FreeSurface(PSDL13Surface(result^.surface)^.surface);
+    end else begin    
       SetNonAlphaPixelsProcedure(result);
+      PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, loadedImage);
     end;
-    
-    PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(result));
     // Free the loaded image; if its not the result's surface
     PSDL13Surface(result^.surface)^.surface := nil;
     SDL_FreeSurface(loadedImage);

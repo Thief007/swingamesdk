@@ -434,7 +434,6 @@ implementation
   // This resizes the graphics window used by SwinGame
 	procedure ResizeGraphicsWindowProcedure(newWidth, newHeight : LongInt);
   begin
-    WriteLn('Resizing Screen');
     SDL_SetWindowSize(PSDL_Window(PSDL13Screen(_screen)^.window), newWidth, newHeight);
     _SetupScreen(newWidth, newHeight);
   end;

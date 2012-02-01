@@ -59,10 +59,10 @@ implementation
   procedure InitKeyCodes();
   begin
     _KeyCode[LongInt(vk_Unknown)] := LongInt(SDLK_UNKNOWN);
-    _KeyCode[LongInt(vk_BACKSPACE)] := LongInt(vk_BACKSPACE);     //Hopeful
-    _KeyCode[LongInt(vk_TAB)] := LongInt(vk_TAB);                 //Hopeful
+    _KeyCode[LongInt(vk_BACKSPACE)] := LongInt(SDLK_BACKSPACE);     //Hopeful
+    _KeyCode[LongInt(vk_TAB)] := LongInt(SDLK_TAB);                 //Hopeful
     _KeyCode[LongInt(vk_CLEAR)] := LongInt(SDLK_CLEAR);
-    _KeyCode[LongInt(vk_RETURN)] := LongInt(vk_RETURN);           //Hopeful
+    _KeyCode[LongInt(vk_RETURN)] := LongInt(SDLK_RETURN);           //Hopeful
     _KeyCode[LongInt(vk_PAUSE)] := LongInt(SDLK_PAUSE);
     _KeyCode[LongInt(vk_ESCAPE)] := LongInt(SDLK_ESCAPE);
     _KeyCode[LongInt(vk_SPACE)] := LongInt(SDLK_SPACE);
@@ -101,7 +101,7 @@ implementation
     // Skip uppercase letters
     
     _KeyCode[LongInt(vk_LEFTBRACKET)] := LongInt(SDLK_LEFTBRACKET);
-    _KeyCode[LongInt(vk_BACKSLASH)] := LongInt(vk_BACKSLASH);           //Hopeful
+    _KeyCode[LongInt(vk_BACKSLASH)] := LongInt(SDLK_BACKSLASH);           //Hopeful
     _KeyCode[LongInt(vk_RIGHTBRACKET)] := LongInt(SDLK_RIGHTBRACKET);
     _KeyCode[LongInt(vk_CARET)] := LongInt(SDLK_CARET);
     _KeyCode[LongInt(vk_UNDERSCORE)] := LongInt(SDLK_UNDERSCORE);
