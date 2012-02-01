@@ -790,7 +790,10 @@ implementation
       SetLength(bmpIds,   Length(bmpIds) + 1);
       
       bmpIds[High(bmpIds)]      := Trim(ExtractDelimited(1, data, [',']));
-      bmpArray[High(bmpArray)]  := LoadBitmap(Trim(ExtractDelimited(2, data, [','])));
+      bmpArray[High(bmpArray)]  := LoadBitmap(Trim(ExtractDelimited(2, data, [','])), True,     RGBAColor(Byte(StrToInt(ExtractDelimited(8, data, [',']))),
+                                                                                                Byte(StrToInt(ExtractDelimited(9, data, [',']))),
+                                                                                                Byte(StrToInt(ExtractDelimited(10,data, [',']))), 
+                                                                                                255));
       
       w     := StrToInt(ExtractDelimited(3, data, [',']));
       h     := StrToInt(ExtractDelimited(4, data, [',']));
@@ -800,10 +803,6 @@ implementation
       
       BitmapSetCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
       
-      SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(Byte(StrToInt(ExtractDelimited(8, data, [',']))),
-                                                             Byte(StrToInt(ExtractDelimited(9, data, [',']))),
-                                                             Byte(StrToInt(ExtractDelimited(10, data, [','])))));
-        
       if ((CountDelimiter(data,',') = 11) AND (LowerCase(Trim(ExtractDelimited(11, data, [',']))) = 't')) then 
         colliIndex := High(bmpArray);
     end;
@@ -1071,7 +1070,8 @@ implementation
     {$ENDIF}
     
     if assigned(c) then
-    begin
+    begin  
+      FreeSprite(c^.charSprite);
       CallFreeNotifier(c);     
       Dispose(c);
     end;

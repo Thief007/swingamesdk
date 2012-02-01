@@ -1224,10 +1224,10 @@ const
         SDL_PIXELFORMAT_UYVY = ((((Uint32(Uint8('U'))) shl 0) or ((Uint32(Uint8('Y'))) shl 8)) or ((Uint32(Uint8('V'))) shl 16)) or ((Uint32(Uint8('Y'))) shl 24);
         SDL_PIXELFORMAT_YVYU = ((((Uint32(Uint8('Y'))) shl 0) or ((Uint32(Uint8('V'))) shl 8)) or ((Uint32(Uint8('Y'))) shl 16)) or ((Uint32(Uint8('U'))) shl 24);
         SDLK_UNKNOWN = 0;
-        SDLK_RETURN = '\r';
-        SDLK_ESCAPE = '\033';
-        SDLK_BACKSPACE = '\b';
-        SDLK_TAB = '\t';
+        SDLK_RETURN = #13;
+        SDLK_ESCAPE = #27;
+        SDLK_BACKSPACE = #8;
+        SDLK_TAB = #9;
         SDLK_SPACE = ' ';
         SDLK_EXCLAIM = '!';
         SDLK_QUOTEDBL = '"';
@@ -1262,7 +1262,7 @@ const
         SDLK_QUESTION = '?';
         SDLK_AT = '@';
         SDLK_LEFTBRACKET = '[';
-        SDLK_BACKSLASH = '\\';
+        SDLK_BACKSLASH = '\';
         SDLK_RIGHTBRACKET = ']';
         SDLK_CARET = '^';
         SDLK_UNDERSCORE = '_';
