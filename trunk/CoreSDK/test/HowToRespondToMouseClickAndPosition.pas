@@ -1,7 +1,6 @@
 program HowToRespondToMouseClickAndPosition;
 uses
-  SwinGame, sgTypes, sysutils;
-  //sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio, sysutils, sgGeometry;  
+  SwinGame, sgTypes, sysutils;  
   
 procedure Main();
 var

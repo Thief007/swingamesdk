@@ -11,8 +11,8 @@ begin
     LoadDefaultColors();
 
     ClearScreen(ColorWhite);
-
-    PlayMusic(LoadMusic('diving-turtle.mp3')); 
+    LoadMusic('diving-turtle.mp3');		
+    PlayMusic('diving-turtle.mp3'); 
     DrawText('How To Play Music!!!', ColorRed, 40, 120);  
 
   RefreshScreen();

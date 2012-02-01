@@ -60,10 +60,10 @@ begin
   
   c := ColorGreen;
   c1 := CircleAt(400, 300, 15); // return a circle
-  lineArray[0] := LineFrom(350, 250, 350, 350);
-  lineArray[1] := LineFrom(450, 250, 450, 350);
-  lineArray[2] := LineFrom(350, 250, 450, 250);
-  lineArray[3] := LineFrom(350, 350, 450, 350);  
+  lineArray[0] := LineFrom(300, 200, 300, 400);
+  lineArray[1] := LineFrom(500, 200, 500, 400);
+  lineArray[2] := LineFrom(300, 200, 500, 200);
+  lineArray[3] := LineFrom(300, 400, 500, 400);  
   
   repeat // The game loop...
     ProcessEvents();
