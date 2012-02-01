@@ -29,15 +29,17 @@ def get_os_name():
     return "Windows"
 
 
+#generates swingame.pas
 
-
-def CreateSwingamePas():
+def create_swingame_pas():
   print("  Creating SwinGame Unit Code...");
   if(subprocess.call(["python",get_python_script_dir()+"lang_pas_unit.py"]) != 0):
     print ("Error Creating SwinGame Unit Code");
     quit();
   
-def CopyWithoutSvn(src,dest,overwrite = True):
+  
+#tree copy without svn and copy symbolic links.
+def copy_without_svn(src,dest,overwrite = True):
   if(os.path.isdir(dest) and overwrite):
     print("    Cleaning %s" % dest)
     swin_shutil.rmtree(dest,ignore_errors = True)
@@ -50,20 +52,7 @@ def CopyWithoutSvn(src,dest,overwrite = True):
 
 
 
-def copy_pascal_source_to_dist(core_sdk_folder, dist_source_folder):
-  
-  coresdk_libsrc = core_sdk_folder+"libsrc/"
-  coresdk_src = core_sdk_folder+"src/"
-  generated_source_src = get_swin_game_dir()+"Generated/Source/src"
-  
-  print("  Copying %s to %s" % (coresdk_libsrc,dist_source_folder))
-  CopyWithoutSvn(coresdk_libsrc, dist_source_folder)
-  
-  print("  Copying %s to %s" % (coresdk_src,dist_source_folder))
-  CopyWithoutSvn(coresdk_src, dist_source_folder,overwrite = False)
-  
-  print("  Copying %s to %s" % (generated_source_src,dist_source_folder))
-  CopyWithoutSvn(generated_source_src, dist_source_folder,overwrite = False)
+
 
 def assemble_dist(name, language, sgsdk):
   dist_folder = get_swin_game_dir()+"Dist/"
@@ -82,25 +71,25 @@ def assemble_dist(name, language, sgsdk):
   specific_template_folder = lang_template_folder+name+'/'
 
 #clean dist folder
-  print("  Copying common files...")
-  CopyWithoutSvn(common_template_folder, specific_dist_folder)
+  print("\n  Copying common files...")
+  copy_without_svn(common_template_folder, specific_dist_folder)
 
-  print("  Copying %s common files..." % language)
-  CopyWithoutSvn(common_lang_template_folder, specific_dist_folder,overwrite = False)
+  print("\n  Copying %s common files..." % language)
+  copy_without_svn(common_lang_template_folder, specific_dist_folder,overwrite = False)
 
-  print("  Copying %s specific files..." % name)
-  CopyWithoutSvn(specific_template_folder, specific_dist_folder, overwrite = False)
+  print("\n  Copying %s specific files..." % name)
+  copy_without_svn(specific_template_folder, specific_dist_folder, overwrite = False)
   
-  print("  Copying %s generated files..." % language)
-  CopyWithoutSvn(generated_folder, specific_dist_lib_folder,overwrite = False)
+  print("\n  Copying %s generated files..." % language)
+  copy_without_svn(generated_folder, specific_dist_lib_folder,overwrite = False)
   
-  print("  Copying lib files...")
-  CopyWithoutSvn(lib_folder, specific_dist_lib_folder,overwrite = False)
-  flat_copy(lib_src_folder,specific_dist_lib_folder)
-  flat_copy(src_folder,specific_dist_lib_folder)
+  print("\n  Copying lib files...")
+  copy_without_svn(lib_folder, specific_dist_lib_folder,overwrite = False)
+  flat_copy_without_svn(lib_src_folder,specific_dist_lib_folder)
+  flat_copy_without_svn(src_folder,specific_dist_lib_folder)
   
-  
-def flat_copy(src,dest):
+#copy every file not in svn into a flat destination.
+def flat_copy_without_svn(src,dest):
   for root, dirs, files in os.walk(src):
     for f in files:
       if(root.find('.svn') == -1):
@@ -109,12 +98,6 @@ def flat_copy(src,dest):
 
   
 def main():
-  
-  dist_dir_source_src = get_swin_game_dir()+"Dist/Source/src/"
-  generated_dir_pascal = get_swin_game_dir()+"Generated/Pascal/lib/"
-  template_folder = get_swin_game_dir()+"Templates/"
-  pas_dist = get_swin_game_dir()+"Dist/Pascal/"
-
   CopyList = [
     { 
       'target':     'FPC',
@@ -126,21 +109,15 @@ def main():
 
   print("--------------------------------------------------")
   print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
-  print("--------------------------------------------------")
+  print("--------------------------------------------------\n")
   
   
-  CreateSwingamePas();
-  
-  #FLATTEN THIS!
-  print("Copying pascal source to Dist folder...")
-  #copy_pascal_source_to_dist(get_swin_game_dir()+"CoreSDK/", dist_dir_source_src)
+  create_swingame_pas();
   
   for build in CopyList:
-    print("Assembling Dist Folder for %s..." % build['target'])
+    print("  Assembling Dist Folder for %s..." % build['target'])
     assemble_dist(build['target'],build['language'],build['sgsdk'])  
-  print("Finished!");
-  
-  
+  print("\nFinished!");
   
   
   
