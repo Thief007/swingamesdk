@@ -1,7 +1,6 @@
 program HowToRespondToKeystrokes;
 uses
-  SwinGame, sgTypes;
-  //sgInput, sgGraphics, sgResources, sgText, sgTypes, sgUtils, sgAudio;
+  SwinGame, sgTypes;  
   
 procedure Main();
 var
