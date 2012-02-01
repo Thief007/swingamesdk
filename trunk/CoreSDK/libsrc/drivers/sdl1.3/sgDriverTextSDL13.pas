@@ -388,10 +388,11 @@ implementation
 	begin
     GraphicsDriver.ColorComponents(theColor, r, g, b, a);
     if (r = 0) and (g = 0) and (b = 0) then r := r + 1;
+      
 	  DrawDirtyScreen();
-	  
-    offset := RectangleFrom(0, 0, screen^.width, screen^.height);
-    surf := SDL_CreateRGBSurface(SDL_SWSURFACE, screen^.width, screen^.height, 32, 0, 0, 0, 0);
+    
+    offset := RectangleFrom(0, 0, Length(theText) * 10, 10);
+    surf := SDL_CreateRGBSurface(SDL_SWSURFACE, offset.width, offset.height, 32, 0, 0, 0, 0);
     SDL_SetColorKey(surf, SDL_SRCCOLORKEY, GraphicsDriver.RGBAColor(0, 0, 0, 0));
 	  stringColor(surf, RoundShort(x), RoundShort(y), PChar(theText), ToGfxColorProcedure(GraphicsDriver.RGBAColor(r, g, b, a)) );
     texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, surf);
