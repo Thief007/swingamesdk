@@ -88,10 +88,11 @@ class PascalFile(object):
         from pas_file_cache import get_unit_named
         logger.info("File:     Resolving Unit reference: %s", reference.name)
         unit = get_unit_named(reference.name)
-        if (not unit.is_parsed):
-            unit.parse()
-        return unit
-
+        if not (unit is None):
+            if (not unit.is_parsed):
+                unit.parse()
+            return unit
+        return None
     def resolve_variable(self, var_name):
         from pas_file_cache import get_unit_named
         logger.info("File:     Resolving Variable: %s", var_name)
