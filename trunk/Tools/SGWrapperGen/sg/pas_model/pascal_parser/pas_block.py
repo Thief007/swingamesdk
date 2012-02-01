@@ -58,7 +58,7 @@ class PascalBlock(object):
                 # read variable declaration part
                 # and append to current active variables
                 # local variables can overwrite global variables 
-                current_part = PascalVarDeclaration()
+                current_part = PascalVarDeclaration(self)
                 current_part.parse(tokens)
                 self._variables.update(current_part.variables)
             elif (tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function')):
@@ -79,19 +79,25 @@ class PascalBlock(object):
 
         self._compound_statement = parse_statement(tokens, self)
 
-    def get_variable(self, name):
-        result = None
-        if (name in self._variables):
-            result = self._variables[name]
-        elif(self._parent != None and self._parent.get_variable(name) != None):
-            result = self._parent.get_variable(name)
-        else:
-            result = self._file.contents.resolve_variable(name) 
+    def resolve_variable(self, var_name):
+        #check myself
+        for (name, declared_variable) in self._variables.items():
+            if (var_name.lower() == declared_variable.name.lower()):
+                return declared_variable
+        # check parent
+        if self.parent != None:
+            # recursive call for all parents
+            # will always return the answer if it exists
+            return self.parent.resolve_variable(var_name)
+         
+        # finally, it could be an enumeration value...
+        for (name, type) in self._types.items():
+            if type.kind is 'enumeration':
+                for val in type.values:
+                    if val.name.lower() == var_name.lower():
+                        return val
 
-        if result is None:
-            logger.error("Unable to locate variable in scope: " + name)
-            assert False
-        return result
+        return self._file.resolve_variable(var_name)
 
     def resolve_function_call(self, function):
         #check myself

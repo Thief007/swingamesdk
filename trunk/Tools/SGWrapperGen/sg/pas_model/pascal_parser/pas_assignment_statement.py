@@ -21,7 +21,7 @@ class AssignmentStatement(object):
         varName = tokens.match_token(TokenKind.Identifier).value
         operatorValue = tokens.match_token(TokenKind.Operator).value
 
-        self._operand = self._block.get_variable(varName)
+        self._operand = self._block.resolve_variable(varName)
         self._operator = PascalOperator(operatorValue)
 
         self._expression = PascalExpression(self._block)

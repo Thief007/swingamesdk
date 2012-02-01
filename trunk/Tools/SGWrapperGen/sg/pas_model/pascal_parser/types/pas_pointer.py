@@ -41,6 +41,7 @@ class PascalPointer(object):
         elif tokens.match_lookahead(TokenKind.Identifier, 'procedure') or tokens.match_lookahead(TokenKind.Identifier, 'function'):
             self._points_to = PascalFunction(self._block, tokens, func_pointer = True)
             self._points_to.parse(tokens, is_forward=True)
+            self._function_pointer = True
         else:
             logger.error("Invalid pointer declaration: ", tokens.next_token())
             assert False

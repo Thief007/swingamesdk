@@ -1,1 +1,1 @@
-%(c_lib_identifier)s = %(value)s
+%(c_lib_identifier)s

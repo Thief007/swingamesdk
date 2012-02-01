@@ -27,6 +27,12 @@ class PascalEnum(object):
     def name(self):
         return self._name
 
+    def get_low(self):
+        return self._values[0]
+
+    def get_high(self):
+        return self._values[len(self._values)-1]
+
     def parse(self, tokens):
         current_value = 0
         tokens.match_token(TokenKind.Symbol, '(')

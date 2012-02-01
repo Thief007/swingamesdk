@@ -43,7 +43,8 @@ def parse_type(tokens, block):
         assert False
 
     if (new_type is None):
-        logger.error("Unable to resolve type, line: %s", tokens.next_token().line)
+        tok = tokens.next_token()
+        logger.error("Unable to resolve type: %s", tok)
         assert False
     return new_type
           

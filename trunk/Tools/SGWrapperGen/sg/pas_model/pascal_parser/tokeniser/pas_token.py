@@ -4,14 +4,15 @@ class Token(object):
     It also stores details about the word such as line position.
     """
 
-    def __init__(self, kind, value, lineNumber, columnNumber):
+    def __init__(self, kind, value, lineNumber, columnNumber, file):
         self._kind = kind
         self._value = value
         self._lineNumber = lineNumber
         self._lineColumn = columnNumber
+        self._file = file
 
     def __str__ (self):
-        return str(self._kind) + ' : "' + str(self._value) + '" at ' + str(self._lineNumber) + ',' + str(self._lineColumn)
+        return self._file + " : (" + str(self._kind) + ' : "' + str(self._value) + '") at ' + str(self._lineNumber) + ',' + str(self._lineColumn)
 
     @property
     def kind(self):

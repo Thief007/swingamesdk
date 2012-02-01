@@ -1,1 +1,1 @@
-%(pas_lib_identifier)s := %(value)s
+%(pas_lib_identifier)s

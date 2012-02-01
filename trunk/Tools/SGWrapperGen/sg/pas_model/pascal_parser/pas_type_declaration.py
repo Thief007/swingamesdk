@@ -52,10 +52,13 @@ class PascalTypeDeclaration(object):
 
         tokens.match_token(TokenKind.Identifier, 'type')
 
-        while not token_has_values(tokens.lookahead()[0], reservedWords):
+        while True:
             m_comment = PascalMetaComment(tokens)
             m_comment.process_meta_comments()
             new_type = None
+
+            if token_has_values(tokens.lookahead()[0], reservedWords):
+                break
 
             type_name = tokens.match_token(TokenKind.Identifier).value
             tokens.match_token(TokenKind.Operator, '=')
@@ -72,7 +75,6 @@ class PascalTypeDeclaration(object):
             # other type...
             else:
                 new_type = parse_type(tokens, self._parent)
-                new_type.set_name(type_name)
                 tokens.match_token(TokenKind.Symbol, ';')
 
             # forward declarations... 
