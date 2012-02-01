@@ -129,7 +129,7 @@ def main():
   print("--------------------------------------------------")
   
   
-  #CreateSwingamePas();
+  CreateSwingamePas();
   
   #FLATTEN THIS!
   print("Copying pascal source to Dist folder...")
