@@ -189,8 +189,8 @@ class PascalMetaComment(object):
         param_toks.append(self._tokens.match_token(TokenKind.Identifier).value)
         
         # read ahead for a , between each identifier in the list
-        # the list must have 1 or more parameters
-        while self._tokens.match_lookahead(TokenKind.Symbol, ',', consume=True):
+        while self._tokens.peek_next_char() == ',':
+            self._tokens.match_lookahead(TokenKind.Symbol, ',', consume=True)
             param_toks.append(self._tokens.match_token(TokenKind.Identifier).value)
         
         doc_tok = self._tokens.read_to_end_of_comment() #self._read_comment()
@@ -258,7 +258,7 @@ class PascalMetaComment(object):
         self._add_attribute(token.value, eval(num_tok.value))
     
     def process_numbers_attribute(self, token):
-        num_tok = self._match_token(TokenKind.Number)
+        num_tok = self._tokens.match_token(TokenKind.Number)
         self._append_attribute(token.value, eval(num_tok.value))
     
     def process_meta_comment(self, token):
@@ -290,11 +290,11 @@ class PascalMetaComment(object):
                 if not self._tokens.match_lookahead('symbol', ')'):
                     while True:
                         #args are ids, number, or strings
-                        args.append(self._tokens.match_one_token([(TokenKind.Identifier,None), (TokenKind.Number, None), (TokeKind.String, None), (TokenKind.Boolean, None)]))
+                        args.append(self._tokens.match_one_token([(TokenKind.Identifier,None), (TokenKind.Number, None), (TokenKind.String, None), (TokenKind.Boolean, None)]))
                         
                         #if not comma following - end args
                         if not self._tokens.match_lookahead(TokenKind.Symbol, ',', consume=True): break;
-                close_tok = self._match_token(TokenKind.Symbol, ')')
+                close_tok = self._tokens.match_token(TokenKind.Symbol, ')')
             else: 
                 args = None
                 self._add_attribute('called_by_lib', True)

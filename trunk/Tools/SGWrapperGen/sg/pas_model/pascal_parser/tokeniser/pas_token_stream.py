@@ -123,13 +123,13 @@ class SGTokenStream(object):
         tokenIdentifier - value pairs.
         Will throw an error if no match could be found
         """
-        matched = self.match_one_lookahead(token_lst, True)
+        matched = self.match_one_lookahead(token_lst, consume=False)
         tok = self.next_token()
         if not matched:
             logger.error('TokenStream    %s: unexpected %s(%s) expected %s', 
                 self._tokeniser.line_details(), 
                 tok._kind, tok._value, 
-                map(lambda n: '%s(%s)' % (n[0],n[1]),token_kind_lst))
+                map(lambda n: '%s(%s)' % (n[0],n[1]),token_lst))
             assert False
         return tok
 
@@ -145,6 +145,12 @@ class SGTokenStream(object):
         exposes the tokeniser's read_to_eol() method
         """
         return self._tokeniser.read_to_eol()
+
+    def peek_next_char(self):
+        """
+        exposes the tokeniser's peekNextChar() method
+        """
+        return self._tokeniser.peekNextChar()
 
 
         

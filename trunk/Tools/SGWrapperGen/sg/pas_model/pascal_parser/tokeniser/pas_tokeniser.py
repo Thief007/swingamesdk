@@ -21,6 +21,7 @@ class SGPasTokeniser(object):
         self._meta_comment_line = -1
         self._line_no = 0 #starts at first line
         self._filename = 'supplied data'
+        self._in_meta_comment = False
     
     def tokenise(self, filename):
         '''Initialises the tokeniser with characters loaded from the specified 
@@ -96,9 +97,10 @@ class SGPasTokeniser(object):
         
     def _advance_line(self):
         '''Move the line index to the next line. Reset the line character no to
-        the initial value (-1).'''
+        the initial value (-1), also sets in_meta_comment to false.'''
         self._line_no += 1
         self._char_no = -1
+        self._in_meta_comment = False
     
     def _read_until(self, start, end_fn):
         '''Return a string starting with (and including) the "start" character
@@ -166,6 +168,7 @@ class SGPasTokeniser(object):
                 if self._peek(3) != '///':
                     return result.strip()
                 else:
+                    self._in_meta_comment = True
                     self._char_no += 3
                 line = ''
             else:
@@ -194,8 +197,8 @@ class SGPasTokeniser(object):
             self._token_start = self._char_no
             
             kind = None
-            value = ''
-            
+            value = None
+            char_number = 0
             
             # Ignore white space characters
             if t == ' ' or t == '\t': #ignore white space
@@ -203,19 +206,24 @@ class SGPasTokeniser(object):
             # Move to next line (if at end of line)
             elif t == '\n': 
                 self._advance_line()
+            # Is it a MetaComment?
+            #elif self._in_meta_comment:
+            #    if t == '@':
+            #        char_number = self._char_no
+            #        kind = TokenKind.Attribute
+            #        value = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
             # Numbers (int or float style format
             elif t in '1234567890' or (t in '-+' and self._peek(1) in '1234567890'): #is digit or +/-
                kind = TokenKind.Number
                char_number = self._char_no
                value = self._read_matching(t, num_match)
-               logger.debug('Tokeniser      : read %s (%s)', kind, value)
-               return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             # Comment, single line // or meta comment line ///
             elif t == '/' and self._peek(1) == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
                         self._meta_comment_start = self._char_no
                         self._meta_comment_line = self._line_no
+                        self._in_meta_comment = True
                         kind = TokenKind.MetaComment
                         char_number = self._char_no
                         value = self.read_to_end_of_comment()
@@ -223,17 +231,13 @@ class SGPasTokeniser(object):
                         kind = TokenKind.Comment
                         char_number = self._char_no
                         value = self.read_to_eol()
-                        logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                    return Token(kind, value, self._line_no+1, char_number+1, self._filename)
                 else:
                     logger.error("Unexpected error: " + self.line_details)
             # Attribute identified by an @ symbol then a name
             elif t == '@':
-                kind = TokenKind.Attribute
                 char_number = self._char_no
+                kind = TokenKind.Attribute
                 value = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
-                logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             # Identifier (id) of alphanumeric characters including 
             elif t.isalpha():
                 char_number = self._char_no
@@ -244,8 +248,6 @@ class SGPasTokeniser(object):
                     kind = TokenKind.Operator
                 else:
                     kind = TokenKind.Identifier
-                logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             #Bound Comment
             elif t == '{' or (t == '(' and self._peek(1) == '*'):
                 if t == '(' and self._match_and_read('*'):
@@ -253,15 +255,11 @@ class SGPasTokeniser(object):
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
                     kind = TokenKind.Comment
                     value = comment[:-2]
-                    logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                    return Token(kind, value, self._line_no+1, char_number+1, self._filename)
                 elif t == '{':
+                    char_number = self._char_no
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
                     kind = TokenKind.Comment
-                    char_number = self._char_no
                     value = comment[:-1]
-                    logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                    return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             # Operator
             elif (t == ':' and self._peek(1) == '=') or t in '=+-*/><':
                 kind = TokenKind.Operator
@@ -284,27 +282,23 @@ class SGPasTokeniser(object):
                     value = t + '='
                 else:
                     value = t
-                logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             # Symbol
             elif t in '(),:;[].^':
                 kind = TokenKind.Symbol
                 char_number = self._char_no
                 value = t
-                logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
             # Catch any single quotes inside a string value.
             elif t == "'":
                 char_number = self._char_no
                 string = self._read_until('', lambda temp: (temp[-1:] == "'") and (not self._match_and_read("'")))
                 kind = TokenKind.String
-                value = string[:-1]
-                logger.debug('Tokeniser      : read %s (%s)', kind, value)
-                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
+                value = string[:-1]    
             # Hmm.. unknown token. What did we forget? 
             else:
                 logger.error("Unknown token type: " + t)
-    
+            if (not (kind is None)) and (value != None): 
+                logger.debug('Tokeniser      : read %s (%s)', kind, value)
+                return Token(kind, value, self._line_no+1, char_number+1, self._filename)
 
 #----------------------------------------------------------------------------=
 

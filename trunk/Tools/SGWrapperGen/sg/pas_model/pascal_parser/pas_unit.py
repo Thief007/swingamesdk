@@ -4,6 +4,7 @@ from pas_function import PascalFunction
 from pas_var_declaration import PascalVarDeclaration
 from pascal_parser.pas_type_declaration import PascalTypeDeclaration
 from pascal_parser.pas_uses_clause import PascalUsesClause
+from pascal_parser.pas_operator_overload import PascalOperatorOverload
 
 class PascalUnit(object):
     """
@@ -88,9 +89,12 @@ class PascalUnit(object):
         """
         from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
         # read unit header
+
         tokens.match_token(TokenKind.Identifier, 'unit');
         self._name = tokens.match_token(TokenKind.Identifier)._value;
         tokens.match_token(TokenKind.Symbol, ';')
+
+        logger.info("Parsing unit header: %s (%s)", self._file.filename, self._name)
 
         # read interface
         tokens.match_token(TokenKind.Identifier, 'interface')
@@ -123,6 +127,9 @@ class PascalUnit(object):
                 current_part = PascalTypeDeclaration(self)
                 current_part.parse(tokens) 
                 self._types.update(current_part.types)
+            elif (tokens.match_lookahead(TokenKind.Identifier, 'operator')):
+                  temp = PascalOperatorOverload(self)
+                  temp.parse(tokens)
             elif tokens.match_lookahead(TokenKind.Identifier, 'implementation'):
                 break
             else:
@@ -132,7 +139,6 @@ class PascalUnit(object):
 
         init_present = False
         tokens.match_lookahead(TokenKind.Identifier, 'implementation')
-        logger.info("Parsed unit header: %s (%s)", self._file.filename, self._name)
         ## if there is a uses clause - read it
         #if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
         #    uses_clause = PascalUsesClause(self._file)

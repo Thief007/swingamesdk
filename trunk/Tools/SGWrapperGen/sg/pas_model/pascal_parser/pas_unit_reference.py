@@ -31,9 +31,9 @@ class PascalUnitReference(object):
         self._name = tokens.match_token(TokenKind.Identifier).value;
         if do_resolve:
             self._points_to = file_owner.resolve_unit_reference(self)
-            #if self._points_to is None:
-            #    logger.error("Unable to resolve unit reference: " + self._name)
-            #    assert False
+            if self._points_to is None:
+                logger.error("Unable to resolve unit reference: " + self._name)
+                assert False
 
     def to_code(self):
         import converter_helper
