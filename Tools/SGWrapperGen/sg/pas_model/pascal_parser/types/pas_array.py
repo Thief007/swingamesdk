@@ -33,12 +33,24 @@ class PascalArray(object):
         # array [0..n,0..m] of
         if tokens.match_lookahead(TokenKind.Symbol, '[', consume=True):
             while True:
-                low_idx = tokens.match_token(TokenKind.Number).value
-                tokens.match_token(TokenKind.Symbol, '.')
-                tokens.match_token(TokenKind.Symbol, '.')
-                high_idx = tokens.match_token(TokenKind.Number).value
+                low_idx = 0
+                high_idx = 0
+                if (tokens.match_lookahead(TokenKind.Number)):
+                    low_idx = tokens.match_token(TokenKind.Number).value
+                    tokens.match_token(TokenKind.Symbol, '.')
+                    tokens.match_token(TokenKind.Symbol, '.')
+                    high_idx = tokens.match_token(TokenKind.Number).value
+                 
+                # It's another ordinal type...   
+                elif (tokens.match_lookahead(TokenKind.Identifier)):
+                    # it's a type in the case of enumerations... could be a variable in the case of constants
+                    idx_type = self._owner.resolve_type(tokens.match_token(TokenKind.Identifier).value)
+                    if idx_type.kind is 'enumeration':
+                        low_idx = idx_type.get_low().value
+                        high_idx = idx_type.get_high().value
+                else:
+                    logger.error("Array:        Ordinal type expected: %s", tokens.next_token())  
                 self._dimensions.append((low_idx,high_idx))
-                    
                 if tokens.match_lookahead(TokenKind.Symbol, ']', consume=True):
                     break
                 tokens.match_token(TokenKind.Symbol, ',')

@@ -104,16 +104,16 @@ class PascalFunction(object):
             type = parse_type(self._tokens, self._block)
             self._return_type = type
             self._block._variables['result'] = PascalVariable('result', type)
-            self._result = self._block.get_variable('result')
+            self._result = self._block.resolve_variable('result')
 
-        # modifiers
+        # modifiers '; modifier; modifier...; 
         while True:
-            if tokens.lookahead(2)[1].value in self._possible_modifiers:
+            if tokens.lookahead(2)[1].value.lower() in self._possible_modifiers:
                 self._tokens.match_token(TokenKind.Symbol, ';')
                 if (self._tokens.match_lookahead(TokenKind.Identifier, 'forward')):
                     self._is_forward = True
                     is_forward = True
-                self._modifiers.append(self._tokens.match_token(TokenKind.Identifier).value)
+                self._modifiers.append(self._tokens.match_token(TokenKind.Identifier).value.lower())
             else:
                 break;
         if not self._func_pointer:

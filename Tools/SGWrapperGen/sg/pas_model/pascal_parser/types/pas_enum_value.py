@@ -22,6 +22,10 @@ class PascalEnumValue(object):
     def name(self):
         return self._name
 
+    @property
+    def value(self):
+        return self._value
+
     def to_code(self):
         import converter_helper
 

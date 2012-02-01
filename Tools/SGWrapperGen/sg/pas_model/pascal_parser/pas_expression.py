@@ -67,7 +67,10 @@ class PascalExpression(object):
                 #variable
                 else:
                     varName = tokens.match_token(TokenKind.Identifier).value
-                    newContent = self._block.get_variable(varName)
+                    newContent = self._block.resolve_variable(varName)
+                    if newContent is None:
+                        logger.error("Unable to resolve variable: %s", varName)
+                        assert False
             # Operator
             elif tokens.match_lookahead(TokenKind.Operator):
                 
@@ -77,6 +80,7 @@ class PascalExpression(object):
                 tokens.next_token() # consume the delimiter
                 newContent = PascalExpression(self._block, innerExpr = True)
                 newContent.parse(tokens)
+                
             else:
                 logger.error('Unknown expression token... %s' % str(tokens.next_token().value))
                 assert False

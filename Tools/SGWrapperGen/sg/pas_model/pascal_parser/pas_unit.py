@@ -86,6 +86,7 @@ class PascalUnit(object):
         Parses the entire pascal unit
         expects: 'unit name;' at the start
         """
+        from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
         # read unit header
         tokens.match_token(TokenKind.Identifier, 'unit');
         self._name = tokens.match_token(TokenKind.Identifier)._value;
@@ -101,6 +102,11 @@ class PascalUnit(object):
 
         # read declarations
         while (True):
+
+            self._comments = tokens.get_comments()
+
+            self._meta_comment = PascalMetaComment(tokens)
+            self._meta_comment.process_meta_comments()
             # variable declaration part
             if (tokens.match_lookahead(TokenKind.Identifier, 'var')):
                 # read variable declaration part
@@ -125,8 +131,8 @@ class PascalUnit(object):
             self._interface.append(current_part)
 
         init_present = False
-        tokens.match_token(TokenKind.Identifier, 'implementation')
-
+        tokens.match_lookahead(TokenKind.Identifier, 'implementation')
+        logger.info("Parsed unit header: %s (%s)", self._file.filename, self._name)
         ## if there is a uses clause - read it
         #if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
         #    uses_clause = PascalUsesClause(self._file)

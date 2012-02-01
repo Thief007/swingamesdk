@@ -134,6 +134,17 @@ class SGTokenStream(object):
         return tok
 
     def read_to_end_of_comment(self):
+        """ 
+        exposes the tokeniser's read_to_end_of_comment()
+        method
+        """
         return self._tokeniser.read_to_end_of_comment()
+
+    def read_to_eol(self):
+        """
+        exposes the tokeniser's read_to_eol() method
+        """
+        return self._tokeniser.read_to_eol()
+
 
         
