@@ -82,20 +82,23 @@ fi
 #
 # Step 5: Set the paths to local variables
 #
-OUT_DIR="${APP_PATH}/bin"
-FULL_OUT_DIR="${FULL_APP_PATH}/bin"
+
 TMP_DIR="${APP_PATH}/tmp"
 SDK_SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/tmp/out.log"
 FPC_BIN=`which fpc`
 
 if [ "$OS" = "$MAC" ]; then
+    OUT_DIR="${APP_PATH}/bin/Mac"
+    FULL_OUT_DIR="${FULL_APP_PATH}/bin/Mac"
     FRAMEWORK_DIR="${FULL_APP_PATH}/lib"	
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
     HEADER_DIR="${VERSION_DIR}/Headers"
     RESOURCES_DIR="${VERSION_DIR}/Resources"
     CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
 elif [ "$OS" = "$WIN" ]; then
+    OUT_DIR="${APP_PATH}/bin/Win"
+    FULL_OUT_DIR="${FULL_APP_PATH}/bin/Win"
     LIB_DIR="${APP_PATH}/lib"
     # FPC paths require c:/
     SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
