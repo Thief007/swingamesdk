@@ -21,7 +21,7 @@ unit sgUtils;
 
 //=============================================================================
 interface
-  uses sgTypes, sgDriverTimer;
+  uses sgTypes;
 //=============================================================================
 
 //----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     sgSavePNG, sgShared, sgTrace, sgInputBackend, //SwinGame shared library code
-    sgResources, sgGeometry, sgImages, sgGraphics; //SwinGame
+    sgResources, sgGeometry, sgImages, sgGraphics, sgDriverTimer; //SwinGame
 //=============================================================================
 
 
