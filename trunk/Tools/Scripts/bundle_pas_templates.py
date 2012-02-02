@@ -5,6 +5,21 @@ import swin_shutil
 
 
 
+CopyList = [
+  { 
+    'target':     'FPC',
+    'language':   'Pascal', 
+    'sgsdk':      False
+  },
+  
+  {
+    'target':     'iOS',
+    'language':   'Pascal', 
+    'sgsdk':      False
+  
+  }
+]
+
 
 
 #get Current path
@@ -48,7 +63,7 @@ def copy_without_svn(src,dest,overwrite = True):
   
 
 
-
+#assembles the files for the dist folder
 def assemble_dist(name, language, sgsdk):
   lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
   lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
@@ -122,6 +137,9 @@ def build_sgsdk():
       print ("\n  Error Compiling SGSDK");
       quit();
 
+
+
+# for compiling SGSDK
 def copy_coresdk_to_dist_source():
   generated_source_folder = get_swin_game_dir()+"Generated/Source/src/"
   template_source_folder = get_swin_game_dir()+"Templates/Source"
@@ -142,21 +160,6 @@ def copy_coresdk_to_dist_source():
 
   
 def main():
-  CopyList = [
-    { 
-      'target':     'FPC',
-      'language':   'Pascal', 
-      'sgsdk':      False
-    },
-    
-    {
-    'target':     'iOS',
-    'language':   'Pascal', 
-    'sgsdk':      False
-    
-    }
-  ]
-
 
   print("--------------------------------------------------")
   print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
