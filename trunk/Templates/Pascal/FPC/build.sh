@@ -32,7 +32,9 @@ OUT_DIR="${APP_PATH}/bin"
 FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
-LIB_DIR="${APP_PATH}/lib"
+
+
+
 LOG_FILE="${APP_PATH}/out.log"
 
 PAS_FLAGS="-O3 -vw"
@@ -41,6 +43,15 @@ SG_INC="-Fu${APP_PATH}/lib/"
 FPC_BIN=`which fpc`
 
 CLEAN="N"
+
+
+if [ "$OS" = "$MAC" ]; then
+    LIB_DIR="${APP_PATH}/lib/mac"
+elif [ "$OS" = "$WIN" ]; then
+    LIB_DIR="${APP_PATH}/lib/win"
+fi
+
+
 
 Usage()
 {

@@ -91,7 +91,7 @@ FPC_BIN=`which fpc`
 if [ "$OS" = "$MAC" ]; then
     OUT_DIR="${APP_PATH}/bin/Mac"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/Mac"
-    FRAMEWORK_DIR="${FULL_APP_PATH}/lib"	
+    FRAMEWORK_DIR="${FULL_APP_PATH}/lib/mac"	
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
     HEADER_DIR="${VERSION_DIR}/Headers"
     RESOURCES_DIR="${VERSION_DIR}/Resources"
@@ -99,7 +99,7 @@ if [ "$OS" = "$MAC" ]; then
 elif [ "$OS" = "$WIN" ]; then
     OUT_DIR="${APP_PATH}/bin/Win"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/Win"
-    LIB_DIR="${APP_PATH}/lib"
+    LIB_DIR="${APP_PATH}/lib/win"
     # FPC paths require c:/
     SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
     OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
@@ -462,7 +462,7 @@ else
     echo "--------------------------------------------------"
     CleanTmp
     rm -rf "${OUT_DIR}"
-    mkdir "${OUT_DIR}"
+    mkdir -p "${OUT_DIR}"
     echo    ... Cleaned
 
 fi
