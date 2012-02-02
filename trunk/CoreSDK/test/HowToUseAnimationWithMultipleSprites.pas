@@ -2,16 +2,6 @@ program HowToUseAnimationWithMultipleSprites;
 uses
     sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
 
-procedure DomyFrog(sprt: Sprite; key: KeyCode; animationName: String; dx, dy: Single);
-begin
-    if KeyDown(key) then
-    begin
-        SpriteStartAnimation(sprt, animationName);
-        SpriteSetDX(sprt, dx);
-        SpriteSetDY(sprt, dy);		
-    end;
-end;
-
 procedure Main();
 var
     myFrog, myLizard: Sprite;

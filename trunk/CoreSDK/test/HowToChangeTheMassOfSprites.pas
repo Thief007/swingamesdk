@@ -17,14 +17,14 @@ begin
     earth := CreateSprite(BitmapNamed('earth'));
     SpriteSetX(earth, 700);
     SpriteSetY(earth, 100);
-    SpriteSetMass(earth, 10);
     SpriteSetVelocity(earth, VectorTo(-0.8, 0.6));
+    SpriteSetMass(earth, 10);
 
     asteroid := CreateSprite(BitmapNamed('asteroid'));
     SpriteSetX(asteroid, 100);
     SpriteSetY(asteroid, 500);
-    SpriteSetMass(asteroid, 1);
     SpriteSetVelocity(asteroid, VectorTo(1, -0.6));
+    SpriteSetMass(asteroid, 1);
 
     repeat
         ProcessEvents();
