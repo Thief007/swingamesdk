@@ -88,6 +88,22 @@ class APIDocWriter(object):
             $("#toggle" + method_uname)[0].innerHTML = "hide details";
         }
     }
+
+    function toggleMethods(method_name)
+    {
+        sel = "#" + method_name;
+        if ($(sel).is(':visible'))
+        {
+            $(sel).hide(500);
+            $("#lnk" + method_name)[0].innerHTML = "[show]";
+        }
+        else
+        {
+            $(sel).show(500);
+            $("#lnk" + method_name)[0].innerHTML = "[hide]";
+        }
+    }
+
     
     function toggleAlternateDetails(method_uname)
     {
@@ -105,7 +121,7 @@ class APIDocWriter(object):
     }
     
     function toggleShownMethods()
-    {
+    {   
         sel = ".details"
         if ($(sel).is(':visible'))
         {
@@ -125,7 +141,7 @@ class APIDocWriter(object):
 
 <h1>%(title)s</h1>
 
-%(toc)s
+<!-- %(toc)s -->
 
 %(desc)s
 
@@ -135,7 +151,7 @@ class APIDocWriter(object):
 Generated %(datetime)s for svn version %(svnversion)s
 </div>
 <script>
-    $(".details").hide();
+    $(".method_details").hide();
 </script>
 </body>
 </html>
@@ -198,14 +214,16 @@ Generated %(datetime)s for svn version %(svnversion)s
         '''Convert toc list of tuples (name, uname) to list items. 
         Only 1 unique name is presented in the toc for brevity.
         '''
-        toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
+        #toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
+        toc =  '<aside id="sidebar-a" class="grid-box" style="min-height: 500px;"><div class="grid-box width100 grid-v"><div class="module mod-box mod-box-header deepest"><h3 class="module-title">%s</h3><ul class="menu menu-sidebar">%s</ul></div></div></aside>'% (self.title, '%(toc)s')
         tmp = []
         last = ''
-        for title, uname, detail in sorted(self.toc, key=lambda entry: entry[0]):
+        for title, uname in sorted(self.toc, key=lambda entry: entry[0]):
             if title != last:
                 last = title
-                css_class = ' class="details"' if detail else ''
-                tmp.append('<li%s><a href="#%s" title="%s">%s</a></li>' % (css_class, uname, uname, title))
+                #todo: remove details class
+                #css_class = ' class="details"' if detail else ''
+                tmp.append('<li class="level1 item1"><a href="#parent_%s" title="%s">%s</a></li>' % (title, title, title))
         return toc % {'toc': '\n'.join(tmp) }
 
     def format_desc(self):
@@ -328,10 +346,10 @@ class IdentifierCollector(object):
             self.ids['umethods'][method.uname] = method
         
         # modify method to also keep the doc_url for us
-        if method.doc_details:
-            method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname +'?details'
-        else:
-            method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname
+        # if method.doc_details:
+        #     method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname +'?details'
+        # else:
+        method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname
     
     def _type_visitor(self, member, other):
         self.ids['types'][member.name] = member
@@ -401,7 +419,7 @@ class UnitPresenter(object):
         self.details_docs = dict()                          # Dictionary of details files
         self.idcollection = idcollection
         self.last_method = None 
-        parser_runner.visit_all_units(self.file_visitor)
+        parser_runner.visit_all_units(self.present_unit_for_file)
 
     def lead_trim(self, text):
         '''Remove leading "-" or ":" from text as it sometimes appears in parameter 
@@ -411,7 +429,7 @@ class UnitPresenter(object):
             text = text[1:].strip()
         return text
 
-    def method_visitor(self, method, other):
+    def write_methods_for_unit(self, method, other):
         '''Format the current method details and store in the global body and toc lists '''
         
         link_type = self.idcollection.link_type
@@ -421,10 +439,10 @@ class UnitPresenter(object):
         out_doc = self.doc
         
         # Keep the toc entry (name and unique ID for hyperlinks)
-        out_doc.toc.append( (method.name, method.uname, method.doc_details) )
+        out_doc.toc.append( (method.name, method.uname) )
     
         # Build up the parameters with formatted modifier terms if used
-        tmp = []
+        tmp = [ ]
         for p in method.params:
             if p.modifier:
                 tmp.append("<span class='pmod'>%s</span> %s" % (p.modifier, p.name))
@@ -433,15 +451,28 @@ class UnitPresenter(object):
         param_txt = ', '.join(tmp)
         
         #Wrap detail methods
-        if method.doc_details:
-            out_doc.append('<div class="details">')
-        
+        # if method.doc_details:
+        #     out_doc.append('<div class="details">')
+            
         if self.last_method != method.name:
-            out_doc.append('<div>')
+            if self.last_method:
+                # TODO: need to add close after last function!
+                out_doc.append('</ul></div></div>')
+            #
+            # Added header for each new method... with div to wrap details.
+            # removed the Show/Hide link from the header. its below if I change my mind
+            #<a href="javascript:toggleMethods(\'%(name)s\')" alt ="" class="" id="lnk%(name)s">[show]</a>
+            #
+            tmp = '<div class="method" id="parent_%(name)s">\n<h3>%(spaced_name)s </h3>\n' + \
+                  '%(desc)s\n<div id="%(name)s"><ul>\n'
+            desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
+            out_doc.append(tmp % {'uname': method.uname, # unique id's for overloads
+                                   'name': method.name, 
+                                   'spaced_name': method.spaced_name(), 
+                                   'desc': desc })
             self.last_method = method.name
             new_group = True
         else:
-            out_doc.append('<div class="alt%s" style="display:none">' % method.name)
             new_group = False
         
         # Create the method signature
@@ -450,18 +481,23 @@ class UnitPresenter(object):
         else:
             sig = '%s (%s)' % (method.spaced_name(), param_txt)
         
-        # Print the headings    
-        tmp = '<div class="method" id="%(uname)s">\n<h3>%(name)s</h3>\n' + \
-              '<p class="sig">%(sig)s</p>\n' + \
-              '%(desc)s\n'
+        # Print the headings 
+        # if method.uname != method.name:
+        #             tmp = '<li>%(sig)s <a href="javascript:toggleMethods(\'%(uname)s\')" alt ="" class="" id="method_lnk_%(uname)s">[show]</a> <div class="method_details" id="%(uname)s">%(desc)s'
+        #         else:
+        tmp_uname = "_" + method.uname
+        tmp = '<li>%s <a href="javascript:toggleMethods(\'%s\')" alt ="" class="" id="lnk%s">[show]</a> <div class="method_details" id="%s">%s' % ('%(sig)s', tmp_uname, tmp_uname, tmp_uname, '%(desc)s')
         desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
+        #if (method.name == method.uname): method.uname = "_"+method.uname
         out_doc.append(tmp % {'uname': method.uname, # unique id's for overloads
-                               'name': method.name, 
+                               'name': method.name,
+                               'spaced_name': method.spaced_name(), 
                                'desc': desc, 
                                'sig': sig })
-        
-        # Create a details div
-        out_doc.append('<div class="method-details" id="body%s" style="display:none">\n' % method.uname)
+    
+        # # Create a details div
+        # out_doc.append('<div class="method-details" id="body%s" style="display:none">\n' % method.uname)
+        # 
         
         # If parameters and/or return type details
         if len(method.params) > 0 or method.return_type:
@@ -500,7 +536,7 @@ class UnitPresenter(object):
                   for bit in bits:
                     if not len(bit.strip()) == 0:
                       out_doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
-            # END LIST
+            # END PARANETER LIST
             out_doc.append('</dl>')
         
         # url = source_url(method.meta_comment_line_details),
@@ -527,37 +563,42 @@ class UnitPresenter(object):
         
         # Meta-details 
         out_doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
-        out_doc.append("\n</div>\n")# End method body
-        out_doc.append('<a class="details-link" id="toggle%s" href="javascript:toggleMethodDetails(\'%s\')">show details</a>\n' % (method.uname, method.uname))
+        # out_doc.append("\n</div>\n")# End method body
+        # out_doc.append('<a class="details-link" id="toggle%s" href="javascript:toggleMethodDetails(\'%s\')">show details</a>\n' % (method.uname, method.uname))
         
-        if new_group and self.module.number_of_methods_named(method.name) > 1:
-            out_doc.append('<a class="details-link" id="alt%s" href="javascript:toggleAlternateDetails(\'%s\')">show other versions</a>\n' % (method.name, method.name))
+        # if new_group and self.module.number_of_methods_named(method.name) > 1:
+        #     out_doc.append('<a class="details-link" id="alt%s" href="javascript:toggleAlternateDetails(\'%s\')">show other versions</a>\n' % (method.name, method.name))
         
         out_doc.append("\n</div>\n")
-        out_doc.append("\n</div>\n") # Alternate/Main        
+        out_doc.append("\n</li>\n")
             
-        if method.doc_details:
-            out_doc.append('\n</div>\n')
+        # if method.doc_details:
+        #     out_doc.append('\n</div>\n')
     
-    def file_visitor(self, the_file, other):
+    def present_unit_for_file(self, the_file, other):
+        '''
+        Run for each file, creates html page with documentation for the web site.
+        '''
         # Don't do some files...
         if the_file.name in ['SGSDK', 'Types']: return
-        #if the_file.name in ['SGSDK']: return
         
         # Create a new document to write to
         self.doc = APIDocWriter()
         self.doc.title = the_file.name
         self.doc.desc = self.idcollection.format_text(the_file.members[0].doc)
         
-        self.doc.append('<a class="details-link" id="toggleShownMethods" href="javascript:toggleShownMethods()">show all methods</a>\n')
+        #todo: remove show all methods...
+        #self.doc.append('<a class="details-link" id="toggleShownMethods" href="javascript:toggleShownMethods()">show all methods</a>\n')
         
         # Here we go...
         print '  ... %s ' % (the_file.name)
         for m in the_file.members:
             self.module = m
             if m.is_module: 
-                m.visit_methods(self.method_visitor, None)
-                
+                m.visit_methods(self.write_methods_for_unit, None)
+        #close off the last method...
+        if self.last_method: #check there was a last method
+            self.doc.append('</div></div>')        
         self.doc.savetofile(the_file.name + '.html')
 
 
@@ -624,7 +665,7 @@ h3 { border-bottom: 1px solid #955 }
 .methods li, #types li { list-style-type: none; }
 #types li { display: inline; width: 20em; float: left }
 '''
-    doc.toc = [('Methods','Methods',False),('Types','Types',False)]
+    doc.toc = [('Methods','Methods'),('Types','Types')]
     doc.h2('Methods','Methods')
         
     ## Methods 
@@ -706,7 +747,7 @@ def create_types_doc(idcollection):
     for key in keys:
         obj = ids['types'][key]
         # keep a TOC entry
-        doc.toc.append((key, key, False))
+        doc.toc.append((key, key))
         # Print the headings    
         tmp = '<div class="type" id="%(name)s">\n<h3>%(name)s</h3>\n%(desc)s\n'
         desc = '' if obj.doc.strip() == '' else '<p>%s</p>' % format_text(obj.doc)
@@ -815,12 +856,16 @@ def main():
     # Parse all files ready for use...
     print ' Parsing all pas units...'
     parser_runner.parse_all_units()
+    
     # Extract method/type details and create identifiers/Types pages
     idc = IdentifierCollector()
+    
     # Create all unit (module) pages
     UnitPresenter(idc)
+    
     # Create the index.html page
     IndexPresenter(idc)
+    
     # Create indentifiers.html and Types.html pages
     create_identifiers_doc(idc)
     create_types_doc(idc)
