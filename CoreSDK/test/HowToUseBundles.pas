@@ -1,9 +1,8 @@
-program HowToUseBundles;
+ program HowToUseBundles;
 uses 
     sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources, sgText;
 procedure Main();
 var
-    gameTime: Timer;
     explosion: sprite;
 begin    
     OpenAudio();
@@ -18,17 +17,17 @@ begin
     SpriteSetY(explosion, 131);
 
     Repeat
+        ProcessEvents(); 
 		ClearScreen(ColorWhite);
 		DrawText('[A]nimation', ColorBlack, 0, 0);
 		DrawText('[T]ext', ColorBlack, 0, 10);
 		DrawText('[S]ound Effect', ColorBlack, 0, 20);
 		DrawText('[M]usic', ColorBlack, 0, 30);
-		DrawText('[G]ame Time', ColorBlack, 0, 40);
+		//DrawText('[G]ame Time', ColorBlack, 0, 40);
 		DrawSprite(explosion);
 
 		UpdateSprite(explosion);
 
-		ProcessEvents();
 		if KeyTyped(VK_A) then SpriteStartAnimation(explosion, 'FireExplosion')
 		else if KeyDown(VK_T) then DrawText('Hi!!!', ColorRed, FontNamed('harabaraText'), 0, 200)
 		else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))

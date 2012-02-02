@@ -8,8 +8,6 @@ var
 begin
     OpenGraphicsWindow('Move a Sprite with Keyboard Input', 800, 600);
 
-    ClearScreen(ColorWhite);
-
     LoadBitmapNamed('ball', 'ball_small.png');
 
     ball := CreateSprite(BitmapNamed('ball'));
@@ -18,33 +16,30 @@ begin
 
     repeat
     ProcessEvents();
-    SpriteSetDx(ball, 0);
-    SpriteSetDy(ball, 0.02);
-
-    ClearScreen();
+    ClearScreen(ColorWhite);
 
     if KeyDown(VK_RIGHT) then
     begin
-        SpriteSetDx(ball, 0.2);
+        SpriteSetDx(ball, 1);
         SpriteSetDy(ball, 0);
     end
 
     else if KeyDown(VK_LEFT) then
     begin
-        SpriteSetDx(ball, -0.2);
+        SpriteSetDx(ball, -1);
         SpriteSetDy(ball, 0);
     end
 
     else if KeyDown(VK_UP) then
     begin
         SpriteSetDx(ball, 0);
-        SpriteSetDy(ball, -0.2);
+        SpriteSetDy(ball, -1);
     end
 
     else if KeyDown(VK_DOWN) then
     begin
         SpriteSetDx(ball, 0);
-        SpriteSetDy(ball, 0.2);
+        SpriteSetDy(ball, 1);
     end
 
     else

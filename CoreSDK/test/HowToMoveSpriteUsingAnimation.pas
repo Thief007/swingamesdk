@@ -40,16 +40,14 @@ begin
             SpriteSetDY(myFrog, 0);
             
             DoWalking(myFrog, VK_UP, 'WalkBack', 0, -0.25);
-            DoWalking(myFrog, VK_DOWN,  'WalkFront', 0, +0.25);
-            DoWalking(myFrog, VK_LEFT,  'WalkLeft',  -0.25, 0);
+            DoWalking(myFrog, VK_DOWN, 'WalkFront', 0, +0.25);
+            DoWalking(myFrog, VK_LEFT, 'WalkLeft',  -0.25, 0);
             DoWalking(myFrog, VK_RIGHT, 'WalkRight',  +0.25, 0);
 
-            DoWalking(myFrog, VK_W, 	 'MoonWalkBack',  0, -0.25);
-            DoWalking(myFrog, VK_S,  'MoonWalkFront', 0, +0.25);
-            DoWalking(myFrog, VK_A,  'MoonWalkLeft',  -0.25, 0);
-            DoWalking(myFrog, VK_D, 'MoonWalkRight',  +0.25, 0);
-
-            DoWalking(myFrog, VK_SPACE, 'dance', 0, 0);
+            DoWalking(myFrog, VK_W, 'MoonWalkBack', 0, -0.25);
+            DoWalking(myFrog, VK_S, 'MoonWalkFront', 0, +0.25);
+            DoWalking(myFrog, VK_A, 'MoonWalkLeft', -0.25, 0);
+            DoWalking(myFrog, VK_D, 'MoonWalkRight', +0.25, 0);
         end;
     until WindowCloseRequested();
 
