@@ -1,9 +1,18 @@
   var
     //Preset colours, do not change these values.
-    ColorBlue, ColorGreen, ColorRed, ColorWhite, ColorBlack, ColorYellow,
-    ColorPink, ColorTurquoise, ColorGrey, ColorMagenta, ColorTransparent,
-    ColorLightGrey: Color;
-    
+    ColorWhite        : Color = $FFFFFFFF;
+    ColorGreen        : Color = $FF00FF00;
+    ColorBlue         : Color = $FF0000FF;
+    ColorBlack        : Color = $FF000000;
+    ColorRed          : Color = $FFFF0000;
+    ColorYellow       : Color = $FFFFFF00;
+    ColorPink         : Color = $FFFF1493;
+    ColorTurquoise    : Color = $FF00CED1;
+    ColorGrey         : Color = $FF808080;
+    ColorMagenta      : Color = $FF00FFFF;
+    ColorTransparent  : Color = $00000000;
+    ColorLightGrey    : Color = $FFC8C8C8;
+      
   procedure LoadDefaultColors();
   
 implementation
