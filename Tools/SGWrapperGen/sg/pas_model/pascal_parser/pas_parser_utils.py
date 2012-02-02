@@ -76,7 +76,7 @@ def parse_statement(tokens, block):
     elif tokens.match_lookahead(TokenKind.Identifier):
         # { variable } ( '+=', '-=', '/=', '*=' ) { variable }
         # assignment statement
-        if token_has_values(tokens.lookahead(2)[1], assignmentOperators):
+        if token_has_values(tokens.lookahead(2)[1], assignmentOperators) or ((tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier) and token_has_values(tokens.lookahead(4)[3], assignmentOperators)):
             result = _parse_assignment_statement(tokens, block)
         # function/procedure call
         elif (tokens.lookahead(2)[1].value == '('):

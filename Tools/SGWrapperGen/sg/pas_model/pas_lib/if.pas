@@ -1,3 +1,2 @@
 if  %(expression)s  then
-begin
-%(statement)send;
+%(statement)s %(else)s;

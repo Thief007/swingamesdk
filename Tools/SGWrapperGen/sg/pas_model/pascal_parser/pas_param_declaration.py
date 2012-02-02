@@ -62,7 +62,7 @@ class PascalParameterDeclaration(object):
             the_type = parse_type(tokens, self._block)   # reads the type and returns PascalType
             
             for parameter_name in parameters:
-                toAdd = PascalVariable(parameter_name, the_type, modifier)
+                toAdd = PascalVariable(parameter_name, the_type, modifier, is_parameter=True)
                 self._vars.append(toAdd)
                 method.add_parameter(toAdd)
                 logger.debug('Parser    : Adding parameter %s (%s) to %s', parameter_name, the_type, method.name)
@@ -71,7 +71,7 @@ class PascalParameterDeclaration(object):
             
         tokens.match_token(TokenKind.Symbol, ')')
                 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -89,10 +89,13 @@ class PascalParameterDeclaration(object):
         for (name, module) in converter_helper.converters.items():
             parameters = ""
             for index in range(len(self._vars)):
-                var_data = dict()
-                var_data['identifier'] = self._vars[index].code[name + '_identifier']
-                var_data['type'] = converter_helper.convert_type(module._type_switcher, self._vars[index].type, self._vars[index]._modifier)
-                parameters += module.parameter_template % (var_data)
+                if self._vars[index].type.kind is 'array':
+                    parameters += module.convert_array_declaration(self._vars[index], is_parameter=True)
+                else:
+                    var_data = dict()
+                    var_data['identifier'] = self._vars[index].code[name + '_identifier']
+                    var_data['type'] = converter_helper.convert_type(module._type_switcher, self._vars[index].type, self._vars[index]._modifier)
+                    parameters += module.parameter_template % (var_data)
 
                 if index < (len(self._vars)-1):
                     parameters += my_data[name + '_seperator']

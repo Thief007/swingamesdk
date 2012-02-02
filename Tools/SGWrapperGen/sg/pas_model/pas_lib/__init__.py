@@ -26,6 +26,22 @@ _type_dicts = {
     '_adapter_type_switcher': _adapter_type_switcher,
     }
 
+def convert_array_declaration(array, is_parameter):
+    """
+    converts an array to a string describing the array
+    """
+    from converter_helper import lower_name, convert_type
+    var_name = array.name
+    type_name = convert_type(_type_switcher, array.type.nested_type, None)
+
+    if is_parameter:
+        return '%s : array of %s;' % (var_name, type_name ) 
+    else:
+        str_dimensions = '['
+        for dimension in array.type.dimensions:
+            str_dimensions += '%s..%s' % (dimension[0], dimension[1])
+        str_dimensions += ']'
+        return '%s : array %s of %s;\n' % (var_name, str_dimensions, type_name ) 
 
 extension = '.pas'
 
@@ -56,3 +72,5 @@ enum_value_template             = get_template("enum_values.pas")
 enum_template                   = get_template("enum.pas")
 unit_reference_template         = get_template("unit_reference.pas")
 uses_clause_template            = get_template("uses_clause.pas")
+repeat_statement_template       = get_template("repeat_statement.pas")
+else_statement_template         = get_template("else.pas")

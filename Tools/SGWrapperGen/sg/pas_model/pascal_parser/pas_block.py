@@ -78,6 +78,7 @@ class PascalBlock(object):
         # at this point we must be at a begin
 
         self._compound_statement = parse_statement(tokens, self)
+        tokens.match_token(TokenKind.Symbol)
 
     def resolve_variable(self, var_name):
         #check myself

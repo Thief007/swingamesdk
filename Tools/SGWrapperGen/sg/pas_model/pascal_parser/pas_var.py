@@ -4,10 +4,11 @@ class PascalVariable(object):
         Contains a name and type
     """
     
-    def __init__(self, name, type, modifier = None):
+    def __init__(self, name, type, modifier = None, is_parameter=False):
         self._type = type
         self._name = name
         self._modifier = modifier
+        self._is_parameter = is_parameter
         """
         Stores the line of code for each of the language converters
             eg. code["c_lib"] returns the code to declare a variable in c
@@ -34,6 +35,10 @@ class PascalVariable(object):
     def kind(self):
         return 'variable'
 
+    @property
+    def is_record(self):
+        return (type.kind == 'record')
+
     def to_code(self):
         '''
             Creates a _code entry for each of the converter modules
@@ -47,6 +52,9 @@ class PascalVariable(object):
 
         for (name, module) in converter_helper.converters.items():
             # types need to be evaluated in the loop because they are module specific
-            my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._type, self._modifier)
-            self._code[name] = module.variable_template % my_data
+            if self._type.kind is 'array':
+                self._code[name] = module.convert_array_declaration(self, self._is_parameter)
+            else:
+                my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._type, self._modifier)
+                self._code[name] = module.variable_template % my_data
             self._code[name + "_identifier"] = my_data[name + "_identifier"]

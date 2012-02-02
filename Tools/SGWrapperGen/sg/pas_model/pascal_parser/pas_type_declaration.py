@@ -74,6 +74,11 @@ class PascalTypeDeclaration(object):
                 tokens.match_token(TokenKind.Symbol, ';')
             # other type...
             else:
+                if tokens.match_lookahead(TokenKind.Identifier) and tokens.lookahead(2)[1].value == '.':
+                    # sgTypes.type... so consume the extra identifier and dot
+                    tokens.match_token(TokenKind.Identifier)
+                    tokens.match_token(TokenKind.Symbol, '.')
+
                 new_type = parse_type(tokens, self._parent)
                 tokens.match_token(TokenKind.Symbol, ';')
 

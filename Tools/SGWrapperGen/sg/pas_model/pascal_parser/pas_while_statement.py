@@ -43,7 +43,7 @@ class PascalWhileStatement(object):
         # expression will consume the 'then' delimiter
         logger.debug("Finished parsing while statement")
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -51,11 +51,8 @@ class PascalWhileStatement(object):
         import converter_helper
         
         self._expression.to_code()
-        if (self._statement.kind == 'compound statement'):
-            self._statement.to_code()
-        else:
-            self._statement.to_code()
+        self._statement.to_code()
 
         for (name, module) in converter_helper.converters.items():
-            self._code[name] =  (indentation * '    ') + module.while_statement_template % {'expression' : self._expression.code[name], 'statement' : self._statement.code[name] }
+            self._code[name] = module.while_statement_template % {'expression' : self._expression.code[name], 'statement' : self._statement.code[name] }
 

@@ -111,11 +111,12 @@ def convert_type(the_dict, the_type, modifier = None, dict_name = '_type_switche
             logger.error('HELPER    : Error changing model type %s - %s', modifier, the_type)
             logger.error('          : Add \'%s[%s]\': \'%s\': \'????\',', dict_name, modifier, the_type.name.lower())
                 
-            the_dict[modifier][key] = "UNKNOWN"
+            # hack solution to fix some SwinGame types not being 
+            the_dict[modifier][key] = the_type.name
         
         return the_dict[modifier][key]
     else:
-        return the_type.name
+        return the_type.name    # for Pascal the names stay the same...
 
 def convert_operator(the_dict, the_operator, dict_name = '_operator_conversion_table'):
     '''

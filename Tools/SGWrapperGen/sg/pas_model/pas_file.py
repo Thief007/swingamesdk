@@ -24,7 +24,6 @@ class PascalFile(object):
         self._meta_comment = None
         self._is_virtual = is_virtual
         self._meta_comment = None
-        self._tokens = None
         self._stream = None
         if not self._is_virtual:
             self._stream = SGTokenStream(path)
@@ -86,28 +85,36 @@ class PascalFile(object):
 
     def resolve_unit_reference(self, reference):
         from pas_file_cache import get_unit_named
-        logger.info("File:     Resolving Unit reference: %s", reference.name)
+        logger.debug("File:     Resolving Unit reference: %s", reference.name)
         unit = get_unit_named(reference.name)
         if not (unit is None):
             if (not unit.is_parsed):
                 unit.parse()
             return unit
         return None
+
     def resolve_variable(self, var_name):
         from pas_file_cache import get_unit_named
-        logger.info("File:     Resolving Variable: %s", var_name)
+        logger.debug("File:     Resolving Variable: %s", var_name)
         for unit_reference in self._contents.uses:
             unit = unit_reference.points_to.contents
+            # could be a variable...
             for unit_name, unit_var in unit.variables.items():
                 if unit_name.lower() == var_name.lower():
                     return unit_var
+            # or it could be an enumeration value...
+            for (name, type) in unit.types.items():
+                if type.kind is 'enumeration':
+                    for val in type.values:
+                        if val.name.lower() == var_name.lower():
+                            return val
         # check the System unit...
         system = get_unit_named('System')
         if (system != None):
             for name, unit_var in system.contents.variables.items():
                 if name.lower() == var_name.lower():
                     return unit_var
-        logger.error("File:     Unable to resolve variable: %s", var_name)
+        logger.error("File:     Unable to resolve variable: %s in %s" %( var_name, self._filename))
         assert False
 
     def resolve_function_call(self, function):
@@ -115,7 +122,7 @@ class PascalFile(object):
         Assumes the file has checked itself for the function before calling this
         """
         from pas_file_cache import get_unit_named
-        logger.info("File:     Resolving Function call: %s", function.name)
+        logger.debug("File:     Resolving Function call: %s", function.name)
         for unit_reference in self._contents.uses:
             unit = unit_reference.points_to.contents
             for unit_function in unit.functions:
@@ -130,12 +137,12 @@ class PascalFile(object):
             for unit_function in system.contents.functions:
                 if unit_function.name.lower() == function.name.lower():
                     return unit_function
-        logger.error("File:     Unable to resolve function: %s", function.name)
+        logger.error("File:     Unable to resolve function: %s in %s" % (function.name,  self._filename))
         assert False
 
     def resolve_type(self, type):
         from pas_file_cache import get_unit_named
-        logger.info("File:     Resolving Type: %s", type)
+        logger.debug("File:     Resolving Type: %s", type)
         for unit_reference in self._contents.uses:
             if unit_reference.points_to != None:
                 unit = unit_reference.points_to.contents
@@ -148,7 +155,7 @@ class PascalFile(object):
             for name, unit_type in system.contents.types.items():
                 if name.lower() == type.lower():
                     return unit_type
-        logger.error("File:     Unable to resolve type: %s", type)
+        logger.error("File:     Unable to resolve type: %s in %s" % (type, self._filename))
         assert False
 
     def parse(self):

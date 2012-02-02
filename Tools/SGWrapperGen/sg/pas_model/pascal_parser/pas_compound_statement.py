@@ -38,7 +38,6 @@ class PascalCompoundStatement(object):
             # compound statement currently consumes the end keyword, but not the symbol ';' or '.'
             if tokens.match_lookahead(TokenKind.Identifier, 'end'):
                 tokens.match_token(TokenKind.Identifier, 'end')             # consume end token
-                tokens.match_token(TokenKind.Symbol)
                 break
             elif tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, '.'):
                 # consumed end already -> somehow?

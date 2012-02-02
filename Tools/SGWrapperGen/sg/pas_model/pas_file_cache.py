@@ -21,7 +21,7 @@ def add_file(file):
         _files[file.name] = file
         if file.contains_kind == 'unit':
             _loaded_units[file.name] = file
-            logger.info("File Cache:        Added file: %s", file.name)
+            logger.info("File Cache:        Added unit: %s", file.name)
     else:
         logger.error("File Cache:       Unable to add None unit")
         assert False
