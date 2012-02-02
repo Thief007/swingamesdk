@@ -43,19 +43,13 @@ def copy_without_svn(src,dest,overwrite = True):
   if(os.path.isdir(dest) and overwrite):
     print("    Cleaning %s" % dest)
     swin_shutil.rmtree(dest,ignore_errors = True)
+  print ("    Copying %s to %s" % (src,dest))
   swin_shutil.copytree(src,dest,symlinks = True,ignore = swin_shutil.ignore_patterns(".svn"))
-  print ("    Copied %s to %s" % (src,dest))
   
-  
-  
-  ## name is the folder of the specific target i.e. FPC, Mono, etc
-
-
 
 
 
 def assemble_dist(name, language, sgsdk):
-  dist_folder = get_swin_game_dir()+"Dist/"
   lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
   lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
   src_folder = get_swin_game_dir()+"CoreSDK/src/"
@@ -65,7 +59,7 @@ def assemble_dist(name, language, sgsdk):
   lang_template_folder = template_folder+ language+'/'
   common_lang_template_folder = lang_template_folder+"Common/"
 
-  lang_dist_folder = dist_folder+language+'/'
+  lang_dist_folder = get_swin_game_dir()+"Dist/%s/" % language
   specific_dist_folder = lang_dist_folder+name+'/'
   specific_dist_lib_folder = specific_dist_folder+"lib/"
   specific_template_folder = lang_template_folder+name+'/'
@@ -88,13 +82,63 @@ def assemble_dist(name, language, sgsdk):
   flat_copy_without_svn(lib_src_folder,specific_dist_lib_folder)
   flat_copy_without_svn(src_folder,specific_dist_lib_folder)
   
+  print("--------------------------------------------------")
+  if(sgsdk):
+    build_sgsdk()
+  
 #copy every file not in svn into a flat destination.
 def flat_copy_without_svn(src,dest):
+  
+  print("    Copying all files in %s to %s" % (src, dest))
+  
+  if(not os.path.isdir(dest)):
+    os.mkdir(dest)
   for root, dirs, files in os.walk(src):
     for f in files:
       if(root.find('.svn') == -1):
         fullpath = os.path.join(root, f)
         swin_shutil.copy(fullpath,dest)
+
+
+def build_sgsdk():
+    
+    dist_source_folder = get_swin_game_dir()+"Dist/Source/" 
+    
+    print "Building SGSDK..."
+    
+    print("\n  Copying required files to build SGSDK...")
+    copy_coresdk_to_dist_source()
+    print("\n--------------------------------------------------")
+    
+    print("Cleaning SGSDK...\n")
+    
+    if(subprocess.call(["./%sbuild.sh" % dist_source_folder, "-c"])!=0):
+      print ("\n  Error Cleaning SGSDK");
+      quit();
+
+    print("Compiling SGSDK...\n")
+    
+    if(subprocess.call("./%sbuild.sh" % dist_source_folder)!=0):
+      print ("\n  Error Compiling SGSDK");
+      quit();
+
+def copy_coresdk_to_dist_source():
+  generated_source_folder = get_swin_game_dir()+"Generated/Source/src/"
+  template_source_folder = get_swin_game_dir()+"Templates/Source"
+  dist_source_folder = get_swin_game_dir()+"Dist/Source/"
+  dist_source_src_folder = get_swin_game_dir()+"Dist/Source/src/"
+  dist_source_lib_folder = get_swin_game_dir()+"Dist/Source/lib/"
+  lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
+  src_folder = get_swin_game_dir()+"CoreSDK/src/"
+  lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
+  
+  
+  copy_without_svn(template_source_folder,dist_source_folder)
+  copy_without_svn(lib_folder, dist_source_lib_folder, overwrite = False)
+  flat_copy_without_svn(generated_source_folder, dist_source_src_folder)
+  flat_copy_without_svn(lib_src_folder, dist_source_src_folder)
+  flat_copy_without_svn(src_folder,dist_source_src_folder)
+  
 
   
 def main():
@@ -104,6 +148,13 @@ def main():
       'language':   'Pascal', 
       'sgsdk':      False
     },
+    
+    {
+    'target':     'iOS',
+    'language':   'Pascal', 
+    'sgsdk':      False
+    
+    }
   ]
 
 
@@ -113,9 +164,10 @@ def main():
   
   
   create_swingame_pas();
-  
+  print("--------------------------------------------------")
   for build in CopyList:
-    print("  Assembling Dist Folder for %s..." % build['target'])
+    
+    print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
     assemble_dist(build['target'],build['language'],build['sgsdk'])  
   print("\nFinished!");
   
