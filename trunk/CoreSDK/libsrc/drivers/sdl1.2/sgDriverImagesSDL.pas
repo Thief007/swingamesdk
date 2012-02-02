@@ -67,14 +67,14 @@ implementation
     r, c: Longint;
   begin
  	  CheckAssigned('SDL1.2 ImagesDriver - SetNonTransparentPixels recieved unassigned Bitmap', bmp);
-
+    
     SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
 
     for c := 0 to bmp^.width - 1 do
     begin
       for r := 0 to bmp^.height - 1 do
       begin
-        bmp^.nonTransparentPixels[c, r] := (GraphicsDriver.GetPixel32(bmp^.surface, c, r) <> transparentColor);
+        bmp^.nonTransparentPixels[c, r] := (GraphicsDriver.GetPixel32(bmp, c, r) <> transparentColor);
       end;
     end;
   end;
@@ -86,7 +86,7 @@ implementation
   begin
     SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
     hasAlpha := PSDL_Surface(bmp^.surface)^.format^.BytesPerPixel = 4;
-
+    
     for c := 0 to bmp^.width - 1 do
     begin
       for r := 0 to bmp^.height - 1 do
@@ -113,6 +113,7 @@ implementation
     // Image loaded, so create SwinGame bitmap
     //
     new(result);
+    result^.surface := nil;
 
     if not transparent then 
     begin
@@ -122,7 +123,8 @@ implementation
       else
         result^.surface := SDL_DisplayFormatAlpha(loadedImage);
     end
-    else result^.surface := SDL_DisplayFormat(loadedImage);
+    else 
+      result^.surface := SDL_DisplayFormat(loadedImage);
 
     if not assigned(result^.surface) then
     begin
@@ -140,7 +142,9 @@ implementation
     begin
       correctedTransColor := ColorFrom(result, transparentColor);
       SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+      WriteLn('Pixels for ', filename, ' ', HexStr(result^.surface));
       SetNonTransparentPixels(result, transparentColor);
+      WriteLn('Done ', filename);
     end
     else
     begin
