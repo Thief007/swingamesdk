@@ -6,6 +6,7 @@ APP_PATH=`cd "$APP_PATH"; pwd`
 cd "$APP_PATH"
 FULL_APP_PATH=$APP_PATH
 APP_PATH="."
+SDL_13=false
 
 #
 # Step 1: Detect the operating system
@@ -31,8 +32,16 @@ TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
 
+if [ ${1} = "-badass" ]; then
+    SDL_13=true
+fi
+
 if [ "$OS" = "$MAC" ]; then
-    LIB_DIR="${APP_PATH}/lib/mac"
+    if [ ${SDL_13} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    else
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
 elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib/win"
 fi
@@ -45,7 +54,13 @@ if [ "$OS" = "$WIN" ]; then
     PAS_FLAGS="-g -Ci -gc -Ct"
 else
     PAS_FLAGS="-gw -Ci -Ct"
+fi    
+
+
+if [ ${SDL_13} = true ]; then
+  PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
 fi
+
 DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src ${DRV_LIB}"
 CLEAN="N"
@@ -154,14 +169,24 @@ CleanTmp()
     mkdir "${TMP_DIR}"
 }
 
+DoDriverMessage()
+{
+  if [ ${SDL_13} = true ]; then
+    echo "  ... Using SDL 1.3 Driver"
+  else
+    echo "  ... Using SDL 1.2 Driver"
+  fi
+}
+
 doBasicMacCompile()
 {
     mkdir -p ${TMP_DIR}/${1}
+    
     echo "  ... Compiling $GAME_NAME - $1"
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gh -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-rpath @loader_path/../Frameworks" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
     
     if [ $? != 0 ]; then DoExitCompile; fi
 }
@@ -177,7 +202,7 @@ doMacCompile()
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gh -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}.${1}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}.${1}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
     
     #-CioOR
     
@@ -362,7 +387,7 @@ then
     echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
     echo "--------------------------------------------------"
     echo "  ... Creating ${GAME_NAME}"    
-    
+    DoDriverMessage;
     if [ "$OS" = "$MAC" ]; then
         HAS_PPC=false
         HAS_i386=false
