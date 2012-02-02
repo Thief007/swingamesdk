@@ -11,6 +11,11 @@ class PascalRepeatStatement(object):
         self._expression = None
         self._block = block
         self._statements = list()
+        self._code = dict()     
+
+    @property
+    def code(self):
+        return self._code
 
     @property
     def expression(self):
@@ -36,9 +41,22 @@ class PascalRepeatStatement(object):
         # expression will consume the 'then' delimiter
         logger.debug("Finished parsing repeat statement")
 
+    def to_code(self):
+        '''
+        This method creates the code to declare all it's variables
+        for each of the modules
+        '''
+        import converter_helper
+        
+        self._expression.to_code()
 
-                
+        for statement in self._statements:
+            statement.to_code()
 
-
+        for (name, module) in converter_helper.converters.items():
+            statements = ''
+            for statement in self._statements:
+                statements += statement.code[name]
+            self._code[name] = module.repeat_statement_template % {'expression' : self._expression.code[name], 'statements' : statements }
 
 

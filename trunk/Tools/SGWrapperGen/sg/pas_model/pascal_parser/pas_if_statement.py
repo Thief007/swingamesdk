@@ -10,6 +10,7 @@ class PascalIfStatement(object):
     def __init__(self, block):
         self._expression = None
         self._statement = None
+        self._else_statement = None
         self._block = block
         self._code = dict()
 
@@ -41,6 +42,11 @@ class PascalIfStatement(object):
         self._expression.parse(tokens)
         self._statement = parse_statement(tokens, self._block)
         # expression will consume the 'then' delimiter
+        if tokens.match_lookahead(TokenKind.Identifier, 'else') :
+            tokens.match_token(TokenKind.Identifier, 'else')
+            self._else_statement = parse_statement(tokens, self._block)
+        tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
+
         logger.debug("Finished parsing if statement")
 
     def to_code(self):
@@ -51,16 +57,19 @@ class PascalIfStatement(object):
         import converter_helper
         
         self._expression.to_code()
-        if (self._statement.kind == 'compound statement'):
-            self._statement.to_code()
-        else:
-            self._statement.to_code(indentation+1)
+        self._statement.to_code()
+        if not (self._else_statement is None):
+            self._else_statement.to_code()
 
         for (name, module) in converter_helper.converters.items():
-            self._code[name] = module.if_statement_template % {'expression' : self._expression.code[name], 'statement' : self._statement.code[name] }
+            if_data = dict()
+            if_data['expression'] = self._expression.code[name] 
+            if_data['statement'] = self._statement.code[name]
+            if_data['else'] = ''
+            if not (self._else_statement is None):
+                 if_data['else'] = module.else_statement_template % { "statement" : self._else_statement.code[name] }
 
-
-
+            self._code[name] = module.if_statement_template % if_data
 
 
 

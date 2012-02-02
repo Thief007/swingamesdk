@@ -27,7 +27,7 @@ begin
   repeat // The game loop...
     ProcessEvents();    
     
-    if RegionClickedId() = 'Button1' then ChangeColor(RandomColor);    
+    if RegionClickedId() = 'Button1' then ChangeColor(RandomColor());    
     DrawPanels();      
     UpdateInterface();
     

@@ -18,10 +18,24 @@ class AssignmentStatement(object):
         return self._code
 
     def parse(self, tokens):
-        varName = tokens.match_token(TokenKind.Identifier).value
-        operatorValue = tokens.match_token(TokenKind.Operator).value
+        varName = ''
+        if (tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier):
+            # record field...
+            varName = tokens.match_token(TokenKind.Identifier).value
+            tokens.match_token(TokenKind.Symbol, '.')
+            field_name = tokens.match_token(TokenKind.Identifier).value
 
-        self._operand = self._block.resolve_variable(varName)
+            self._operand = self._block.resolve_variable(varName)
+            if self._operand.type.kind is 'record':
+                if not self._operand.type.has_field(field_name):
+                    logger.error("Parser:       Variable %s does not have field: %s in %s" % (var_name, field_name, next_token.filename))
+                    assert False
+                                 
+        else:
+            varName = tokens.match_token(TokenKind.Identifier).value
+            self._operand = self._block.resolve_variable(varName)
+
+        operatorValue = tokens.match_token(TokenKind.Operator).value
         self._operator = PascalOperator(operatorValue)
 
         self._expression = PascalExpression(self._block)

@@ -54,7 +54,7 @@ if __name__ == '__main__':
                     stream=sys.stdout)
     path = 'test\Pascal'
 
-    add_file(PascalFile.create_unit_from('System', [('myVar', 'LongInt')], ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Boolean'], ['myFunc']))
+    add_file(PascalFile.create_unit_from('System', [('myVar', 'LongInt')], ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Integer', 'Boolean'], ['myFunc']))
 
     print '----------   Adding Files  ----------'
     for file in glob.glob(os.path.join(path, '*.pas')):

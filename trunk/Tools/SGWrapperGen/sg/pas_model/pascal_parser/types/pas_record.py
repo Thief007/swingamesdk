@@ -26,6 +26,13 @@ class PascalRecord(object):
     def name(self):
         return self._name
 
+    @property
+    def has_field(name):
+        for field in self._fields:
+            if field.name == name:
+                return True
+        return False
+
     def parse(self, tokens):
         from pascal_parser.types.pas_record_field import PascalRecordField
         from pascal_parser.pas_parser_utils import _parse_identifier_list, parse_type

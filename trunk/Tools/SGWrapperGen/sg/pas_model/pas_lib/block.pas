@@ -1,2 +1,2 @@
-%(declarations)sbegin
-%(statement)send
+%(declarations)s
+%(statement)s

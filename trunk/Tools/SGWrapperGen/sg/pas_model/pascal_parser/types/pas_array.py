@@ -14,16 +14,26 @@ class PascalArray(object):
     def name(self):
         return self._name
 
+    @property
+    def dimensions(self):
+        return self._dimensions
+
     def set_name(self, name):
         self._name = name
               
     @property
+    def nested_type(self):
+        return self._nested_type
+
+    @property
     def kind(self):
         return 'array'
 
-    @property
-    def type(self):
-        return self._type
+    def get_dimensions(n=1):
+        """
+        returns the nth set of dimensions of an array
+        """
+        if n <= len(self._dimensions): return self._dimensions[n-1]
 
     def parse(self, tokens):
         from pascal_parser.pas_parser_utils import parse_type

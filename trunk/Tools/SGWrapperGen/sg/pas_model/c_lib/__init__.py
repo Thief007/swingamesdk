@@ -266,7 +266,8 @@ _type_dictionary_creation_data = [
             ('shape[0..n - 1]',                         'shape *'),
             ('bitmap[0..n - 1]',                        'bitmap *'),
             ('directionangles[0..n - 1]',               'direction_angles *'),
-            ('dirstatedata[0..n - 1][0..n - 1]',        'dir_state_data *'),
+            ('dirstatedata[0..n - 1][0..n - 1]',        
+             'dir_state_data *'),
             ('linesegment[0..n - 1]',                   'line_segment *'),
             ('triangle[0..n - 1]',                      'triangle *'),
             
@@ -327,6 +328,22 @@ def _build_type_dictionary(type_dictionary_creation_data, dicts):
             for a_key in my_keys:
                 _add_to_dict(dicts[a_key], type_mapping[a_key], identifier_tupple)
 
+def convert_array_declaration(array, is_parameter):
+    """
+    converts an array to a string describing the array
+    """
+    from converter_helper import lower_name, convert_type
+    var_name = lower_name(array.name)
+    type_name = convert_type(_type_switcher, array.type.nested_type, None)
+
+    if is_parameter:
+        return type_name + ' *' + var_name
+    else:
+        result = type_name + var_name 
+        for dimension in array.type.dimensions:
+            result += '[%s]' % dimension[1]
+        return result + ';\n'
+
 #------------------
 
 
@@ -364,3 +381,5 @@ enum_value_template             = get_template("enum_values.c")
 enum_template                   = get_template("enum.c")
 unit_reference_template         = get_template("unit_reference.c")
 uses_clause_template            = get_template("uses_clause.c")
+repeat_statement_template       = get_template("repeat_statement.c")
+else_statement_template         = get_template("else.c")

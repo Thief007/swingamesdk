@@ -5,6 +5,7 @@ from types.pas_number import PascalNumber
 from types.pas_string import PascalString
 from types.pas_operator import PascalOperator
 from types.pas_string import PascalString
+from types.pas_bool import PascalBool
 
 class PascalExpression(object):
     """
@@ -72,14 +73,16 @@ class PascalExpression(object):
                         logger.error("Unable to resolve variable: %s", varName)
                         assert False
             # Operator
-            elif tokens.match_lookahead(TokenKind.Operator):
-                
+            elif tokens.match_lookahead(TokenKind.Operator):                
                 newContent = PascalOperator(tokens.match_token(TokenKind.Operator).value)
 
             elif tokens.match_lookahead(TokenKind.Symbol, '('):
                 tokens.next_token() # consume the delimiter
                 newContent = PascalExpression(self._block, innerExpr = True)
                 newContent.parse(tokens)
+
+            elif tokens.match_lookahead(TokenKind.Boolean):
+                newContent = PascalBool(tokens.match_token(TokenKind.Boolean).value)
                 
             else:
                 logger.error('Unknown expression token... %s' % str(tokens.next_token().value))
