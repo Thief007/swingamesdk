@@ -66,7 +66,10 @@ fi
 
 echo "--------------------------------------------------"
 echo "  ... Creating C# library code"
+mkdir -p ${CS_GENERATED_CODE_DIR}
 CreateCSCode
+
+LOG_FILE="./out.log"
 
 #
 # Step 7: Compile library
@@ -84,8 +87,16 @@ if [ "$OS" = "$WIN" ]; then
     
     csc -t:library -r:System.dll -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}\\lib\\SwinGame.dll" "${CS_LIBRARY_DIR}\\*.cs" "${CS_GENERATED_CODE_DIR}\\*.cs"
 else
-    gmcs -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}/lib/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs" "${CS_GENERATED_CODE_DIR}/*.cs"
+
+    gmcs -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}/lib/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs" "${CS_GENERATED_CODE_DIR}/*.cs"  > ${LOG_FILE} 2> ${LOG_FILE}
+    if [ $? != 0 ]; then
+      echo "Compilation of ${CS_GENERATED_LIB_DIR}/lib/SwinGame.dll failed!"
+      cat out.log
+      exit 1;
+    fi
 fi
+rm -f ${LOG_FILE} 2>> /dev/null
+rm -rf ${CS_GENERATED_CODE_DIR}
 
 #
 # Step 8: Copy files

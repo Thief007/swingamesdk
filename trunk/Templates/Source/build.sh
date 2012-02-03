@@ -89,8 +89,8 @@ LOG_FILE="${APP_PATH}/tmp/out.log"
 FPC_BIN=`which fpc`
 
 if [ "$OS" = "$MAC" ]; then
-    OUT_DIR="${APP_PATH}/bin/Mac"
-    FULL_OUT_DIR="${FULL_APP_PATH}/bin/Mac"
+    OUT_DIR="${APP_PATH}/bin/mac"
+    FULL_OUT_DIR="${FULL_APP_PATH}/bin/mac"
     FRAMEWORK_DIR="${FULL_APP_PATH}/lib/mac"	
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
     HEADER_DIR="${VERSION_DIR}/Headers"
