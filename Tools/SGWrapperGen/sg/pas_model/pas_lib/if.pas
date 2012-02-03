@@ -1,2 +1,2 @@
 if  %(expression)s  then
-%(statement)s %(else)s;
+%(statement)s %(else)s

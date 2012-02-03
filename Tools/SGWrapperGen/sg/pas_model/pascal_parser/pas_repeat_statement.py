@@ -41,7 +41,7 @@ class PascalRepeatStatement(object):
         # expression will consume the 'then' delimiter
         logger.debug("Finished parsing repeat statement")
 
-    def to_code(self):
+    def to_code(self, indentation=0):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -56,7 +56,7 @@ class PascalRepeatStatement(object):
         for (name, module) in converter_helper.converters.items():
             statements = ''
             for statement in self._statements:
-                statements += statement.code[name]
+                statements += statement.code[name] + module.statement_seperator + '\n'
             self._code[name] = module.repeat_statement_template % {'expression' : self._expression.code[name], 'statements' : statements }
 
 

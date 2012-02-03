@@ -19,6 +19,10 @@ class Token(object):
         return self._kind
 
     @property
+    def filename(self):
+        return self._file
+
+    @property
     def value(self):
         return self._value
 

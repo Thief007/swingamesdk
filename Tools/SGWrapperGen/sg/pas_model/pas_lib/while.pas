@@ -1,3 +1,2 @@
 while  %(expression)s  do
-begin
-%(statement)send;
+%(statement)s

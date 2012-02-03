@@ -26,12 +26,17 @@ class PascalRecord(object):
     def name(self):
         return self._name
 
-    @property
-    def has_field(name):
+    def has_field(self, name):
         for field in self._fields:
             if field.name == name:
                 return True
         return False
+
+    def get_field(self, name):
+        for field in self._fields:
+            if field.name == name:
+                return field
+        return None
 
     def parse(self, tokens):
         from pascal_parser.types.pas_record_field import PascalRecordField
@@ -48,7 +53,7 @@ class PascalRecord(object):
 
             for varName in idList:
                 if not varName in self._fields:
-                    field = PascalRecordField(varName, type, modifier)
+                    field = PascalRecordField(varName, type, self)
                     self._fields.append(field)
                     logger.debug("Parsed field : " + varName + " : " + type.name)
 

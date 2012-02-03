@@ -49,7 +49,7 @@ class PascalIfStatement(object):
 
         logger.debug("Finished parsing if statement")
 
-    def to_code(self):
+    def to_code(self, indentation=0):
         '''
         This method creates the code to declare all it's variables
         for each of the modules

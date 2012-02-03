@@ -5,9 +5,10 @@ class PascalRecordField(object):
     Describes a record field in pascal
     """
     
-    def __init__(self, name, type, modifier):
+    def __init__(self, name, type, record):
         self._name = name
         self._type = type
+        self._record = record
         self._code = dict()
 
     @property
@@ -29,6 +30,9 @@ class PascalRecordField(object):
 
         my_data['pas_lib_identifier'] = self._name 
         my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
+
+        self._code['pas_lib_reference'] = "%s.%s" % ( self._record.name, self._name )
+        self._code['c_lib_reference'] = "%s.%s" % ( converter_helper.lower_name(self._record.name), converter_helper.lower_name(self._name ))
 
         for (name, module) in converter_helper.converters.items():
             my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._type, None)

@@ -1,1 +1,2 @@
-%(statements)s
+{
+%(statements)s}

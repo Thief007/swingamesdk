@@ -1,4 +1,3 @@
 if ( %(expression)s )
-{
-%(statement)s}
+%(statement)s
 %(else)s
