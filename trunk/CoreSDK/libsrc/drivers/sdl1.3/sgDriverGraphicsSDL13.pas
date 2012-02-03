@@ -494,6 +494,28 @@ implementation
     SDL_RenderPresent(PSDL13Screen(_screen)^.renderer);
   end;
   
+  function AvailableResolutions() : ResolutionArray;
+	var
+  	mode : SDL_DisplayMode;
+  	i, modes    : LongInt;
+  	resolutions : ResolutionArray;
+	begin
+	  setLength(resolutions,0);
+	  //built in screen = 0
+		modes := SDL_GetNumDisplayModes(0);
+    for i:= 0 to modes do
+    begin
+      SDL_GetDisplayMode(0, i, @mode);
+      setLength(resolutions, length(resolutions)+1);
+      resolutions[i].width := mode.w;
+      resolutions[i].height := mode.h;
+      resolutions[i].refreshRate := mode.refresh_rate;
+      resolutions[i].format      := mode.format;
+    end;
+    result := resolutions;
+    
+	end;
+	
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
   var
       sdlScreen : PSDL13Screen;
@@ -634,5 +656,6 @@ implementation
     GraphicsDriver.SurfaceFormatAssigned    := @SurfaceFormatAssignedProcedure;
     GraphicsDriver.GetScreenWidth           := @GetScreenWidthProcedure;
     GraphicsDriver.GetScreenHeight          := @GetScreenHeightProcedure;
+    GraphicsDriver.AvailableResolutions := @AvailableResolutions;
 	end;
 end.
