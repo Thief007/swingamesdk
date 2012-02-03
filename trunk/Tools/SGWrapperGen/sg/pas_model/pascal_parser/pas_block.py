@@ -5,6 +5,7 @@ from pascal_parser.pas_parser_utils import logger, parse_statement
 from pas_var_declaration import PascalVarDeclaration 
 from pas_function import PascalFunction
 from pas_type_declaration import PascalTypeDeclaration
+from pas_compound_statement import PascalCompoundStatement
 
 class PascalBlock(object):
     """
@@ -76,8 +77,10 @@ class PascalBlock(object):
                 assert False
             self._contents.append(current_part)
         # at this point we must be at a begin
-
-        self._compound_statement = parse_statement(tokens, self)
+        
+        self._compound_statement = PascalCompoundStatement(self, True)
+        self._compound_statement.parse(tokens)
+                                                   
         tokens.match_token(TokenKind.Symbol)
 
     def resolve_variable(self, var_name):

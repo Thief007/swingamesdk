@@ -9,7 +9,8 @@ class PascalCompoundStatement(object):
     as well as store a list of statements
     """
 
-    def __init__(self, block):
+    def __init__(self, block, is_block_statement=False):
+        self._is_block_statement = is_block_statement
         self._statements = list()
         self._block = block
         self._code = dict()
@@ -52,7 +53,7 @@ class PascalCompoundStatement(object):
 
         logger.debug("Finished parsing compound statement")
 
-    def to_code(self):
+    def to_code(self, indentation=0):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -61,7 +62,7 @@ class PascalCompoundStatement(object):
         
 
         for statement in self._statements:
-            statement.to_code()
+            statement.to_code(indentation)
 
         for (name, module) in converter_helper.converters.items():
             statements = ""
@@ -69,8 +70,11 @@ class PascalCompoundStatement(object):
             # otherwise don't...
             if (self._block.parent != None) or (self._block.parent == None and name == 'pas_lib') :
                 for statement in self._statements:
-                    statements += statement.code[name]
-                self._code[name] = module.compound_statement_template % { "statements": statements }
+                    statements += statement.code[name] + module.statement_seperator + '\n'
+                if self._is_block_statement:
+                    self._code[name] = module.block_compound_statement_template % { "statements": statements }
+                else:
+                    self._code[name] = module.compound_statement_template % { "statements": statements }
             else:
                 self._code[name] = ''
 

@@ -57,4 +57,4 @@ class PascalVariable(object):
             else:
                 my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._type, self._modifier)
                 self._code[name] = module.variable_template % my_data
-            self._code[name + "_identifier"] = my_data[name + "_identifier"]
+            self._code[name + "_reference"] = my_data[name + "_identifier"]

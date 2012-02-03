@@ -6,6 +6,7 @@ from types.pas_string import PascalString
 from types.pas_operator import PascalOperator
 from types.pas_string import PascalString
 from types.pas_bool import PascalBool
+from pas_var_reference import PascalVariableReference
 
 class PascalExpression(object):
     """
@@ -65,13 +66,17 @@ class PascalExpression(object):
                     funcCall = PascalFunctionCall(self._block, inExpr=True)
                     funcCall.parse(tokens)
                     newContent = funcCall
-                #variable
+                 # record field...
+                elif (tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier):
+                    varName = tokens.match_token(TokenKind.Identifier).value
+                    tokens.match_token(TokenKind.Symbol, '.')
+                    field_name = tokens.match_token(TokenKind.Identifier).value
+
+                    newContent = PascalVariableReference(varName, self._block, field_name)
+                # variable
                 else:
                     varName = tokens.match_token(TokenKind.Identifier).value
-                    newContent = self._block.resolve_variable(varName)
-                    if newContent is None:
-                        logger.error("Unable to resolve variable: %s", varName)
-                        assert False
+                    newContent = PascalVariableReference(varName, self._block)
             # Operator
             elif tokens.match_lookahead(TokenKind.Operator):                
                 newContent = PascalOperator(tokens.match_token(TokenKind.Operator).value)
@@ -114,8 +119,8 @@ class PascalExpression(object):
             expression = ""
 
             for part in self._contents:
-                if part.kind == 'variable':
-                    expression += part.code[name + '_identifier']   # variable[name] returns variable declaration
+                if part.kind == 'variable' or part.kind == 'record field':
+                    expression += part.code[name + '_reference']   # variable[name] returns variable declaration
                 else:
                     expression += part.code[name]
             
