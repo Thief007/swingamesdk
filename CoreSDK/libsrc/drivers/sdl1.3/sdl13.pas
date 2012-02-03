@@ -7,7 +7,7 @@
 unit sdl13;
 interface
 type
-      size_t = PtrUInt;
+      size_t = PtrUInt; 
       int64_t = Int64;
       Uint64_t = QWord;
       Uint64 = QWord;

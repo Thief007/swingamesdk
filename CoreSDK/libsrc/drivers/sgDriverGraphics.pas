@@ -52,6 +52,7 @@ interface
     SurfaceFormatAssignedProcedure        = function ( bmp : Bitmap) : Boolean;
     GetScreenWidthProcedure               = function():LongInt;
     GetScreenHeightProcedure              = function():LongInt;
+  	AvaialbleResolutionsProcedure         = function (): ResolutionArray;
 
 	GraphicsDriverRecord = record
 	  GetPixel32                : GetPixel32Procedure;
@@ -85,6 +86,7 @@ interface
     SurfaceFormatAssigned     : SurfaceFormatAssignedProcedure;
     GetScreenWidth            : GetScreenWidthProcedure;
     GetScreenHeight           : GetScreenHeightProcedure;
+    AvailableResolutions      : AvaialbleResolutionsProcedure;
 	end;
 	
 	var

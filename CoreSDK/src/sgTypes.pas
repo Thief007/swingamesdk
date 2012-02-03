@@ -95,6 +95,20 @@ interface
       width, height: Longint;
     end;
     
+
+    
+    
+    /// @struct Resolution
+    Resolution = packed record
+      format : word;
+      refreshRate, width, height: Longint;
+    end;
+    
+    /// @type ResolutionArray
+    /// @array_wrapper
+    /// @field data: array of Resolution
+    ResolutionArray = Array of Resolution;
+    
     /// @struct Circle
     Circle = packed record
       center: Point2D;
