@@ -17,6 +17,12 @@ CopyList = [
     'language':   'Pascal', 
     'sgsdk':      False
   
+  },
+  {
+    'target':     'Mono',
+    'language':   'CSharp', 
+    'sgsdk':      True
+  
   }
 ]
 
@@ -45,6 +51,13 @@ def get_os_name():
 
 
 #generates swingame.pas
+
+def create_sgsdk_pas():
+  print("    Creating SGSDK Code...");
+  if(subprocess.call(["python",get_python_script_dir()+"create_pas_lib.py"]) != 0):
+     print ("Error Creating SGSDK Code");
+     quit();  
+
 
 def create_swingame_pas():
   print("  Creating SwinGame Unit Code...");
@@ -130,7 +143,11 @@ def build_sgsdk():
     if(subprocess.call(["./%sbuild.sh" % dist_source_folder, "-c"])!=0):
       print ("\n  Error Cleaning SGSDK");
       quit();
-
+    
+    if(os.listdir(get_swin_game_dir()+"Generated/Source/src/")==[]):
+      print("  SGSDK code not found...\n")
+      create_sgsdk_pas();
+      
     print("Compiling SGSDK...\n")
     
     if(subprocess.call("./%sbuild.sh" % dist_source_folder)!=0):
@@ -164,6 +181,7 @@ def main():
   print("--------------------------------------------------")
   print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
   print("--------------------------------------------------\n")
+  
   
   
   create_swingame_pas();
