@@ -59,16 +59,16 @@ CopyDists()
         if [ "$OS" = "$MAC" ]; then
             echo -n " with library"
             #Copy SGSDK framework
-            cp -R -p -f "${SOURCE_DIST_DIR}/bin"/*.framework "${to}/lib"
+            cp -R -p -f "${SOURCE_DIST_DIR}/bin/mac"/*.framework "${to}/lib"
             #Copy SDL frameworks
-            cp -R -p -f "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
+            cp -R -p -f "${SOURCE_DIST_DIR}/lib/mac"/*.framework "${to}/lib"
         elif [ "$OS" = "$WIN" ]; then
             echo -n " with library"
             #Copy SGSDK framework
-            cp -p -f "${SOURCE_DIST_DIR}/bin"/*.dll "${to}/lib"
+            cp -p -f "${SOURCE_DIST_DIR}/bin/win"/*.dll "${to}/lib"
             #Copy SDL frameworks
-            cp -p -f "${SOURCE_DIST_DIR}/lib"/*.dll "${to}/lib"
-            cp -p -f "${SOURCE_DIST_DIR}/lib"/*.rc "${to}/lib"
+            cp -p -f "${SOURCE_DIST_DIR}/lib/win"/*.dll "${to}/lib"
+            cp -p -f "${SOURCE_DIST_DIR}/lib/win"/*.rc "${to}/lib"
         fi
         echo ""
     done
