@@ -12,14 +12,16 @@ interface
 	type
 		ShowKeyboardProcedure = procedure();
 		InitProcedure = procedure();
-		HandleAxisMotionEventProcedure = function() : AccelerometerMotion;
+		ProcessAxisMotionEventProcedure = function() : AccelerometerMotion;
 		AxisToGProcedure = function( value : LongInt ) : Single;
+		ProcessTouchEventProcedure = function (touchID : Int64) : FingerArray;
 	
 	iOSDriverRecord = record
 		ShowKeyboard     			: ShowKeyboardProcedure;
 		Init	         				: InitProcedure;
-		HandleAxisMotionEvent : HandleAxisMotionEventProcedure;
+		ProcessAxisMotionEvent : ProcessAxisMotionEventProcedure;
 		AxisToG 							: AxisToGProcedure;
+		ProcessTouchEvent 			: ProcessTouchEventProcedure;
 	end;  
 	
 	
@@ -41,13 +43,21 @@ implementation
 	procedure DefaultShowKeyboardProcedure();
 	begin
 		LoadDefaultiOSDriver();
-		iOSDriver.ShowKeyboard();
+		exit;
+		//TO DO
+		// iOSDriver.ShowKeyboard();
 	end;
 
-	function DefaultHandleAxisMotionEventProcedure() : AccelerometerMotion; 
+	function DefaultProcessAxisMotionEventProcedure() : AccelerometerMotion; 
 	begin
 		LoadDefaultiOSDriver();
-		result := iOSDriver.HandleAxisMotionEvent();
+		result := iOSDriver.ProcessAxisMotionEvent();
+	end;
+
+	function DefaultProcessTouchEventProcedure(touchID : Int64): FingerArray; 
+	begin
+		LoadDefaultiOSDriver();
+		result := iOSDriver.ProcessTouchEvent(touchID);
 	end;
 
 	function DefaultAxisToGProcedure(value : LongInt): Single; 
@@ -68,8 +78,9 @@ implementation
 	begin
 		iOSDriver.ShowKeyboard 					:= @DefaultShowKeyboardProcedure;
     iOSDriver.Init         					:= @DefaultInitProcedure;
-    iOSDriver.HandleAxisMotionEvent := @DefaultHandleAxisMotionEventProcedure;
+    iOSDriver.ProcessAxisMotionEvent := @DefaultProcessAxisMotionEventProcedure;
     iOSDriver.AxisToG 							:= @DefaultAxisToGProcedure;
+    iOSDriver.ProcessTouchEvent 			:= @DefaultProcessTouchEventProcedure;
 	end;
 end.
 	
