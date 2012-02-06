@@ -68,19 +68,21 @@ def parse_statement(tokens, block):
     if tokens.match_lookahead(TokenKind.Identifier, 'begin'):
         result = _parse_compound_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier, 'if'):
-          result = _parse_if_statement(tokens, block)
+        result = _parse_if_statement(tokens, block)
+    elif tokens.match_lookahead(TokenKind.Identifier, 'case'):
+        result = _parse_case_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier, 'while'):
         result = _parse_while_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier, 'repeat'):
         result = _parse_repeat_statement(tokens, block)
     elif tokens.match_lookahead(TokenKind.Identifier):
+        # function/procedure call
+        if (tokens.lookahead(2)[1].value == '('):
+            result = _parse_procedure_call_statement(tokens, block)
         # { variable } ( '+=', '-=', '/=', '*=' ) { variable }
         # assignment statement
-        if token_has_values(tokens.lookahead(2)[1], assignmentOperators) or ((tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier) and token_has_values(tokens.lookahead(4)[3], assignmentOperators)):
+        elif _is_assignment_statement(tokens):
             result = _parse_assignment_statement(tokens, block)
-        # function/procedure call
-        elif (tokens.lookahead(2)[1].value == '('):
-            result = _parse_procedure_call_statement(tokens, block)
         # something else?
         else:
             logger.error("Unknown statement : " + str(tokens.next_token()))
@@ -89,6 +91,29 @@ def parse_statement(tokens, block):
         logger.error("Unrecognised token: " + str(tokens.next_token()))
         assert False
     return result
+
+# Checks to see if the statement is an assignment statement...
+# only checks for a depth of 1...
+# identifier.identifier 'operator'
+# identifier[ ] 'operator'
+# identifier 'operator'         
+def _is_assignment_statement(tokens, current_index=1):
+    current_idx = current_index
+    # identifier 'operator'
+    if token_has_values(tokens.lookahead(current_idx + 1)[current_idx], assignmentOperators):
+        return True
+    # identifier.identifier 'operator'
+    elif ((tokens.lookahead(current_idx+1)[current_idx].value == '.') and (tokens.lookahead(current_idx+2)[current_idx+1].kind is TokenKind.Identifier)):
+        return _is_assignment_statement(tokens, current_idx + 2)    # move past . symbol to the next identifier
+        #identifier [ ] 'operator
+    elif (tokens.lookahead(current_idx+1)[current_idx].value == '['):
+        # move to the end of the expression...
+        while tokens.lookahead(current_idx+1)[current_idx].value != ']':
+            current_idx += 1
+        return _is_assignment_statement(tokens, current_idx+1)  # move past the array dereference to the next symbol
+    else:
+        logger.error("Error in Assignment Statement: %s..." % tokens.lookahead(current_idx+1)[current_idx])
+        assert False
 
 def _parse_compound_statement(tokens, block):
     from pas_compound_statement import PascalCompoundStatement 
@@ -122,6 +147,13 @@ def _parse_assignment_statement(tokens, block):
     from pas_assignment_statement import AssignmentStatement
 
     result = AssignmentStatement(block)
+    result.parse(tokens)
+    return result
+
+def _parse_case_statement(tokens, block):
+    from pas_case_statement import PascalCaseStatement
+
+    result = PascalCaseStatement(block)
     result.parse(tokens)
     return result
 

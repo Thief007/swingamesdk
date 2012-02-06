@@ -60,7 +60,7 @@ class AssignmentStatement(object):
     def block(self):
         return self._block
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -79,4 +79,7 @@ class AssignmentStatement(object):
             my_data[name + '_operand'] = self._operand.code[name + '_reference']
             my_data[name + '_expression'] = self._expression.code[name]
             my_data[name + '_operator'] = self._operator.code[name]
-            self._code[name] = (indentation * '    ') + module.assignment_template % my_data
+            self._code[name] = module.assignment_template % my_data
+
+            self._code[name] = converter_helper.apply_indents(self._code[name], module.indenter['statement'])
+            

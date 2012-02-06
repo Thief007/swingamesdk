@@ -57,7 +57,7 @@ class PascalRecord(object):
                     self._fields.append(field)
                     logger.debug("Parsed field : " + varName + " : " + type.name)
 
-    def to_code(self):
+    def to_code(self, indentation=0):
         import converter_helper
 
         my_data = dict()
@@ -71,5 +71,7 @@ class PascalRecord(object):
         for (name, module) in converter_helper.converters.items():
             my_data["fields"] = ""
             for field in self._fields:
-                my_data["fields"] += field.code[name]
+                my_data["fields"] += field.code[name] + '\n'
+            my_data["fields"] = converter_helper.apply_indents(my_data['fields'], module.indenter["record_field"])
+            
             self._code[name] = module.record_template % my_data

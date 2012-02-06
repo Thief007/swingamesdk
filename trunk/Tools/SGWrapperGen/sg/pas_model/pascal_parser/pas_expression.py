@@ -38,7 +38,7 @@ class PascalExpression(object):
         newContent = None
         while (True):
             # expression over?
-            if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do'):
+            if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do') or tokens.match_lookahead(TokenKind.Identifier, 'of'):
                 if self._innerExpr:
                     logger.error('Inner expression ended with ; or , : ', tokens.next_token().line_details)
                     assert false

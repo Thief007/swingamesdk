@@ -19,7 +19,7 @@ begin
     if KeyTyped(vk_s) then ShowMouse();
     if MouseShown () then DrawText('visible', ColorBlue, 'Arial', 14, 120, 90);
     if NOT MouseShown () then DrawText('not visible', ColorBlue, 'Arial', 14, 120, 90);
-    if MouseClicked(LeftButton) then str := FloatToStr(MouseX) + ',' + FloatToStr(MouseY);
+    if MouseClicked(LeftButton) then str := FloatToStr(MouseX()) + ',' + FloatToStr(MouseY());
     if MouseDown(LeftButton) then DrawText('is down', ColorBlue, 'Arial', 14, 200, 140);
     if MouseUp(LeftButton) then DrawText('is up', ColorBlue, 'Arial', 14, 200, 140);
     if MouseDown(RightButton) then DrawText('is down', ColorBlue, 'Arial', 14, 200, 165);
@@ -59,7 +59,7 @@ begin
     DrawText('Press H to hide the cursor', ColorBlue, 'Arial', 14, 20, 40);
     DrawText('Press S to show the cursor', ColorBlue, 'Arial', 14, 20, 65);
     DrawText('Cursor status :', ColorBlue, 'Arial', 14, 20, 90);
-    DrawText('Mouse Position at: ' + FloatToStr(MousePosition.x) + ',' + FloatToStr(MouseY), ColorGreen, 'Arial', 10, 0, 0);
+    DrawText('Mouse Position at: ' + FloatToStr(MousePosition.x) + ',' + FloatToStr(MouseY()), ColorGreen, 'Arial', 10, 0, 0);
     DrawText('Mouse last click at position : ' + str, ColorBlue, 'Arial', 14, 20, 115);
     DrawText('Mouse LeftButton status :', ColorBlue, 'Arial', 14, 20, 140);
     DrawText('Mouse RightButton status :', ColorBlue, 'Arial', 14, 20, 165);    

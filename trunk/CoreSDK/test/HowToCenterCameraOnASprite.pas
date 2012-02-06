@@ -31,7 +31,7 @@ begin
     ClearScreen(ColorWhite);
     
     //Camera current coordinate
-    DrawText(PointToString(CameraPos()), ColorBlack, CameraX+700, CameraY+2);
+    DrawText(PointToString(CameraPos()), ColorBlack, CameraX()+700, CameraY()+2);
     
     DrawRectangle(ColorBlue, CameraScreenRect()); // Draw rectangle that encompases the area of the game world that is curretnly on the screen   
     

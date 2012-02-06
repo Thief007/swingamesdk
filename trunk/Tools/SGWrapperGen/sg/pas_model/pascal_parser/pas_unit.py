@@ -26,16 +26,19 @@ class PascalUnit(object):
         self._code = dict()
 
     @staticmethod
-    def create_from(file, variable_names = [()], type_names = [], function_names = []):
+    def create_from(file, variable_names, type_names, function_names):
         from pascal_parser.pas_var import PascalVariable
         from pascal_parser.types.pas_type import PascalType
         result = PascalUnit(file)
-        for (name, type) in variable_names:
-            result.variables[name] = (PascalVariable(name, type))
-        for type_name in type_names:
-            result.types[type_name] = (PascalType(type_name))
-        for function_name in function_names:
-            result.function_declarations.append(function_name)
+        if not (variable_names is None):
+            for (name, type) in variable_names:
+                result.variables[name] = (PascalVariable(name, type))
+        if not (type_names is None):
+            for type_name in type_names:
+                result.types[type_name] = (PascalType(type_name))
+        if not (function_names is None):
+            for function_name in function_names:
+                result.function_declarations.append(function_name)
         return result
 
 

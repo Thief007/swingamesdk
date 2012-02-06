@@ -1,12 +1,14 @@
 from converter_helper import load_templates, get_template
 
+"""
+The indenter stores the number of indents a particular structure has from the current 'base'
+"""
 indenter = {
-    "compound_statement"    : (0, 0),
-    "statement"             : (+1, -1),
-    "variable"              : (+1, -1),
-    "if_statement"          : (0, 0),
-    "while_loop"            : (0, 0),
-
+    "statement"                 : (+1),
+    "block_compound_statement"  : (+1),
+    "variable"                  : (+1),
+    "types"                     : (+1),
+    "record_field"              : (+1),
             }
 
 _val_switcher = {
@@ -43,7 +45,7 @@ def convert_array_declaration(array, is_parameter):
     type_name = convert_type(_type_switcher, array.type.nested_type, None)
 
     if is_parameter:
-        return '%s : array of %s;' % (var_name, type_name ) 
+        return '%s : array of %s' % (var_name, type_name ) 
     else:
         str_dimensions = '['
         for dimension in array.type.dimensions:
@@ -85,3 +87,6 @@ uses_clause_template                = get_template("uses_clause.pas")
 repeat_statement_template           = get_template("repeat_statement.pas")
 else_statement_template             = get_template("else.pas")
 block_compound_statement_template   = get_template('block_compound_statement.pas')
+function_call_expr_template         = get_template('function_call_expr.pas')
+case_statement_template             = get_template('case_statement.pas')
+case_template                       = get_template('case.pas')

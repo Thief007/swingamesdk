@@ -93,7 +93,7 @@ class PascalParameterDeclaration(object):
                     parameters += module.convert_array_declaration(self._vars[index], is_parameter=True)
                 else:
                     var_data = dict()
-                    var_data['identifier'] = self._vars[index].code[name + '_identifier']
+                    var_data['identifier'] = self._vars[index].code[name + '_reference']
                     var_data['type'] = converter_helper.convert_type(module._type_switcher, self._vars[index].type, self._vars[index]._modifier)
                     parameters += module.parameter_template % (var_data)
 

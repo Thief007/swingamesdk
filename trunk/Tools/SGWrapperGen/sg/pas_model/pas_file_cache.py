@@ -10,7 +10,7 @@ def get_file_named(name):
     '''
     '''
     if name != None:
-        return _files[name]
+        return _files[name.lower()]
     else:
         return None
 
@@ -18,9 +18,9 @@ def add_file(file):
     '''
     '''
     if file != None:
-        _files[file.name] = file
+        _files[file.name.lower()] = file
         if file.contains_kind == 'unit':
-            _loaded_units[file.name] = file
+            _loaded_units[file.name.lower()] = file
             logger.info("File Cache:        Added unit: %s", file.name)
     else:
         logger.error("File Cache:       Unable to add None unit")
@@ -30,7 +30,7 @@ def get_unit_named(name):
     '''
     gets a unit of a specific name from the unit cache
     '''
-    if (name != None) and (name in _loaded_units):
-        return _loaded_units[name]
+    if (name != None) and (name.lower() in _loaded_units):
+        return _loaded_units[name.lower()]
     else:
         return None

@@ -131,3 +131,12 @@ def convert_operator(the_dict, the_operator, dict_name = '_operator_conversion_t
         the_dict[key] = the_operator.value
         
     return the_dict[key]
+
+#--------------------------------------------------------------------------------------------------
+
+def apply_indents(str, indentation):
+    result = """"""
+    for line in str.split('\n'):
+        result += (indentation * '    ') + line + '\n'
+    result = result.rstrip()
+    return result

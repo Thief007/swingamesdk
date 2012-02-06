@@ -57,6 +57,7 @@ class PascalRepeatStatement(object):
             statements = ''
             for statement in self._statements:
                 statements += statement.code[name] + module.statement_seperator + '\n'
+            #statements = converter_helper.apply_indents(statements, module.indenter['statement'])
             self._code[name] = module.repeat_statement_template % {'expression' : self._expression.code[name], 'statements' : statements }
-
+            self._code[name] = converter_helper.apply_indents(self._code[name], module.indenter['statement'])
 

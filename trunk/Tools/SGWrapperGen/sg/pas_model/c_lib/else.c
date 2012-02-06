@@ -1,3 +1,2 @@
 else
-{
-%(statement)s}
+%(statement)s

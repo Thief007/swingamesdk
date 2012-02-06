@@ -94,7 +94,7 @@ class PascalTypeDeclaration(object):
             pointer_type = self._parent.resolve_type(type._points_to_identifier)
             type.assign_type(pointer_type)
         
-    def to_code(self):
+    def to_code(self, indentation=0):
         '''
 
         '''
@@ -107,11 +107,12 @@ class PascalTypeDeclaration(object):
         # seperators need to be set for every new package
         #   these could go in the __init__ for each library?
         for (key, type) in self._type_declarations.items():
-            type.to_code()
+            type.to_code(indentation)
 
         for (name, module) in converter_helper.converters.items():
             declaration = ""
             index = 0
             for (key, type) in self._type_declarations.items():
                 declaration += type.code[name]
+            declaration = converter_helper.apply_indents(declaration, module.indenter['types'])
             self._code[name] =  module.type_declaration_template % {"declaration" : declaration}

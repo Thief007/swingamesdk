@@ -121,12 +121,12 @@ class PascalFunction(object):
         if not is_forward:
             self._block.parse(tokens)
         
-    def to_code(self):
+    def to_code(self, indentation):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
         '''
-        import converter_helper
+        import converter_helper 
 
         my_data = dict()
 
@@ -136,11 +136,12 @@ class PascalFunction(object):
         my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
 
         self._parameters.to_code()
-        self._block.to_code()
+        self._block.to_code(indentation)
 
         for (name, module) in converter_helper.converters.items():
             # types need to be evaluated in the loop because they are module specific
             comments = ''
+            code = """"""
             for current_line in self._comments:
                 comments += module.comment_template % { "comment" : current_line}
             my_data[name + '_comments'] = comments
@@ -153,6 +154,8 @@ class PascalFunction(object):
 
             if (self._isFunction):
                 my_data[name + '_type'] = converter_helper.convert_type(module._type_switcher, self._return_type)
-                self._code[name] = module.function_declaration_template % my_data
+                code = module.function_declaration_template % my_data
             else:
-                self._code[name] = module.procedure_declaration_template % my_data
+                code = module.procedure_declaration_template % my_data
+
+            self._code[name] = converter_helper.apply_indents(code, indentation)

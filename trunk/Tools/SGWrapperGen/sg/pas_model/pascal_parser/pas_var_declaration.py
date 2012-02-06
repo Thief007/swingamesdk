@@ -65,7 +65,7 @@ class PascalVarDeclaration(object):
                 logger.debug("Finished parsing variable declaration")
                 break
 
-    def to_code(self):
+    def to_code(self, indentation=0):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -79,5 +79,6 @@ class PascalVarDeclaration(object):
             variables = ""
             for (key, variable) in self._vars.items():
                 variables += variable.code[name]
+            variables = converter_helper.apply_indents(variables, module.indenter['variable'])
             self._code[name] = module.variable_decl_template % { "variables": variables }
-
+           

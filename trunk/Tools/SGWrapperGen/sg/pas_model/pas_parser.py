@@ -26,20 +26,8 @@ def write_file(file_data):
             os.makedirs(newPath)
 
         file = open(change_file_extension(newPath +  file_data.filename, module.extension), "w")
-        for line in file_data.code[name].split('\n'):
-            if ('}' in line):
-                tabs -= 1
-
-            string_to_write = ''
-            for count in range(tabs):
-                string_to_write += '\t'
-            string_to_write += line + '\n'
-            file.write(string_to_write)
-
-            if ('{' in line):
-                tabs += 1
-
-    file.close()
+        file.write(file_data.code[name])
+        file.close()
 
 if __name__ == '__main__':
     import c_lib
@@ -54,8 +42,8 @@ if __name__ == '__main__':
                     stream=sys.stdout)
     path = 'test\Pascal'
 
-    add_file(PascalFile.create_unit_from('System', [('myVar', 'LongInt')], ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Integer', 'Boolean'], ['myFunc']))
-
+    add_file(PascalFile.create_unit_from('System', None, ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Integer', 'Boolean'], None))
+    add_file(PascalFile.create_unit_from('SysUtils', None, None, None))
     print '----------   Adding Files  ----------'
     for file in glob.glob(os.path.join(path, '*.pas')):
         add_file(PascalFile(file))

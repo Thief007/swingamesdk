@@ -44,9 +44,7 @@ begin
           cPoint.y += 1;
         end;    
     end;
-  end
-  else
-    
+  end;    
 end;
   
 procedure Main();

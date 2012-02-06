@@ -58,7 +58,7 @@ class PascalFunctionCall(object):
     def identifier(self):
         return self._identifier
 
-    def to_code(self, indentation = 0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -78,8 +78,10 @@ class PascalFunctionCall(object):
 
         for (name, module) in converter_helper.converters.items():
             my_data[name + '_args'] = self._arguments.code[name]
-            result = ''
             # if the function call is a statement then we indent it
-            if not (self._inExpr):
-                result += (indentation * '    ')
-            self._code[name] = (module.function_call_template % my_data)
+            
+            if self._inExpr:
+                self._code[name] = module.function_call_expr_template % my_data
+            else:
+                self._code[name] = (module.function_call_template % my_data)
+                self._code[name] = converter_helper.apply_indents(self._code[name], module.indenter['statement'])
