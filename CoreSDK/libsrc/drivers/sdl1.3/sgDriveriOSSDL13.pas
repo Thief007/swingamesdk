@@ -18,8 +18,8 @@ interface
 	
 implementation
 	uses sgDriveriOS;
-
-
+	var
+	accelerometer :PSDL_Joystick;
 	procedure InitProcedure();
 	begin
 		{$IFDEF IOS}
@@ -82,11 +82,11 @@ implementation
 	function ProcessTouchEventProcedure(touchID : int64): FingerArray; 
 	var
 	  touch : PSDL_Touch;
-	  tmpFinger : PSDL_Finger;
 	  numberOfFingers, count : LongInt;
 	  sdlFingerArray : PPSDL_Finger;
+	  {$IFNDEF FPC}
 	  sdlFingerArrayIndex : LongWord;
-
+	  {$ENDIF}	
 	begin
 		touch := SDL_GetTouch(touchID);
 		if (touch = nil) then exit;
@@ -103,8 +103,7 @@ implementation
 				result[count] := SDLFingerToFinger((sdlFingerArray + SizeOf(PSDL_Finger))^^);
 			{$ELSE}
 				sdlFingerArrayIndex := (LongWord(sdlFingerArray) + SizeOf(PSDL_Finger));
-				tmpFinger := Ptr(sdlFingerArrayIndex,0)^;
-				result[count] := SDLFingerToFinger(tmpFinger^);
+				result[count] := SDLFingerToFinger(Ptr(sdlFingerArrayIndex)^^);
 			{$ENDIF}
 
 
