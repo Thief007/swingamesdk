@@ -115,6 +115,13 @@ interface
       radius: Longint;
     end;
 
+    /// @struct AccelerometerMotion
+    AccelerometerMotion = packed record
+      xAxis: Longint;
+      yAxis: Longint;
+      zAxis: Longint;
+    end;
+
     /// @struct LineSegment
     LineSegment = packed record
         startPoint: Point2D;

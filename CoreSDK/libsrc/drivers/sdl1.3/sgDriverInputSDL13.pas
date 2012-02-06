@@ -6,7 +6,7 @@ interface
 
       
 implementation
-  uses sgDriverInput, sgInputBackend, sgInput, sgShared, sgTypes ;
+  uses sgDriverInput, sgInputBackend, sgInput, sgShared, sgTypes, sgDriveriOS ;
 
   
   function IsKeyPressedProcedure(virtKeyCode : LongInt) : Boolean;
@@ -83,6 +83,7 @@ implementation
            SDL_KEYDOWN:       HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
            SDL_KEYUP:         HandleKeyupEvent(event.key.keysym.sym);
            SDL_MOUSEBUTTONUP: ProcessMouseEvent(event.button.button); 
+           SDL_JOYAXISMOTION: iOSDriver.HandleAxisMotionEvent();
          end;
        end;
     end;
