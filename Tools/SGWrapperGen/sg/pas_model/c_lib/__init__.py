@@ -10,7 +10,16 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 import sys
 import os
 
-
+"""
+The indenter stores the number of indents a particular structure has from the current 'base'
+"""
+indenter = {
+    "statement"                 : (+1),
+    "block_compound_statement"  : (0),
+    "variable"                  : (+1),
+    "types"                     : (0),
+    "record_field"              : (+1),
+            }
 
 _val_switcher = {
     'True': 'true',
@@ -386,3 +395,4 @@ uses_clause_template                = get_template("uses_clause.c")
 repeat_statement_template           = get_template("repeat_statement.c")
 else_statement_template             = get_template("else.c")
 block_compound_statement_template   = get_template('block_compound_statement.c')
+function_call_expr_template         = get_template('function_call_expr.c')

@@ -49,7 +49,7 @@ class PascalIfStatement(object):
 
         logger.debug("Finished parsing if statement")
 
-    def to_code(self, indentation=0):
+    def to_code(self):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -64,12 +64,16 @@ class PascalIfStatement(object):
         for (name, module) in converter_helper.converters.items():
             if_data = dict()
             if_data['expression'] = self._expression.code[name] 
-            if_data['statement'] = self._statement.code[name]
+            statement = self._statement.code[name]
+
+            if_data['statement'] = statement
             if_data['else'] = ''
+
             if not (self._else_statement is None):
-                 if_data['else'] = module.else_statement_template % { "statement" : self._else_statement.code[name] }
+                statement = self._else_statement.code[name]
+                if_data['else'] = module.else_statement_template % { "statement" : statement }
 
             self._code[name] = module.if_statement_template % if_data
-
+            self._code[name] = converter_helper.apply_indents(self._code[name], module.indenter['statement'])
 
 

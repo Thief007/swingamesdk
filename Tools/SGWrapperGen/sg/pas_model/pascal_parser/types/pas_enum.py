@@ -44,7 +44,7 @@ class PascalEnum(object):
             current_value += 1
             tokens.match_lookahead(TokenKind.Symbol, ',', consume=True) #consume commas
 
-    def to_code(self):
+    def to_code(self,indentation = 0):
         import converter_helper
 
         for value in self._values:

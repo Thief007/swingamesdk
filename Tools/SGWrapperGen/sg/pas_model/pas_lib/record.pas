@@ -1,2 +1,3 @@
 %(pas_lib_identifier)s = record
-%(fields)send;
+%(fields)s
+end;

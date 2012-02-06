@@ -128,7 +128,7 @@ class PascalBlock(object):
         return self._file.resolve_type(type_name)
 
 
-    def to_code(self, exportStatements=True):
+    def to_code(self, indentation=0):
         '''
         This method creates the code to declare all it's variables
         for each of the modules
@@ -136,7 +136,7 @@ class PascalBlock(object):
         import converter_helper
         
         for part in self._contents:
-            part.to_code()
+            part.to_code(indentation)
 
         if (self._compound_statement != None):
             self._compound_statement.to_code()
@@ -154,4 +154,4 @@ class PascalBlock(object):
                 lang_data['statement'] = self._compound_statement.code[name]
 
             self._code[name] = module.block_template % lang_data
-
+            self._code[name] = converter_helper.apply_indents(self._code[name], indentation)
