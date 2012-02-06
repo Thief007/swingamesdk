@@ -37,6 +37,8 @@ interface
     function GetNormalisedDeltaXAxis():Single;
     function GetNormalisedDeltaYAxis():Single;
     function GetNormalisedDeltaZAxis():Single;
+    function iDeviceTouched():Boolean;
+    function iDeviceMoved():Boolean;
   type
     KeyDownData = record
       downAt:   Longint;
@@ -48,6 +50,8 @@ interface
     _quit:                  Boolean;
     _keyPressed:            Boolean;
     _textCancelled:         Boolean;
+    _justTouched:           Boolean;
+    _justMoved:             Boolean;
     _tempString:            String;
 
     _lastKeyRepeat:         Longint;
@@ -80,6 +84,8 @@ implementation
     _readingString := false;
     _textCancelled := false;
     _lastKeyRepeat := 0;
+    _justMoved:= false;
+    _justTouched:=false;
     
     SetLength(_KeyDown, 0);
   end;
@@ -132,6 +138,8 @@ implementation
   
   procedure InputBackendProcessEvents();
   begin
+    _justTouched := false;
+    _justMoved := false;
     _keyPressed := false;
     SetLength(_KeyReleased, 0);
     SetLength(_KeyJustTyped, 0);
@@ -431,6 +439,7 @@ implementation
   
   procedure HandleTouchEvent(finger : FingerArray);
   begin
+    _justTouched := true;
     _fingers := finger;
   end;
 
@@ -447,6 +456,7 @@ implementation
 
   procedure HandleAxisMotionEvent(Accelerometer :  AccelerometerMotion);
   begin
+    _justMoved := true;
     _deltaAccelerometer := Accelerometer;    
   end;
 
@@ -478,6 +488,16 @@ implementation
   function GetNormalisedDeltaZAxis():Single;
   begin
     result := iOSDriver.AxisToG(_deltaAccelerometer.zAxis);
+  end;
+
+  function iDeviceTouched():Boolean;
+  begin
+    result := _justTouched;
+  end;
+
+  function iDeviceMoved():Boolean;
+  begin
+    result := _justMoved;
   end;
 
   
