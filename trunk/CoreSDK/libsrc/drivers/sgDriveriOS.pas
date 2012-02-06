@@ -7,35 +7,35 @@ unit sgDriveriOS;
 //=============================================================================
 
 interface
-	uses sgTypes, {$IFDEF SWINGAME_SDL13}sgDriveriOSSDL13{$ELSE}sgDriveriOSSDL{$ENDIF};
-	
+	uses sgTypes, {$IFDEF SWINGAME_SDL13},sgDriveriOSSDL13{$ENDIF};
+
 	type
 		ShowKeyboardProcedure = procedure();
 		InitProcedure = procedure();
 		ProcessAxisMotionEventProcedure = function() : AccelerometerMotion;
 		AxisToGProcedure = function( value : LongInt ) : Single;
 		ProcessTouchEventProcedure = function (touchID : Int64) : FingerArray;
-	
+
 	iOSDriverRecord = record
 		ShowKeyboard     			: ShowKeyboardProcedure;
 		Init	         				: InitProcedure;
 		ProcessAxisMotionEvent : ProcessAxisMotionEventProcedure;
 		AxisToG 							: AxisToGProcedure;
 		ProcessTouchEvent 			: ProcessTouchEventProcedure;
-	end;  
-	
-	
-	
+	end;
+
+
+
 	var
 		iOSDriver : iOSDriverRecord;
-		
+
 implementation
 	procedure LoadDefaultiOSDriver();
 	begin
 	  {$IFDEF SWINGAME_SDL13}
 		  LoadSDL13iOSDriver();
 		{$ELSE}
-		  LoadSDLiOSDriver();
+		 // LoadSDLiOSDriver();
 		{$ENDIF}
 	end;
 
@@ -48,32 +48,32 @@ implementation
 		// iOSDriver.ShowKeyboard();
 	end;
 
-	function DefaultProcessAxisMotionEventProcedure() : AccelerometerMotion; 
+	function DefaultProcessAxisMotionEventProcedure() : AccelerometerMotion;
 	begin
 		LoadDefaultiOSDriver();
 		result := iOSDriver.ProcessAxisMotionEvent();
 	end;
 
-	function DefaultProcessTouchEventProcedure(touchID : Int64): FingerArray; 
+	function DefaultProcessTouchEventProcedure(touchID : Int64): FingerArray;
 	begin
 		LoadDefaultiOSDriver();
 		result := iOSDriver.ProcessTouchEvent(touchID);
 	end;
 
-	function DefaultAxisToGProcedure(value : LongInt): Single; 
+	function DefaultAxisToGProcedure(value : LongInt): Single;
 	begin
 		LoadDefaultiOSDriver();
 		result :=  iOSDriver.AxisToG(value);
 	end;
 
-	procedure DefaultInitProcedure(); 
+	procedure DefaultInitProcedure();
 	begin
     LoadDefaultiOSDriver();
     iOSDriver.Init();
 	end;
 
 
-	
+
 	initialization
 	begin
 		iOSDriver.ShowKeyboard 					:= @DefaultShowKeyboardProcedure;
@@ -83,4 +83,4 @@ implementation
     iOSDriver.ProcessTouchEvent 			:= @DefaultProcessTouchEventProcedure;
 	end;
 end.
-	
+
