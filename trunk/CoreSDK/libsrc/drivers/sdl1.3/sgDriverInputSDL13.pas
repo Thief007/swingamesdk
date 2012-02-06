@@ -79,11 +79,12 @@ implementation
        while SDL_PollEvent(@event) > 0 do
        begin
          case SDL_EventType(event._type) of
-           SDL_QUIT_EVENT:    DoQuit();
-           SDL_KEYDOWN:       HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
-           SDL_KEYUP:         HandleKeyupEvent(event.key.keysym.sym);
-           SDL_MOUSEBUTTONUP: ProcessMouseEvent(event.button.button); 
-           SDL_JOYAXISMOTION: iOSDriver.HandleAxisMotionEvent();
+           SDL_QUIT_EVENT                     : DoQuit();
+           SDL_KEYDOWN                        : HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
+           SDL_KEYUP                          : HandleKeyupEvent(event.key.keysym.sym);
+           SDL_MOUSEBUTTONUP                  : ProcessMouseEvent(event.button.button); 
+           SDL_JOYAXISMOTION                  : HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
+           SDL_FINGERDOWN, SDL_FINGERMOTION  : HandleTouchEvent(iOSDriver.ProcessTouchEvent(event.tfinger.touchId));
          end;
        end;
     end;

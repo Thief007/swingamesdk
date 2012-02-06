@@ -96,7 +96,25 @@ interface
     end;
     
 
+    /// @struct Finger
+    Finger = Packed record
+      id : int64;
+      position : Point2D;
+      positionDelta : Point2D;
+      lastPosition : Point2D;
+      pressure : word;
+      lastPressure :word;
+      down : boolean;
+    end;
+
     
+    /// @type FingerArray
+    /// @array_wrapper
+    /// @field data: array of Finger
+    FingerArray = Array of Finger;
+      
+
+
     
     /// @struct Resolution
     Resolution = packed record

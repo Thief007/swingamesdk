@@ -1,7 +1,7 @@
 unit sgInputBackend;
 
 interface
-  uses sgTypes, sgDriver;
+  uses sgTypes;
     procedure DoQuit();
     procedure CheckQuit();
     procedure HandleKeydownEvent(kyCode, kyChar : LongInt);
@@ -27,10 +27,16 @@ interface
     function TextEntryWasCancelled: boolean; 
     function WasKeyDown(kyCode : LongInt) : Boolean;
     function WasKeyJustTyped(kyCode : LongInt) : Boolean;
-    
-    
-    
-    
+    procedure HandleTouchEvent(finger : FingerArray);
+    procedure HandleAxisMotionEvent(Accelerometer :  AccelerometerMotion);
+    function GetDeltaXAxis():LongInt;
+    function GetDeltaYAxis():LongInt;
+    function GetDeltaZAxis():LongInt;
+    function GetFingers(): FingerArray;
+    function GetNumberOfFingers(): LongInt;
+    function GetNormalisedDeltaXAxis():Single;
+    function GetNormalisedDeltaYAxis():Single;
+    function GetNormalisedDeltaZAxis():Single;
   type
     KeyDownData = record
       downAt:   Longint;
@@ -57,8 +63,13 @@ interface
     _area:                  Rectangle;
     _readingString:         Boolean;
     _ButtonsClicked: Array [MouseButton] of Boolean;
+
+    //IOS Variables
+    _fingers:            FingerArray;
+    _deltaAccelerometer: AccelerometerMotion;
+
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics;
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics ,sgDriveriOS;
   
   procedure _InitGlobalVars(); 
   begin
@@ -375,8 +386,8 @@ implementation
   function WasKeyReleased(kyCode: Longint): Boolean;
   var i: Longint;
   begin
-    result := false;    
-    kyCode := Driver.GetKeyCode(kyCode);
+    result := false;
+  
     for i := 0 to High(_KeyReleased) do
     begin
       if _KeyReleased[i] = kyCode then
@@ -391,7 +402,6 @@ implementation
   i : Integer;
   begin
     result := false;
-    kyCode := Driver.GetKeyCode(kyCode);
     for i := 0 to High(_KeyJustTyped) do
     begin
       if _KeyJustTyped[i] = kyCode then
@@ -407,7 +417,6 @@ implementation
   i : Integer;
   begin
     result := false;
-    kyCode := Driver.GetKeyCode(kyCode);
     for i := 0 to High(_KeyDown) do
     begin
       if _KeyDown[i].code = kyCode then
@@ -417,7 +426,60 @@ implementation
       end;
     end;
   end;
+
+  //iOS Procedures
   
+  procedure HandleTouchEvent(finger : FingerArray);
+  begin
+    _fingers := finger;
+  end;
+
+  function GetFingers(): FingerArray;
+  begin
+    result := _fingers;
+  end;
+
+  function GetNumberOfFingers(): LongInt;
+  begin
+    result := Length(_fingers);
+  end;
+
+
+  procedure HandleAxisMotionEvent(Accelerometer :  AccelerometerMotion);
+  begin
+    _deltaAccelerometer := Accelerometer;    
+  end;
+
+  function GetDeltaXAxis():LongInt;
+  begin
+    result := _deltaAccelerometer.xAxis;
+  end;
+
+  function GetDeltaYAxis():LongInt;
+  begin
+    result := _deltaAccelerometer.yAxis;
+  end;
+  
+  function GetDeltaZAxis():LongInt;
+  begin
+    result := _deltaAccelerometer.zAxis;
+  end;
+  
+  function GetNormalisedDeltaXAxis():Single;
+  begin
+    result := iOSDriver.AxisToG(_deltaAccelerometer.xAxis);
+  end;
+
+  function GetNormalisedDeltaYAxis():Single;
+  begin
+    result := iOSDriver.AxisToG(_deltaAccelerometer.yAxis);
+  end;
+  
+  function GetNormalisedDeltaZAxis():Single;
+  begin
+    result := iOSDriver.AxisToG(_deltaAccelerometer.zAxis);
+  end;
+
   
 initialization
     _InitGlobalVars();
