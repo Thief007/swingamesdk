@@ -22,13 +22,14 @@ begin
   renderer := SDL_CreateRenderer(win, -1, LongWord(SDL_RENDERER_ACCELERATED) or LongWord(SDL_RENDERER_PRESENTVSYNC));
   WriteLn(HexStr(renderer));
   
- SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
- SDL_RenderClear(renderer);
- SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
+ //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+ //SDL_RenderClear(renderer);
+ //SDL_RenderPresent(renderer);
+ //SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
   repeat
-{      srcRect.x +=1;
-      srcRect.y +=1;
-}      SDL_RenderFillRect(renderer, @srcRect);
+      //srcRect.x +=1;
+      //srcRect.y +=1;
+      //SDL_RenderFillRect(renderer, @srcRect);
       SDL_RenderPresent(renderer);
   until False;
   
