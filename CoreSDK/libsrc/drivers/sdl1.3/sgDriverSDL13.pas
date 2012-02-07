@@ -320,10 +320,15 @@ implementation
 	end;
   
   procedure QuitProcedure(); 
-  begin
-    SDL_DestroyRenderer(PSDL13Screen(_screen)^.renderer);
-    SDL_DestroyWindow(PSDL13Screen(_screen)^.window);
-    Dispose(PSDL13Screen(_screen));
+  begin    
+    if Assigned(PSDL13Screen(_screen)) then
+    begin
+      if Assigned(PSDL13Screen(_screen)^.renderer) then 
+        SDL_DestroyRenderer(PSDL13Screen(_screen)^.renderer);
+      if Assigned(PSDL13Screen(_screen)^.window) then
+        SDL_DestroyWindow(PSDL13Screen(_screen)^.window);
+      Dispose(PSDL13Screen(_screen));
+    end;
     SDL_Quit();
   end;
   
@@ -345,8 +350,8 @@ implementation
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to enable unicode');
     {$ENDIF}
     //Unicode required by input manager.
-    SDL_EnableUNICODE(SDL_ENABLE);
     InitKeyCodes();
+    _screen := nil;
   end;
   
   
