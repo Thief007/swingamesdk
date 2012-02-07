@@ -17,7 +17,7 @@ interface
   procedure LoadSDL13MixerAudioDriver();
   
 implementation
-  uses sgDriverAudio, sgTypes, sgShared, SDL13, SDL13_Mixer;
+  uses sgDriverAudio, sgTypes, sgShared, SDL13, SDL13_Mixer, sysUtils;
   
   var
         // Contains the sound channels used to determine if a sound is currently
@@ -74,19 +74,23 @@ implementation
   // and returns a null pointer.
   function LoadSoundEffectProcedure(filename, name: String) : SoundEffect;
   begin
-    New(result);        
-        result^.effect := Mix_LoadWAV(PChar(filename));
-    
-    if result^.effect = nil then
-        begin
-            Dispose(result);
-            result := nil;
-            RaiseWarning('Error loading sound effect: ' + AudioDriver.GetError());
-            exit;
-        end;
+    New(result); 
+    try
+
+      result^.effect := Mix_LoadWAV(PChar(filename));
+      if result^.effect = nil then RaiseException('Error loading sound effect');
+
+    except on e1: Exception do
+      begin
+        Dispose(result);
+        result := nil;
+        RaiseWarning('Error loading sound effect: ' + AudioDriver.GetError());
+        exit;
+      end;
+    end;
   
-        result^.filename := filename;
-        result^.name := name;
+    result^.filename := filename;
+    result^.name := name;
   end;
   
   procedure StopSoundEffectProcedure(effect : SoundEffect);
