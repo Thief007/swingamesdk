@@ -1,7 +1,7 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
 class PascalPointer(object):
     """
-    Describes a pointer
+    Describes a type pointer...
     """
     
     def __init__(self, block):

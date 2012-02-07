@@ -21,18 +21,9 @@ class AssignmentStatement(object):
 
     def parse(self, tokens):
         varName = ''
-         # record field...
-        if (tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier):
 
-            varName = tokens.match_token(TokenKind.Identifier).value
-            tokens.match_token(TokenKind.Symbol, '.')
-            field_name = tokens.match_token(TokenKind.Identifier).value
-
-            self._operand = PascalVariableReference(varName, self._block, field_name)  
-        # ordinary variable                               
-        else:
-            varName = tokens.match_token(TokenKind.Identifier).value
-            self._operand = PascalVariableReference(varName, self._block)
+        self._operand = PascalVariableReference(self._block)
+        self._operand.parse(tokens)
 
         operatorValue = tokens.match_token(TokenKind.Operator).value
         self._operator = PascalOperator(operatorValue)

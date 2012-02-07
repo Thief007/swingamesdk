@@ -38,9 +38,9 @@ class PascalExpression(object):
         newContent = None
         while (True):
             # expression over?
-            if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do') or tokens.match_lookahead(TokenKind.Identifier, 'of'):
+            if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do') or tokens.match_lookahead(TokenKind.Identifier, 'of') or tokens.match_lookahead(TokenKind.Symbol, ']'):
                 if self._innerExpr:
-                    logger.error('Inner expression ended with ; or , : ', tokens.next_token().line_details)
+                    logger.error('Inner expression terminator expected, %s: ', tokens.next_token())
                     assert false
                 tokens.next_token() # consume the delimiter
                 logger.debug('Expression ended')
@@ -50,42 +50,32 @@ class PascalExpression(object):
                 if self._innerExpr:
                     tokens.match_token(TokenKind.Symbol, ')') # consume the delimiter
                     logger.debug('Inner expression ended')
-
                 break
-            # Number
-            elif tokens.match_lookahead(TokenKind.Number):
-                
-                newContent = PascalNumber(tokens.next_token().value)
-            elif tokens.match_lookahead(TokenKind.String):
-                # string
-                newContent = PascalString(tokens.next_token().value)
             # starts with an Identifier
             elif tokens.match_lookahead(TokenKind.Identifier):
-                # function call
-                if tokens.lookahead(2)[1].value == '(':
-                    funcCall = PascalFunctionCall(self._block, inExpr=True)
-                    funcCall.parse(tokens)
-                    newContent = funcCall
-                 # record field...
-                elif (tokens.lookahead(2)[1].value == '.') and (tokens.lookahead(3)[2].kind is TokenKind.Identifier):
-                    varName = tokens.match_token(TokenKind.Identifier).value
-                    tokens.match_token(TokenKind.Symbol, '.')
-                    field_name = tokens.match_token(TokenKind.Identifier).value
-
-                    newContent = PascalVariableReference(varName, self._block, field_name)
-                # variable
+                # Function Call
+                if tokens.lookahead(2)[1].value is '(':
+                    newContent = PascalFunctionCall(self._block, inExpr=True)
+                    newContent.parse(tokens)
+                # Variable
                 else:
-                    varName = tokens.match_token(TokenKind.Identifier).value
-                    newContent = PascalVariableReference(varName, self._block)
+                    newContent = PascalVariableReference(self._block)
+                    newContent.parse(tokens)
+            # Number
+            elif tokens.match_lookahead(TokenKind.Number):
+                newContent = PascalNumber(tokens.next_token().value)
+            # string
+            elif tokens.match_lookahead(TokenKind.String):
+                newContent = PascalString(tokens.next_token().value)
             # Operator
             elif tokens.match_lookahead(TokenKind.Operator):                
                 newContent = PascalOperator(tokens.match_token(TokenKind.Operator).value)
-
+            # inner expression
             elif tokens.match_lookahead(TokenKind.Symbol, '('):
                 tokens.next_token() # consume the delimiter
                 newContent = PascalExpression(self._block, innerExpr = True)
                 newContent.parse(tokens)
-
+            # Boolean
             elif tokens.match_lookahead(TokenKind.Boolean):
                 newContent = PascalBool(tokens.match_token(TokenKind.Boolean).value)
                 

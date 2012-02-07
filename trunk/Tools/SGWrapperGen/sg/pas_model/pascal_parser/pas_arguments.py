@@ -42,8 +42,6 @@ class PascalArguments(object):
             newExpression = PascalExpression(self._block)
             newExpression.parse(tokens)
             self._contents.append(newExpression)
-            if ():
-                break
 
     def to_code(self):
         '''

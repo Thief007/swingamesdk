@@ -30,6 +30,11 @@ def write_file(file_data):
         file.close()
 
 if __name__ == '__main__':
+
+    logging.basicConfig(level=logging.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s',
+                stream=sys.stdout)
+
     import c_lib
     import pas_lib
     import converter_helper
@@ -37,9 +42,7 @@ if __name__ == '__main__':
     converter_helper.converters["c_lib"] = c_lib
     converter_helper.converters["pas_lib"] = pas_lib
 
-    logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s',
-                    stream=sys.stdout)
+
     path = 'test\Pascal'
 
     add_file(PascalFile.create_unit_from('System', None, ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Integer', 'Boolean'], None))
