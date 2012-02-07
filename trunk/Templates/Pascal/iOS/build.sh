@@ -250,12 +250,20 @@ copyWithoutSVN()
     find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
     # Copy files and links
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+    cd "${FULL_APP_PATH}"
 }
 
 
 echo "  ... Copying resources."
 mkdir -p "${OUT_DIR}Resources"
+
+
+
 copyWithoutSVN "./Resources" "${OUT_DIR}/Resources"
+#setting icon
+cp "./Resources/SwinGame.ico" "${OUT_APP_DIR}/icon.png"
+#setting pre splash
+cp "./Resources/images/Swinburne.jpg" "${OUT_APP_DIR}/default.png"
 rm -f ${LOG_FILE} 2>> /dev/null
 echo "  ... Starting iOS Simulator."
 #restart simulator

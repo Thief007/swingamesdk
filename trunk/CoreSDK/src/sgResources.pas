@@ -678,7 +678,7 @@ implementation
         i: Longint;
         f: Font;
         txt: String;
-        oldW, oldH: Longint;
+        //oldW, oldH: Longint;
         //isStep: Boolean;
         isPaused: Boolean;
         isSkip: Boolean;
@@ -703,9 +703,9 @@ implementation
         {$ENDIF}
         try
             try
-                oldW := ScreenWidth();
-                oldH := ScreenHeight();
-                if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(800, 600);
+                //oldW := ScreenWidth();
+                //oldH := ScreenHeight();
+                //if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(800, 600);
                 ToggleWindowBorder();
                 
                 LoadResourceBundle('splash.txt', False);
@@ -772,7 +772,7 @@ implementation
             end;
             ToggleWindowBorder();
             
-            if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(oldW, oldH);
+            //if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(oldW, oldH);
         end;
         
         {$IFDEF TRACE}
