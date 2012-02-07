@@ -1,1 +1,1 @@
-( %(expression)s )
+(%(expression)s)

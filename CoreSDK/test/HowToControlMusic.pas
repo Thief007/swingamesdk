@@ -50,8 +50,8 @@ begin
       if KeyTyped(vk_6) then PlayMusic('diving-turtle.mp3');
       if KeyTyped(vk_p) then PauseMusic();
       if KeyTyped(vk_r) then ResumeMusic();
-      if KeyTyped(vk_KP_PLUS) and (MusicVolume() < 1)  then SetMusicVolume(MusicVolume + 0.1);
-      if KeyTyped(vk_KP_MINUS) and (MusicVolume() > 0) then SetMusicVolume(MusicVolume - 0.1);      
+      if KeyTyped(vk_KP_PLUS) and (MusicVolume() < 1)  then SetMusicVolume(MusicVolume() + 0.1);
+      if KeyTyped(vk_KP_MINUS) and (MusicVolume() > 0) then SetMusicVolume(MusicVolume() - 0.1);      
       if KeyTyped(vk_s) then if MusicPlaying() then StopMusic();
     end;
     DrawText('Control Music (Escape or q to quit)', ColorRed, 'Arial', 18, 15, 15);

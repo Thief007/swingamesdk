@@ -29,8 +29,10 @@ def write_file(file_data):
         file.write(file_data.code[name])
         file.close()
 
-if __name__ == '__main__':
+def run():
+    main()
 
+def main():
     logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s - %(levelname)s - %(message)s',
                 stream=sys.stdout)
@@ -65,5 +67,6 @@ if __name__ == '__main__':
         if file.contains_kind == 'program':
             write_file(file)
 
-
-    
+if __name__ == '__main__':
+    main()
+  
