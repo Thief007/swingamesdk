@@ -34,10 +34,8 @@ class PascalFunctionCall(object):
 
         self._arguments = PascalArguments(self._block)
         self._arguments.parse(tokens)
-
-        if (not self._inExpr) :
+        if not self._inExpr:
             tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
-
         if do_resolve:
             self._points_to = self._block.resolve_function_call(self)
             if self._points_to is self:

@@ -14,7 +14,8 @@ import os
 import shutil
 from shutil import make_archive
 
-_lang = [ {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"} ]
+_lang = [   {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"}, 
+            {"lang": "C", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"} ]
 _base_path = "../../Dist/HowTo"
 
 def build_dir_structure():

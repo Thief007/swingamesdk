@@ -59,7 +59,7 @@ class PascalCaseStatement(object):
             tokens.match_token(TokenKind.Symbol, ':')
 
             statement = parse_statement(tokens, self._block)
-            tokens.match_token(TokenKind.Symbol, ';')
+            tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
             self._case.append(tuple((constant, statement)))
         if tokens.match_lookahead(TokenKind.Identifier, 'else', consume=True) or tokens.match_lookahead(TokenKind.Identifier, 'otherwise', consume=True):
             while not (tokens.match_lookahead(TokenKind.Identifier, 'end', consume=True)):
