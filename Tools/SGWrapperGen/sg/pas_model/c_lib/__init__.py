@@ -19,6 +19,7 @@ indenter = {
     "variable"                  : (+1),
     "types"                     : (0),
     "record_field"              : (+1),
+    "cases"                     : (+1),
             }
 
 _val_switcher = {
@@ -396,3 +397,8 @@ repeat_statement_template           = get_template("repeat_statement.c")
 else_statement_template             = get_template("else.c")
 block_compound_statement_template   = get_template('block_compound_statement.c')
 function_call_expr_template         = get_template('function_call_expr.c')
+case_statement_template             = get_template('case_statement.c')
+case_template                       = get_template('case.c')
+var_pointer_dereference_template    = get_template('var_pointer_dereference.c')
+var_record_dereference_template     = get_template('var_record_dereference.c')
+var_array_dereference_template      = get_template('var_array_dereference.c')

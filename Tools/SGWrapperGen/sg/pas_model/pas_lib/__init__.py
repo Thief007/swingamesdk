@@ -9,6 +9,7 @@ indenter = {
     "variable"                  : (+1),
     "types"                     : (+1),
     "record_field"              : (+1),
+    "cases"                     : (+1),
             }
 
 _val_switcher = {
@@ -90,3 +91,6 @@ block_compound_statement_template   = get_template('block_compound_statement.pas
 function_call_expr_template         = get_template('function_call_expr.pas')
 case_statement_template             = get_template('case_statement.pas')
 case_template                       = get_template('case.pas')
+var_pointer_dereference_template    = get_template('var_pointer_dereference.pas')
+var_record_dereference_template     = get_template('var_record_dereference.pas')
+var_array_dereference_template      = get_template('var_array_dereference.pas')

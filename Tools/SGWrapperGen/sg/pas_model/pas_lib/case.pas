@@ -1,1 +1,1 @@
-%(constant) : %(statement)s
+%(constant)s : %(statement)s

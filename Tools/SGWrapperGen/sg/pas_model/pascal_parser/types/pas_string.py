@@ -22,8 +22,7 @@ class PascalString(object):
     def __str__(self):
         return str(value)
 
-    def to_code(self, indentation=0):
+    def to_code(self):
         import converter_helper
         for (name, module) in converter_helper.converters.items():
-            variables = ""
-            self._code[name] = (indentation * '    ') +  (module.string_template % {'string' : self._value} )
+            self._code[name] = (module.string_template % {'string' : self._value} )

@@ -78,7 +78,7 @@ class PascalCaseStatement(object):
         import converter_helper
         for case in self._case:
             case[1].to_code()   # statement to code...
-        for statement in _else_statements:
+        for statement in self._else_statements:
             statement.to_code()
         self._expression.to_code()
 
