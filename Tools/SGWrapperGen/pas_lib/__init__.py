@@ -11,17 +11,17 @@ import sys
 import os
 
 _type_switcher = {
+    'int64':    'int64',
     'single': 'Single',
     'longint': 'Longint',
-    'soundeffect': 'SoundEffect',
-    'music': 'Music',
+    'word': 'Word',
+
     'string': 'PChar',
     'color': 'LongWord',
     'timer': 'Timer',
     'byte': 'Byte',
     'resourcekind': 'ResourceKind',
     'longword': 'Longword',
-    'uint16': 'UInt16',
     'bitmap': 'Bitmap',
     'matrix2d': 'Matrix2D',
     'triangle': 'Triangle',
@@ -37,7 +37,11 @@ _type_switcher = {
     'mousebutton': 'MouseButton',
     'boolean': 'Boolean',
     'keycode': 'KeyCode',
+
+
     
+    'resolutionarray':  'resolutionPtr',
+    'fingerarray':      'FingerPtr',
     'longintarray':     'LongintPtr',
     'bitmaparray':      'BitmapPtr',
     'point2darray':     'Point2DPtr',
@@ -60,9 +64,13 @@ _type_switcher = {
     'stringarray': 'StringPtr',
     'collisiontestkind':    'CollisionTestKind',
     
-    'bitmapcell':       'BitmapCell',
-    
-    
+    'bitmapcell':           'BitmapCell',
+    'finger':               'Finger',
+    'resolution':           'Resolution',
+
+    'soundeffect':          'SoundEffect',
+    'music':                'Music',
+
     'panel':                'Panel',
     'region':               'Region',
     'guiradiogroup':        'GUIRadioGroup',

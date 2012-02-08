@@ -24,13 +24,19 @@ GAME_NAME=${APP_PATH##*/}
 FULL_APP_PATH=$APP_PATH
 APP_PATH="."
 
+LIBSRC_DIR="${APP_PATH}/lib"
 
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
 FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
-LIB_DIR="${APP_PATH}/lib"
+
+if [ "$OS" = "$MAC" ]; then
+    LIB_DIR="${APP_PATH}/lib/mac"
+elif [ "$OS" = "$WIN" ]; then
+    LIB_DIR="${APP_PATH}/lib/win"
+fi
 LOG_FILE="${APP_PATH}/out.log"
 
 C_FLAGS="-std=c99"
@@ -145,16 +151,16 @@ doCompileGameMain()
     name="${SRC_DIR}/${GAME_MAIN}"
     name=${file##*/} # ## = delete longest match for */... ie all but file name
     name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-    doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" $1
+    doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" "$1"
 }
 
 doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
-    
-    for file in `find ${LIB_DIR} | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        echo "here"
         out_file="${TMP_DIR}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
     done
@@ -163,6 +169,7 @@ doBasicMacCompile()
     
     #Assemble all of the .s files
     echo "  ... Creating game"
+    echo ${LIB_DIR}
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -Wl,-rpath,@loader_path/../Frameworks -arch i386 -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
@@ -294,7 +301,6 @@ doWindowsCompile()
     
     #Assemble all of the .s files
     echo "  ... Creating game"
-    
     ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }

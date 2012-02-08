@@ -6,24 +6,36 @@ import swin_shutil
 
 
 CopyList = [
-  { 
-    'target':     'FPC',
-    'language':   'Pascal', 
-    'sgsdk':      False
-  },
+  # { 
+  #   'target':     'FPC',
+  #   'language':   'Pascal', 
+  #   'sgsdk':      False
+  # },
   
+  # {
+  #   'target':     'iOS',
+  #   'language':   'Pascal', 
+  #   'sgsdk':      False
+  # },
+
+  # {
+  #   'target':     'Mono',
+  #   'language':   'CSharp', 
+  #   'sgsdk':      True
+  # },
+
   {
-    'target':     'iOS',
-    'language':   'Pascal', 
-    'sgsdk':      False
-  
+  'target':     'gcc',
+  'language':   'C', 
+  'sgsdk':      True
   },
+
   {
-    'target':     'Mono',
-    'language':   'CSharp', 
-    'sgsdk':      True
-  
-  }
+  'target':     'gpp',
+  'language':   'C', 
+  'sgsdk':      True
+  },
+
 ]
 
 
@@ -113,6 +125,9 @@ def assemble_dist(name, language, sgsdk):
   print("--------------------------------------------------")
   if(sgsdk):
     build_sgsdk()
+    dist_source_folder = get_swin_game_dir()+"Dist/Source/"
+    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
+    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
   
 #copy every file not in svn into a flat destination.
 def flat_copy_without_svn(src,dest):
@@ -129,7 +144,9 @@ def flat_copy_without_svn(src,dest):
 
 
 def build_sgsdk():
-    
+    bash = ""
+    if (get_os_name() == "Windows"):
+      bash = "bash ";
     dist_source_folder = get_swin_game_dir()+"Dist/Source/" 
     
     print "Building SGSDK..."
@@ -150,9 +167,12 @@ def build_sgsdk():
       
     print("Compiling SGSDK...\n")
     
-    if(subprocess.call("./%sbuild.sh" % dist_source_folder)!=0):
+    if(subprocess.call("%s./%sbuild.sh" % [bash, dist_source_folder])!=0):
       print ("\n  Error Compiling SGSDK");
+      if (get_os_name() == "Windows"):
+        print ("do you have msys/bin in your environment PATH variable?")
       quit();
+    
 
 
 
