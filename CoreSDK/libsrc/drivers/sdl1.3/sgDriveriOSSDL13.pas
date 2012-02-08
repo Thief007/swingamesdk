@@ -65,18 +65,20 @@ implementation
 		result := value / MAX_G;
 	end;
 
-	function SDLFingerToFinger(sdlFinger : SDL_Finger ): Finger;
+	function SDLFingerToFinger(sdlFinger : PSDL_Finger ): Finger;
 	begin
-		result.id               := sdlFinger.id;
-	  result.position.x       := sdlFinger.x;
-	  result.position.y       := sdlFinger.y;
-	  result.positionDelta.x  := sdlFinger.xdelta;
-	  result.positionDelta.y  := sdlFinger.ydelta;
-	  result.lastPosition.x		:= sdlFinger.last_x;
-	  result.lastPosition.y 	:= sdlFinger.last_y;
-	  result.pressure 				:=sdlFinger.pressure;
-	  result.lastPressure 		:=sdlFinger.last_pressure;
-	  result.down 						:= (sdlFinger.down = SDL_TRUE);
+		if not assigned(sdlFinger) then exit;
+		
+		result.id               := sdlFinger^.id;
+	  result.position.x       := sdlFinger^.x;
+	  result.position.y       := sdlFinger^.y;
+	  result.positionDelta.x  := sdlFinger^.xdelta;
+	  result.positionDelta.y  := sdlFinger^.ydelta;
+	  result.lastPosition.x		:= sdlFinger^.last_x;
+	  result.lastPosition.y 	:= sdlFinger^.last_y;
+	  result.pressure 				:= sdlFinger^.pressure;
+	  result.lastPressure 		:= sdlFinger^.last_pressure;
+	  result.down 						:= (sdlFinger^.down = SDL_TRUE);
 	end;
 
 	function ProcessTouchEventProcedure(touchID : int64): FingerArray; 
@@ -84,32 +86,18 @@ implementation
 	  touch : PSDL_Touch;
 	  numberOfFingers, count : LongInt;
 	  sdlFingerArray : PPSDL_Finger;
-	  {$IFNDEF FPC}
-	  sdlFingerArrayIndex : LongWord;
-	  {$ENDIF}	
 	begin
 		touch := SDL_GetTouch(touchID);
 		if (touch = nil) then exit;
 		sdlFingerArray := touch^.fingers;
 		numberOfFingers := touch^.num_fingers;
+
 		SetLength(result, numberOfFingers);
-		
 
-		result[0] := SDLFingerToFinger(sdlFingerArray^^);
-
-		for count := 1 to numberOfFingers do
+		for count := 0 to numberOfFingers - 1 do
 		begin
-			{$IFDEF FPC}
-				result[count] := SDLFingerToFinger((sdlFingerArray + SizeOf(PSDL_Finger))^^);
-			{$ELSE}
-				sdlFingerArrayIndex := (LongWord(sdlFingerArray) + SizeOf(PSDL_Finger));
-				result[count] := SDLFingerToFinger(Ptr(sdlFingerArrayIndex)^^);
-			{$ENDIF}
-
-
+			result[count] := SDLFingerToFinger((sdlFingerArray + count)^);
 		end;
-
-
 	end;
 	
 	procedure LoadSDL13iOSDriver();
