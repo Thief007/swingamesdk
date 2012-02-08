@@ -1,9 +1,8 @@
-BITMAP,SwinGame,SwinGame.jpg
+//
+// This loads all of the resourced used by the splash screen
+//
 BITMAP,Swinburne,Swinburne.jpg
-BITMAP,SplashBack,SplashBack.jpg
-BITMAP,SwinGameAni,SwinGameAni.jpg,546,327,2,6,11
-BITMAP,LoaderEmpty,loader_empty.png
-BITMAP,LoaderFull,loader_full.png
+BITMAP,SwinGameAni,SwinGameAni.jpg,350,100,7,8,56
 FONT,LoadingFont,arial.ttf,12
 FONT,ArialLarge,arial.ttf,18
 ANIM,Startup,startup.txt

@@ -19,7 +19,6 @@ source "${APP_PATH}/inc/base_template_dirs.sh"
 PYTHON_SCRIPT='create_pas_lib.py'
 PYTHON_UNIT_SCRIPT='lang_pas_unit.py'
 
-
 #
 # Step 4: Set up array of files to copy
 #
@@ -28,7 +27,7 @@ COPY_LIST=( "Command line FPC,${FPC_PAS_TEMPLATE_DIR},${FPC_PAS_DIST_DIR}" )
 if [ "$OS" = "$MAC" ]; then
     # build framework if needed
     # if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
-        source ${APP_PATH}/bundle_source.sh -b
+        ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
         echo
         echo
@@ -36,7 +35,7 @@ if [ "$OS" = "$MAC" ]; then
 elif [ "$OS" = "$WIN" ]; then
     # build dll if needed
     # if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
-        source ${APP_PATH}/bundle_source.sh -b
+        ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK library"; exit 1; fi
         echo
         echo
