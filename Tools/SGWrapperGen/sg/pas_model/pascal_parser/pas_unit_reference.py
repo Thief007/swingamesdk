@@ -32,8 +32,7 @@ class PascalUnitReference(object):
         if do_resolve:
             self._points_to = file_owner.resolve_unit_reference(self)
             if self._points_to is None:
-                logger.error("Unable to resolve unit reference: %s in %s" % (self._name, file_owner.name))
-                assert False
+                raise_error(("Unable to resolve unit reference: %s in %s" % (self._name, file_owner.name)), '', is_critical=False)
 
     def to_code(self):
         import converter_helper

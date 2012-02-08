@@ -1,5 +1,5 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
-from pascal_parser.pas_parser_utils import logger, reservedWords, token_has_values
+from pascal_parser.pas_parser_utils import raise_error, logger, reservedWords, token_has_values
 from pascal_parser.types.pas_type_cache import *
 from pascal_parser.types.pas_enum import PascalEnum
 from pascal_parser.types.pas_pointer import PascalPointer

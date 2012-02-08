@@ -56,6 +56,8 @@ def convert_array_declaration(array, is_parameter):
 
 extension = '.pas'
 
+proper_name = "Pascal"
+
 statement_seperator = ';'
 
 load_templates("pas_lib/", ".pas")

@@ -1,4 +1,4 @@
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 class PascalArguments(object):
     """
     Describes a single variable in pascal

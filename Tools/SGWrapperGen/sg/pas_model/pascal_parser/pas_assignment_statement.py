@@ -2,7 +2,7 @@ from tokeniser.pas_token_kind import TokenKind
 from pas_expression import PascalExpression
 from types.pas_operator import PascalOperator
 from pas_var_reference import PascalVariableReference
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 class AssignmentStatement(object):
     """
     The assignment statement stores the information about an assignment statement

@@ -136,8 +136,7 @@ class PascalUnit(object):
             elif tokens.match_lookahead(TokenKind.Identifier, 'implementation'):
                 break
             else:
-                logger.error('Unknown unit token...' + str(tokens.next_token()))
-                assert False
+                raise_error(('Unknown unit token...' + str(tokens.next_token())), '', is_critical=False)
             self._interface.append(current_part)
 
         init_present = False

@@ -40,8 +40,7 @@ class PascalExpression(object):
             # expression over?
             if tokens.match_lookahead(TokenKind.Symbol, ';') or tokens.match_lookahead(TokenKind.Symbol, ',') or tokens.match_lookahead(TokenKind.Identifier, 'then') or tokens.match_lookahead(TokenKind.Identifier, 'do') or tokens.match_lookahead(TokenKind.Identifier, 'of') or tokens.match_lookahead(TokenKind.Symbol, ']'):
                 if self._innerExpr:
-                    logger.error('Inner expression terminator expected, %s: ', tokens.next_token())
-                    assert false
+                    raise_error(('Inner expression terminator expected, %s: ', tokens.next_token()), '', is_critical=False)
                 tokens.next_token() # consume the delimiter
                 logger.debug('Expression ended')
                 break
@@ -80,8 +79,7 @@ class PascalExpression(object):
                 newContent = PascalBool(tokens.match_token(TokenKind.Boolean).value)
                 
             else:
-                logger.error('Unknown expression token... %s' % str(tokens.next_token().value))
-                assert False
+                raise_error(('Unknown expression token... %s' % str(tokens.next_token().value)), '', is_critical=False)
 
             self._contents.append(newContent)
 

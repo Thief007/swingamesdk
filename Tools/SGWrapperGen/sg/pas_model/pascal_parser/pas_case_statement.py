@@ -48,13 +48,11 @@ class PascalCaseStatement(object):
             elif (tokens.match_lookahead(TokenKind.String)):
                 constant = tokens.match_token(TokenKind.String.value)
                 if len(constant) > 1:
-                    logger.error("Constant expected: %s" %tokens.next_token())
-                    assert False
+                    raise_error(("Constant expected: %s" %tokens.next_token()), '', is_critical=False)
             elif tokens.match_lookahead(TokenKind.Identifier):
                 constant = self._block.resolve_variable(tokens.match_token(TokenKind.Identifier).value)
             else:
-                logger.error("CaseStatement:        Ordinal type expected: %s", tokens.next_token())  
-                assert False
+                raise_error(("CaseStatement:        Ordinal type expected: %s", tokens.next_token()), '', is_critical=False)
 
             tokens.match_token(TokenKind.Symbol, ':')
 

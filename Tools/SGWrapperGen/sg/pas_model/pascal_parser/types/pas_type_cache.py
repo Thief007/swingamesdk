@@ -1,4 +1,4 @@
-from pascal_parser.pas_parser_utils import logger 
+from pascal_parser.pas_parser_utils import raise_error, logger 
 
 _loaded_types = dict()
 
@@ -11,8 +11,7 @@ def get_type(name):
     if no type is found then it returns None
     '''
     if name is None:
-        logger.error("Type Cache:       name was None")
-        assert False
+        raise_error(("Type Cache:       name was None"), '', is_critical=False)
 
     if name in _loaded_types:
         return _loaded_types[name]
@@ -27,5 +26,4 @@ def add_type(to_add):
     if get_type(to_add.name) is None:
         _loaded_types[to_add.name] = to_add
     else:
-        logger.error("Type Cache:       Type already exists in cache (%s)", to_add.name)
-        assert False
+        logger.warning("Type Cache:       Type already exists in cache (%s)", to_add.name)
