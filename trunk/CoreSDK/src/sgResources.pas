@@ -677,7 +677,7 @@ implementation
         isPaused: Boolean;
         isSkip: Boolean;
         startAni: Animation;
-        aniBmp: Bitmap;
+        aniBmp: sgTypes.Bitmap;
         
         procedure InnerProcessEvents();
         begin
