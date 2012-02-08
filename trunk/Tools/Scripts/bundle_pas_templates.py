@@ -6,23 +6,23 @@ import swin_shutil
 
 
 CopyList = [
-  # { 
-  #   'target':     'FPC',
-  #   'language':   'Pascal', 
-  #   'sgsdk':      False
-  # },
+  { 
+    'target':     'FPC',
+    'language':   'Pascal', 
+    'sgsdk':      False
+  },
   
-  # {
-  #   'target':     'iOS',
-  #   'language':   'Pascal', 
-  #   'sgsdk':      False
-  # },
+  {
+    'target':     'iOS',
+    'language':   'Pascal', 
+    'sgsdk':      False
+  },
 
-  # {
-  #   'target':     'Mono',
-  #   'language':   'CSharp', 
-  #   'sgsdk':      True
-  # },
+  {
+    'target':     'Mono',
+    'language':   'CSharp', 
+    'sgsdk':      True
+  },
 
   {
   'target':     'gcc',
@@ -134,7 +134,6 @@ def assemble_dist(name, language, sgsdk):
     
   print("--------------------------------------------------")
   if(sgsdk):
-    build_sgsdk()
     dist_source_folder = get_swin_game_dir()+"Dist/Source/"
     copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
     copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
@@ -171,9 +170,6 @@ def build_sgsdk():
       print ("\n  Error Cleaning SGSDK");
       quit();
     
-    if(os.listdir(get_swin_game_dir()+"Generated/Source/src/")==[]):
-      print("  SGSDK code not found...\n")
-      create_sgsdk_pas();
       
     print("Compiling SGSDK...\n")
     if(subprocess.call("%s./%sbuild.sh" % (bash, dist_source_folder))!=0):
@@ -213,13 +209,15 @@ def main():
   
   
   
-  create_swingame_pas();
+  create_swingame_pas()
+  
+  build_sgsdk()
   print("--------------------------------------------------")
   for build in CopyList:
     
     print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
     assemble_dist(build['target'],build['language'],build['sgsdk'])  
-  print("\nFinished!");
+  print("\nFinished!")
   
   
   
