@@ -150,7 +150,7 @@ doCompile()
 doCompileGameMain()
 {
     name="${SRC_DIR}/${GAME_MAIN}"
-    name=${file##*/} # ## = delete longest match for */... ie all but file name
+    name=${name##*/} # ## = delete longest match for */... ie all but file name
     name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
     doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" "$1"
 }
@@ -159,7 +159,7 @@ doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
     
-    for file in `find ${LIBSRC_DIR}/lib"} | grep [.]c$` ; do
+    for file in `find "${LIBSRC_DIR}" | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${name}.o"
@@ -232,7 +232,7 @@ doMacPackage()
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
-
+    ICON="${GAMEAPP_PATH}/Contents/Resources/SwinGame.icns"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\

@@ -48,8 +48,8 @@ def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (code that links to the DLL)'''
     return lang_helper.std_type_visitor(c_lib._adapter_type_switcher, the_type, modifier, dict_name = '_adapter_type_switcher')
 
-def c_code_for_adapter_type(the_type, var_name):
-    data_type = adapter_type_visitor(the_type)
+def c_code_for_adapter_type(the_type, var_name, modifier = None):
+    data_type = adapter_type_visitor(the_type, modifier)
     if data_type.find("%s") > -1:
         #type has name placeholder
         return data_type % var_name
@@ -304,11 +304,11 @@ def _do_create_type_code(member):
     assert member.is_class or member.is_struct or member.is_enum or member.is_type
     
     member_data = member.lang_data['c']
-    
+
     if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
         if member.is_pointer_wrapper: # convert to resource pointer
             the_type = member.data_type
-            member_data.signature = 'typedef %s;\n' % c_code_for_adapter_type(the_type, member.lower_name)
+            member_data.signature = 'typedef %s;\n' % c_code_for_adapter_type(the_type, member.lower_name, 'ptr-decl')
         elif member.is_data_wrapper: # alias of another type
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
@@ -328,7 +328,7 @@ def _do_create_type_code(member):
         
     elif member.is_struct:
         #typedef struct %s_struct { } struct;
-        member_data.signature = 'typedef struct { \n'
+        member_data.signature = 'typedef struct _%s { \n' % member.lower_name
         
         #write the fields
         for field in member.field_list:
@@ -405,11 +405,11 @@ def write_c_header_for(the_file, out_path):
         seen_types.append(member.lower_name)
         
         if member.is_class:
-            if member.lower_name + "_data" not in seen_types:
-                # print "not seen", member.lower_name + "_data"
-                need_types[member.lower_name + "_data"] = member
-            else:
-                write_c_signature(member, other)
+            # if member.lower_name + "_data" not in seen_types:
+            #     # print "not seen", member.lower_name + "_data"
+            #     need_types[member.lower_name + "_data"] = member
+            # else:
+            write_c_signature(member, other)
         if member.is_struct or member.is_enum or member.is_type:
             write_c_signature(member, other)
             if member.lower_name in need_types.keys():

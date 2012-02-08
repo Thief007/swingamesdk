@@ -76,7 +76,15 @@ def create_swingame_pas():
   if(subprocess.call(["python",get_python_script_dir()+"lang_pas_unit.py"]) != 0):
     print ("Error Creating SwinGame Unit Code");
     quit();
-  
+
+
+def create_lang_lib(language):
+  print("  Creating %s library..." % language);
+  if (language == "Pascal"):
+    language = "pas"
+  if(subprocess.call(["python",get_python_script_dir()+"create_%s_library.py" % language.lower()]) != 0):
+    print ("Error Creating %s library..." % language);
+    quit();
   
 #tree copy without svn and copy symbolic links.
 def copy_without_svn(src,dest,overwrite = True):
@@ -90,6 +98,8 @@ def copy_without_svn(src,dest,overwrite = True):
 
 #assembles the files for the dist folder
 def assemble_dist(name, language, sgsdk):
+  create_lang_lib(language)
+
   lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
   lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
   src_folder = get_swin_game_dir()+"CoreSDK/src/"
@@ -117,11 +127,13 @@ def assemble_dist(name, language, sgsdk):
   print("\n  Copying %s generated files..." % language)
   copy_without_svn(generated_folder, specific_dist_lib_folder,overwrite = False)
   
+
   print("\n  Copying lib files...")
   copy_without_svn(lib_folder, specific_dist_lib_folder,overwrite = False)
-  flat_copy_without_svn(lib_src_folder,specific_dist_lib_folder)
-  flat_copy_without_svn(src_folder,specific_dist_lib_folder)
-  
+  if (language == "Pascal"):
+    flat_copy_without_svn(lib_src_folder,specific_dist_lib_folder)
+    flat_copy_without_svn(src_folder,specific_dist_lib_folder)
+    
   print("--------------------------------------------------")
   if(sgsdk):
     build_sgsdk()
@@ -166,8 +178,7 @@ def build_sgsdk():
       create_sgsdk_pas();
       
     print("Compiling SGSDK...\n")
-    
-    if(subprocess.call("%s./%sbuild.sh" % [bash, dist_source_folder])!=0):
+    if(subprocess.call("%s./%sbuild.sh" % (bash, dist_source_folder))!=0):
       print ("\n  Error Compiling SGSDK");
       if (get_os_name() == "Windows"):
         print ("do you have msys/bin in your environment PATH variable?")
