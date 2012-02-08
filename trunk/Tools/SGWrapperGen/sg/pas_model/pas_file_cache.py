@@ -1,10 +1,14 @@
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 
 _loaded_units = dict()
 _files = dict()
 
 def files():
     return _files
+
+def remove_file_named(name):
+    if get_file_named(name.lower()) != None:
+        del _files[name.lower()]
 
 def get_file_named(name):
     '''
@@ -22,9 +26,10 @@ def add_file(file):
         if file.contains_kind == 'unit':
             _loaded_units[file.name.lower()] = file
             logger.info("File Cache:        Added unit: %s", file.name)
+        else:
+            logger.info("File Cache:        Added program: %s", file.name)
     else:
-        logger.error("File Cache:       Unable to add None unit")
-        assert False
+        raise_error("File Cache:       Unable to add None unit", 'FileIO', is_critical=False)
 
 def get_unit_named(name):
     '''

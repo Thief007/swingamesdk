@@ -21,13 +21,11 @@ class PascalVariableReference(object):
             if self._record.has_field(name):
                 self._variable = self._record.get_field(name)
             else:
-                logger.error("Record %s does not contain field %s" % (self._record.name, name))
-                assert False
+                raise_error(("Record %s does not contain field %s" % (self._record.name, name)), '', is_critical=False)
         else:
             self._variable = self._block.resolve_variable(name)
         if self._variable is None:
-            logger.error("Unable to resolve variable: %s", varName)
-            assert False
+            raise_error(("Unable to resolve variable: %s", varName), '', is_critical=False)
         # enumeration value -> cannot be dereferenced
         if self._variable.kind is 'enumeration value':
             self._symbol = None
@@ -95,6 +93,5 @@ class PascalVariableReference(object):
                     my_data['expression'] = symbol.code[name]
                     my_data['var_reference'] = module.var_array_dereference_template % my_data
                 else:
-                    logger.error("Unknown symbol type when converting... %s", symbol)
-                    assert False
+                    raise_error(("Unknown symbol type when converting... %s", symbol), '', is_critical=False)
             self._code[name + '_reference'] = my_data['var_reference']

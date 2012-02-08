@@ -9,7 +9,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 
 from pas_token_kind import TokenKind
 from pas_token import Token
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 
 class SGPasTokeniser(object):
     

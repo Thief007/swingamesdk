@@ -43,5 +43,4 @@ class PascalPointer(object):
             self._points_to.parse(tokens, is_forward=True)
             self._function_pointer = True
         else:
-            logger.error("Invalid pointer declaration: ", tokens.next_token())
-            assert False
+            raise_error(("Invalid pointer declaration: ", tokens.next_token()), '', is_critical=False)

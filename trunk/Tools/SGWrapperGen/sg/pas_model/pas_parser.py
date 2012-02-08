@@ -4,8 +4,9 @@ import os
 import glob
 
 from pas_file import PascalFile
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 from pas_converter import run_convert
+import converter_helper
 from pas_file_cache import add_file, get_file_named, files
 
 def change_file_extension(fileName, new_extension):
@@ -14,18 +15,20 @@ def change_file_extension(fileName, new_extension):
     eg. change_file_extension (PascalTest.pas, '.c')
     will return PascalTest.c
     '''
-    base = fileName.split('.')[0]
+    base = os.path.basename(fileName).split('.')[0]
     return (base + new_extension)
 
-def write_file(file_data):
+def write_file(file_data, destination):
     tabs = 0
     for (name, module) in converter_helper.converters.items():
-        newPath = 'test/' + name + '/'
+        dest = os.path.normpath(destination + "/" + module.proper_name + '/')
+        filename = change_file_extension(dest + '/' + file_data.filename, module.extension)
+        print "Writing file %s to %s" %(filename, dest)
 
-        if not os.path.exists(newPath):
-            os.makedirs(newPath)
+        if not os.path.exists(dest):
+            os.makedirs(dest)
 
-        file = open(change_file_extension(newPath +  file_data.filename, module.extension), "w")
+        file = open(dest + '/' + filename, "w")
         file.write(file_data.code[name])
         file.close()
 
@@ -40,19 +43,48 @@ def main():
     import c_lib
     import pas_lib
     import converter_helper
-    
+
     converter_helper.converters["c_lib"] = c_lib
     converter_helper.converters["pas_lib"] = pas_lib
 
+    source = os.path.normpath("../../Dist/HowTo/Source_Code/HowTos")
+    lib_source = os.path.normpath("../../Dist/HowTo/Source_Code/HowTos/lib")
+    destination = os.path.normpath("../../Dist/HowTo/Source_Code")
 
-    path = 'test\Pascal'
+    print "Current Directory:                   %s" %os.getcwd()
+    print "os.path.join(os.getcwd() + source :  %s" % os.path.join(os.getcwd(), source)
+    print "Source Directory:                    %s" %source
+    print "Library Source Directory:            %s" %lib_source
+    print "Destination Directory:               %s" %destination
 
+    if not os.path.exists(source):
+        raise_error("Source directory does not exist %s" %source, '', is_critical=False)
+    if not os.path.exists(lib_source):
+        raise_error("Library directory does not exist %s" %lib_source, '', is_critical=False)
+    if not os.path.exists(destination):
+        raise_error("Destination directory does not exist %s" %destination, '', is_critical=False)
+
+    print '----------   Adding Files  ----------'    
+    
+    # add units in the lib_source directory to the file list
     add_file(PascalFile.create_unit_from('System', None, ['LongInt', 'Byte', 'String', 'Single', 'Pointer', 'LongWord', 'Integer', 'Boolean'], None))
     add_file(PascalFile.create_unit_from('SysUtils', None, None, None))
-    print '----------   Adding Files  ----------'
-    for file in glob.glob(os.path.join(path, '*.pas')):
-        add_file(PascalFile(file))
+    dir_contents = glob.glob(os.path.join(lib_source, "*.pas"))
+    if len(dir_contents) > 0:
+        for fname in dir_contents:
+            add_file(PascalFile(fname))
+    else:
+        print "Library directory was empty: %s" %lib_source
 
+    # adds files in the source directory to the file list
+    dir_contents = glob.glob(os.path.join(source, "HowTo*.pas"))
+    if len(dir_contents) > 0:
+        for fname in dir_contents:
+            add_file(PascalFile(fname))
+    else:
+        print 
+        raise_error("Source directory was empty: %s" %source, '', is_critical=True)
+    
     print '----------     Parsing    ----------'
     for (name, file) in files().items():
         if not file.is_parsed:
@@ -65,7 +97,7 @@ def main():
     print '----------     Writing    ----------'
     for (name, file) in files().items():
         if file.contains_kind == 'program':
-            write_file(file)
+            write_file(file, destination)
 
 if __name__ == '__main__':
     main()

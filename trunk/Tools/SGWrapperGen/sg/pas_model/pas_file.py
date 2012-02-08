@@ -1,8 +1,9 @@
 from pascal_parser.tokeniser.pas_token_stream import SGTokenStream
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 from pascal_parser.pas_program import PascalProgram
 from pascal_parser.pas_unit import PascalUnit
+from pas_file_cache import remove_file_named
 class PascalFile(object):
     """
     Describes a pascal source file.
@@ -29,7 +30,7 @@ class PascalFile(object):
             self._stream = SGTokenStream(path)
             self._meta_comment = PascalMetaComment(self._stream)
             self._meta_comment.process_meta_comments()
-            self._filename = os.path.basename(path)
+            self._filename = os.path.basename(path).split('.')[0]
             # program?
             if self._stream.match_lookahead(TokenKind.Identifier, 'program'):
                 self._contains_kind = 'program';
@@ -40,8 +41,7 @@ class PascalFile(object):
                 self._contents = PascalUnit(self)   
             else:
                 #logger
-                logger.error("Error in program syntax: %s in %s", self._stream.next_token(), self._filename)
-                assert False
+                raise_error(("Error in program syntax: %s in %s", self._stream.next_token(), self._filename), '', is_critical=False)
 
             self._name = self._stream.lookahead(2)[1].value     # file's 'name' is after the kind of file is stated
         else:
@@ -114,8 +114,7 @@ class PascalFile(object):
             for name, unit_var in system.contents.variables.items():
                 if name.lower() == var_name.lower():
                     return unit_var
-        logger.error("File:     Unable to resolve variable: %s in %s" %( var_name, self._filename))
-        assert False
+        raise_error(("File:     Unable to resolve variable: %s in %s" %( var_name, self._filename)), '', is_critical=False)
 
     def resolve_function_call(self, function):
         """
@@ -137,8 +136,7 @@ class PascalFile(object):
             for unit_function in system.contents.functions:
                 if unit_function.name.lower() == function.name.lower():
                     return unit_function
-        logger.error("File:     Unable to resolve function: %s in %s" % (function.name,  self._filename))
-        assert False
+        raise_error(("File:     Unable to resolve function: %s in %s" % (function.name,  self._filename)), '', is_critical=False)
 
     def resolve_type(self, type):
         from pas_file_cache import get_unit_named
@@ -155,16 +153,23 @@ class PascalFile(object):
             for name, unit_type in system.contents.types.items():
                 if name.lower() == type.lower():
                     return unit_type
-        logger.error("File:     Unable to resolve type: %s in %s" % (type, self._filename))
-        assert False
+        raise_error(("File:     Unable to resolve type: %s in %s" % (type, self._filename)), '', is_critical=False)
 
     def parse(self):
         """
         parse initiates the parsing of the file described by this PascalFile
         It populates itself with details of the program and parses the contents.
         """     
-        self._contents.parse(self._stream)
-        self._is_parsed = True
+        try:
+            self._contents.parse(self._stream)
+            self._is_parsed = True
+        except Exception:
+            if self._contains_kind is 'unit':
+                # critical error -> units must be parsable
+                # re-raise the same error
+                raise
+            logger.info("Skipping file: %s", self._name)
+            remove_file_named(self._name)
 
     def to_code(self):
         import converter_helper

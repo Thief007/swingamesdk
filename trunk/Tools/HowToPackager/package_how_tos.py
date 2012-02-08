@@ -14,8 +14,9 @@ import os
 import shutil
 from shutil import make_archive
 
-_lang = [   {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"}, 
-            {"lang": "C", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas"} ]
+_lang = [   {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
+            #{"lang": "C", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".c"} 
+            ]
 _base_path = "../../Dist/HowTo"
 
 def build_dir_structure():
@@ -28,7 +29,7 @@ def build_dir_structure():
     for lang in _lang:
         print "  -  Adding language", lang["lang"]
         os.mkdir(_base_path + "/" + lang["lang"])
-        os.mkdir (_base_path+ "/Source_Code")
+        os.mkdir (_base_path+ "/Source_Code/" + lang['lang'])
 def copy_how_to_template(how_to_name):
     print " - Adding", how_to_name
     

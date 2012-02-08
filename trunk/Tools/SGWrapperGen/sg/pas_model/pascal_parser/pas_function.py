@@ -1,5 +1,5 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
-from pascal_parser.pas_parser_utils import logger, parse_statement
+from pascal_parser.pas_parser_utils import raise_error, logger, parse_statement
 from pas_var import PascalVariable
 
 class PascalFunction(object):

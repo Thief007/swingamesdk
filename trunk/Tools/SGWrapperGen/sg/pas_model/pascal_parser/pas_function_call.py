@@ -43,8 +43,7 @@ class PascalFunctionCall(object):
                 # need to get the function I'm being called from...
                 self._points_to = self._block._functions[self.name]
             elif self._points_to is None:
-                logger.error("Unable to resolve function call:  " + self.identifier)
-                assert False
+                raise_error(("Unable to resolve function call:  " + self.identifier), '', is_critical=False)
 
         logger.debug('Ended function call %s', self._identifier)
 

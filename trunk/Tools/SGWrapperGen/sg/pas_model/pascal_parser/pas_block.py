@@ -1,6 +1,6 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
 
-from pascal_parser.pas_parser_utils import logger, parse_statement
+from pascal_parser.pas_parser_utils import raise_error, logger, parse_statement
 
 from pas_var_declaration import PascalVarDeclaration 
 from pas_function import PascalFunction
@@ -73,8 +73,7 @@ class PascalBlock(object):
             elif tokens.match_lookahead(TokenKind.Identifier, 'begin'):
                 break
             else:
-                logger.error('Unknown block token...' + str(tokens.next_token()))
-                assert False
+                raise_error(('Unknown block token...' + str(tokens.next_token())), '', is_critical=False)
             self._contents.append(current_part)
         # at this point we must be at a begin
         

@@ -362,7 +362,7 @@ def convert_array_declaration(array, is_parameter):
 from converter_helper import load_templates, get_template
 
 extension = '.c'
-
+proper_name = "C"
 _build_type_dictionary(_type_dictionary_creation_data, _type_dicts)   
 
 

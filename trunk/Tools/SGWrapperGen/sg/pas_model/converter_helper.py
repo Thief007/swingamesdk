@@ -1,18 +1,24 @@
 _templates = dict()
-from pas_parser import logger
+from pascal_parser.pas_parser_utils import logger, raise_error
 
 converters = {}
 
-def load_templates(path, extension):
+def load_templates(lib, extension):
     import glob
     import os
-    for path in glob.glob(path + '*' + extension):
-        file = open(path, "r")
-        template = ''
-        for line in file.readlines():
-            template += line
-        _templates[os.path.basename(path)] = template
-        file.close()
+    print os.getcwd()
+    path = '../SGWrapperGen/sg/pas_model/' + lib
+    file_paths = glob.glob(path + '*' + extension)
+    if len(file_paths) > 0:
+        for path in file_paths:
+            file = open(path, "r")
+            template = ''
+            for line in file.readlines():
+                template += line
+            _templates[os.path.basename(path)] = template
+            file.close()
+    else:
+        raise_error(("Template path is empty: %s" % path), '', is_critical=True)
 
 def get_template(name):
     if name is None: return None
@@ -20,8 +26,7 @@ def get_template(name):
     if (name in _templates):
         return _templates[name]
     else:
-        logger.error("Error getting template: " + name)
-        assert False 
+        raise_error(("Error getting template: " + name), '', is_critical=True) 
 
 #--------------------------------------------------------------------------------------------------
 

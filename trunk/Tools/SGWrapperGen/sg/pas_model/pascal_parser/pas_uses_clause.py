@@ -1,5 +1,5 @@
 from pascal_parser.tokeniser.pas_token_kind import TokenKind
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 from pascal_parser.pas_unit_reference import PascalUnitReference
 
 class PascalUsesClause(object):
@@ -39,8 +39,7 @@ class PascalUsesClause(object):
                 new_reference.parse(tokens, self._file_owner, do_resolve)
                 self._units.append(new_reference)
             else:
-                logger.error('Error reading uses clause: ' + str(tokens.next_token()))
-                assert False
+                raise_error(('Error reading uses clause: ' + str(tokens.next_token())), '', is_critical=False)
         logger.debug("Finished parsing uses clause")
 
     def to_code(self):

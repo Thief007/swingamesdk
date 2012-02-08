@@ -18,6 +18,20 @@ operators   =   [   (TokenKind.Operator, '+'), (TokenKind.Operator, '-'), (Token
 # Logger object is used to log events to console
 logger = logging.getLogger("sgLogger")
 
+def raise_error(logger_msg, exception_msg, is_critical=False):
+    """
+    This method will log a message to the screen.
+    It will also raise an exception.
+     - logger_msg : the message to be passed to the logger
+     - is_critical : if True the parser is stopped
+     - exception_msg : the message to be displayed in the exception
+    """
+    logger.error(logger_msg)
+    if is_critical:
+        assert False
+    else:
+        raise Exception(exception_msg)
+
 def parse_type(tokens, block):
     """
     parses the type then checks to see if the type already exists in the cache,
@@ -39,13 +53,11 @@ def parse_type(tokens, block):
     elif tokens.match_lookahead(TokenKind.Identifier):
         new_type = block.resolve_type(tokens.match_token(TokenKind.Identifier).value)
     else:
-        logger.error("Unknown type: ", tokens.next_token())
-        assert False
+        raise_error(("Unknown type: ", tokens.next_token()), '', is_critical=False)
 
     if (new_type is None):
         tok = tokens.next_token()
-        logger.error("Unable to resolve type: %s", tok)
-        assert False
+        raise_error(("Unable to resolve type: %s", tok), '', is_critical=False)
     return new_type
           
 def token_has_values(token, list_values):
@@ -85,11 +97,9 @@ def parse_statement(tokens, block):
             result = _parse_assignment_statement(tokens, block)
         # something else?
         else:
-            logger.error("Unknown statement : " + str(tokens.next_token()))
-            assert False
+            raise_error(("Unknown statement : " + str(tokens.next_token())), '', is_critical=False)
     else:
-        logger.error("Unrecognised token: " + str(tokens.next_token()))
-        assert False
+        raise_error(("Unrecognised token: " + str(tokens.next_token())), '', is_critical=False)
     return result
 
 # Checks to see if the statement is an assignment statement...
@@ -112,8 +122,7 @@ def _is_assignment_statement(tokens, current_index=1):
             current_idx += 1
         return _is_assignment_statement(tokens, current_idx+1)  # move past the array dereference to the next symbol
     else:
-        logger.error("Error in Assignment Statement: %s..." % tokens.lookahead(current_idx+1)[current_idx])
-        assert False
+        raise_error(("Error in Assignment Statement: %s..." % tokens.lookahead(current_idx+1)[current_idx]), '', is_critical=False)
 
 def _parse_compound_statement(tokens, block):
     from pas_compound_statement import PascalCompoundStatement 

@@ -2,7 +2,7 @@ from pas_tokeniser import SGPasTokeniser
 from pas_token_kind import TokenKind
 from pas_token import Token
 from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
-from pascal_parser.pas_parser_utils import logger
+from pascal_parser.pas_parser_utils import raise_error, logger
 
 class SGTokenStream(object):
     """A stream of tokens the parsing code can move through"""
@@ -89,10 +89,8 @@ class SGTokenStream(object):
         tok = self.next_token()
         
         if tok._kind != token_kind or (token_value != None and token_value != tok._value.lower()):
-            logger.error('TokenStream        %s: found a %s (%s) expected %s (%s)', 
-                self._tokeniser.line_details(), 
-                tok._kind, tok._value, token_kind, token_value)
-            assert False
+            raise_error(('TokenStream        %s: found a %s (%s) expected %s (%s)', 
+                         self._tokeniser.line_details(), tok._kind, tok._value, token_kind, token_value), '', is_critical=False)
             
         logger.debug('TokenStream    : Matched token %s (%s)', tok._kind, tok._value)
         return tok
@@ -126,11 +124,10 @@ class SGTokenStream(object):
         matched = self.match_one_lookahead(token_lst, consume=False)
         tok = self.next_token()
         if not matched:
-            logger.error('TokenStream    %s: unexpected %s(%s) expected %s', 
+            raise_error(('TokenStream    %s: unexpected %s(%s) expected %s', 
                 self._tokeniser.line_details(), 
                 tok._kind, tok._value, 
-                map(lambda n: '%s(%s)' % (n[0],n[1]),token_lst))
-            assert False
+                map(lambda n: '%s(%s)' % (n[0],n[1]),token_lst)), exception_msg, is_critical=False)
         return tok
 
     def read_to_end_of_comment(self):
