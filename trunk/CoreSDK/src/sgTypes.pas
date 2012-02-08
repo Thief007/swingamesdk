@@ -98,12 +98,12 @@ interface
 
     /// @struct Finger
     Finger = Packed record
-      id : int64;
+      id : Int64;
       position : Point2D;
       positionDelta : Point2D;
       lastPosition : Point2D;
-      pressure : word;
-      lastPressure :word;
+      pressure : Word;
+      lastPressure :Word;
       down : boolean;
     end;
 
@@ -118,7 +118,7 @@ interface
     
     /// @struct Resolution
     Resolution = packed record
-      format : word;
+      format : Word;
       refreshRate, width, height: Longint;
     end;
     

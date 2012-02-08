@@ -25,26 +25,33 @@ FULL_APP_PATH=$APP_PATH
 APP_PATH="."
 
 
+LIBSRC_DIR="${APP_PATH}/lib"
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
 FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
-LIB_DIR="${APP_PATH}/lib"
+
+if [ "$OS" = "$MAC" ]; then
+    LIB_DIR="${APP_PATH}/lib/mac"
+elif [ "$OS" = "$WIN" ]; then
+    LIB_DIR="${APP_PATH}/lib/win"
+fi
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-x c++"
+C_FLAGS="-std=c99"
 SG_INC="-I${APP_PATH}/lib/"
 
 #Locate the compiler...
 GCC_BIN=`which clang`
 if [ -z "$GCC_BIN" ]; then
     #try locating gcc
-    GCC_BIN=`which g++`
+    GCC_BIN=`which gcc`
     
     if [ -z "$GCC_BIN" ]; then
         #no compiler found :(
-        echo "Unable to find a C compiler. Install either clang or g++."
+        echo "Unable to find a C compiler. Install either clang or gcc."
         exit -1
     fi
 fi
@@ -90,13 +97,14 @@ fi
 #
 # Change directories based on release or debug builds
 #
+
 if [ -n "${RELEASE}" ]; then
-    C_FLAGS="-x c++ -O3 -Wall"
+    C_FLAGS="-std=c99 -O3 -Wall"
     OUT_DIR="${OUT_DIR}/Release"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
 else
-    C_FLAGS="-x c++ -g -Wall"
+    C_FLAGS="-std=c99 -g -Wall"
     OUT_DIR="${OUT_DIR}/Debug"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
     TMP_DIR="${TMP_DIR}/Debug"
@@ -144,14 +152,14 @@ doCompileGameMain()
     name="${SRC_DIR}/${GAME_MAIN}"
     name=${file##*/} # ## = delete longest match for */... ie all but file name
     name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-    doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" $1
+    doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" "$1"
 }
 
 doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
     
-    for file in `find ${LIB_DIR} | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR}/lib"} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${name}.o"

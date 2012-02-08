@@ -71,8 +71,9 @@ _type_dictionary_creation_data = [
             ('longword',    'uint32_t'),
             ('single',      'float'),
             ('longint',     'int32_t'),
-            ('uint16',      'unsigned short int'),
+            ('word',      'unsigned short int'),
             ('color',       'color'),
+            ('int64',       'long long'),
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -212,6 +213,8 @@ _type_dictionary_creation_data = [
             ('bitmaparray',     'bitmap *'),
             ('singlearray',     'float *'),
             ('pointer[0..n - 1]',   'void *'),
+            ('fingerarray',   'finger_array'),
+            ('resolutionarray',   'resolution_array'),
         ],
         '_type_switcher': {
             None:       '#2#',
@@ -285,7 +288,7 @@ _type_dictionary_creation_data = [
             ('collisionside',       'collision_side'),
             ('collisiontestkind',   'collision_test_kind'),
             ('shapekind',           'shape_kind'),
-            ('guielementkind',      'gui_element_kind'),
+            ('guielementkind',      'guielement_kind'),
             ('eventkind',           'event_kind'),
             ('filedialogselecttype','file_dialog_select_type'),
             
@@ -328,6 +331,9 @@ _type_dictionary_creation_data = [
             ('guilabeldata[0..n - 1]',                  'guilabel_data *'),
             ('guiradiogroupdata[0..n - 1]',             'guiradio_group_data *'),
             ('region[0..n - 1]',                        'region **'),
+            ('resolution[0..n - 1]',                    'resolution *'),
+            ('finger[0..n - 1]',                        'finger *'),
+
           
             ('point2d[0..2]',                           'point2d %s[3]'),
             ('single[0..2][0..2]',                      'float %s[3][3]'),
