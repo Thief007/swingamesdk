@@ -35,8 +35,12 @@ def get_svn_version():
     return result
 
 OUT_PATH = "../../Generated/Documentation"
+_dist_base_path = "../../Dist/HowTo"
 
 SVN_VERSION = get_svn_version()
+
+#global menu types array
+_MENU_TYPES = []
 
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
@@ -167,6 +171,7 @@ Generated %(datetime)s for svn version %(svnversion)s
             ('Types.html', 'Types')
         ]
         self.toc = []
+        self.sql = []
         self.desc = ''
         self.body = []
         # bind the body append/extend methods to this object
@@ -217,13 +222,27 @@ Generated %(datetime)s for svn version %(svnversion)s
         #toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
         toc =  '<aside id="sidebar-a" class="grid-box" style="min-height: 500px;"><div class="grid-box width100 grid-v"><div class="module mod-box mod-box-header deepest"><h3 class="module-title">%s</h3><ul class="menu menu-sidebar">%s</ul></div></div></aside>'% (self.title, '%(toc)s')
         tmp = []
+        sql_insert_menu_type =[]
+
+        last = ''
+        sql_insert_menu_type.append('("'+self.title.lower() +'", "'+self.title+'", "'+self.title+' api menu"),')
+        _MENU_TYPES.append(self.title.lower())
+
+        fappend = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","a")
+        for line in sql_insert_menu_type:
+          fappend.write(line+'\n')         
+        fappend.close 
+        
+    
         last = ''
         for title, uname in sorted(self.toc, key=lambda entry: entry[0]):
             if title != last:
                 last = title
                 #todo: remove details class
                 #css_class = ' class="details"' if detail else ''
-                tmp.append('<li class="level1 item1"><a href="#parent_%s" title="%s">%s</a></li>' % (title, title, title))
+                tmp.append('<li class="level1 item1"><a href="#parent_%s" title="%s">%s</a></li>' % (title, title, title)); 
+     
+   
         return toc % {'toc': '\n'.join(tmp) }
 
     def format_desc(self):
@@ -440,7 +459,17 @@ class UnitPresenter(object):
         
         # Keep the toc entry (name and unique ID for hyperlinks)
         out_doc.toc.append( (method.name, method.uname) )
-    
+        sql_menu_items = []
+        if self.last_method != method.name:
+            print method.name
+            temp_title = method.name
+            sql_menu_items.append('("'+self.title+'", "'+temp_title+'", "'+temp_title+'", "#parent_'+temp_title+'" , "url", 1, 0, 0, 0, 0, 0, "0000-00-00 00:00:00", 0, 0, 0, 0, "menu_image=-1", 0, 0, 0),')
+            
+        f_items = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","a")
+        for line in sql_menu_items:
+            f_items.write(line+'\n')
+        f_items.close
+                
         # Build up the parameters with formatted modifier terms if used
         tmp = [ ]
         for p in method.params:
@@ -845,13 +874,69 @@ def create_types_doc(idcollection):
 
 
 
+def create_sql_menu_insert():
+    sql_insert_menu_type = []
+    f = open("../../Dist/site_menu_sql/site_menu_sql_create.sql",'w')
+    sql_insert_menu_type.append('DROP TABLE IF EXISTS `a65dl_menu_types`; CREATE TABLE IF NOT EXISTS `a65dl_menu_types` ( `id` int(10) unsigned NOT NULL auto_increment, `menutype` varchar(75) NOT NULL default \'\', `title` varchar(255) NOT NULL default \'\',`description` varchar(255) NOT NULL default \'\', PRIMARY KEY  (`id`), UNIQUE KEY `menutype` (`menutype`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;')
+    sql_insert_menu_type.append('INSERT INTO `a65dl_menu_types` ( `menutype`, `title`, `description`) VALUES')
+    sql_insert_menu_type.append('("mainmenu", "Main Menu", "The main menu for the site"),')
+    for line in sql_insert_menu_type:
+      f.write(line+'\n')         
+    f.close 
+
+def create_sql_menu_items():
+    sql_insert_menu_items = []
+    f = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql",'w')
+    sql_insert_menu_items.append('DELETE FROM `a65dl_menu` WHERE `menutype` <> "mainmenu";')
+    sql_insert_menu_items.append('INSERT INTO `a65dl_menu` (`menutype`, `name`, `alias`, `link`, `type`, `published`, `parent`, `componentid`, `sublevel`, `ordering`, `checked_out`, `checked_out_time`, `pollid`, `browserNav`, `access`, `utaccess`, `params`, `lft`, `rgt`, `home`) VALUES')
+    for line in sql_insert_menu_items:
+      f.write(line+'\n')         
+    f.close 
+
+def countFile(_file):
+    lines, blanks, sentences, words, nonwhite = 0, 0, 0, 0, 0
+
+    textf = open(_file, "r")
+    for l in textf:
+      lines += 1
+      if l.startswith('\n'):
+        blanks += 1 # sorry MACs
+      else:
+        sentences += l.count('.') + l.count('!') + l.count('?')
+        tempwords = l.split(None)
+        words += len(tempwords)
+        nonwhite += sum(map(len, tempwords))
+    textf.close()
+
+    return (lines, blanks, sentences, words, nonwhite)
+
+def end_create_sql_menu_script():
+    _file = "../../Dist/site_menu_sql/site_menu_sql_create.sql"
+    fappendEnd = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","r+")
+    lines, blanks, sentences, words, nonwhite = countFile(_file)
+    print nonwhite + words - 1
+    fappendEnd.seek(nonwhite + words)
+    fappendEnd.write(';')     
+    fappendEnd.close  
+
+def end_create_sql_menu_items():
+    _file = "../../Dist/site_menu_sql/site_menu_sql_items_create.sql"
+    fappendEnd = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","r+")
+    lines, blanks, sentences, words, nonwhite = countFile(_file)
+    print nonwhite + words - 1
+    fappendEnd.seek(nonwhite + words-2)
+    fappendEnd.write(';')     
+    fappendEnd.close  
+  
 #==============================================================================
 # MAIN
 #==============================================================================
     
 def main():
     # coppy
-  
+    create_sql_menu_insert()
+    create_sql_menu_items()
+
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     # Parse all files ready for use...
     print ' Parsing all pas units...'
@@ -869,6 +954,8 @@ def main():
     # Create indentifiers.html and Types.html pages
     create_identifiers_doc(idc)
     create_types_doc(idc)
-
+    end_create_sql_menu_script()
+    end_create_sql_menu_items()
+    #create_sql_menu_insert()
 if __name__ == '__main__':
     main()
