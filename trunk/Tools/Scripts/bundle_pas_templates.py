@@ -80,8 +80,6 @@ def create_swingame_pas():
 
 def create_lang_lib(language):
   print("  Creating %s library..." % language);
-  if (language == "Pascal"):
-    language = "pas"
   if(subprocess.call(["python",get_python_script_dir()+"create_%s_library.py" % language.lower()]) != 0):
     print ("Error Creating %s library..." % language);
     quit();
