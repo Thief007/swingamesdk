@@ -322,13 +322,13 @@ implementation
                     BundleResource:         LoadResourceBundleNamed(current.name, current.path, false);
                     TimerResource:          CreateTimer(current.name);
                     BitmapResource:         rbLoadBitmap();
-                    FontResource:               rbLoadFont();
+                    FontResource:           rbLoadFont();
                     SoundResource:          LoadSoundEffectNamed(current.name, current.path);
                     MusicResource:          LoadMusicNamed(current.name, current.path);
-                    MapResource:                LoadMapNamed(current.name, current.path);
-                    AnimationResource:  LoadAnimationScriptNamed(current.name, current.path);
+                    MapResource:            LoadMapNamed(current.name, current.path);
+                    AnimationResource:      LoadAnimationScriptNamed(current.name, current.path);
                     PanelResource:          LoadPanelNamed(current.name, current.path);
-                    CharacterResource:  LoadCharacterNamed(current.name, current.path);
+                    CharacterResource:      LoadCharacterNamed(current.name, current.path);
                     else
                         RaiseException('Unknown resource kind in LoadResources' + IntToStr(Longint(kind)));
                 end;
@@ -667,14 +667,8 @@ implementation
 //----------------------------------------------------------------------------
     
     procedure ShowLogos();
-    const
-        ANI_X = 143;
-        ANI_Y = 134;
-        ANI_W = 546;
-        ANI_H = 327;
-        ANI_V_CELL_COUNT = 6;
-        ANI_CELL_COUNT = 11;
     var
+        aniX, aniY : LongInt;
         i: Longint;
         f: Font;
         txt: String;
@@ -683,6 +677,7 @@ implementation
         isPaused: Boolean;
         isSkip: Boolean;
         startAni: Animation;
+        aniBmp: Bitmap;
         
         procedure InnerProcessEvents();
         begin
@@ -706,26 +701,35 @@ implementation
                 //oldW := ScreenWidth();
                 //oldH := ScreenHeight();
                 //if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(800, 600);
-                ToggleWindowBorder();
+                // ToggleWindowBorder();
                 
                 LoadResourceBundle('splash.txt', False);
                 
-                ClearScreen();
-                DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
+                aniBmp := BitmapNamed('Swinburne');
+                aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
+                aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
+                
+                ClearScreen(ColorWhite);
+                DrawBitmap(aniBmp, aniX, aniY);
+                
                 f := FontNamed('ArialLarge');
                 txt := 'SwinGame API by Swinburne University of Technology';
-                DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
+                DrawText(txt, ColorBlack, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
                 f := FontNamed('LoadingFont');
-                DrawText(DLL_VERSION, ColorWhite, f, 5, 580);
+                DrawText(DLL_VERSION, ColorBlack, f, 5, 580);
                 
                 i := 1;
-                while isPaused or (i < 60) do
+                while isPaused or (i < 120) do
                 begin
                     i += 1;
                     InnerProcessEvents();
                     RefreshScreen(60);
                     if isSkip then break;
                 end;
+                
+                aniBmp := BitmapNamed('SwinGameAni');
+                aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
+                aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
                 
                 {$IFDEF TRACE}
                     startAni := CreateAnimation('splash-debug', AnimationScriptNamed('Startup'));
@@ -734,9 +738,10 @@ implementation
                 {$ENDIF}
                 while not AnimationEnded(startAni) do
                 begin
-                    DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
+                    ClearScreen(ColorWhite);
+                    // DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
                     
-                    DrawAnimation(startAni, BitmapNamed('SwinGameAni'), ANI_X, ANI_Y);
+                    DrawAnimation(startAni, aniBmp, aniX, aniY);
                     UpdateAnimation(startAni);
                     
                     RefreshScreen();
@@ -770,7 +775,7 @@ implementation
                  end;
                 {$ENDIF}
             end;
-            ToggleWindowBorder();
+            // ToggleWindowBorder();
             
             //if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(oldW, oldH);
         end;
