@@ -33,6 +33,7 @@ _type_switcher = {
 
 _adapter_type_switcher = {
     None:       dict(),
+    'ptr-decl': dict(),         # for pointer declarations within structures only
     'const':    dict(),
     'var':      dict(),
     'out':      dict(),
@@ -110,9 +111,6 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
-
-
-
         ],
         '_type_switcher': {
             None:       '#2# ',
@@ -121,10 +119,11 @@ _type_dictionary_creation_data = [
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
-            None:       '#2#_data *',
-            'var':      '#2# *',
+            None:           '#2#_data *',
+            'ptr-decl':     'struct _#2#_data *',
+            'var':          '#2# *',
             'var-cpp':      '#2# &',
-            'return':   '#2#',
+            'return':       '#2#',
         }
     },
     #recursive structs
@@ -145,10 +144,11 @@ _type_dictionary_creation_data = [
           'return':   '#2#',
       },
       '_adapter_type_switcher': {
-          None:       'void *',
-          'var':      '#2# *',
-          'var-cpp':      '#2# &',
-          'return':   '#2#',
+          None:         '#2# ',
+          'ptr-decl':   'struct _#2#_data *',
+          'var':        '#2# *',
+          'var-cpp':    '#2# &',
+          'return':     '#2#',
       }
     },
     # void type

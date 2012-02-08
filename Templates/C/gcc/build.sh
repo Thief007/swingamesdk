@@ -149,7 +149,7 @@ doCompile()
 doCompileGameMain()
 {
     name="${SRC_DIR}/${GAME_MAIN}"
-    name=${file##*/} # ## = delete longest match for */... ie all but file name
+    name=${name##*/} # ## = delete longest match for */... ie all but file name
     name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
     doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" "$1"
 }
@@ -160,16 +160,15 @@ doBasicMacCompile()
     for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "here"
         out_file="${TMP_DIR}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
+
     done
     
     doCompileGameMain "-arch i386"
     
     #Assemble all of the .s files
     echo "  ... Creating game"
-    echo ${LIB_DIR}
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -Wl,-rpath,@loader_path/../Frameworks -arch i386 -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
@@ -232,7 +231,7 @@ doMacPackage()
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
-
+    ICON="${GAMEAPP_PATH}/Contents/Resources/SwinGame.icns"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\
