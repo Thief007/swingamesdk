@@ -25,15 +25,29 @@ def get_parser_directory():
 	return "../SGWrapperGen/sg/pas_model/"
 
 def prepare_directories():
+	print " Cleaning HowTo folder:"
+	shutil.rmtree(get_how_to_directory(), ignore_errors=True)
+	print "  Making: 	HowTo folder"
+	os.mkdir(get_how_to_directory())
+	print "  Making:	Source_Code folder"
+	os.mkdir(get_how_to_directory() + '/Source_Code/')
+	os.mkdir(get_how_to_directory() + '/Source_Code/HowTos')
+	os.mkdir(get_how_to_directory() + '/Source_Code/HowTos/lib/')
+
 	print "  Copying Pascal library for parser"
-	shutil.rmtree(get_how_to_directory() + "/Source_Code/HowTos/lib")
-	shutil.copytree(get_dist_directory() + "/Pascal/FPC/lib", get_how_to_directory() + "/Source_Code/HowTos/lib")
-	# print "  Removing: 	HowTo folder"
-	# shutil.rmtree(get_how_to_directory())
-	# print "  Making: 	HowTo folder"
-	# os.mkdir(get_how_to_directory())
-	# print "  Making:	Source_Code folder"
-	# os.mkdir(get_how_to_directory() + '/Source_Code')
+	source = get_dist_directory() + "/Pascal/FPC/lib"
+	destination = get_how_to_directory() + "/Source_Code/HowTos/lib/"
+
+	print "	- Source:		", source
+	print "	- Destination:	", destination
+	
+	# shutil.copytree(source)
+	files_to_copy = glob.glob(os.path.join(source, "sg*.pas"))
+	files_to_copy.append(source + "/SwinGame.pas")
+
+	for fname in files_to_copy:
+		print " Copying:	" + os.path.basename(fname)
+		shutil.copy2(fname, destination)
 
 def copy_how_tos():
 	"""
@@ -103,7 +117,7 @@ def generate_templates():
 		quit()
 
 def main():
-	#prepare_directories()
+	prepare_directories()
 	generate_resource_list()
 	copy_how_tos()
 	parse_how_tos()

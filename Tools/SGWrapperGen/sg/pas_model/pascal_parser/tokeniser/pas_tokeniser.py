@@ -212,8 +212,8 @@ class SGPasTokeniser(object):
             #        char_number = self._char_no
             #        kind = TokenKind.Attribute
             #        value = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
-            # Numbers (int or float style format
-            elif t in '1234567890' or (t in '-+' and self._peek(1) in '1234567890'): #is digit or +/-
+            # Numbers (int or float style format or hexadeciaml ($)
+            elif t in '$1234567890' or (t in '-+' and self._peek(1) in '1234567890'): #is digit or +/-
                kind = TokenKind.Number
                char_number = self._char_no
                value = self._read_matching(t, num_match)
