@@ -1,5 +1,5 @@
 program TestSDL_NetClient;
-uses SDL13, SDL_Net, SysUtils, sgDriverNetworkingSDL, sgShared, sgUtils, sgSharedUtils, SwinGame;
+uses SDL13, SDL_Net, SysUtils, sgNetworking, sgShared, sgUtils, sgSharedUtils, SwinGame, sgTypes;
 
 var
   _Ports : Array of Integer;
@@ -46,7 +46,7 @@ var
   i             : Integer;
 begin  
   result := False;
-  if (not ReceiveUDPMessage()) then exit;
+  if (not UDPMessageReceived()) then exit;
   lReceivedData := PopAllMessages();
   result := True;
   for i:= Low(lReceivedData) to High(lReceivedData) do

@@ -62,7 +62,7 @@ implementation
   uses
     {$IFDEF SWINGAME_SDL13}sgDriverImagesSDL13{$ELSE}sgDriverImagesSDL{$ENDIF};
     
-	procedure LoadDefaultDriver();
+	procedure LoadDefaultImagesDriver();
 	begin
 	  {$IFDEF SWINGAME_SDL13}
 		  LoadSDL13ImagesDriver();
@@ -73,91 +73,91 @@ implementation
 	
 	procedure DefaultSetNonAlphaPixelsProcedure(bmp : Bitmap);
 	begin
-	 LoadDefaultDriver();
+	 LoadDefaultImagesDriver();
 	 ImagesDriver.SetNonAlphaPixels(bmp);
 	end;
 	
 	procedure DefaultInitBitmapColorsProcedure(bmp : Bitmap);
 	begin	  
-		LoadDefaultDriver();
-		ImagesDriver.InitBitmapColors(bmp);
+	  LoadDefaultImagesDriver();
+	  ImagesDriver.InitBitmapColors(bmp);
 	end;
 	
 	function DefaultSurfaceExistsProcedure(bmp : Bitmap) : Boolean;
 	begin
-	  LoadDefaultDriver();
-		result := ImagesDriver.SurfaceExists(bmp);
+	  LoadDefaultImagesDriver();
+	  result := ImagesDriver.SurfaceExists(bmp);
 	end;
 	
 	procedure DefaultCreateBitmapProcedure (bmp : Bitmap; width, height : LongInt);
 	begin
-		LoadDefaultDriver();
+		LoadDefaultImagesDriver();
 		ImagesDriver.CreateBitmap(bmp, width, height);
 	end;  
 	
 	function DefaultDoLoadBitmapProcedure (filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
 	begin
-		LoadDefaultDriver();
+		LoadDefaultImagesDriver();
 		result := ImagesDriver.DoLoadBitmap(filename, transparent, transparentColor);
 	end;
 	
 	function DefaultSameBitmapProcedure(const bitmap1, bitmap2 : Bitmap) : Boolean;
   begin
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     result := ImagesDriver.SameBitmap(Bitmap1, Bitmap2);
   end;
   
   procedure DefaultBlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr);
   begin
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.BlitSurface(srcBmp, destBmp, srcRect, destRect);
   end;
   
   procedure DefaultFreeSurfaceProcedure(bmp : Bitmap);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.FreeSurface(bmp);
   end;
 
   procedure DefaultMakeOpaqueProcedure(bmp : Bitmap);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.MakeOpaque(bmp);
   end;
 
   procedure DefaultSetOpacityProcedure(bmp : Bitmap; pct : Single);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.SetOpacity(bmp, pct);
   end;
 
   procedure DefaultMakeTransparentProcedure(bmp : Bitmap);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.MakeTransparent(bmp);
   end;
 
   procedure DefaultRotateScaleSurfaceProcedure(resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.RotateScaleSurface(resultBmp, src, deg, scale, smooth);
   end;
 
   procedure DefaultClearSurfaceProcedure(dest : Bitmap; toColor : Color);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.ClearSurface(dest, toColor);
   end;
 
   procedure DefaultOptimiseBitmapProcedure(surface : Bitmap);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.OptimiseBitmap(surface);
   end;
 
   procedure DefaultSaveBitmapProcedure(src : Bitmap; filepath : String);
   begin	  
-    LoadDefaultDriver();
+    LoadDefaultImagesDriver();
     ImagesDriver.SaveBitmap(src, filepath);
   end;
 
