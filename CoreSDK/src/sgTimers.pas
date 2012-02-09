@@ -12,7 +12,7 @@
 //
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame Timers can be used to manage time based actions in your game. Each
 /// timer keeps track of the number of milliseconds that have ellapsed since

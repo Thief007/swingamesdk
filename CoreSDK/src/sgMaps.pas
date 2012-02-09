@@ -1,4 +1,4 @@
-{$I sgTrace.inc}
+
 
 unit sgMaps;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}

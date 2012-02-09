@@ -32,9 +32,32 @@ TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
 
-if [ ${1} = "-badass" ]; then
-    SDL_13=true
-fi
+Usage()
+{
+    echo "Usage: [-c] [-h] src_name"
+    echo 
+    echo "Compiles your game into an executable application."
+    echo "Output is located in $OUT_DIR."
+    echo
+    echo "Options:"
+    echo " -c   Perform a clean rather than a build"
+    echo " -h   Show this help message "
+    exit 0
+}
+
+while getopts chb: o
+do
+    case "$o" in
+    c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
+    h)  Usage ;;
+    esac
+done
+
+shift $((${OPTIND}-1))
 
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
@@ -51,9 +74,9 @@ fi
 #
 FPC_BIN=`which fpc`
 if [ "$OS" = "$WIN" ]; then
-    PAS_FLAGS="-g -Ci -gc -Ct"
+    PAS_FLAGS="-g -Ci -gc -Ct -dTrace"
 else
-    PAS_FLAGS="-gw -Ci -Ct"
+    PAS_FLAGS="-g -Ci -gw -Ct -dTrace"
 fi    
 
 
@@ -81,30 +104,6 @@ fi
 # Set game name
 #
 GAME_NAME="Test"
-
-
-Usage()
-{
-    echo "Usage: [-c] [-h] src_name"
-    echo 
-    echo "Compiles your game into an executable application."
-    echo "Output is located in $OUT_DIR."
-    echo
-    echo "Options:"
-    echo " -c   Perform a clean rather than a build"
-    echo " -h   Show this help message "
-    exit 0
-}
-
-while getopts chd o
-do
-    case "$o" in
-    c)  CLEAN="Y" ;;
-    h)  Usage ;;
-    esac
-done
-
-shift $((${OPTIND}-1))
 
 #
 # Locate GameMain.pas

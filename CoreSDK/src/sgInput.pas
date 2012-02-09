@@ -36,7 +36,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// Responsible for input event processing for mouse and keyboard events. This
 /// includes mouse visibility, mouse movement and button clicks (including the 

@@ -38,7 +38,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame's Audio is responsible for loading and playing music and sound
 /// effects. The main functionality exists in `LoadMusic`, `PlayMusic`,

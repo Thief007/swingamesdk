@@ -72,7 +72,7 @@ uses sgTypes;
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
-    sgShared, sgResources;
+    sgShared, sgResources, sgTrace;
 
   function WithinRange(arrayLength : Integer; currentIndex : Integer) : Boolean;
   begin

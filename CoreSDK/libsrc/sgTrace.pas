@@ -27,8 +27,6 @@ unit sgTrace;
 interface
 //=============================================================================
 
-  {$I sgTrace.inc}
-
   {$IFDEF Trace}
   type
       TraceLevel = (tlNone, tlError, tlWarning, tlInfo, tlVerbose);

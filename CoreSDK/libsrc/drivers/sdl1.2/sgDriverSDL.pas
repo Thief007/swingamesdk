@@ -20,7 +20,7 @@ uses
 	procedure LoadSDLDriver();
 		
 implementation
-	uses SDL, sgDriver, sgShared;
+	uses SDL, sgDriver, sgShared, sgTrace;
 	
 	function GetErrorProcedure() : PChar;
 	begin

@@ -25,7 +25,7 @@ uses sgTypes, SDL;
 	
 implementation
 	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry,
-		SDL_gfx, SDL_Image, sgSavePNG, sgInputBackend;
+		SDL_gfx, SDL_Image, sgSavePNG, sgInputBackend, sgTrace;
 	
 
   

@@ -3,7 +3,7 @@
 //
 // SwinGame exported library
 //
-{$I sgTrace.inc}
+
 
 library %(name)s;
   uses SysUtils, Strings, sgTrace, sgShared,

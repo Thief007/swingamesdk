@@ -15,7 +15,7 @@
 //              			They can  be drawn as rectangles and read from file.
 //=============================================================================
 
-{$I sgTrace.inc}
+
 /// The User Interface code is used to create Graphical User Interface components in SwinGame
 ///
 ///@module UserInterface
@@ -4629,6 +4629,8 @@ end;
 // Dialog code
 procedure InitialiseFileDialog();
 begin
+  if not HasPanel('fdFileDialog') then LoadResourceBundle('FileDialog.txt');
+  
   with dialog do
   begin
     dialogPanel := PanelNamed('fdFileDialog');
@@ -5067,6 +5069,9 @@ end;
     GUIC.panelDragging      := nil;
     
     GUIC.panelIds := TStringHash.Create(False, 1024);
+    
+    GUISetForegroundColor($ffffffff);
+    GUISetBackgroundColor($00000000);
     
     with dialog do
     begin
