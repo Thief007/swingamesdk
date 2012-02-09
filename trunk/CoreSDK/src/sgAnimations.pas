@@ -21,7 +21,7 @@
 // - 2009-12-08: Andrew : Created
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// Animations in SwinGame can be used to move between cells in bitmaps and
 /// sprites. Each Animation generates a number sequence that can then be used

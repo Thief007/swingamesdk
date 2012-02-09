@@ -51,7 +51,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// The graphics code of SwinGame is used to draw primitive shapes to the screen
 /// or onto bitmaps.
@@ -1369,7 +1369,7 @@ implementation
   uses Math, Classes, SysUtils, // system
        sgSavePNG, 
        sgTrace, 
-       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface, sgDriverGraphics, sgDriver, sgDriverImages;
+       sgCamera, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgDriverGraphics, sgDriver, sgDriverImages;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -2264,9 +2264,6 @@ implementation
       ColorTransparent := RGBAColor(0, 0, 0, 0);
       ColorLightGrey := RGBAColor(200, 200, 200, 255);
       
-      GUISetForegroundColor(ColorGreen);
-      GUISetBackgroundColor(ColorBlack);
-      
       GraphicsDriver.InitializeScreen(screen, screenWidth div 2 - 30, screenHeight div 2, ColorWhite, ColorGrey, 'Loading ...');
       RefreshScreen();
     except on e: Exception do
@@ -2281,7 +2278,6 @@ implementation
     {$ENDIF}
     
     ShowLogos();
-    LoadResourceBundle('FileDialog.txt');
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'OpenGraphicsWindow');
     {$ENDIF}

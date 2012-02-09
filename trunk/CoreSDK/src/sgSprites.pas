@@ -24,7 +24,7 @@
 //
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame Sprites are game elements that can be moved, and animated. Sprites are
 /// located at a position in the game, have a velocity, and an animation. The 

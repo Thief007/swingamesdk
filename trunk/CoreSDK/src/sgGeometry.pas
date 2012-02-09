@@ -49,7 +49,7 @@
 //                      : shapes units.
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame's geometry code includes the features to create, draw, and manipulate
 /// shapes.

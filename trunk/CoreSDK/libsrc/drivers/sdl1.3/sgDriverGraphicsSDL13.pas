@@ -69,7 +69,7 @@ implementation
   // Used to draw Primitive Shapes to a Surface -> Bitmap - > Renderer.
   procedure DrawSurfaceToRenderer();
   var
-    surf : PSDL_Surface;
+    // surf : PSDL_Surface;
     offset : Rectangle;
   begin  
     _ScreenDirty := False;
@@ -198,8 +198,8 @@ implementation
   end;
   
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
-	var
-    r, g, b, a : Uint8;
+    // var
+    //     r, g, b, a : Uint8;
 	begin
 	  if dest <> screen then
 	  begin
@@ -313,7 +313,7 @@ implementation
 	procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
   var
     width, height : LongInt;
-    size : LongInt;
+    // size : LongInt;
   	surf : PSDL_Surface;
     srcRect, destRect : SDL_Rect;
   begin  
@@ -336,7 +336,7 @@ implementation
 	procedure DrawEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
    var
     width, height : LongInt;
-    size : LongInt;
+    // size : LongInt;
   	surf : PSDL_Surface;
     srcRect, destRect : SDL_Rect;
   begin  
@@ -409,8 +409,8 @@ implementation
 	
 	// This procedure sets the color of a pixel on a bitmap
 	procedure SetPixelColorProcedure(dest : Bitmap; x, y : Integer; clr : Color);
-	var
-    r, g, b, a : Uint8;
+    // var
+    //     r, g, b, a : Uint8;
 	begin
 	  if dest <> screen then
 	  begin
@@ -462,9 +462,9 @@ implementation
   
   // This procedure sets up the global variable (screen)
   procedure _SetupScreen(screenWidth, screenHeight: Longint);
-  var
-    bpp        : integer;
-    rMask, gMask, bMask, aMask, format : Uint32; 
+  // var
+  //   bpp        : integer;
+  //   rMask, gMask, bMask, aMask, format : Uint32; 
   begin
     if screen = nil 
       then New(screen)
@@ -517,8 +517,8 @@ implementation
 	end;
 	
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
-  var
-      sdlScreen : PSDL13Screen;
+  // var
+  //     sdlScreen : PSDL13Screen;
   begin
     
     // Initialize SDL.

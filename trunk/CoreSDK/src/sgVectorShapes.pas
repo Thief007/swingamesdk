@@ -860,7 +860,7 @@ uses
 
 
 implementation
-uses  SysUtils, sgGeometry, sgShared, sgPhysics, sgGraphics, sgCamera, sgSprites;
+    uses  SysUtils, sgGeometry, sgShared, sgPhysics, sgGraphics, sgCamera, sgSprites, sgTrace;
 
 function PointOnLineList(const pt:point2d; const s:Shape):Boolean;
 var

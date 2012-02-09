@@ -135,8 +135,6 @@ interface
 //=============================================================================
 implementation
 //=============================================================================
-  // { $I sgTrace.inc}
-  //   uses sgTrace;
 
 //---------------------------------------------------------------------------
 // array get/put methods - pointer functions
@@ -370,27 +368,27 @@ implementation
     idx: integer;
     entry: THashEntry;
   begin
-    {$IFDEF TRACE}
-      TraceEnter('hashtable', 'THashTable.setValue');
-      Trace('hashtable', 'Info', 'THashTable.setValue', 'fTable = ' + HexStr(fTable));
-    {$ENDIF}
+    // {$IFDEF TRACE}
+    //   TraceEnter('hashtable', 'THashTable.setValue');
+    //   Trace('hashtable', 'Info', 'THashTable.setValue', 'fTable = ' + HexStr(fTable));
+    // {$ENDIF}
 
     // first try to find key in the table and replace the value
     idx := hashToIndex(key);
-    {$IFDEF TRACE}
-        Trace('hashtable', 'Info', 'THashTable.setValue', 'idx = ' + IntToStr(idx));
-    {$ENDIF}
+    // {$IFDEF TRACE}
+    //     Trace('hashtable', 'Info', 'THashTable.setValue', 'idx = ' + IntToStr(idx));
+    // {$ENDIF}
     entry := arrayGet(fTable, idx);
-    {$IFDEF TRACE}
-        Trace('hashtable', 'Info', 'THashTable.setValue', 'entry = ' + HexStr(entry));
-    {$ENDIF}
+    // {$IFDEF TRACE}
+    //     Trace('hashtable', 'Info', 'THashTable.setValue', 'entry = ' + HexStr(entry));
+    // {$ENDIF}
     while entry <> nil do
     begin
       if equal(key, entry.key) then
       begin
-        {$IFDEF TRACE}
-          Trace('hashtable', 'Info', 'THashTable.setValue', 'Found Matching');
-        {$ENDIF}
+        // {$IFDEF TRACE}
+        //   Trace('hashtable', 'Info', 'THashTable.setValue', 'Found Matching');
+        // {$ENDIF}
 
         result := false;
         entry.value := value;
@@ -400,9 +398,9 @@ implementation
       entry := entry.next;
     end;
     
-    {$IFDEF TRACE}
-        Trace('hashtable', 'Info', 'THashTable.setValue', 'Done checking... inserting');
-    {$ENDIF}
+    // {$IFDEF TRACE}
+    //     Trace('hashtable', 'Info', 'THashTable.setValue', 'Done checking... inserting');
+    // {$ENDIF}
 
     // inserting new key-value pair
     inc(fModCount);
@@ -416,9 +414,9 @@ implementation
     inc(fcount);
     result := true;
     
-    {$IFDEF TRACE}
-      TraceExit('hashtable', 'THashTable.setValue');
-    {$ENDIF}
+    // {$IFDEF TRACE}
+    //   TraceExit('hashtable', 'THashTable.setValue');
+    // {$ENDIF}
   end;
 
 

@@ -32,7 +32,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// Supports the presentation (drawing) of text to screen using loaded `Font`s 
 /// to style the text. Load a different ``Font`` for each unique text 

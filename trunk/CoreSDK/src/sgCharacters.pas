@@ -18,7 +18,7 @@
 //
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame Characters are Sprites with additional functionality to handle animations
 /// for movement and state. For example, you may have a Soldier character with images

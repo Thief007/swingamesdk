@@ -41,7 +41,7 @@ var
   _ScreenDirty : Boolean = False;  
 		
 implementation
-	uses sgDriver, sgShared, SysUtils;
+	uses sgDriver, sgShared, SysUtils, sgTrace;
 	
 	var
 	  _Initialised : Boolean = False;

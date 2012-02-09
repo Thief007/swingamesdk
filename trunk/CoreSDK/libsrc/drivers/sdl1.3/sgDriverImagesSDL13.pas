@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13; // sdl;
+	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgTrace; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -102,7 +102,7 @@ implementation
   function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
   var
     loadedImage: PSDL_Surface;
-    surf : PSDL_Surface;
+    // surf : PSDL_Surface;
     offset : Rectangle;
   begin
     result := nil; //start at nil to exit cleanly on error
@@ -254,7 +254,7 @@ implementation
 	procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 
 	var
 	  r, g, b, a : Byte;
-	  x, y, w, h : LongInt;
+      // x, y, w, h : LongInt;
   begin
  //  	CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap', dest);
 //    CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap Surface', dest^.surface);

@@ -32,7 +32,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame's Camera functionality can be used to create scrolling games where
 /// the camera moves around a virtual game world. Using the camera allows you to

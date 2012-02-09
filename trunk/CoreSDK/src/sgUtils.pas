@@ -10,7 +10,7 @@
 // - 2010-12-15: Andrew : Created to take general functionality from Core
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// SwinGame's Utils contain a number of helper routines that can be useful in
 /// general game development.

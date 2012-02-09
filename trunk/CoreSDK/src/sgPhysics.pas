@@ -69,7 +69,7 @@
 // - Various
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// The physics contains code to check and perform collisions between bitmaps and shapes
 /// in SwinGame. This code will help you determine if two sprites have hit each other, 

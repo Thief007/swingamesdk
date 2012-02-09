@@ -27,7 +27,7 @@
 //
 //=============================================================================
 
-{$I sgTrace.inc}
+
 
 /// Supports the loading and releasing of game resources and bundles, including 
 /// application path settings. Current resource types include images, sounds, 
@@ -710,6 +710,7 @@ implementation
                 aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
                 
                 ClearScreen(ColorWhite);
+                RefreshScreen();
                 DrawBitmap(aniBmp, aniX, aniY);
                 
                 f := FontNamed('ArialLarge');
@@ -739,7 +740,6 @@ implementation
                 while not AnimationEnded(startAni) do
                 begin
                     ClearScreen(ColorWhite);
-                    // DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
                     
                     DrawAnimation(startAni, aniBmp, aniX, aniY);
                     UpdateAnimation(startAni);
@@ -756,6 +756,16 @@ implementation
                     if isSkip then break;
                 end;
                 
+                i := 1;
+                ClearScreen(ColorWhite);
+                while isPaused or (i < 30) do
+                begin
+                    i += 1;
+                    
+                    InnerProcessEvents();
+                    RefreshScreen(60);
+                    if isSkip then break;
+                end;
             except on e:Exception do
                 {$IFDEF TRACE}
                 begin
