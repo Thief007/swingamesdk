@@ -9,33 +9,39 @@ CopyList = [
   { 
     'target':     'FPC',
     'language':   'Pascal', 
-    'sgsdk':      False
+    'sgsdk':      False,
+    'os':         ['Mac OS X', 'Windows', 'Linux'],
   },
-  
   {
     'target':     'iOS',
     'language':   'Pascal', 
-    'sgsdk':      False
+    'sgsdk':      False,
+    'os':         ['Mac OS X'],
   },
-
   {
     'target':     'Mono',
     'language':   'CSharp', 
-    'sgsdk':      True
+    'sgsdk':      True,
+    'os':         ['Mac OS X', 'Linux'],
   },
-
+  # {
+  #   'target':     'VS08',
+  #   'language':   'CSharp', 
+  #   'sgsdk':      True,
+  #   'os':         ['Windows'],
+  # },
   {
-  'target':     'gcc',
-  'language':   'C', 
-  'sgsdk':      True
+    'target':     'gcc',
+    'language':   'C', 
+    'sgsdk':      True,
+    'os':         ['Mac OS X', 'Windows', 'Linux'],
   },
-
   {
-  'target':     'gpp',
-  'language':   'C', 
-  'sgsdk':      True
+    'target':     'gpp',
+    'language':   'C', 
+    'sgsdk':      True,
+    'os':         ['Mac OS X', 'Windows', 'Linux'],
   },
-
 ]
 
 
@@ -135,9 +141,12 @@ def assemble_dist(name, language, sgsdk):
   print("--------------------------------------------------")
   if(sgsdk):
     dist_source_folder = get_swin_game_dir()+"Dist/Source/"
-    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
-    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
-  
+    if (get_os_name() == "Windows"):
+      copy_without_svn(dist_source_folder+"bin/win", specific_dist_folder+"lib/win", overwrite = False)
+    elif (get_os_name() == "MAC OS X"):
+      copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
+      #copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
+
 #copy every file not in svn into a flat destination.
 def flat_copy_without_svn(src,dest):
   
@@ -165,8 +174,7 @@ def build_sgsdk():
     print("\n--------------------------------------------------")
     
     print("Cleaning SGSDK...\n")
-    
-    if(subprocess.call(["./%sbuild.sh" % dist_source_folder, "-c"])!=0):
+    if(subprocess.call(["%s" % bash,"./%sbuild.sh" % dist_source_folder, "-c"])!=0):
       print ("\n  Error Cleaning SGSDK");
       quit();
     
@@ -214,9 +222,9 @@ def main():
   build_sgsdk()
   print("--------------------------------------------------")
   for build in CopyList:
-    
-    print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
-    assemble_dist(build['target'],build['language'],build['sgsdk'])  
+    if get_os_name() in build['os']:
+      print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
+      assemble_dist(build['target'],build['language'],build['sgsdk'])  
   print("\nFinished!")
   
   

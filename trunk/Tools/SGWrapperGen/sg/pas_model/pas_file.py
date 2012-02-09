@@ -163,12 +163,13 @@ class PascalFile(object):
         try:
             self._contents.parse(self._stream)
             self._is_parsed = True
-        except Exception:
-            if self._contains_kind is 'unit':
+        except Exception, e:
+            if self._contains_kind == 'unit':
                 # critical error -> units must be parsable
                 # re-raise the same error
                 raise
             logger.info("Skipping file: %s", self._name)
+            logger.info("Reason: %s" %e)
             remove_file_named(self._name)
 
     def to_code(self):

@@ -413,9 +413,11 @@ then
         
         PrepareTmp
         
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
         
+        mv "${TMP_DIR}/SGSDK.dll" "${OUT_DIR}/SGSDK.dll"
+
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
@@ -429,8 +431,10 @@ then
         PrepareTmp
 
         echo "  ... Compiling Library"
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
+
+        mv "${TMP_DIR}/SGSDK.dll" "${OUT_DIR}/SGSDK.dll"
         
         mv "${OUT_DIR}/libSGSDK.so" "${OUT_DIR}/libsgsdk.so"
         mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"

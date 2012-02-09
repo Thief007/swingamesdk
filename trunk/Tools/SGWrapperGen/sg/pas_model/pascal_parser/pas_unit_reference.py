@@ -1,5 +1,5 @@
 from tokeniser.pas_token_kind import TokenKind
-from pas_parser_utils import logger
+from pas_parser_utils import logger, raise_error
 
 class PascalUnitReference(object):
     """
