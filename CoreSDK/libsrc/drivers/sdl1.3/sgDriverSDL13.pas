@@ -349,7 +349,6 @@ implementation
     {$IFDEF Trace}
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to enable unicode');
     {$ENDIF}
-    //Unicode required by input manager.
     InitKeyCodes();
     _screen := nil;
   end;
