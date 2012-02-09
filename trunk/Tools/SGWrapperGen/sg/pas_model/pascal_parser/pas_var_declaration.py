@@ -51,7 +51,9 @@ class PascalVarDeclaration(object):
             type = parse_type(tokens, self._block)
                 # assign value at creation... consume value, expression?
                 #PascalExpression(self._block).parse(tokens)
-
+            if tokens.match_lookahead(TokenKind.Operator, '=', consume=True):
+                tokens.next_token()   # $ consume the assigned value... not needed for now...
+                tokens.next_token()   # number...
             tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
 
             for varName in idList:

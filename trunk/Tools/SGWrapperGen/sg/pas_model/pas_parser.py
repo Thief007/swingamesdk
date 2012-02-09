@@ -95,21 +95,21 @@ def main():
     print " Parsing files:"
     print '*' * 70
     for (name, file) in files().items():
-        if (not file.is_parsed):
+        if (not file.is_parsed) and (file.contains_kind == 'program'):
             file.parse()
     
     print '*' * 70
     print ' Converting files:'
     print '*' * 70
     for (name, file) in files().items():
-        if file.contains_kind == 'program':
+        if file.is_parsed and file.contains_kind == 'program':
             run_convert(file)       
 
     print '*' * 70
     print ' Writing files: '
     print '*' * 70
     for (name, file) in files().items():
-        if file.contains_kind == 'program':
+        if file.is_parsed and file.contains_kind == 'program':
             write_file(file, destination)
 
 if __name__ == '__main__':
