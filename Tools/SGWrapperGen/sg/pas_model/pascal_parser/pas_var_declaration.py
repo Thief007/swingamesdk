@@ -49,9 +49,10 @@ class PascalVarDeclaration(object):
             idList = _parse_identifier_list(tokens)
             tokens.match_token(TokenKind.Symbol, ':')
             type = parse_type(tokens, self._block)
+                # assign value at creation... consume value, expression?
+                #PascalExpression(self._block).parse(tokens)
 
-            if (not tokens.match_lookahead(TokenKind.Symbol, ')')):
-                tokens.match_token(TokenKind.Symbol, ';')
+            tokens.match_lookahead(TokenKind.Symbol, ';', consume=True)
 
             for varName in idList:
                 if not varName in self._vars:

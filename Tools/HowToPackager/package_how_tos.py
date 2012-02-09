@@ -15,7 +15,7 @@ import shutil
 from shutil import make_archive
 
 _lang = [   {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
-            #{"lang": "C", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".c"} 
+            {"lang": "C", "template": "../../Dist/C/gcc", "main file": "main.c", "extension": ".c"} 
             ]
 _base_path = "../../Dist/HowTo"
 
@@ -30,6 +30,7 @@ def build_dir_structure():
         print "  -  Adding language", lang["lang"]
         os.mkdir(_base_path + "/" + lang["lang"])
         os.mkdir (_base_path+ "/Source_Code/" + lang['lang'])
+
 def copy_how_to_template(how_to_name):
     print " - Adding", how_to_name
     
@@ -41,7 +42,7 @@ def copy_how_to_template(how_to_name):
         shutil.copytree(lang["template"], path)
         # Delete "main file" from "current_how_to_path"/src
         print "   -- Deleting GameMain file"
-        os.remove(path + "/src/GameMain.pas")
+        os.remove(path + "/src/" + lang['main file'])
 
 def copy_how_to_resources(current_how_to, how_to_resource, lang):
     path = "%s/%s" % ("../../CoreSDK/test/Resources",how_to_resource)
@@ -73,9 +74,9 @@ def copy_current_how_to_pas_file():
         if line[0] == "*":
             current_how_to = line[1:].strip()
             for lang in _lang:
-                path = "%s/%s%s" % ("../../CoreSDK/test",current_how_to,".pas")
+                path = "%s/%s%s" % (_base_path + "Source_Code/" + lang['lang'] + '/',current_how_to,lang['extension'])
                 if os.path.exists(path):                    
-                    dest = "%s/%s/%s/%s/%s%s" % (_base_path, lang["lang"],current_how_to,"src",current_how_to,".pas")
+                    dest = "%s/%s/%s/%s/%s%s" % (_base_path, lang["lang"],current_how_to,"src",current_how_to, lang['extension'])
                     print "   -- Copying ", path
                     print "   -- To ",dest        
                     shutil.copy2(path,dest)
@@ -87,8 +88,11 @@ def copy_current_how_to_pas_file():
                 else:
                     print "   WARNING -- "+ current_how_to +" file does not exist"
       
-def copy_how_tos():
-    """Copy the language templates to how tos folders for each how to document"""
+def create_templates():
+    """
+    Copy the language templates to how tos folders for each how to document
+    and copy the resources for the how to into the template
+    """
     
     print "  Creating How To Templates"
     
@@ -115,8 +119,8 @@ def copy_how_tos():
                 copy_how_to_resources(current_how_to, current_how_to_resource, lang)
 
 def main():
-    build_dir_structure()
-    copy_how_tos()
+    #build_dir_structure()
+    create_templates()
     copy_current_how_to_pas_file()
     zip_how_to()
 if __name__ == '__main__':

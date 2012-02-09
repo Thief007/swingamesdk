@@ -184,7 +184,7 @@ doMacCompile()
     mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${LIB_DIR} | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${1}/${name}.o"
@@ -267,7 +267,7 @@ doMacPackage()
 doLinuxCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${LIB_DIR} | grep [.]c$`; do
+    for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
@@ -290,7 +290,7 @@ doLinuxPackage()
 doWindowsCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${LIB_DIR} | grep [.]c$`; do
+    for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""

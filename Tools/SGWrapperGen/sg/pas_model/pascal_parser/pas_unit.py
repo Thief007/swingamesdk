@@ -18,7 +18,7 @@ class PascalUnit(object):
         self._interface = list()
         self._implementation = list()
         self._function_forward_declarations = list()
-
+        self._parsed = False
         self._variables = dict()
         self._functions = dict()
         self._types = dict()
@@ -92,12 +92,9 @@ class PascalUnit(object):
         """
         from pascal_parser.tokeniser.pas_meta_comment import PascalMetaComment
         # read unit header
-
         tokens.match_token(TokenKind.Identifier, 'unit');
         self._name = tokens.match_token(TokenKind.Identifier)._value;
         tokens.match_token(TokenKind.Symbol, ';')
-
-        logger.info("Parsing unit header: %s (%s)", self._file.filename, self._name)
 
         # read interface
         tokens.match_token(TokenKind.Identifier, 'interface')
@@ -138,9 +135,10 @@ class PascalUnit(object):
             else:
                 raise_error(('Unknown unit token...' + str(tokens.next_token())), '', is_critical=False)
             self._interface.append(current_part)
-
+        self._parsed = True
         init_present = False
         tokens.match_lookahead(TokenKind.Identifier, 'implementation')
+        logger.info("Parsed unit header: %s (%s)", self._file.filename, self._name)
         ## if there is a uses clause - read it
         #if (tokens.match_lookahead(TokenKind.Identifier, 'uses')):
         #    uses_clause = PascalUsesClause(self._file)
@@ -176,6 +174,5 @@ class PascalUnit(object):
         #        _parse_compound_statement(tokens, None)
         #tokens.match_token(TokenKind.Identifier, 'end')
             
-      
+  
 
-    

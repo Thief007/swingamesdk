@@ -89,8 +89,8 @@ class SGTokenStream(object):
         tok = self.next_token()
         
         if tok._kind != token_kind or (token_value != None and token_value != tok._value.lower()):
-            raise_error(('TokenStream        %s: found a %s (%s) expected %s (%s)', 
-                         self._tokeniser.line_details(), tok._kind, tok._value, token_kind, token_value), '', is_critical=False)
+            raise_error(('TokenStream        %s: found a %s (%s) expected %s (%s)' %
+                         (self._tokeniser.line_details(), tok._kind, tok._value, token_kind, token_value)), '', is_critical=False)
             
         logger.debug('TokenStream    : Matched token %s (%s)', tok._kind, tok._value)
         return tok

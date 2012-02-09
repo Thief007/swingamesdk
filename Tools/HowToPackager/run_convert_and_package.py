@@ -8,8 +8,32 @@ import os
 # 1. Copy resources needed by the parser
 #		- HowTos
 #		- SwinGame library
-# 2. Parse HowTo files
+# 2. Generate resource list
+# 3. Parse HowTo files
 #... and more!
+
+def get_dist_directory():
+	return "../../Dist"
+
+def get_test_directory():
+	return "../../CoreSDK/test"
+
+def get_how_to_directory():
+	return get_dist_directory() + "/HowTo"
+
+def get_parser_directory():
+	return "../SGWrapperGen/sg/pas_model/"
+
+def prepare_directories():
+	print "  Copying Pascal library for parser"
+	shutil.rmtree(get_how_to_directory() + "/Source_Code/HowTos/lib")
+	shutil.copytree(get_dist_directory() + "/Pascal/FPC/lib", get_how_to_directory() + "/Source_Code/HowTos/lib")
+	# print "  Removing: 	HowTo folder"
+	# shutil.rmtree(get_how_to_directory())
+	# print "  Making: 	HowTo folder"
+	# os.mkdir(get_how_to_directory())
+	# print "  Making:	Source_Code folder"
+	# os.mkdir(get_how_to_directory() + '/Source_Code')
 
 def copy_how_tos():
 	"""
@@ -18,8 +42,9 @@ def copy_how_tos():
 
 	How To files are identified by the regex HowTo*.pas
 	"""
-	source = "../../CoreSDK/test"
-	destination = "../../Dist/HowTo/Source_Code/HowTos"
+
+	source = get_test_directory()
+	destination = get_how_to_directory() + "/Source_Code/HowTos"
 
 	if not os.path.exists(destination):
 		os.makedirs(destination)
@@ -41,18 +66,47 @@ def copy_how_tos():
 def parse_how_tos():
 	"""
 	Calls the pascal parser to parse the how to files
+	Files are moved into Dist/HowTo/Source_Code/%(Lang_name)
 	"""
 	print "*" * 70
 	print "Parsing How Tos:"
 	print "*" * 70
-	if subprocess.call(["python", "../SGWrapperGen/sg/pas_model/pas_parser.py"]) != 0:
+	if subprocess.call(["python", get_parser_directory() + "/pas_parser.py"]) != 0:
 		print "Error parsing How To files."
 		assert False
+
+def generate_resource_list():
+	"""
+	This method produces a list of resources used to create the template files.
+	The resource_list is put in Dist/HowTo/Source_Code
+		- The list should be the same between languages
+	"""
+	print '*' * 70
+	print " Generating resource list: "
+	print '*' * 70
+	if subprocess.call(["python", "run_How-To_Resources_Begin_script.py"]) == 0:
+		resource_list = get_test_directory() + "/HowToResources.txt"
+		shutil.copy2(resource_list, get_how_to_directory() + "/Source_Code")
+	else:
+		print " Error copying files..."
+		quit()
+
+def generate_templates():
+	"""
+
+	"""
+	print '*' * 70
+	print " Generating templates: "
+	print '*' * 70
+	if subprocess.call(["python", "package_how_tos.py"]) != 0:
+		print " Error packaging how tos"
+		quit()
+
 def main():
+	#prepare_directories()
+	generate_resource_list()
 	copy_how_tos()
 	parse_how_tos()
-
-    #subprocess.call(["python", "run_How-To_Resources_Begin_script.py"])
-    
+	generate_templates()
 if __name__ == '__main__':
     main()
