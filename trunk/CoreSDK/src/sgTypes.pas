@@ -1053,6 +1053,19 @@ interface
     end;
     
 
+    MessageData = packed record
+      msg       : String;
+      IP        : String;
+      port      : LongInt;
+    end;
+    
+    MessageDataArray = Array of MessageData;
+  
+    MessagePtr = ^MessageLink;
+    MessageLink = packed record
+      data  : MessageData;
+      next  : MessagePtr;
+    end;
     
     
     
