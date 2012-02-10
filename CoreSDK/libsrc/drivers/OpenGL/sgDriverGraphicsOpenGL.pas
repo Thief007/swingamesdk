@@ -34,7 +34,7 @@ uses sgTypes, SDL13, sgNetworking, SysUtils,gl;
   procedure DrawDirtyScreen();
   
 implementation
-  uses sgDriverGraphics, sgShared, Math;  
+  uses sgDriverGraphics, sgShared, Math, sgDriverImages;  
 
   procedure DrawDirtyScreen();
   begin  
@@ -361,7 +361,10 @@ implementation
     result := resolutions;
     
   end;
-  
+    procedure RefreshScreenProcedure(screen : Bitmap);
+  begin
+    SDL_GL_SwapWindow(POpenGLWindow(_screen)^.window);
+  end;
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
   // var
   //     sdlScreen : PSDL13Screen;
@@ -392,13 +395,16 @@ implementation
       POpenGLWindow(_screen)^.context := SDL_GL_CreateContext(POpenGLWindow(_screen)^.window);
 
     //VSYNC
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
 
 
     if screen = nil then 
       New(screen);
     if (screen^.surface = nil) then 
       screen^.surface := POpenGLWindow(_screen)^.window;
+
+    ImagesDriver.ClearSurface(screen,0);
+    RefreshScreenProcedure(nil);
 
     glEnable( GL_TEXTURE_2D );
     glMatrixMode (GL_PROJECTION);
@@ -427,10 +433,7 @@ implementation
     result := false;
   end;
   
-  procedure RefreshScreenProcedure(screen : Bitmap);
-  begin
-    SDL_GL_SwapWindow(POpenGLWindow(_screen)^.window);
-  end;
+
   
   function ColorFromProcedure(bmp : Bitmap; r, g, b, a : byte) : Color;
   begin
