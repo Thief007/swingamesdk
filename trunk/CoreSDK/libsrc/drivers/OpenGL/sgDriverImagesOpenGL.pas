@@ -145,6 +145,7 @@ implementation
       //SetNonAlphaPixelsProcedure(result);
       result^.surface := CreateGLTextureFromSurface(loadedImage);
     end;
+
     // Free the loaded image; if its not the result's surface
     SDL_FreeSurface(loadedImage);
   end; 
@@ -199,20 +200,12 @@ implementation
       lRatioY := 0;
       lRatioW := 1;
       lRatioH := 1;
-      WriteLn('Source Rect IS Nil');
     end else begin
-      WriteLn('Source Rect Not Nil');
       lRatioX := GetCoords(srcBMP^.width, srcRect^.x);//srcRect^.width / srcBmp^.width ;
       lRatioY := GetCoords(srcBMP^.height, srcRect^.y);//
       lRatioW := lRatioX + GetCoords(srcBMP^.width, srcRect^.width);
       lRatioH := lRatioY + GetCoords(srcBMP^.height, srcRect^.height);
-      WriteLn('Source Width: ', srcRect^.width);
-      WriteLn('Source Height: ', srcRect^.height);
-      WriteLn('Dest Width: ', srcBmp^.width);
-      WriteLn('Dest Height: ', srcBmp^.height);
     end;
-    WriteLn('lRatioX: ', lRatioX:2:3);
-    WriteLn('lRatioY: ', lRatioY:2:3);
  //   if (destBmp <> nil) then exit;
     glBindTexture( GL_TEXTURE_2D, GLUInt(srcBmp^.surface^) );
  
