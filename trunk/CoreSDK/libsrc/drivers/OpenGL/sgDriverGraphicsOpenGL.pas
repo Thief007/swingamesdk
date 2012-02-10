@@ -15,7 +15,7 @@ unit sgDriverGraphicsOpenGL;
 //
 //=============================================================================
 interface
-uses sgTypes, SDL13, sgNetworking, SysUtils;
+uses sgTypes, SDL13, sgNetworking, SysUtils,gl;
 
   type
     OpenGLWindow = record
@@ -127,8 +127,21 @@ implementation
   end;
 
   procedure FillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  var
+    r,g,b,a : Byte;
+
   begin
-    exit;
+
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+    glColor3f(r/255, g/255, b/255);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x3, y3);
+    glEnd();
   end;
   
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
@@ -156,19 +169,73 @@ implementation
   
   // This procedure draws a filled rectangle to a bitmap
   procedure FillRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
+  var
+    
+    x1,x2,y1,y2 : LongInt;
+    r,g,b,a : Byte;
+
   begin
-    exit;
+    x1 := Round(rect.x);
+    x2 := x1 + rect.width;
+    y1 := Round(rect.y);
+    y2 := y1 + rect.height;
+
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor3f(r/255, g/255, b/255);
+    glBegin(GL_TRIANGLE_STRIP);
+    glVertex2f(x1, y1);
+    glVertex2f(x1, y2);
+    glVertex2f(x2, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x1,y2);
+
+    glEnd();
   end;
   
   procedure DrawRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
+  var
+    x1,x2,y1,y2 : LongInt;
+    r,g,b,a : Byte;
+
   begin
-    exit;
+    x1 := Round(rect.x);
+    x2 := x1 + rect.width;
+    y1 := Round(rect.y);
+    y2 := y1 + rect.height;
+
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor3f(r/255, g/255, b/255);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x1, y2);
+    glEnd();
   end;
   
   // This procedure draws a line on a bitmap between two points
   procedure DrawLineProcedure(dest : Bitmap; x1, y1, x2, y2 : LongInt; clr : Color);
+  var
+    r,g,b,a : Byte;
+
   begin
-    exit;
+
+
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor3f(r/255, g/255, b/255);
+    glBegin(GL_LINES);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glEnd();
   end;
   
   // This procedure sets the color of a pixel on a bitmap
@@ -244,6 +311,10 @@ implementation
 
     //VSYNC
     SDL_GL_SetSwapInterval(1);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+    glOrtho (0, screenWidth, screenHeight, 0, 0, 1);
+    glDisable(GL_DEPTH_TEST);
 
   end;
   
