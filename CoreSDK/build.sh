@@ -31,7 +31,7 @@ FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
-
+OPENGL=false
 Usage()
 {
     echo "Usage: [-c] [-h] src_name"
@@ -54,7 +54,7 @@ do
         fi 
         ;;
     h)  Usage ;;
-    g)  OPENGL=true  
+    g)  OPENGL=true
     esac
 done
 
@@ -64,6 +64,7 @@ if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     elif [ ${OPENGL}=true ]; then
+
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     else
       LIB_DIR="${APP_PATH}/lib/mac"
@@ -86,9 +87,10 @@ fi
 
 if [ ${SDL_13} = true ]; then
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
-fi
 
-if [ ${OPENGL}=true ]; then
+
+elif [ ${OPENGL}=true ]; then
+          echo "OPENGL"
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
 fi
 
