@@ -133,7 +133,8 @@ implementation
   
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
   begin
-    exit;
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRectf(-0.75f,0.75f, 0.75f, -0.75f);
   end;
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);

@@ -63,7 +63,7 @@ shift $((${OPTIND}-1))
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
-    elif [ ${OPENGL}=true ]; then
+    elif [ ${OPENGL} = true ]; then
 
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     else
@@ -87,10 +87,10 @@ fi
 
 if [ ${SDL_13} = true ]; then
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
+fi
 
-
-elif [ ${OPENGL}=true ]; then
-          echo "OPENGL"
+if [ ${OPENGL} = true ]; then
+  echo "OPENGL"
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
 fi
 
