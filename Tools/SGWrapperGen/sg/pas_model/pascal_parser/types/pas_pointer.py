@@ -13,7 +13,7 @@ class PascalPointer(object):
 
     @property
     def name(self):
-        return self._points_to_identifier
+        return self._name
 
     def set_name(self, name):
         self._name = name
