@@ -85,6 +85,7 @@ class PascalTypeDeclaration(object):
             # forward declarations... 
             if (new_type.kind is 'pointer') and (not new_type.is_function_pointer):
                 self._forward_pointer_declarations[new_type.name] = new_type
+                new_type.set_name(type_name)
             # parse new type and add it to the type declaration
             self._type_declarations[type_name] = new_type
             self._parent._types[type_name] = new_type

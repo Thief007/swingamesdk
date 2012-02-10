@@ -1,1 +1,1 @@
-#include "%(pas_lib_identifier)s"
+#include "%(pas_lib_identifier)s.h"

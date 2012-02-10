@@ -5,12 +5,15 @@ import os
 
 # This script is responsible for preparing the files for use by the parser and the bundler
 # Steps:
-# 1. Copy resources needed by the parser
+# 1. Prepare How To directory
+#		- Clean
+#		- Create new
+# 2. Copy resources needed by the parser
 #		- HowTos
 #		- SwinGame library
-# 2. Generate resource list
-# 3. Parse HowTo files
-#... and more!
+# 3. Generate resource list
+# 4. Parse HowTo files
+# 5. Generate templates
 
 def get_dist_directory():
 	return "../../Dist"
@@ -24,9 +27,36 @@ def get_how_to_directory():
 def get_parser_directory():
 	return "../SGWrapperGen/sg/pas_model/"
 
+def rmgeneric(path, __func__):
+
+    try:
+        __func__(path)
+        #print 'Removed ', path
+    except OSError, (errno, strerror):
+        print "Error %s : %s" %(path, strerror)
+            
+def removeall(path):
+
+    if not os.path.isdir(path):
+        return
+    
+    files=os.listdir(path)
+
+    for x in files:
+        fullpath=os.path.join(path, x)
+        if os.path.isfile(fullpath):
+            f = os.remove
+            rmgeneric(fullpath, f)
+        elif os.path.isdir(fullpath):
+            removeall(fullpath)
+            f = os.rmdir
+            rmgeneric(fullpath, f)
+
 def prepare_directories():
-	print " Cleaning HowTo folder:"
-	shutil.rmtree(get_how_to_directory(), ignore_errors=True)
+	if os.path.exists(get_how_to_directory()):
+		print " Cleaning HowTo folder:"
+		removeall(get_how_to_directory())
+		os.rmdir(get_how_to_directory())
 	print "  Making: 	HowTo folder"
 	os.mkdir(get_how_to_directory())
 	print "  Making:	Source_Code folder"
@@ -107,13 +137,24 @@ def generate_resource_list():
 
 def generate_templates():
 	"""
-
+	Generates and populates all the template files
 	"""
 	print '*' * 70
 	print " Generating templates: "
 	print '*' * 70
 	if subprocess.call(["python", "package_how_tos.py"]) != 0:
 		print " Error packaging how tos"
+		quit()
+	
+def build_all_how_tos():
+	"""
+
+	"""
+	print '*' * 70
+	print " Building How Tos"
+	print '*' * 70
+	if subprocess.call(["python", "test_how_tos.py"]) != 0:
+		print "	Error building How Tos"
 		quit()
 
 def main():
@@ -122,5 +163,7 @@ def main():
 	copy_how_tos()
 	parse_how_tos()
 	generate_templates()
+	build_all_how_tos()
+	print "Finished!"
 if __name__ == '__main__':
     main()
