@@ -45,7 +45,7 @@ Usage()
     exit 0
 }
 
-while getopts chb: o
+while getopts chb:g: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
@@ -54,6 +54,7 @@ do
         fi 
         ;;
     h)  Usage ;;
+    g)  OPENGL=true  
     esac
 done
 
@@ -62,12 +63,15 @@ shift $((${OPTIND}-1))
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL}=true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     else
       LIB_DIR="${APP_PATH}/lib/mac"
     fi
 elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib/win"
 fi
+
 
 #
 # Set compiler path and options
@@ -82,6 +86,10 @@ fi
 
 if [ ${SDL_13} = true ]; then
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
+fi
+
+if [ ${OPENGL}=true ]; then
+  PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
 fi
 
 DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
@@ -172,6 +180,8 @@ DoDriverMessage()
 {
   if [ ${SDL_13} = true ]; then
     echo "  ... Using SDL 1.3 Driver"
+  elif [ ${OPENGL}=true ]; then
+    echo "  ... Using OpenGL Driver"
   else
     echo "  ... Using SDL 1.2 Driver"
   fi

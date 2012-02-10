@@ -94,16 +94,32 @@ interface
 		
 implementation
 uses 
-  sgDriver, {$IFDEF SWINGAME_SDL13}sgDriverGraphicsSDL13{$ELSE}sgDriverGraphicsSDL{$ENDIF};
+   
+  {$IFDEF SWINGAME_OPENGL}
+    sgDriverGraphicsOpenGL;
+  {$ELSE}
+      {$IFDEF SWINGAME_SDL13}
+        sgDriverGraphicsSDL13;
+      {$ELSE}
+        sgDriverGraphicsSDL;
+      {$ENDIF}
+  {$ENDIF}
     
 	procedure LoadDefaultGraphicsDriver();
 	begin
-	  {$IFDEF SWINGAME_SDL13}
-      // WriteLn('SDL 1.3 Defined');
-		  LoadSDL13GraphicsDriver();
+    {$IFDEF SWINGAME_OPENGL}
+      WriteLn('OpenGL Defined');
+      LoadOpenGLGraphicsDriver();
 		{$ELSE}
-      // WriteLn('SDL 1.3 Not Defined');
-		  LoadSDLGraphicsDriver();
+      {$IFDEF SWINGAME_SDL13}
+      WriteLn('SDL 1.3 Defined');
+      LoadSDL13GraphicsDriver();  
+
+      {$ELSE}
+        // WriteLn('SDL 1.3 Not Defined');
+        WriteLn('SDL 1.2 Defined');
+		    LoadSDLGraphicsDriver();
+      {$ENDIF}
 		{$ENDIF}
 	end;
 	

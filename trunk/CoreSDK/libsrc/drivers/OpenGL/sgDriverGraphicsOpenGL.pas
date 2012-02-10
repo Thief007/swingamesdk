@@ -1,4 +1,4 @@
-unit sgDriverGraphicsSDL13;
+unit sgDriverGraphicsOpenGL;
 //=============================================================================
 // sgDriverGraphicsSDL.pas
 //=============================================================================
@@ -15,25 +15,32 @@ unit sgDriverGraphicsSDL13;
 //
 //=============================================================================
 interface
-uses sgTypes, SDL13;
+uses sgTypes, SDL13, sgNetworking, SysUtils;
+
+  type
+    OpenGLWindow = record
+        window  : PSDL_window;
+        context : SDL_GLContext;  
+    end;
+  
+    POPenGLWindow = ^OpenGLWindow;
+
+
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
-  
-  procedure LoadSDL13GraphicsDriver();
+  procedure LoadOpenGLGraphicsDriver();
   function ToGfxColorProcedure(val : Color): Color;
   procedure DrawSurfaceToRenderer();
   procedure DrawDirtyScreen();
   
 implementation
-  uses sgDriverGraphics, sysUtils, sgShared, sgGeometry, 
-    SDL13_gfx, SDL13_Image, sgSavePNG, sgInputBackend, sgDriverSDL13, sgDriverImages, sgUtils;  
+  uses sgDriverGraphics, sgShared;  
 
   procedure DrawDirtyScreen();
   begin  
-    if _ScreenDirty then
-    begin
+
       exit
-    end;
+
   end;
 
   procedure DisposeSurface(surface : Pointer);
@@ -59,7 +66,7 @@ implementation
   
   function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
   begin
-    exit;
+    result := 0;
   end;
     
   procedure PutPixelProcedure(bmp: Bitmap; clr: Color; x, y: Longint);
@@ -68,12 +75,18 @@ implementation
   end;
   
   procedure ColorComponentsProcedure(c: Color; var r, g, b, a: byte);
-  begin  
-    exit;
+  begin
+    // writeln(c, ' = ', IntToHex(c, 8));
+    // writeln(IntToHex(c and $FF000000, 8), ' -> ', IntToHex((c and $FF000000) shr 24, 8));
+    a := c and $FF000000 shr 24;
+    r := c and $00FF0000 shr 16;
+    g := c and $0000FF00 shr 8;
+    b := c and $000000FF;
   end;
   
   function ToGfxColorProcedure(val : Color): Color;
   begin
+    RaiseException('Do not use SDL_gfx');
     result := 0;
   end;
   
@@ -92,7 +105,7 @@ implementation
   
   procedure SetRenderDrawColor(c : Color);
   begin
-    result := 0;
+    exit;
   end;
   
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
@@ -203,11 +216,10 @@ implementation
   // var
   //     sdlScreen : PSDL13Screen;
   begin
-    
     // Initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO) < 0) then exit;
     
-    _screen := New(PSDL13Screen);
+    New(POpenGLWindow(_screen));
     
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
@@ -220,13 +232,18 @@ implementation
     
     // Create the window where we will draw.
     {$IFDEF IOS}
-      PSDL13Screen(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+      POpenGLWindow(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                                        screenWidth, screenHeight, Uint32(SDL_WINDOW_OPENGL) or Uint32(SDL_WINDOW_SHOWN) or Uint32(SDL_WINDOW_BORDERLESS));
     {$ELSE}
-      PSDL13Screen(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+      POpenGLWindow(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                                        screenWidth, screenHeight, Uint32(SDL_WINDOW_OPENGL) or Uint32(SDL_WINDOW_SHOWN) );
     {$ENDIF}
-    _SetupScreen(screenWidth, screenHeight);
+
+      POpenGLWindow(_screen)^.context := SDL_GL_CreateContext(POpenGLWindow(_screen)^.window);
+
+    //VSYNC
+    SDL_GL_SetSwapInterval(1);
+
   end;
   
   // This resizes the graphics window used by SwinGame
@@ -245,12 +262,12 @@ implementation
   // returns true if the save is successful, and false if it is not
   function SaveImageProcedure(bmpToSave : Bitmap; path : String) : Boolean;
   begin
-    exit;
+    result := false;
   end;
   
   procedure RefreshScreenProcedure(screen : Bitmap);
   begin
-    exit;
+    SDL_GL_SwapWindow(POpenGLWindow(_screen)^.window);
   end;
   
   function ColorFromProcedure(bmp : Bitmap; r, g, b, a : byte) : Color;
@@ -289,7 +306,7 @@ implementation
   end;
   
 
-  procedure LoadSDL13GraphicsDriver();
+  procedure LoadOpenGLGraphicsDriver();
   begin
     GraphicsDriver.GetPixel32               := @GetPixel32Procedure;
     GraphicsDriver.PutPixel                 := @PutPixelProcedure;    
