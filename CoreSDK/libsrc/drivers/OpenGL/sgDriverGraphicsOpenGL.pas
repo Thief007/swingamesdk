@@ -224,12 +224,12 @@ implementation
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
     glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINE_LOOP);
-      for angle := 0 to 360 do
+    glBegin(GL_TRIANGLE_FAN);
+    for angle := 0 to 360 do
       begin
         tmpDeg := angle * STEP_FACTOR;
         rad := DegToRad(tmpDeg);
-        glVertex2f(cos(rad)*halfWidth*2,sin(rad)*halfHeight*2);
+        glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
       end;
     glEnd();
 
@@ -251,13 +251,12 @@ implementation
 
 
     glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_TRIANGLE_FAN);
-      glVertex2f(xPos, yPos);
+    glBegin(GL_LINE_LOOP);
       for angle := 0 to 360 do
       begin
         tmpDeg := angle * STEP_FACTOR;
         rad := DegToRad(tmpDeg);
-        glVertex2f(cos(rad)*halfWidth*2,sin(rad)*halfHeight*2);
+        glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
       end;
     glEnd();
 

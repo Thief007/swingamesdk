@@ -25,9 +25,9 @@ begin
       GraphicsDriver.FillTriangle(nil,$FF0000FF,0,0,0,10+y,x,y);
       GraphicsDriver.DrawTriangle(nil,rnd(LONG_INT_LIMIT),0,0,0,10+y,x-50,y-50);
       GraphicsDriver.FillCircle(nil,$FFFF0000,10*2,10*2,600);
-      GraphicsDriver.DrawCircle(nil,rnd(LONG_INT_LIMIT),x*2,y*2,y);
-      // GraphicsDriver.DrawEllipse(nil,rnd(LONG_INT_LIMIT),x*2,y*2,x,y);
-      // GraphicsDriver.FillEllipse(nil,$FF00FF00,x*2,y*2,x,y);
+      GraphicsDriver.DrawCircle(nil,rnd(LONG_INT_LIMIT),x*3,y*2,y);
+      GraphicsDriver.DrawEllipse(nil,rnd(LONG_INT_LIMIT),1000,100,25,50);
+      GraphicsDriver.FillEllipse(nil,$FF00FF00,1000,100,25,50);
       RefreshScreen();
       x += 1;
       y += 1;
