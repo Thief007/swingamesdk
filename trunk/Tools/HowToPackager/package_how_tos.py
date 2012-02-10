@@ -16,7 +16,7 @@ from shutil import make_archive
 
 _lang = [   
             {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
-            {"lang": "C", "template": "../../Dist/C/gcc", "main file": "main.c", "extension": ".c"} 
+            {"lang": "C", "template": "../../Dist/C/gpp", "main file": "main.c", "extension": ".c"} 
         ]
 _base_path = "../../Dist/HowTo"
 
@@ -130,6 +130,6 @@ def main():
     #build_dir_structure()
     create_templates()
     copy_current_how_to_pas_file()
-    zip_how_to()
+    #zip_how_to()
 if __name__ == '__main__':
     main()

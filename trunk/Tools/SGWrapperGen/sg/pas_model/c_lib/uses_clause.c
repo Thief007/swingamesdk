@@ -1,1 +1,1 @@
-%(references)s
+#include "SwinGame.h"
