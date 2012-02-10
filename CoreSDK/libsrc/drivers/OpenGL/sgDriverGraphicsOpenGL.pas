@@ -362,7 +362,6 @@ implementation
   // This procedure sets up the global variable (screen)
   procedure _SetupScreen(screenWidth, screenHeight: Longint);
   begin
-    exit;
   end;
   
   function AvailableResolutions() : ResolutionArray;
@@ -406,11 +405,19 @@ implementation
 
     //VSYNC
     SDL_GL_SetSwapInterval(1);
+
+
+    if screen = nil then 
+      New(screen);
+    if (screen^.surface = nil) then 
+      screen^.surface := POpenGLWindow(_screen)^.window;
+
+    glEnable( GL_TEXTURE_2D );
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
     glOrtho (0, screenWidth, screenHeight, 0, 0, 1);
     glDisable(GL_DEPTH_TEST);
-
+    _SetupScreen(screenWidth, screenHeight);
   end;
   
   // This resizes the graphics window used by SwinGame
@@ -463,13 +470,19 @@ implementation
   end;
 
   function GetScreenWidthProcedure(): LongInt; 
+  var
+    w, h : LongInt;
   begin
-    result := 0;
+    SDL_GetWindowSize(POpenGLWindow(_screen)^.window,@w, @h);
+    result := w;
   end;
   
   function GetScreenHeightProcedure(): LongInt;
+  var
+    w, h : LongInt;
   begin
-    result := 0;
+    SDL_GetWindowSize(POpenGLWindow(_screen)^.window,@w, @h);
+    result := h;
   end;
   
 

@@ -285,7 +285,7 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput, sgDriver;
 
 //----------------------------------------------------------------------------
 // Game Loop Essentials
@@ -330,17 +330,17 @@ implementation
   end;
   function KeyReleased(key: KeyCode): Boolean;
   begin
-    result := WasKeyReleased(Longint(key));
+    result := WasKeyReleased(Driver.GetKeyCode(Longint(key)));
   end;
 
   function KeyDown(key : keyCode): Boolean;
   begin
-    result := WasKeyDown(Longint(key));
+    result := WasKeyDown(Driver.GetKeyCode(Longint(key)));
   end;
   
   function KeyTyped(key: KeyCode): Boolean;
   begin
-    result := WasKeyJustTyped(LongInt(key));
+    result := WasKeyJustTyped(Driver.GetKeyCode(Longint(key)));
   end;
 
   function AnyKeyPressed(): Boolean;
