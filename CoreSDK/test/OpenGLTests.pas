@@ -1,39 +1,44 @@
 program OpenGLTests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
-  sgDriverGraphics,sgGraphics, sgUtils,sgInput,sgGeometry;
+  sgDriverGraphics,sgGraphics, sgUtils,sgInput,sgGeometry,sgTypes, sgTimers;
   
 const LONG_INT_LIMIT = 2147483647;
 
 procedure Main();
 var
   x,y : LongInt;
+  stopwatch : Timer;
 begin
-  x:=0;
-  y:=0;
+  x :=0;
   Writeln('opening window');
   OpenGraphicsWindow('Hello World', 1024, 768);
   Writeln('clearing screen to red');
   Writeln('refreshing screen');
+
+  stopwatch := CreateTimer();
+
+  StartTimer(stopwatch);
   repeat
     begin
+      
       ProcessEvents();
       ClearScreen(LONG_INT_LIMIT);
-      GraphicsDriver.DrawRectangle(nil, RectangleFrom(0,0,x,y), rnd(LONG_INT_LIMIT));
-      GraphicsDriver.FillRectangle(nil, RectangleFrom(50,50,x,y), $FF00FFFF);
-      GraphicsDriver.DrawLine(nil,0,0,x+10,y+10, rnd(LONG_INT_LIMIT));
-      GraphicsDriver.FillTriangle(nil,$FF0000FF,0,0,0,10+y,x,y);
-      GraphicsDriver.DrawTriangle(nil,rnd(LONG_INT_LIMIT),0,0,0,10+y,x-50,y-50);
-      GraphicsDriver.FillCircle(nil,$FFFF0000,10*2,10*2,600);
-      GraphicsDriver.DrawCircle(nil,rnd(LONG_INT_LIMIT),x*3,y*2,y);
-      GraphicsDriver.DrawEllipse(nil,rnd(LONG_INT_LIMIT),1000,100,25,50);
-      GraphicsDriver.FillEllipse(nil,$FF00FF00,1000,100,25,50);
+      GraphicsDriver.DrawRectangle(nil, RectangleFrom(rnd(1024),rnd(768),rnd(120),rnd(120)), rnd(LONG_INT_LIMIT));
+      GraphicsDriver.FillRectangle(nil, RectangleFrom(rnd(1024),rnd(768),rnd(120),rnd(120)), $FF00FFFF);
+      GraphicsDriver.DrawLine(nil,rnd(1024),rnd(768),rnd(120),rnd(120), rnd(LONG_INT_LIMIT));
+      GraphicsDriver.FillTriangle(nil,$FF0000FF,rnd(1024),rnd(768),rnd(120),rnd(120),rnd(120),rnd(120));
+      GraphicsDriver.DrawTriangle(nil,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(120),rnd(120),rnd(120),rnd(120));
+      GraphicsDriver.FillCircle(nil,$FFFF0000,rnd(1024),rnd(768),rnd(120));
+      GraphicsDriver.DrawCircle(nil,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(120));
+      GraphicsDriver.DrawEllipse(nil,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(120),rnd(120));
+      GraphicsDriver.FillEllipse(nil,$FF00FF00,rnd(1024),rnd(768),rnd(120),rnd(120));
       RefreshScreen();
       x += 1;
-      y += 1;
     end;
-  until WindowCloseRequested();
-
+  until x= 1000;
+WriteLn('Time: ', TimerTicks(stopwatch));
+FreeTimer(stopwatch);
 
 end;
 

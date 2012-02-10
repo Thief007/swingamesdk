@@ -159,11 +159,9 @@ implementation
   end;
   
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
-  const
-    STEP_FACTOR = 5;
+
   var
     rad : Single;
-    tmpDeg : LongInt;
     r,g,b,a : Byte;
     angle : LongInt;
   begin
@@ -176,19 +174,16 @@ implementation
     glBegin(GL_LINE_LOOP);
       for angle := 0 to 360 do
       begin
-        tmpDeg := angle * STEP_FACTOR;
-        rad := DegToRad(tmpDeg);
+        rad := DegToRad(angle);
         glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
       end;
     glEnd();
   end;
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
-  const
-    STEP_FACTOR = 5;
+
   var
     rad : Single;
-    tmpDeg : LongInt;
     r,g,b,a : Byte;
     angle : LongInt;
   begin
@@ -202,8 +197,7 @@ implementation
       glVertex2f(xc, yc);
       for angle := 0 to 360 do
       begin
-        tmpDeg := angle * STEP_FACTOR;
-        rad := DegToRad(tmpDeg);
+        rad := DegToRad(angle);
         glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
       end;
     glEnd();
@@ -211,12 +205,10 @@ implementation
   
   // This procedure draws an Ellipse to a bitmap
   procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
-  const
-    STEP_FACTOR = 5;
+
   var
     
     rad : Single;
-    tmpDeg : LongInt;
     r,g,b,a : Byte;
     angle : LongInt;
   begin
@@ -227,8 +219,7 @@ implementation
     glBegin(GL_TRIANGLE_FAN);
     for angle := 0 to 360 do
       begin
-        tmpDeg := angle * STEP_FACTOR;
-        rad := DegToRad(tmpDeg);
+        rad := DegToRad(angle);
         glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
       end;
     glEnd();
@@ -237,11 +228,9 @@ implementation
   
   // This procedure draws an Ellipse to a bitmap
   procedure DrawEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
-    const
-    STEP_FACTOR = 5;
+
   var
     rad : Single;
-    tmpDeg : LongInt;
     r,g,b,a : Byte;
     angle : LongInt;
   begin
@@ -254,8 +243,7 @@ implementation
     glBegin(GL_LINE_LOOP);
       for angle := 0 to 360 do
       begin
-        tmpDeg := angle * STEP_FACTOR;
-        rad := DegToRad(tmpDeg);
+        rad := DegToRad(angle);
         glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
       end;
     glEnd();
@@ -404,7 +392,7 @@ implementation
       POpenGLWindow(_screen)^.context := SDL_GL_CreateContext(POpenGLWindow(_screen)^.window);
 
     //VSYNC
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
 
 
     if screen = nil then 
