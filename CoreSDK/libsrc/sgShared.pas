@@ -30,8 +30,7 @@ unit sgShared;
 //=============================================================================
 interface
   uses 
-    stringhash,   // libsrc
-    sgInputBackend, sgTypes;
+    stringhash, sgInputBackend, sgTypes;
 //=============================================================================
   
   type
@@ -87,9 +86,11 @@ interface
   procedure RaiseException(message: String);
   procedure RaiseWarning(message: String);
   
-  {$ifdef DARWIN}
-  procedure CyclePool();
-  {$endif}
+  {$IFDEF DARWIN}
+      {$IFNDEF IOS}
+          procedure CyclePool();
+      {$ENDIF}
+  {$ENDIF}
   
   
   function RoundUByte(val: Double): Byte;
@@ -168,9 +169,10 @@ implementation
 // Global variables for Mac OS Autorelease Pool
 //----------------------------------------------------------------------------
     {$ifdef DARWIN}
-      NSAutoreleasePool: Pointer;
-      //drain: Pointer;
-      pool: Pointer = nil;
+      {$IFNDEF IOS}
+        NSAutoreleasePool: Pointer;
+        pool: Pointer = nil;
+      {$ENDIF}
     {$endif}
     
 //---------------------------------------------------------------------------
@@ -180,12 +182,12 @@ implementation
   {$ifdef DARWIN}
     {$linklib libobjc.dylib}
     {$IFNDEF IOS}
-      procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}  
-    {$endif}
-    function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
-    function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
-    function class_respondsToSelector(cls, sel: Pointer): boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
-    function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+        procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}  
+        function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
+        function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+        function class_respondsToSelector(cls, sel: Pointer): boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
+        function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+    {$ENDIF}
   {$endif}
   
   constructor TResourceContainer.create(data: Pointer);
@@ -218,10 +220,10 @@ implementation
       //FIX: Error with Mac and FPC 2.2.2
       SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
       
-      NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      pool := objc_msgSend(pool, sel_registerName('init'));
       {$IFNDEF IOS}
+        NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
+        pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+        pool := objc_msgSend(pool, sel_registerName('init'));
         NSApplicationLoad();
       {$endif}
     {$endif}
@@ -254,6 +256,7 @@ implementation
   end;
   
   {$ifdef DARWIN}
+  {$IFNDEF IOS}
   procedure CyclePool();
   begin
     if class_respondsToSelector(NSAutoreleasePool, sel_registerName('drain')) then
@@ -266,6 +269,7 @@ implementation
       pool := objc_msgSend(pool, sel_registerName('init'));
     end;
   end;
+  {$ENDIF}
   {$endif}
 
 
@@ -395,11 +399,13 @@ end;
   finalization
   begin
     {$ifdef DARWIN}
-        if not assigned(pool) then
-        begin
-            pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-            pool := objc_msgSend(pool, sel_registerName('init'));
-        end;
+        {$IFNDEF IOS}
+            if not assigned(pool) then
+            begin
+                pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+                pool := objc_msgSend(pool, sel_registerName('init'));
+            end;
+        {$ENDIF}
     {$endif}
     
     if screen <> nil then
@@ -412,13 +418,15 @@ end;
     Driver.Quit();
     
     {$ifdef DARWIN}
-      // last pool will self drain...
-        if assigned(pool) then
-        begin
-            objc_msgSend(pool, sel_registerName('drain'));
-        end;
-        pool := nil;
-        NSAutoreleasePool := nil;
+        {$IFNDEF IOS}
+            // last pool will self drain...
+            if assigned(pool) then
+            begin
+                objc_msgSend(pool, sel_registerName('drain'));
+            end;
+            pool := nil;
+            NSAutoreleasePool := nil;
+        {$ENDIF}
     {$endif}
   end;
 
