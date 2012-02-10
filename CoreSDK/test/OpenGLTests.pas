@@ -1,7 +1,7 @@
 program OpenGLTests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
-  sgDriverGraphics,sgGraphics, sgUtils;
+  sgDriverGraphics,sgGraphics, sgUtils,sgInput;
   
 
 
@@ -11,9 +11,15 @@ begin
   GraphicsDriver.InitializeGraphicsWindow('Hello World', 640, 480);
   Writeln('clearing screen to red');
   Writeln('refreshing screen');
-  ClearScreen($FFFFFFFF);
-  RefreshScreen();
-  Delay(5000);
+  repeat
+    begin
+      ProcessEvents();
+      ClearScreen(rnd(2147483647));
+      RefreshScreen();
+    end;
+  until WindowCloseRequested();
+
+
 end;
 
 begin
