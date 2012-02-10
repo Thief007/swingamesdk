@@ -111,6 +111,7 @@ class PascalExpression(object):
                     expression += part.code[name + '_reference']   # variable[name] returns variable declaration
                 else:
                     expression += part.code[name]
+                expression += ' '
             
             if (self._innerExpr):
                 self._code[name] = module.inner_expression_template % { "expression": expression }

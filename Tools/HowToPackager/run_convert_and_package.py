@@ -55,8 +55,9 @@ def removeall(path):
 def prepare_directories():
 	if os.path.exists(get_how_to_directory()):
 		print " Cleaning HowTo folder:"
-		removeall(get_how_to_directory())
-		os.rmdir(get_how_to_directory())
+		shutil.rmtree(get_how_to_directory())
+		# removeall(get_how_to_directory())
+		# os.rmdir(get_how_to_directory())
 	print "  Making: 	HowTo folder"
 	os.mkdir(get_how_to_directory())
 	print "  Making:	Source_Code folder"

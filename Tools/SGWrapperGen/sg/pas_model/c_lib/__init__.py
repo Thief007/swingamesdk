@@ -307,7 +307,8 @@ _operator_conversion_table = {
     '=' : '==',
     '<>' : '!=',
     'and' : '&&',
-    'or' : '||'
+    'or' : '||',
+    'not' : '!',
     }       
 
 statement_seperator = ''              

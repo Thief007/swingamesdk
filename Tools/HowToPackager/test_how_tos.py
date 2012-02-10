@@ -13,10 +13,11 @@ import subprocess
 import sys
 import glob
 import platform
+import posixpath 
 
 _lang = [ 
             {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
-            {"lang": "C", "template": "../../Dist/C/gcc", "main file": "main.c", "extension": ".c"} 
+            {"lang": "C", "template": "../../Dist/C/gpp", "main file": "main.c", "extension": ".c"} 
         ]
 _enumLoad = [ {"load": "BitmapNamed"}]
 _base_path = "../../Dist/HowTo/"
@@ -33,21 +34,39 @@ def get_os_name():
     return "Windows"
 
 def open_how_to():
+    failed_list = []
     bash = ''
     if (get_os_name() == "Windows"):
       bash = 'bash ';
 
     for lang in _lang:     
-        path = _base_path + lang['lang'] + '/'
-        how_to_list = glob.glob(os.path.join(path, "HowTo*"))
+        path = _base_path + lang['lang']
+        how_to_list = glob.glob((path + '//' + "HowTo*"))
         for how_to in how_to_list:
-            build_sh = "%s/build.sh" % how_to
-            run_sh = "%s/run.sh" % how_to
-            print "Building %s" % build_sh #os.path.basename(how_to)
-            subprocess.call("%s./%s" % (bash, build_sh))
-            print "Running %s " % how_to #os.path.basename(how_to)
-            subprocess.call("%s./%s" % (bash, run_sh))
-  
+            print "*" * 70
+            build_sh = posixpath.normpath("%s/build.sh" % how_to)
+            build_sh = build_sh.replace("\\", "/")
+            run_sh = posixpath.normpath("%s/run.sh" % how_to)
+            run_sh = run_sh.replace("\\", "/")
+            print " - Building %s" % build_sh #os.path.basename(how_to)
+            print "     - ", "%s./%s" % (bash, build_sh)
+            if subprocess.call("%s./%s" % (bash, build_sh)) == 0:
+                pass
+                # print " - Running %s " % run_sh #os.path.basename(how_to)
+                # print "     - ", "%s./%s" % (bash, run_sh)
+                # subprocess.call("%s./%s" % (bash, run_sh))
+            else:
+                print "     - Build failed."
+                print "     - Removing %s" %how_to
+                failed_list.append(os.path.basename(how_to))
+                shutil.rmtree(how_to)
+    print '*' * 70
+    print ' - Failed builds:'
+    for build in failed_list:
+        print '     - ', build
+    print '*' * 70
+
+
 def main():
     open_how_to();
 if __name__ == '__main__':
