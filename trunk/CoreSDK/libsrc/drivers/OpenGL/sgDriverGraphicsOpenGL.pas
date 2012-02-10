@@ -34,7 +34,7 @@ uses sgTypes, SDL13, sgNetworking, SysUtils,gl;
   procedure DrawDirtyScreen();
   
 implementation
-  uses sgDriverGraphics, sgShared;  
+  uses sgDriverGraphics, sgShared, Math;  
 
   procedure DrawDirtyScreen();
   begin  
@@ -109,8 +109,22 @@ implementation
   end;
   
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  var
+    r,g,b,a : Byte;
+
   begin
-    exit;
+
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+    glColor4f(r/255, g/255, b/255, a/255);
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(x1, y1);
+    glVertex2f(x2, y2);
+    glVertex2f(x3, y3);
+    glVertex2f(x1, y1);
+    glEnd();
   end;
   
   procedure GetLengthFromPoints(pos : array of Single; var lnth : LongInt; var lowest : Single );
@@ -136,7 +150,7 @@ implementation
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
 
-    glColor3f(r/255, g/255, b/255);
+    glColor4f(r/255, g/255, b/255, a/255);
     glBegin(GL_TRIANGLES);
     glVertex2f(x1, y1);
     glVertex2f(x2, y2);
@@ -145,26 +159,108 @@ implementation
   end;
   
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
+  const
+    STEP_FACTOR = 5;
+  var
+    rad : Single;
+    tmpDeg : LongInt;
+    r,g,b,a : Byte;
+    angle : LongInt;
   begin
-    // glColor3f(0.0f, 0.0f, 0.0f);
-    // glRectf(-0.75f,0.75f, 0.75f, -0.75f);
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor4f(r/255, g/255, b/255, a/255);
+    glBegin(GL_LINE_LOOP);
+      for angle := 0 to 360 do
+      begin
+        tmpDeg := angle * STEP_FACTOR;
+        rad := DegToRad(tmpDeg);
+        glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
+      end;
+    glEnd();
   end;
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
+  const
+    STEP_FACTOR = 5;
+  var
+    rad : Single;
+    tmpDeg : LongInt;
+    r,g,b,a : Byte;
+    angle : LongInt;
   begin
-    exit;
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor4f(r/255, g/255, b/255, a/255);
+    glBegin(GL_TRIANGLE_FAN);
+      glVertex2f(xc, yc);
+      for angle := 0 to 360 do
+      begin
+        tmpDeg := angle * STEP_FACTOR;
+        rad := DegToRad(tmpDeg);
+        glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
+      end;
+    glEnd();
   end;
   
   // This procedure draws an Ellipse to a bitmap
   procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+  const
+    STEP_FACTOR = 5;
+  var
+    
+    rad : Single;
+    tmpDeg : LongInt;
+    r,g,b,a : Byte;
+    angle : LongInt;
   begin
-    exit;
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+    glColor4f(r/255, g/255, b/255, a/255);
+    glBegin(GL_LINE_LOOP);
+      for angle := 0 to 360 do
+      begin
+        tmpDeg := angle * STEP_FACTOR;
+        rad := DegToRad(tmpDeg);
+        glVertex2f(cos(rad)*halfWidth*2,sin(rad)*halfHeight*2);
+      end;
+    glEnd();
+
   end;
   
   // This procedure draws an Ellipse to a bitmap
   procedure DrawEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
+    const
+    STEP_FACTOR = 5;
+  var
+    rad : Single;
+    tmpDeg : LongInt;
+    r,g,b,a : Byte;
+    angle : LongInt;
   begin
-    exit;
+    
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+
+
+
+    glColor4f(r/255, g/255, b/255, a/255);
+    glBegin(GL_TRIANGLE_FAN);
+      glVertex2f(xPos, yPos);
+      for angle := 0 to 360 do
+      begin
+        tmpDeg := angle * STEP_FACTOR;
+        rad := DegToRad(tmpDeg);
+        glVertex2f(cos(rad)*halfWidth*2,sin(rad)*halfHeight*2);
+      end;
+    glEnd();
+
   end;
   
   // This procedure draws a filled rectangle to a bitmap
@@ -184,7 +280,7 @@ implementation
 
 
 
-    glColor3f(r/255, g/255, b/255);
+    glColor4f(r/255, g/255, b/255, a/255);
     glBegin(GL_TRIANGLE_STRIP);
     glVertex2f(x1, y1);
     glVertex2f(x1, y2);
@@ -210,7 +306,7 @@ implementation
 
 
 
-    glColor3f(r/255, g/255, b/255);
+    glColor4f(r/255, g/255, b/255, a/255);
     glBegin(GL_LINE_LOOP);
     glVertex2f(x1, y1);
     glVertex2f(x2, y1);
@@ -231,7 +327,7 @@ implementation
 
 
 
-    glColor3f(r/255, g/255, b/255);
+    glColor4f(r/255, g/255, b/255, a/255);
     glBegin(GL_LINES);
     glVertex2f(x1, y1);
     glVertex2f(x2, y2);

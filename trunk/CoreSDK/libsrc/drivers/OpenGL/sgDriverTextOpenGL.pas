@@ -72,7 +72,7 @@ implementation
   
   function GetFontStyleProcedure(font : Font) : FontStyle;
   begin
-    result := FontStyle.NormalFont;
+    result := NormalFont;
   end;
   
   function SizeOfTextProcedure(font : Font; theText : String; var w : Longint ; var h : LongInt) : Integer;
