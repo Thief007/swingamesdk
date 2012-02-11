@@ -29,21 +29,13 @@ end;
 
 procedure Main();
 var
-    earth: Sprite;
     asteroid: Sprite;
 begin
     OpenGraphicsWindow('Create a Sprite', 800, 600);
 
     ClearScreen(ColorWhite);
 
-    LoadBitmapNamed('earth', 'earth.png');
     LoadBitmapNamed('asteroid', 'asteroid.png');
-
-    earth := CreateSprite(BitmapNamed('earth'));
-    SpriteSetX(earth, 700);
-    SpriteSetY(earth, 100);
-    SpriteSetMass(earth, 10);
-    SpriteSetVelocity(earth, VectorTo(-0.8, 0.6));
 
     asteroid := CreateSprite(BitmapNamed('asteroid'));
     SpriteSetX(asteroid, 100);
@@ -54,17 +46,11 @@ begin
     repeat
         ProcessEvents();
         ClearScreen(ColorWhite);
-        DrawSprite(earth);
-        UpdateSprite(earth);
         DrawSprite(asteroid);
         UpdateSprite(asteroid);
 		
-		KeepOnScreen(earth);
 		KeepOnScreen(asteroid);
-		
-        if SpriteCollision(earth, asteroid) then CollideCircles(asteroid, earth);
-
-        RefreshScreen();
+		RefreshScreen(60);
     until WindowCloseRequested();
 
     ReleaseAllResources();

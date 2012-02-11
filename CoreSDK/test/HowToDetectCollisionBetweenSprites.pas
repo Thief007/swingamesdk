@@ -14,12 +14,12 @@ begin
     ball2 := CreateSprite(BitmapNamed('ball'));
     
     SpriteSetX(ball1, 400);
-    SpriteSetY(ball1, 100);
+    SpriteSetY(ball1, 200);
     SpriteSetDx(ball1, 0);
     SpriteSetDy(ball1, 0.1);
     
     SpriteSetX(ball2, 400);
-    SpriteSetY(ball2, 500);
+    SpriteSetY(ball2, 400);
     SpriteSetDx(ball2, 0);
     SpriteSetDy(ball2, -0.1);
 
