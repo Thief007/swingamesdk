@@ -14,11 +14,8 @@ import sys
 import glob
 import platform
 import posixpath 
+from convert_utils import *
 
-_lang = [ 
-            {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
-            {"lang": "C", "template": "../../Dist/C/gpp", "main file": "main.c", "extension": ".c"} 
-        ]
 _enumLoad = [ {"load": "BitmapNamed"}]
 _base_path = "../../Dist/HowTo/"
 _base_path_Source_Code = "../../Dist/HowTo/Source_Code/"
@@ -39,7 +36,7 @@ def open_how_to():
     if (get_os_name() == "Windows"):
       bash = 'bash ';
 
-    for lang in _lang:     
+    for lang in languages:     
         path = _base_path + lang['lang']
         how_to_list = glob.glob((path + '//' + "HowTo*"))
         for how_to in how_to_list:
@@ -49,21 +46,19 @@ def open_how_to():
             run_sh = posixpath.normpath("%s/run.sh" % how_to)
             run_sh = run_sh.replace("\\", "/")
             print " - Building %s" % build_sh #os.path.basename(how_to)
-            print "     - ", "%s./%s" % (bash, build_sh)
             if subprocess.call("%s./%s" % (bash, build_sh)) == 0:
-                pass
-                # print " - Running %s " % run_sh #os.path.basename(how_to)
-                # print "     - ", "%s./%s" % (bash, run_sh)
-                # subprocess.call("%s./%s" % (bash, run_sh))
+                print " - Running %s " % run_sh #os.path.basename(how_to)
+                print "     - ", "%s./%s" % (bash, run_sh)
+                subprocess.call("%s./%s" % (bash, run_sh))
             else:
                 print "     - Build failed."
                 print "     - Removing %s" %how_to
-                failed_list.append(os.path.basename(how_to))
+                failed_list.append((os.path.basename(how_to), lang['lang']))
                 shutil.rmtree(how_to)
     print '*' * 70
     print ' - Failed builds:'
-    for build in failed_list:
-        print '     - ', build
+    for name, lang in failed_list:
+        print '     - %s : %s' %(lang, name)
     print '*' * 70
 
 
