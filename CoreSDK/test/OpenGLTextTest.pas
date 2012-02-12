@@ -380,7 +380,7 @@ var
 begin
     New(temp);
 
-WriteLn('here');
+    WriteLn('here');
     glGenTextures(128, temp^.textures);
     WriteLn('here');
     temp^.displaylist := glGenLists(128);
@@ -565,9 +565,9 @@ begin
         ' uniform sampler2D Tex_Clr0; '#10 +
         ' uniform sampler2D Tex_Alpha0; '#10 +
         ' void main(void) { //vec4 OutColor(0,0,0,0); '#10 +
-        ' vec4 myColor = texture2D(Tex_Clr0,gl_TexCoord[0].xy); '#10 +
+        ' vec4 myColor = texture2D(Tex_Clr0,gl_TexCoord[0].xy) * gl_Color; '#10 +
         ' //myColor.a = texture2D(Tex_Alpha0,gl_TexCoord[1].xy); '#10 +
-        ' gl_FragColor = myColor - vec4(1.0, 0, 1.0, 0.0); '#10 +
+        ' gl_FragColor = myColor; '#10 +
         '} ';
     
     WriteLn('Face ', sizeof(FT_FaceRec));
@@ -619,10 +619,12 @@ begin
         exit;
     end;
 
-    f := LoadFont('/Users/acain/working/SwinGameSDK/CoreSDK/test/Resources/fonts/arial.ttf', 18);
+    f := LoadFont('/Users/acain/Source/Google/SwinGameSDK/CoreSDK/test/Resources/fonts/arial.ttf', 18);
+	WriteLn('Loaded font...', HexStr(f));
 
 
     glUseProgram(myProg);
+    glColor4f ( 1.0, 0, 0, 1.0 );
 	PrintFont(f, 'Hello World!', 50, 50);
     glUseProgram(0);
 
@@ -631,7 +633,6 @@ begin
 	RefreshScreen();
 	Delay(5000);
 
-	WriteLn('Loaded font...', HexStr(f));
 	FreeFont(f);
 
 	exit;	
