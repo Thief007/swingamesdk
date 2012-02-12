@@ -1,7 +1,9 @@
 import subprocess
 import shutil
+from shutil import make_archive
 import glob
 import os
+from convert_utils import *
 
 # This script is responsible for preparing the files for use by the parser and the bundler
 # Steps:
@@ -14,43 +16,8 @@ import os
 # 3. Generate resource list
 # 4. Parse HowTo files
 # 5. Generate templates
-
-def get_dist_directory():
-	return "../../Dist"
-
-def get_test_directory():
-	return "../../CoreSDK/test"
-
-def get_how_to_directory():
-	return get_dist_directory() + "/HowTo"
-
-def get_parser_directory():
-	return "../SGWrapperGen/sg/pas_model/"
-
-def rmgeneric(path, __func__):
-
-    try:
-        __func__(path)
-        #print 'Removed ', path
-    except OSError, (errno, strerror):
-        print "Error %s : %s" %(path, strerror)
-            
-def removeall(path):
-
-    if not os.path.isdir(path):
-        return
-    
-    files=os.listdir(path)
-
-    for x in files:
-        fullpath=os.path.join(path, x)
-        if os.path.isfile(fullpath):
-            f = os.remove
-            rmgeneric(fullpath, f)
-        elif os.path.isdir(fullpath):
-            removeall(fullpath)
-            f = os.rmdir
-            rmgeneric(fullpath, f)
+# 6. Test HowTo's - remove HowTo's that do not build
+# 7. Archive HowTo's
 
 def prepare_directories():
 	if os.path.exists(get_how_to_directory()):
@@ -79,6 +46,27 @@ def prepare_directories():
 	for fname in files_to_copy:
 		print " Copying:	" + os.path.basename(fname)
 		shutil.copy2(fname, destination)
+
+def zip_how_tos():
+    f = open("../../CoreSDK/test/HowToResources.txt")
+    how_to_file_lines = f.readlines()
+    f.close()
+    for line in how_to_file_lines:
+       # if line starts with *... its a new how to...
+       if line[0] == "*":
+           current_how_to = line[1:].strip()
+           for lang in languages:
+                root_dir = os.path.expanduser(os.path.join(get_how_to_directory(), lang["lang"], current_how_to))
+                how_to_src = root_dir + "/src/" + lang['main file']
+                print " - Checking How To src file: %s" % how_to_src
+                if os.path.exists(how_to_src):
+                    path = "%s/%s/%s/%s" % (get_how_to_directory(), lang["lang"], "Archive", current_how_to)
+                    print "   -- Creating Archive "
+                    print "     - ", current_how_to
+                    make_archive(path, 'zip',root_dir)
+                else:
+                    print " - Skipping: %s" % how_to_src
+                    print "     - Unable to find source file"
 
 def copy_how_tos():
 	"""
@@ -165,6 +153,9 @@ def main():
 	parse_how_tos()
 	generate_templates()
 	build_all_how_tos()
-	print "Finished!"
+	zip_how_tos()
+	print "*" * 70
+	print "Finished generating how tos"
+	print "*" * 70
 if __name__ == '__main__':
     main()
