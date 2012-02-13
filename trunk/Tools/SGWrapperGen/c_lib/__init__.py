@@ -215,6 +215,7 @@ _type_dictionary_creation_data = [
             ('pointer[0..n - 1]',   'void *'),
             ('fingerarray',   'finger_array'),
             ('resolutionarray',   'resolution_array'),
+            ('messagedata[0..n - 1]',    'message_data_array')
         ],
         '_type_switcher': {
             None:       '#2#',
@@ -259,6 +260,7 @@ _type_dictionary_creation_data = [
             ('circle',              'circle'),
             ('bitmapcell',          'bitmap_cell'),
             ('guilistitem',         'guilist_item'),
+            ('messagedata',         'message_data'),
         ],
         '_type_switcher': {
             None:       '#2# ', #used for _byval methods

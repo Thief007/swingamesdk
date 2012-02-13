@@ -81,7 +81,9 @@ _type_switcher = {
     'guielementkind':       'GUIElementKind',
     'eventkind':            'EventKind',
     'filedialogselecttype': 'FileDialogSelectType',
-    'guieventcallback':  'GUIEventCallback',
+    'guieventcallback':     'GUIEventCallback',
+    'messagedata':          'MessageData',
+    'messagedataarray':     'MessageDataArray',
 }
 
 

@@ -6,22 +6,22 @@ uses sgShared, sgTypes, sgNamedIndexCollection;
 type
 
   //TCP
-  CreateTCPHostProcedure              = function (aPort : LongInt; aConSocketIndexes : NamedIndexCollection) : Boolean;
-  OpenTCPConnectionToHostProcedure    = function (aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
-  ServerAcceptTCPConnectionProcedure  = function (aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
+  CreateTCPHostProcedure              = function (aPort : LongInt; var aConSocketIndexes : NamedIndexCollection) : Boolean;
+  OpenTCPConnectionToHostProcedure    = function (aIP : String; aPort : LongInt; var aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  ServerAcceptTCPConnectionProcedure  = function (var aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
   TCPMessageReceivedProcedure         = function (aReceiveSocketIndexes : NamedIndexCollection) : Boolean;    
   BroadcastTCPMessageProcedure        = function (aMsg : String) : Boolean;
-  SendTCPMessageToProcedure           = function (aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  SendTCPMessageToProcedure           = function (aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : String;
   //UDP
   OpenUDPListenerSocketProcedure      = function (aPort : LongInt; aUDPSocketIndexes : NamedIndexCollection) : Boolean;
   OpenUDPSendSocketProcedure          = function () : Boolean;
   UDPMessageReceivedProcedure         = function () : Boolean;
   SendUDPMessageProcedure             = function (aMsg, aIP : String; aPort : LongInt) : Boolean;
 
-  CloseTCPHostSocketProcedure         = function (aCollection : NamedIndexCollection; aPort: LongInt) : Boolean;  
-  CloseTCPReceiverSocketProcedure     = function (aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
-  CloseTCPSenderSocketProcedure       = function (aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
-  CloseUDPSocketProcedure             = function (aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  CloseTCPHostSocketProcedure         = function (var aCollection : NamedIndexCollection; aPort: LongInt) : Boolean;  
+  CloseTCPReceiverSocketProcedure     = function (var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  CloseTCPSenderSocketProcedure       = function (var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  CloseUDPSocketProcedure             = function (var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
 
   NetworkingDriverRecord = record
     CreateTCPHost               : CreateTCPHostProcedure;
@@ -62,20 +62,19 @@ uses
 // -- End Hex Code  
 // -- Start Connection Code
   
-  function DefaultCreateTCPHostProcedure(aPort : LongInt; aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function DefaultCreateTCPHostProcedure(aPort : LongInt; var aConSocketIndexes : NamedIndexCollection) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.CreateTCPHost(aPort, aConSocketIndexes);
   end;
   
-  function DefaultOpenTCPConnectionToHostProcedure(aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function DefaultOpenTCPConnectionToHostProcedure(aIP : String; aPort : LongInt; var aSendSocketIndexes : NamedIndexCollection) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.OpenTCPConnectionToHost(aIP, aPort, aSendSocketIndexes);
   end;
- 
   
-  function DefaultServerAcceptTCPConnectionProcedure(aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function DefaultServerAcceptTCPConnectionProcedure(var aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.ServerAcceptTCPConnection(aReceiveSocketIndexes, aConSocketIndexes);
@@ -93,7 +92,7 @@ uses
     result := NetworkingDriver.BroadcastTCPMessage(aMsg);
   end;
   
-  function DefaultSendTCPMessageToProcedure(aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function DefaultSendTCPMessageToProcedure(aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : String;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.SendTCPMessageTo(aMsg, aIP, aPort, aSendSocketIndexes);
@@ -124,25 +123,25 @@ uses
     result := NetworkingDriver.SendUDPMessage(aMsg, aIP, aPort);
   end;
 
-  function DefaultCloseTCPHostSocketProcedure(aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  function DefaultCloseTCPHostSocketProcedure(var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.CloseTCPHostSocket(aCollection, aPort);    
   end;
 
-  function DefaultCloseTCPReceiverSocketProcedure(aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function DefaultCloseTCPReceiverSocketProcedure(var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.CloseTCPReceiverSocket(aCollection, aIP, aPort);    
   end;
 
-  function DefaultCloseTCPSenderSocketProcedure(aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function DefaultCloseTCPSenderSocketProcedure(var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.CloseTCPSenderSocket(aCollection, aIP, aPort);    
   end;
 
-  function DefaultCloseUDPSocketProcedure(aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  function DefaultCloseUDPSocketProcedure(var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
   begin
     LoadSDLNetworkingDriver();
     result := NetworkingDriver.CloseUDPSocket(aCollection, aPort);    
@@ -168,8 +167,5 @@ uses
     NetworkingDriver.CloseTCPReceiverSocket      := @DefaultCloseTCPReceiverSocketProcedure;
     NetworkingDriver.CloseTCPSenderSocket        := @DefaultCloseTCPSenderSocketProcedure;
     NetworkingDriver.CloseUDPSocket              := @DefaultCloseUDPSocketProcedure;
-{
-    NetworkingDriver.DequeueMessage              : @DefaultDequeueMessageProcedure
-    NetworkingDriver.PopAllMessages              : @DefaultPopAllMessagesProcedure}
   end;
 end.

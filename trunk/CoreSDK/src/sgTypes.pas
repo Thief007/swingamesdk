@@ -230,6 +230,7 @@ interface
     Matrix2D = packed record
       elements : Array [0..2,0..2] of Single;
     end;
+
     /// The color type is used within the SwinGameAPI to store color values.
     /// The color values are represented as 32bit RGBA values where R stores the
     /// color's red component, G stores the green component, B stores the blue
@@ -1052,20 +1053,22 @@ interface
       DrawAsVectors:        Boolean;
     end;
     
-
+    /// A record for Message data sent and received in sgNetworking
+    /// 
+    /// @struct MessageData
     MessageData = packed record
       msg       : String;
       IP        : String;
       port      : LongInt;
     end;
     
+    /// THe array of record for message data
+    ///
+    /// @type MessageDataArray
+    /// @array_wrapper
+    /// @field data: array of MessageData
     MessageDataArray = Array of MessageData;
   
-    MessagePtr = ^MessageLink;
-    MessageLink = packed record
-      data  : MessageData;
-      next  : MessagePtr;
-    end;
     
     
     

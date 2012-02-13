@@ -68,17 +68,25 @@ procedure SendMessageToPeer();
 var
   lInput : String = '';
   lPort  : Integer = 0;
+  close : String;
 begin
-  Write('Enter Port: ');
   ReceiveMessage();
-  ReadLn(lInput);
-  lPort := StrToInt(lInput);
-  Write('Message: ');
-  ReadLn(lInput);
-  SendTCPMessageTo(lInput, '127.0.0.1', lPort);
-  ReceiveMessage();
+  Write('Send Message: ');
   if lInput = 'quit' then
     _Quit := True;
+  ReadLn(lInput);
+  close := SendTCPMessageTo(lInput, '127.0.0.1', 2000);
+
+      WriteLn('TCP FailedX: ', close);
+  if (close <> '') then
+  begin
+    WriteLn('CLosing: ', close);
+    CloseTCPSenderSocket('127.0.0.1', 2000);
+    WriteLn('Close Success');
+  end;
+
+
+  ReceiveMessage();
 end;
 
 procedure Broadcast();
@@ -105,6 +113,7 @@ begin
   WriteLn('Success? : ', CloseTCPReceiverSocket('127.0.0.1', 2000));
   WriteLn('Closing Host Socket at 2000...');
   WriteLn('Success? : ', CloseTCPHostSocket(2000));
+  _Quit := true;
 end;
 
 function InitialOptionsQuery() : Integer;
