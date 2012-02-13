@@ -141,7 +141,6 @@ class APIDocWriter(object):
 </script>
 </head>
 <body>
-%(topnav)s
 
 <h1>%(title)s</h1>
 
@@ -470,7 +469,7 @@ class UnitPresenter(object):
         if self.last_method != method.name:
             if self.last_method:
                 # TODO: need to add close after last function!
-                out_doc.append('</ul></div>')
+                out_doc.append('</ul></div></div>')
             
             sql_menu_items = []
             temp_title = method.name
@@ -607,6 +606,7 @@ class UnitPresenter(object):
         self.doc = APIDocWriter()
         self.doc.title = the_file.name
         self.doc.desc = self.idcollection.format_text(the_file.members[0].doc)
+        self.last_method = None 
         
         #todo: remove show all methods...
         #self.doc.append('<a class="details-link" id="toggleShownMethods" href="javascript:toggleShownMethods()">show all methods</a>\n')
