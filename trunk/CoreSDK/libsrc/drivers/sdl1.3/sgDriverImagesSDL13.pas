@@ -133,7 +133,6 @@ implementation
       SDL_SetColorKey(GetSurface(result), SDL_SRCCOLORKEY, transparentColor);
       SDL_UpperBlit(loadedImage, @offset, GetSurface(result), @offset);
       PSDL13Surface(result^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, GetSurface(result));
-  	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, PSDL13Surface(result^.surface)^.texture, @offset, @offset);
   	  SDL_FreeSurface(PSDL13Surface(result^.surface)^.surface);
     end else begin    
       SetNonAlphaPixelsProcedure(result);
