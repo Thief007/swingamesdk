@@ -309,6 +309,7 @@ implementation
     end
     else
     begin
+      glBindTexture(GL_TEXTURE_2D, 0);
       GraphicsDriver.ColorComponents(toColor,r,g,b,a);
       glClearColor ( r/255,g/255,b/255,a/255 );
       glClear ( GL_COLOR_BUFFER_BIT );
