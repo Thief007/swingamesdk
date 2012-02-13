@@ -30,7 +30,7 @@ begin
         RefreshScreen();
         ProcessEvents();
     until WindowCloseRequested();
-
+    FreeSprite(ball)
     ReleaseAllResources();  
 end;
 
