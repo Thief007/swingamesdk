@@ -200,11 +200,7 @@ Generated %(datetime)s for svn version %(svnversion)s
         tmp = '<div id="topnav">\n<ul>\n%(items)s\n</ul>\n</div>'
         if self.topnav:
             items = []
-            for f, title in self.topnav:
-                if f == filename:
-                    items.append('<li><a href="%s" class="current">%s</a></li>' % (f,title))
-                else:
-                    items.append('<li><a href="%s">%s</a></li>' % (f,title))
+            
             return tmp % {'items': ' '.join(items) } 
         else:
             return ''
@@ -219,13 +215,11 @@ Generated %(datetime)s for svn version %(svnversion)s
         '''Convert toc list of tuples (name, uname) to list items. 
         Only 1 unique name is presented in the toc for brevity.
         '''
-        #toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
-        toc =  '<aside id="sidebar-a" class="grid-box" style="min-height: 500px;"><div class="grid-box width100 grid-v"><div class="module mod-box mod-box-header deepest"><h3 class="module-title">%s</h3><ul class="menu menu-sidebar">%s</ul></div></div></aside>'% (self.title, '%(toc)s')
         tmp = []
         sql_insert_menu_type =[]
 
         last = ''
-        sql_insert_menu_type.append('("'+self.title.lower() +'", "'+self.title+'", "'+self.title+' api menu"),')
+        sql_insert_menu_type.append('(\''+self.title.lower() +'\', \''+self.title+'\', \''+self.title+' api menu\'),')
         _MENU_TYPES.append(self.title.lower())
 
         fappend = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","a")
@@ -243,7 +237,7 @@ Generated %(datetime)s for svn version %(svnversion)s
                 tmp.append('<li class="level1 item1"><a href="#parent_%s" title="%s">%s</a></li>' % (title, title, title)); 
      
    
-        return toc % {'toc': '\n'.join(tmp) }
+        #return toc % {'toc': '\n'.join(tmp) }
 
     def format_desc(self):
         tmp = '<h2 id="desc">Description</h2>\n<p>\n%(desc)s\n</p>\n'
@@ -459,16 +453,6 @@ class UnitPresenter(object):
         
         # Keep the toc entry (name and unique ID for hyperlinks)
         out_doc.toc.append( (method.name, method.uname) )
-        sql_menu_items = []
-        if self.last_method != method.name:
-            print method.name
-            temp_title = method.name
-            sql_menu_items.append('("'+self.title+'", "'+temp_title+'", "'+temp_title+'", "#parent_'+temp_title+'" , "url", 1, 0, 0, 0, 0, 0, "0000-00-00 00:00:00", 0, 0, 0, 0, "menu_image=-1", 0, 0, 0),')
-            
-        f_items = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","a")
-        for line in sql_menu_items:
-            f_items.write(line+'\n')
-        f_items.close
                 
         # Build up the parameters with formatted modifier terms if used
         tmp = [ ]
@@ -486,7 +470,15 @@ class UnitPresenter(object):
         if self.last_method != method.name:
             if self.last_method:
                 # TODO: need to add close after last function!
-                out_doc.append('</ul></div></div>')
+                out_doc.append('</ul></div>')
+            
+            sql_menu_items = []
+            temp_title = method.name
+            sql_menu_items.append('(\''+self.doc.title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, 0, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),')
+            f_items = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","a")
+            for line in sql_menu_items:
+                f_items.write(line+'\n')
+            f_items.close
             #
             # Added header for each new method... with div to wrap details.
             # removed the Show/Hide link from the header. its below if I change my mind
@@ -627,7 +619,7 @@ class UnitPresenter(object):
                 m.visit_methods(self.write_methods_for_unit, None)
         #close off the last method...
         if self.last_method: #check there was a last method
-            self.doc.append('</div></div>')        
+            self.doc.append('</ul></div></div>')        
         self.doc.savetofile(the_file.name + '.html')
 
 
@@ -877,9 +869,7 @@ def create_types_doc(idcollection):
 def create_sql_menu_insert():
     sql_insert_menu_type = []
     f = open("../../Dist/site_menu_sql/site_menu_sql_create.sql",'w')
-    sql_insert_menu_type.append('DROP TABLE IF EXISTS `a65dl_menu_types`; CREATE TABLE IF NOT EXISTS `a65dl_menu_types` ( `id` int(10) unsigned NOT NULL auto_increment, `menutype` varchar(75) NOT NULL default \'\', `title` varchar(255) NOT NULL default \'\',`description` varchar(255) NOT NULL default \'\', PRIMARY KEY  (`id`), UNIQUE KEY `menutype` (`menutype`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0;')
-    sql_insert_menu_type.append('INSERT INTO `a65dl_menu_types` ( `menutype`, `title`, `description`) VALUES')
-    sql_insert_menu_type.append('("mainmenu", "Main Menu", "The main menu for the site"),')
+    sql_insert_menu_type.append('(\'mainmenu\', \'Main Menu\', \'The main menu for the site\'),')
     for line in sql_insert_menu_type:
       f.write(line+'\n')         
     f.close 
@@ -887,8 +877,6 @@ def create_sql_menu_insert():
 def create_sql_menu_items():
     sql_insert_menu_items = []
     f = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql",'w')
-    sql_insert_menu_items.append('DELETE FROM `a65dl_menu` WHERE `menutype` <> "mainmenu";')
-    sql_insert_menu_items.append('INSERT INTO `a65dl_menu` (`menutype`, `name`, `alias`, `link`, `type`, `published`, `parent`, `componentid`, `sublevel`, `ordering`, `checked_out`, `checked_out_time`, `pollid`, `browserNav`, `access`, `utaccess`, `params`, `lft`, `rgt`, `home`) VALUES')
     for line in sql_insert_menu_items:
       f.write(line+'\n')         
     f.close 
@@ -915,7 +903,7 @@ def end_create_sql_menu_script():
     fappendEnd = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","r+")
     lines, blanks, sentences, words, nonwhite = countFile(_file)
     print nonwhite + words - 1
-    fappendEnd.seek(nonwhite + words)
+    fappendEnd.seek(nonwhite + words-2)
     fappendEnd.write(';')     
     fappendEnd.close  
 
