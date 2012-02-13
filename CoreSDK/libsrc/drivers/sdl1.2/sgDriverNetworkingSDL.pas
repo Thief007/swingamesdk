@@ -4,12 +4,12 @@ interface
 uses sgShared, SDL_Net, sgNamedIndexCollection, sgTypes;
 
    //TCP
-  function CreateTCPHostProcedure              (aPort : LongInt; aConSocketIndexes : NamedIndexCollection) : Boolean;
-  function OpenTCPConnectionToHostProcedure    (aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
-  function ServerAcceptTCPConnectionProcedure  (aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function CreateTCPHostProcedure              (aPort : LongInt; var aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function OpenTCPConnectionToHostProcedure    (aIP : String; aPort : LongInt; var aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function ServerAcceptTCPConnectionProcedure  (var aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
   function TCPMessageReceivedProcedure         (aReceiveSocketIndexes : NamedIndexCollection) : Boolean;    
   function BroadcastTCPMessageProcedure        (aMsg : String) : Boolean;
-  function SendTCPMessageToProcedure           (aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function SendTCPMessageToProcedure           (aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : String;
   //UDP
   function OpenUDPListenerSocketProcedure      (aPort : LongInt; aUDPSocketIndexes : NamedIndexCollection) : Boolean;
   function OpenUDPSendSocketProcedure          () : Boolean;
@@ -18,10 +18,10 @@ uses sgShared, SDL_Net, sgNamedIndexCollection, sgTypes;
 
   procedure LoadSDLNetworkingDriver            (); 
 
-  function CloseTCPHostSocketProcedure        (aCollection : NamedIndexCollection; aPort: LongInt) : Boolean;  
-  function CloseTCPReceiverSocketProcedure    (aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
-  function CloseTCPSenderSocketProcedure      (aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
-  function CloseUDPSocketProcedure            (aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  function CloseTCPHostSocketProcedure        (var aCollection : NamedIndexCollection; aPort: LongInt) : Boolean;  
+  function CloseTCPReceiverSocketProcedure    (var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function CloseTCPSenderSocketProcedure      (var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function CloseUDPSocketProcedure            (var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
     
 type
   
@@ -44,7 +44,7 @@ var
     
 // -- Start Connection Code
 
-  function AddUDPSocket(aPort : String; aSockets : UDPSocketArray; aNewSocket : PUDPSocket; aCollection : NamedIndexCollection) : UDPSocketArray;
+  function AddUDPSocket(aPort : String; aSockets : UDPSocketArray; aNewSocket : PUDPSocket; var aCollection : NamedIndexCollection) : UDPSocketArray;
   var
     lTmpSockets : UDPSocketArray;
     i         : LongInt;
@@ -58,7 +58,7 @@ var
     result := lTmpSockets;    
   end;
   
-  function AddSocket(aIP : String; aSockets : TCPSocketArray; aNewSocket : PTCPSocket; aCollection : NamedIndexCollection) : TCPSocketArray;
+  function AddSocket(aIP : String; aSockets : TCPSocketArray; aNewSocket : PTCPSocket; var aCollection : NamedIndexCollection) : TCPSocketArray;
   var
     lTmpSockets : Array of PTCPSocket;
     i         : LongInt;
@@ -109,10 +109,10 @@ var
   	result := SDLNet_TCP_Open(lIPAddress); 
 
   	if (not Assigned(result)) then
-  		RaiseWarning('SDLNet_TCP_Open:' + SDLNet_GetError());
+  		RaiseWarning('SDLNet_TCP_Open:' + SDLNet_GetError() + ' ' + aIP);
   end;
   
-  function CreateTCPHostProcedure(aPort : LongInt; aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function CreateTCPHostProcedure(aPort : LongInt; var aConSocketIndexes : NamedIndexCollection) : Boolean;
   var
     lTempSocket  : PTCPSocket = nil;
   begin
@@ -122,7 +122,7 @@ var
     result := Assigned(lTempSocket);    
   end;
   
-  function OpenTCPConnectionToHostProcedure(aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function OpenTCPConnectionToHostProcedure(aIP : String; aPort : LongInt;var aSendSocketIndexes : NamedIndexCollection) : Boolean;
   var
     lTempSocket  : PTCPSocket = nil;    
   begin    
@@ -132,7 +132,7 @@ var
     result := Assigned(lTempSocket);
   end;   
   
-  function ServerAcceptTCPConnectionProcedure(aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
+  function ServerAcceptTCPConnectionProcedure(var aReceiveSocketIndexes, aConSocketIndexes : NamedIndexCollection) : Boolean;
   var
     lTempSocket : PTCPSocket = nil;
     i           : LongInt;
@@ -232,11 +232,12 @@ var
 		end;
   end;
   
-  function SendTCPMessageToProcedure(aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : Boolean;
+  function SendTCPMessageToProcedure(aMsg, aIP : String; aPort : LongInt; aSendSocketIndexes : NamedIndexCollection) : String;
   var
     lLen, i, lSocketIdx : LongInt;
+    lIdentifier : String;
   begin
-    result := True;
+    result := '';
     
     for i := 0 to Length(aMsg) + 1 do
 	  begin
@@ -248,18 +249,15 @@ var
 	  
 	  lLen := Length(aMsg) + 1;
 	  	  
-	  lSocketIdx := IndexOf(aSendSocketIndexes, aIP + ':' + IntToStr(aPort));
+    lIdentifier:= aIP + ':' + IntToStr(aPort);
+	  lSocketIdx := IndexOf(aSendSocketIndexes, lIdentifier);
 	  
-	  if (lSocketIdx = -1) then
-	  begin
-	    RaiseWarning('Socket not found for: ' + aIP + IntToStr(aPort));
-			result := False;
-	  end;
+	  if (lSocketIdx = -1) then begin RaiseWarning('Socket not found for: ' + lIdentifier); exit; end;
 	  
-	  if (SDLNet_TCP_Send(_SendSockets[lSocketIdx], _BufferPtr, lLen) < lLen) then
+    if (SDLNet_TCP_Send(_SendSockets[lSocketIdx], _BufferPtr, lLen) < lLen) then
 		begin
+      result := lIdentifier;
 			RaiseWarning('SDLNet_TCP_Send: ' + SDLNet_GetError());
-			result := False;
 		end;
   end;
 // -- End Message Code  
@@ -397,7 +395,7 @@ var
     result := lTmpSockets;   
   end;
 
-  function RemoveSocketAt(aCollection : NamedIndexCollection; aName : String) : LongInt;
+  function RemoveSocketAt(var aCollection : NamedIndexCollection; aName : String) : LongInt;
   begin
     result := IndexOf(aCollection, aName);
     if (result < 0) then exit;
@@ -405,7 +403,7 @@ var
     RemoveName(aCollection, result);
   end;
 
-  function CloseTCPHostSocketProcedure(aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  function CloseTCPHostSocketProcedure(var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
   var
     lIdx : LongInt;
   begin
@@ -416,7 +414,7 @@ var
     result := True;
   end;
 
-  function CloseTCPReceiverSocketProcedure(aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function CloseTCPReceiverSocketProcedure(var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
   var
     lIdx : LongInt;
   begin
@@ -427,7 +425,7 @@ var
     result := True;
   end;
 
-  function CloseTCPSenderSocketProcedure(aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
+  function CloseTCPSenderSocketProcedure(var aCollection : NamedIndexCollection; aIP : String; aPort : LongInt) : Boolean;
   var
     lIdx : LongInt;
   begin
@@ -438,7 +436,7 @@ var
     result := True;
   end;
 
-  function CloseUDPSocketProcedure(aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
+  function CloseUDPSocketProcedure(var aCollection : NamedIndexCollection; aPort : LongInt) : Boolean;
   var
     lIdx : LongInt;
   begin
