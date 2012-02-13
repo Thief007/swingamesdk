@@ -113,7 +113,8 @@ implementation
     r,g,b,a : Byte;
 
   begin
-
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
@@ -145,7 +146,8 @@ implementation
     r,g,b,a : Byte;
 
   begin
-
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
@@ -165,7 +167,8 @@ implementation
     r,g,b,a : Byte;
     angle : LongInt;
   begin
-    
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
 
@@ -187,7 +190,8 @@ implementation
     r,g,b,a : Byte;
     angle : LongInt;
   begin
-    
+    if(dest <> screen) then
+      RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
 
@@ -212,7 +216,8 @@ implementation
     r,g,b,a : Byte;
     angle : LongInt;
   begin
-    
+    if(dest <> screen) then
+      RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
     glColor4f(r/255, g/255, b/255, a/255);
@@ -258,6 +263,8 @@ implementation
     r,g,b,a : Byte;
 
   begin
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     x1 := Round(rect.x);
     x2 := x1 + rect.width;
     y1 := Round(rect.y);
@@ -284,6 +291,8 @@ implementation
     r,g,b,a : Byte;
 
   begin
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
     x1 := Round(rect.x);
     x2 := x1 + rect.width;
     y1 := Round(rect.y);
@@ -308,7 +317,8 @@ implementation
     r,g,b,a : Byte;
 
   begin
-
+  if(dest <> screen) then
+    RaiseWarning("Drawing primitives to bitmap is currently not supported with the OpenGL driver");exit;
 
     GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
