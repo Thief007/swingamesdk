@@ -23,7 +23,6 @@ begin
 		DrawText('[T]ext', ColorBlack, 0, 10);
 		DrawText('[S]ound Effect', ColorBlack, 0, 20);
 		DrawText('[M]usic', ColorBlack, 0, 30);
-		//DrawText('[G]ame Time', ColorBlack, 0, 40);
 		DrawSprite(explosion);
 
 		UpdateSprite(explosion);
@@ -33,10 +32,9 @@ begin
 		else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))
 		else if KeyTyped(VK_M) then PlayMusic(MusicNamed('danceMusic'), 1);
 		
-		//timer;
 	    RefreshScreen(60);
     until WindowCloseRequested();
-
+	FreeSprite(explosion);
     CloseAudio();
     ReleaseAllResources();
 end;

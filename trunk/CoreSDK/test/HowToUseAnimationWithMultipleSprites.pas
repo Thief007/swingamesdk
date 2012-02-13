@@ -34,7 +34,8 @@ begin
 
         ProcessEvents();
     until WindowCloseRequested();
-
+	FreeSprite(myLizard);
+	FreeSprite(myFrog);
     CloseAudio();
     ReleaseAllResources();
 end;
