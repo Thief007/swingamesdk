@@ -407,6 +407,7 @@ implementation
     RefreshScreenProcedure(nil);
 
     glEnable( GL_TEXTURE_2D );
+    glEnable (GL_BLEND);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
     glOrtho (0, screenWidth, screenHeight, 0, 0, 1);
