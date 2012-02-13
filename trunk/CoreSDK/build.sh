@@ -64,13 +64,18 @@ if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
-
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     else
       LIB_DIR="${APP_PATH}/lib/mac"
     fi
 elif [ "$OS" = "$WIN" ]; then
-    LIB_DIR="${APP_PATH}/lib/win"
+    if [ ${SDL_13} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    elif [ ${OPENGL} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    else
+      LIB_DIR="${APP_PATH}/lib/win"
+    fi
 fi
 
 
