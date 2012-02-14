@@ -47,9 +47,10 @@ def open_how_to():
             run_sh = run_sh.replace("\\", "/")
             print " - Building %s" % build_sh #os.path.basename(how_to)
             if subprocess.call("%s./%s" % (bash, build_sh)) == 0:
-                print " - Running %s " % run_sh #os.path.basename(how_to)
-                print "     - ", "%s./%s" % (bash, run_sh)
-                subprocess.call("%s./%s" % (bash, run_sh))
+                print "     - Build succeeded"
+                # print " - Running %s " % run_sh #os.path.basename(how_to)
+                # print "     - ", "%s./%s" % (bash, run_sh)
+                # subprocess.call("%s./%s" % (bash, run_sh))
             else:
                 print "     - Build failed."
                 print "     - Removing %s" %how_to
