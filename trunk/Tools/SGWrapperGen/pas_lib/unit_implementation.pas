@@ -1,5 +1,10 @@
 Procedure LoadDefaultColors();
-  
+
+var
+  ColorWhite, ColorGreen, ColorBlue, ColorBlack, ColorRed, 
+  ColorYellow, ColorTurquoise, ColorGrey, ColorMagenta, 
+  ColorTransparent, ColorLightGrey : Color;
+
 implementation
 
   procedure LoadDefaultColors();
