@@ -9,6 +9,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 
 import logging
 import sys
+import os
 
 from sg import parser_runner, wrapper_helper
 from sg.sg_cache import logger, find_or_add_file, find_or_add_type, find_or_add_class
@@ -719,6 +720,9 @@ _struct_type_switcher = {
     #Pascal type: what it maps to
     'single': 'internal float _%s',
     'longint': 'internal int _%s',
+    'int64': 'internal long _%s',
+    'word': 'internal ushort _%s',
+    
     'soundeffect': 'internal SoundEffect _%s',
     'music': 'internal Music _%s',
     'string': 'internal string _%s',
@@ -772,63 +776,63 @@ def load_data():
     global _property_class_indexer
     global _struct_property
     
-    f = open('./cs_lib/lib_header.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/lib_header.txt')
     _header = f.read()
     f.close()
     
-    f = open('./cs_lib/lib_method_wrap.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/lib_method_wrap.txt')
     _method_wrapper = f.read()
     f.close()
     
-    f = open('./cs_lib/module_method.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/module_method.txt')
     _module_method = f.read()
     f.close()
     
-    f = open('./cs_lib/module_header.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/module_header.txt')
     _module_header = f.read()
     f.close()
     
-    f = open('./cs_lib/module_footer.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/module_footer.txt')
     _module_footer = f.read()
     f.close()
     
-    f = open('./cs_lib/class_header.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/class_header.txt')
     _class_header = f.read()
     f.close()
     
-    f = open('./cs_lib/class_footer.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/class_footer.txt')
     _class_footer = f.read()
     f.close()
     
-    f = open('./cs_lib/array_property.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/array_property.txt')
     _array_property = f.read()
     f.close()
     
-    f = open('./cs_lib/pointer_wrapper_class_header.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/pointer_wrapper_class_header.txt')
     _pointer_wrapper_class_header = f.read()
     f.close()
 
-    f = open('./cs_lib/no_free_pointer_wrapper_class_header.cs')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/no_free_pointer_wrapper_class_header.cs')
     _no_free_pointer_wrapper_class_header = f.read()
     f.close()
     
-    f = open('./cs_lib/property_class.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/property_class.txt')
     _property_class = f.read()
     f.close()
     
-    f = open('./cs_lib/property_class_property.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/property_class_property.txt')
     _property_class_property = f.read()
     f.close()
     
-    f = open('./cs_lib/property_class_field.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/property_class_field.txt')
     _property_class_field = f.read()
     f.close()
     
-    f = open('./cs_lib/property_class_indexer.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/property_class_indexer.txt')
     _property_class_indexer = f.read()
     f.close()
     
-    f = open('./cs_lib/struct_property.txt')
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/struct_property.txt')
     _struct_property = f.read()
     f.close()
     
@@ -1392,7 +1396,7 @@ def write_struct(member, other):
         writer.writeln(_array_property % details)
     
     if member.data_type.same_as != None:
-        filename = './cs_lib/%s_to_%s.txt' % (member.data_type.name.lower(), member.data_type.same_as.name.lower())
+        filename = os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/%s_to_%s.txt' % (member.data_type.name.lower(), member.data_type.same_as.name.lower())
         f = open(filename)
         cast_code = f.read()
         f.close()
@@ -1640,4 +1644,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

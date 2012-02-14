@@ -95,7 +95,7 @@ mkdir -p "${SRC_DIR}"
 CreateLibrary()
 {
     cd "${PYTHON_SCRIPT_DIR}"
-    python create_pas_lib.py
+    python create_sgsdk_code.py
     if [ $? != 0 ]; then echo "Error creating Pascal library."; exit 1; fi
 }
 

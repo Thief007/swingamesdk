@@ -28,24 +28,34 @@ APP_PATH="."
 # Step 3: Setup options
 #
 EXTRA_OPTS="-O3 -Sewn -vwn -dSWINGAME_LIB"
+VERSION_NO=3.0
 VERSION=3.0
 CLEAN="N"
 INSTALL="N"
+
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=false
+
 
 #
 # Step 4: Usage message and process command line arguments
 #
 Usage()
 {
-    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [version]"
+    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [version]"
     echo 
     echo "Creates and Compiles the native SGSDK library."
     echo
     echo "Options:"
-    echo " -c   Perform a clean rather than a build"
-    echo " -d   Compile with debug symbols"
-    echo " -h   Show this help message"
-    echo " -i   Install after compiling"
+    echo " -c       Perform a clean rather than a build"
+    echo " -d       Compile with debug symbols"
+    echo " -basass  Compile with SDL2 backend"
+    echo " -godly   Compile with SDL2/OpenGL backend"
+    echo " -h       Show this help message"
+    echo " -i       Install after compiling"
     echo
     echo "Requires:"
     echo " - Free Pascal Compiler"
@@ -60,11 +70,19 @@ Usage()
     exit 0
 }
 
-while getopts chdi o
+while getopts chdib:g: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
     h)  Usage ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     d)  EXTRA_OPTS="-vwn -gw -dTRACE -dSWINGAME_LIB"
         DEBUG="Y" ;;
     i)  INSTALL="Y";;
@@ -88,18 +106,44 @@ SDK_SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/tmp/out.log"
 FPC_BIN=`which fpc`
 
+if [ ${SDL_13} = true ]; then
+  EXTRA_OPTS="${EXTRA_OPTS} -dSWINGAME_SDL13"
+  VERSION="${VERSION}badass"
+fi
+
+if [ ${OPENGL} = true ]; then
+  EXTRA_OPTS="${EXTRA_OPTS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
+  VERSION="${VERSION}godly"
+fi
+
 if [ "$OS" = "$MAC" ]; then
     OUT_DIR="${APP_PATH}/bin/mac"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/mac"
-    FRAMEWORK_DIR="${FULL_APP_PATH}/lib/mac"	
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
     HEADER_DIR="${VERSION_DIR}/Headers"
     RESOURCES_DIR="${VERSION_DIR}/Resources"
     CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
+    
+    # Set lib dir
+    if [ ${SDL_13} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    else
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
 elif [ "$OS" = "$WIN" ]; then
     OUT_DIR="${APP_PATH}/bin/Win"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/Win"
-    LIB_DIR="${APP_PATH}/lib/win"
+    
+    if [ ${SDL_13} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    elif [ ${OPENGL} = true ]; then
+      LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    else
+      LIB_DIR="${APP_PATH}/lib/win"
+    fi
+    
     # FPC paths require c:/
     SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
     OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
@@ -137,6 +181,17 @@ fi
 # Step 7: Declare functions for compiling
 #
 
+DoDriverMessage()
+{
+  if [ ${SDL_13} = true ]; then
+    echo "  ... Using SDL 1.3 Driver"
+  elif [ ${OPENGL} = true ]; then
+    echo "  ... Using OpenGL Driver"
+  else
+    echo "  ... Using SDL 1.2 Driver"
+  fi
+}
+
 DisplayHeader()
 {
     echo "--------------------------------------------------"
@@ -146,7 +201,7 @@ DisplayHeader()
     echo "  Running script from $APP_PATH"
     echo "  Saving output to $OUT_DIR"
     if [ "$OS" = "$MAC" ]; then
-        echo "  Copying Frameworks from ${FRAMEWORK_DIR}"
+        echo "  Copying Frameworks from ${LIB_DIR}"
     elif [ "$OS" = "$WIN" ]; then
         echo "  Copying libraries from ${LIB_DIR}"
     fi
@@ -158,6 +213,7 @@ DisplayHeader()
         fi
     fi
     echo "--------------------------------------------------"
+    DoDriverMessage
 }
 
 # Clean up the temporary directory
@@ -185,45 +241,18 @@ doMacCompile()
     
     LINK_OPTS="$2"
     
-    FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS=`cd ${LIB_DIR};ls -d *.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     if [ "*$DEBUG*" = "**" ] ; then
         EXTRA_OPTS="$EXTRA_OPTS -Xs"
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${FRAMEWORK_DIR}' -current_version '${VERSION}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
     mv ${TMP_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${1}.dylib
-    
-    # # Assemble all of the assembly (.s) files
-    # echo "  ... Assembling library for $1"
-    # for file in `find ${TMP_DIR} | grep [.]s$`
-    # do
-    #     /usr/bin/as -o "${file%.s}.o" $file -arch $1
-    #     if [ $? != 0 ]; then echo "An error occurred while assembling $file"; exit 1; fi
-    #     rm $file
-    # done
-    # 
-    # echo "  ... Linking Library"
-    # FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    # 
-    # 
-    # #/usr/bin/libtool -no_order_inits -install_name "@loader_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
-    # 
-    # #FIX: -no_order_inits for SnowLeopard
-    # #FIX: -no_order_data for SnowLeopard can be removed with future versions of the compiler
-    # /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@loader_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` /usr/lib/dylib1.o -framework Cocoa
-    # 
-    # 
-    # if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
-    #     
-    # if [ "*$DEBUG*" = "**" ] ; then
-    #     echo "  ... Stripping symbols from dylib"
-    #     /usr/bin/strip -x "${OUT_DIR}/libSGSDK${1}.dylib"
-    # fi
     
     CleanTmp
 }
@@ -323,11 +352,11 @@ then
         HAS_LION=false
         OS_VER=`sw_vers -productVersion`
         
-        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+        if [ -f /usr/libexec/as/ppc/as ]; then
             HAS_PPC=true
         fi
         
-        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+        if [ -f /usr/libexec/as/i386/as ]; then
             HAS_i386=true
         fi
         
@@ -402,7 +431,7 @@ then
             }
             
             doCopyFramework "${FULL_OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
-            for file in `find ${FRAMEWORK_DIR} -depth 1 | grep [.]framework$`
+            for file in `find ${LIB_DIR} -depth 1 | grep [.]framework$`
             do
                 doCopyFramework ${file} "${INSTALL_DIR}"
             done

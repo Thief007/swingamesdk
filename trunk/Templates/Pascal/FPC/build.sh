@@ -44,13 +44,11 @@ FPC_BIN=`which fpc`
 
 CLEAN="N"
 
-
-if [ "$OS" = "$MAC" ]; then
-    LIB_DIR="${APP_PATH}/lib/mac"
-elif [ "$OS" = "$WIN" ]; then
-    LIB_DIR="${APP_PATH}/lib/win"
-fi
-
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=false
 
 
 Usage()
@@ -70,17 +68,51 @@ Usage()
 
 RELEASE=""
 
-while getopts chdi: o
+while getopts chdi:g:b: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
     h)  Usage ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     esac
 done
 
 shift $((${OPTIND}-1))
+
+if [ "$OS" = "$MAC" ]; then
+    if [ ${SDL_13} = true ]; then
+      TMP_DIR="${TMP_DIR}/badass"
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL} = true ]; then
+        TMP_DIR="${TMP_DIR}/godly"
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    else
+      TMP_DIR="${TMP_DIR}/sdl12"
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    #
+    # This needs 1.3 versions of SDL for Windows...
+    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    #
+    
+    # if [ ${SDL_13} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # elif [ ${OPENGL} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # else
+    LIB_DIR="${APP_PATH}/lib/win"
+    # fi
+fi
 
 #
 # Change directories based on release or debug builds
@@ -92,9 +124,9 @@ if [ -n "${RELEASE}" ]; then
 else
   #its a debug build
   if [ "$OS" = "$MAC" ]; then
-      PAS_FLAGS="-gw -vw -gh"
+      PAS_FLAGS="-gw -vw"
   else
-      PAS_FLAGS="-g -vw -gh"
+      PAS_FLAGS="-g -vw"
   fi
   OUT_DIR="${OUT_DIR}/Debug"
   FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
@@ -107,6 +139,15 @@ fi
 
 if [ -f "${LOG_FILE}" ]; then
     rm -f "${LOG_FILE}"
+fi
+
+
+if [ ${SDL_13} = true ]; then
+  PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
+fi
+
+if [ ${OPENGL} = true ]; then
+  PAS_FLAGS="-dSWINGAME_OPENGL -dSWINGAME_SDL13"
 fi
 
 
@@ -124,6 +165,17 @@ CleanTmp()
         rm -rf "${TMP_DIR}"
     fi
     mkdir "${TMP_DIR}"
+}
+
+doDriverMessage()
+{
+  if [ ${SDL_13} = true ]; then
+    echo "  ... Using SDL 1.3 Driver"
+  elif [ ${OPENGL} = true ]; then
+    echo "  ... Using OpenGL Driver"
+  else
+    echo "  ... Using SDL 1.2 Driver"
+  fi
 }
 
 doBasicMacCompile()
@@ -340,7 +392,7 @@ then
     echo "  Saving output to $OUT_DIR"
     echo "  Compiler flags ${SG_INC} ${PAS_FLAGS}"
     echo "--------------------------------------------------"
-    
+    doDriverMessage
     echo "  ... Creating ${GAME_NAME}"
     
     if [ "$OS" = "$MAC" ]; then
