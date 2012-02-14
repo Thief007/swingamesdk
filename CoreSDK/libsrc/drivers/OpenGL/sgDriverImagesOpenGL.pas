@@ -181,8 +181,8 @@ implementation
   function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
   var
     loadedImage: PSDL_Surface;
-    offset : Rectangle;
-    lTransparentSurface : PSDL_Surface;
+    //offset : Rectangle;
+    //lTransparentSurface : PSDL_Surface;
     lColorToSetTo : Color = $00000000;
   begin
     result := nil; //start at nil to exit cleanly on error
@@ -200,10 +200,10 @@ implementation
     //Determine pixel level collision data
     if transparent then
     begin
-      offset.x := 0;
-      offset.y := 0;
-      offset.width := result^.width;
-      offset.height := result^.height;
+      //offset.x := 0;
+      //offset.y := 0;
+      //offset.width := result^.width;
+      //offset.height := result^.height;
       ReplaceColors(loadedImage, transparentColor, lColorToSetTo, result^.width, result^.height);
 
       result^.surface := CreateGLTextureFromSurface(loadedImage);
@@ -217,7 +217,8 @@ implementation
   end; 
     
   procedure FreeSurfaceProcedure(bmp : Bitmap);
-  begin   
+  begin
+    if bmp = screen then exit;
     if (Assigned(bmp) and Assigned(bmp^.surface)) then
     begin
       Dispose(PTexture(bmp^.surface));
@@ -261,7 +262,7 @@ implementation
   
   procedure BlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr); 
   var
-    lTexture : GLuint;
+    //lTexture : GLuint;
     lRatioX, lRatioY, lRatioW, lRatioH : Single;
   begin
     if (srcRect = nil) then

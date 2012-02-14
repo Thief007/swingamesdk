@@ -6,7 +6,6 @@ APP_PATH=`cd "$APP_PATH"; pwd`
 cd "$APP_PATH"
 FULL_APP_PATH=$APP_PATH
 APP_PATH="."
-SDL_13=false
 
 #
 # Step 1: Detect the operating system
@@ -31,7 +30,13 @@ FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
+
+#
+# Library versions
+#
 OPENGL=false
+SDL_13=false
+
 Usage()
 {
     echo "Usage: [-c] [-h] src_name"
@@ -54,7 +59,10 @@ do
         fi 
         ;;
     h)  Usage ;;
-    g)  OPENGL=true
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     esac
 done
 
@@ -62,10 +70,13 @@ shift $((${OPTIND}-1))
 
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
+      TMP_DIR="${APP_PATH}/tmp/sdl13"
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
+      TMP_DIR="${APP_PATH}/tmp/godly"
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     else
+      TMP_DIR="${APP_PATH}/tmp/badass"
       LIB_DIR="${APP_PATH}/lib/mac"
     fi
 elif [ "$OS" = "$WIN" ]; then
@@ -95,7 +106,6 @@ if [ ${SDL_13} = true ]; then
 fi
 
 if [ ${OPENGL} = true ]; then
-  echo "OPENGL"
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
 fi
 
@@ -176,18 +186,19 @@ DoExitCompile ()
 
 CleanTmp()
 {
-    if [ -d "${TMP_DIR}" ]
+    if [ -d "${APP_PATH}/tmp" ]
     then
-        rm -rf "${TMP_DIR}"
+        rm -rf "${APP_PATH}/tmp"
     fi
-    mkdir "${TMP_DIR}"
+    mkdir -p "${TMP_DIR}"
+    
 }
 
 DoDriverMessage()
 {
   if [ ${SDL_13} = true ]; then
     echo "  ... Using SDL 1.3 Driver"
-  elif [ ${OPENGL}=true ]; then
+  elif [ ${OPENGL} = true ]; then
     echo "  ... Using OpenGL Driver"
   else
     echo "  ... Using SDL 1.2 Driver"

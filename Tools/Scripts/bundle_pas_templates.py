@@ -3,7 +3,9 @@ import platform
 import subprocess
 import swin_shutil
 
-
+_script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
+_swingame_path      = os.path.realpath(_script_path + '../..') + '/'
+_python_script_dir  = os.path.realpath(_script_path + '../SGWrapperGen') + '/'
 
 CopyList = [
   { 
@@ -44,188 +46,326 @@ CopyList = [
   },
 ]
 
+# ====================
+# = Helper functions =
+# ====================
 
-
-#get Current path
-def get_current_path():
-  return os.getcwd()
-
-def get_swin_game_dir():
-  return "../../"
-  
-def get_python_script_dir():
-  return "../SGWrapperGen/"
-
-
-#Getting OS Name
 def get_os_name():
-  osName = platform.system()
-  if osName == "Darwin":
-    return "Mac OS X"
-  elif osName == "Linux":
-    return "Linux"
-  else:
-    return "Windows"
+    """ Returns the name of the Operating System."""
+    osName = platform.system()
+    if osName == "Darwin":
+        return "Mac OS X"
+    elif osName == "Linux":
+        return "Linux"
+    else:
+        return "Windows"
+
+_has_output = False
+
+def output_header(msgs):
+    global _has_output
+    if _has_output: 
+        print ""
+    _has_output = True
+    print "--------------------------------------------------"
+    for line in msgs:
+        print '  ', line
+    print "--------------------------------------------------"
+
+def output_line(msg):
+    print '  * ', msg
 
 
-#generates swingame.pas
+def run_python(script_name):
+    output_line('Running python script: ' + script_name)
+    proc = subprocess.Popen(["python", _python_script_dir + script_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = proc.communicate()
+    
+    if proc.returncode != 0:
+        print "Error running script: ", script_name
+        print out
+        quit()
 
-def create_sgsdk_pas():
-  print("    Creating SGSDK Code...");
-  if(subprocess.call(["python",get_python_script_dir()+"create_pas_lib.py"]) != 0):
-     print ("Error Creating SGSDK Code");
-     quit();  
+def run_bash(script_name, opts):
+    output_line('Running bash script: ' + script_name + ' ' + (opts if opts else ''))
+    if get_os_name() == "Windows":
+        exec_list = ["bash", script_name, opts] if opts else [script_name]
+    else:
+        exec_list = [script_name, opts] if opts else [script_name]
+    
+    proc = subprocess.Popen(exec_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = proc.communicate()
+    
+    if proc.returncode != 0:
+        print "Error running script: ", script_name, " ", opts
+        print out, err
+        
+        if (get_os_name() == "Windows"):
+          print ("Make sure you have msys/bin in your environment PATH variable")
+        
+        quit()
 
-
-def create_swingame_pas():
-  print("  Creating SwinGame Unit Code...");
-  if(subprocess.call(["python",get_python_script_dir()+"lang_pas_unit.py"]) != 0):
-    print ("Error Creating SwinGame Unit Code");
-    quit();
-
-
-def create_lang_lib(language):
-  print("  Creating %s library..." % language);
-  if(subprocess.call(["python",get_python_script_dir()+"create_%s_library.py" % language.lower()]) != 0):
-    print ("Error Creating %s library..." % language);
-    quit();
-  
-#tree copy without svn and copy symbolic links.
 def copy_without_svn(src,dest,overwrite = True):
-  if(os.path.isdir(dest) and overwrite):
-    print("    Cleaning %s" % dest)
-    swin_shutil.rmtree(dest,ignore_errors = True)
-  print ("    Copying %s to %s" % (src,dest))
-  swin_shutil.copytree(src,dest,symlinks = True,ignore = swin_shutil.ignore_patterns(".svn"))
-  
+    """tree copy without svn and copy symbolic links. Overwrite delete destination tree from root..."""
 
+    if(os.path.isdir(dest) and overwrite):
+        # print("    Cleaning %s" % dest)
+        swin_shutil.rmtree(dest,ignore_errors = True)
 
-#assembles the files for the dist folder
-def assemble_dist(name, language, sgsdk):
-  create_lang_lib(language)
+    # print ("    Copying %s to %s" % (src,dest))
+    swin_shutil.copytree(src,dest,symlinks = True,ignore = swin_shutil.ignore_patterns(".svn"))
 
-  lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
-  lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
-  src_folder = get_swin_game_dir()+"CoreSDK/src/"
-  generated_folder = get_swin_game_dir()+"Generated/%s/lib/" % language
-  template_folder = get_swin_game_dir()+"Templates/"
-  common_template_folder = template_folder+"Common/"
-  lang_template_folder = template_folder+ language+'/'
-  common_lang_template_folder = lang_template_folder+"Common/"
+def flat_copy_without_svn(src, dest):
+    """copy every file not in svn into a flat destination."""
+    # print("    Copying all files in %s to %s" % (src, dest))
+    if(not os.path.isdir(dest)):
+        os.mkdir(dest)
 
-  lang_dist_folder = get_swin_game_dir()+"Dist/%s/" % language
-  specific_dist_folder = lang_dist_folder+name+'/'
-  specific_dist_lib_folder = specific_dist_folder+"lib/"
-  specific_template_folder = lang_template_folder+name+'/'
+    for root, dirs, files in os.walk(src):
+        for f in files:
+            if(root.find('.svn') == -1):
+                fullpath = os.path.join(root, f)
+                swin_shutil.copy(fullpath,dest)
 
-#clean dist folder
-  print("\n  Copying common files...")
-  copy_without_svn(common_template_folder, specific_dist_folder)
+# =================================================
+# = Language specific functions called from above =
+# =================================================
 
-  print("\n  Copying %s common files..." % language)
-  copy_without_svn(common_lang_template_folder, specific_dist_folder,overwrite = False)
-
-  print("\n  Copying %s specific files..." % name)
-  copy_without_svn(specific_template_folder, specific_dist_folder, overwrite = False)
-  
-  print("\n  Copying %s generated files..." % language)
-  copy_without_svn(generated_folder, specific_dist_lib_folder,overwrite = False)
-  
-
-  print("\n  Copying lib files...")
-  copy_without_svn(lib_folder, specific_dist_lib_folder,overwrite = False)
-  if (language == "Pascal"):
-    flat_copy_without_svn(lib_src_folder,specific_dist_lib_folder)
-    flat_copy_without_svn(src_folder,specific_dist_lib_folder)
+def build_csharp_lib():
+    """The C# code has been generated, now turn it into a DLL"""
+    output_line('Compiling .NET class library')
     
-  print("--------------------------------------------------")
-  if(sgsdk):
-    dist_source_folder = get_swin_game_dir()+"Dist/Source/"
-    if (get_os_name() == "Windows"):
-      copy_without_svn(dist_source_folder+"bin/win", specific_dist_folder+"lib/win", overwrite = False)
-    elif (get_os_name() == "MAC OS X"):
-      copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
-      #copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
-
-#copy every file not in svn into a flat destination.
-def flat_copy_without_svn(src,dest):
-  
-  print("    Copying all files in %s to %s" % (src, dest))
-  
-  if(not os.path.isdir(dest)):
-    os.mkdir(dest)
-  for root, dirs, files in os.walk(src):
-    for f in files:
-      if(root.find('.svn') == -1):
-        fullpath = os.path.join(root, f)
-        swin_shutil.copy(fullpath,dest)
-
-
-def build_sgsdk():
-    bash = ""
-    if (get_os_name() == "Windows"):
-      bash = "bash ";
-    dist_source_folder = get_swin_game_dir()+"Dist/Source/" 
+    dirs = {
+        'cs_generated_lib_dir':     _swingame_path + 'Generated/CSharp/lib',
+        'cs_generated_code_dir':    _swingame_path + 'Generated/CSharp/Code',
+        'cs_lib_dir':               _swingame_path + 'Templates/CSharp/Library'
+    }
     
-    print "Building SGSDK..."
     
-    print("\n  Copying required files to build SGSDK...")
-    copy_coresdk_to_dist_source()
-    print("\n--------------------------------------------------")
+    if get_os_name() == "Windows":
+        csc = ['csc', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s/SwinGame.dll' % dirs, '%(cs_lib_dir)s/*.cs' % dirs, '%(cs_generated_code_dir)s/*.cs' % dirs]
+    else:
+        csc = ['gmcs', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s/SwinGame.dll' % dirs, '%(cs_lib_dir)s/*.cs' % dirs, '%(cs_generated_code_dir)s/*.cs' % dirs]
     
-    print("Cleaning SGSDK...\n")
-    if(subprocess.call(["%s" % bash,"./%sbuild.sh" % dist_source_folder, "-c"])!=0):
-      print ("\n  Error Cleaning SGSDK");
-      quit();
+    proc = subprocess.Popen(csc, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = proc.communicate()
     
-      
-    print("Compiling SGSDK...\n")
-    if(subprocess.call("%s./%sbuild.sh" % (bash, dist_source_folder))!=0):
-      print ("\n  Error Compiling SGSDK");
-      if (get_os_name() == "Windows"):
-        print ("do you have msys/bin in your environment PATH variable?")
-      quit();
-    
+    if proc.returncode != 0:
+        print "Error compiling C# DLL"
+        print out, err
+        
+        if (get_os_name() == "Windows"):
+            print "Make sure you have csc in your environment PATH variable"
+        else:
+            print "Make sure you have gmcs in your path"
+        quit()
+        
+    if dirs["cs_generated_code_dir"] != '':
+        # path = dirs["cs_generated_code_dir"] + '/*.cs'
+        [os.remove(os.path.join(dirs["cs_generated_code_dir"],f)) for f in os.listdir(dirs["cs_generated_code_dir"]) if f.endswith(".cs")]
 
-
+# ==========================
+# = Create SGSDK libraries =
+# ==========================
 
 # for compiling SGSDK
 def copy_coresdk_to_dist_source():
-  generated_source_folder = get_swin_game_dir()+"Generated/Source/src/"
-  template_source_folder = get_swin_game_dir()+"Templates/Source"
-  dist_source_folder = get_swin_game_dir()+"Dist/Source/"
-  dist_source_src_folder = get_swin_game_dir()+"Dist/Source/src/"
-  dist_source_lib_folder = get_swin_game_dir()+"Dist/Source/lib/"
-  lib_src_folder = get_swin_game_dir()+"CoreSDK/libsrc/"
-  src_folder = get_swin_game_dir()+"CoreSDK/src/"
-  lib_folder = get_swin_game_dir()+"CoreSDK/lib/"
-  
-  
-  copy_without_svn(template_source_folder,dist_source_folder)
-  copy_without_svn(lib_folder, dist_source_lib_folder, overwrite = False)
-  flat_copy_without_svn(generated_source_folder, dist_source_src_folder)
-  flat_copy_without_svn(lib_src_folder, dist_source_src_folder)
-  flat_copy_without_svn(src_folder,dist_source_src_folder)
-  
+    generated_source_folder =   _swingame_path + "Generated/Source/src/"
+    template_source_folder =    _swingame_path + "Templates/Source"
+    dist_source_folder =        _swingame_path + "Dist/Source/"
+    dist_source_src_folder =    _swingame_path + "Dist/Source/src/"
+    dist_source_lib_folder =    _swingame_path + "Dist/Source/lib/"
+    lib_src_folder =            _swingame_path + "CoreSDK/libsrc/"
+    src_folder =                _swingame_path + "CoreSDK/src/"
+    lib_folder =                _swingame_path + "CoreSDK/lib/"
+    
+    copy_without_svn(template_source_folder, dist_source_folder)
+    copy_without_svn(lib_folder, dist_source_lib_folder, overwrite = False)
+    flat_copy_without_svn(generated_source_folder, dist_source_src_folder)
+    flat_copy_without_svn(lib_src_folder, dist_source_src_folder)
+    flat_copy_without_svn(src_folder, dist_source_src_folder)
 
-  
+
+_sgsdk_creation_script_options = {
+    'Mac OS X': ['-badass', '-godly', None],            # default must be last
+    'Windows':  [None], #, '-badass', '-godly'],
+}
+
+def create_sgsdk_library():
+    """ The first step in creating the SwinGame templates is to create the
+        SGSDK framework/dll. This needs to be created for each of the various
+        backend versions supported by the platform."""
+    
+    sgsdk_build_script = _swingame_path + 'Dist/Source/build.sh'
+    
+    output_header(['Generating the code for SGSDK.pas'])
+    run_python('create_sgsdk_code.py')
+    
+    output_line('Copying code to dist source directory')
+    copy_coresdk_to_dist_source()
+    
+    output_header(['Compiling SGSDK framework/dll'])
+    option_list = _sgsdk_creation_script_options[get_os_name()]
+    
+    for opt in option_list:
+        run_bash(sgsdk_build_script, opt)
+
+
+# =========================================
+# = Create the various language libraries =
+# =========================================
+
+_lang_generation_scripts = {
+        'Pascal':   {
+                'script':       'create_pascal_library.py',
+                'use_sgsdk':    False,
+                'copy_dist':    [
+                    { 
+                      'target':     'FPC',
+                      'os':         ['Mac OS X', 'Windows', 'Linux'],
+                    },
+                    {
+                      'target':     'iOS',
+                      'os':         ['Mac OS X'],
+                    },
+                ],
+                'pre_copy_script': None,
+            },
+        'C':    {
+                'script':       'create_c_library.py',
+                'use_sgsdk':    True,
+                'copy_dist':    [
+                    { 
+                      'target':     'GPP',
+                      'os':         ['Mac OS X', 'Windows', 'Linux'],
+                    },
+                    { 
+                      'target':     'GCC',
+                      'os':         ['Mac OS X', 'Windows', 'Linux'],
+                    },
+                ],
+                'pre_copy_script': None,
+            },
+        #'ObjC':     'create_c_library.py',
+        'CSharp':   {
+                'script':       'create_csharp_library.py',
+                'use_sgsdk':    True,
+                'copy_dist':    [
+                    { 
+                      'target':     'Mono',
+                      'os':         ['Mac OS X', 'Linux'],
+                    },
+                    { 
+                      'target':     'VS08',
+                      'os':         ['Windows'],
+                    },
+                ],
+                'pre_copy_script': build_csharp_lib,
+            },
+    } # end _lang_generation_scripts
+
+
+def create_lang_libraries():
+  for key, lang_template_dict in _lang_generation_scripts.items():
+      output_header(['Creating code for %s' % key])
+      
+      run_python(lang_template_dict['script'])
+      
+      if lang_template_dict['pre_copy_script']:
+          lang_template_dict['pre_copy_script']()
+      
+      for copy_dist in lang_template_dict['copy_dist']:
+          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'])
+      
+
+#assembles the files for the dist folder
+def assemble_dist(language, dict, use_sgsdk):
+    lib_folder =                _swingame_path + "CoreSDK/lib/"
+    lib_src_folder =            _swingame_path + "CoreSDK/libsrc/"
+    src_folder =                _swingame_path + "CoreSDK/src/"
+    generated_folder =          _swingame_path + "Generated/%s/lib/" % language
+    template_folder =           _swingame_path + "Templates/"
+    lang_dist_folder =          _swingame_path + "Dist/%s/" % language
+        
+    common_template_folder =        template_folder + "Common/"
+    lang_template_folder =          template_folder + language +'/'
+    
+    common_lang_template_folder =   lang_template_folder + "Common/"
+    specific_template_folder =      lang_template_folder + dict['target'] + '/'
+    
+    specific_dist_folder =          lang_dist_folder + dict['target'] + '/'
+    specific_dist_lib_folder =      specific_dist_folder + "lib/"
+    
+    #clean dist folder
+    # print("\n  Copying common files...")
+    copy_without_svn(common_template_folder, specific_dist_folder)
+    
+    # print("\n  Copying %s common files..." % language)
+    copy_without_svn(common_lang_template_folder, specific_dist_folder, overwrite = False)
+    
+    # print("\n  Copying %s specific files..." % name)
+    copy_without_svn(specific_template_folder, specific_dist_folder, overwrite = False)
+    
+    # print("\n  Copying %s generated files..." % language)
+    copy_without_svn(generated_folder, specific_dist_lib_folder, overwrite = False)
+    
+    # print("\n  Copying lib files...")
+    copy_without_svn(lib_folder, specific_dist_lib_folder, overwrite = False)
+    
+    if language == "Pascal":
+        flat_copy_without_svn(lib_src_folder, specific_dist_lib_folder)
+        flat_copy_without_svn(src_folder, specific_dist_lib_folder)
+    
+    # print("--------------------------------------------------")
+    
+    if use_sgsdk:
+        # print "copying library"
+        dist_source_folder = _swingame_path + "Dist/Source/"
+        if (get_os_name() == "Windows"):
+            copy_without_svn(dist_source_folder+"bin/win", specific_dist_folder+"lib/win", overwrite = False)
+        elif (get_os_name() == "Mac OS X"):
+            # print dist_source_folder+"bin/mac/SGSDK.framework"
+            # print specific_dist_folder+"lib/mac/SGSDK.framework"
+            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
+            
+            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
+            cur = os.getcwd()
+            os.chdir(specific_dist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
+            # print os.getcwd()
+            os.remove('Current')
+            os.symlink('./3.0badass', 'Current')
+            
+            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/opengl/mac/SGSDK.framework")
+            os.chdir(specific_dist_folder+"lib/opengl/mac/SGSDK.framework/Versions")
+            # print os.getcwd()
+            os.remove('Current')
+            os.symlink('./3.0godly', 'Current')
+            os.chdir(cur)
+
 def main():
+    output_header(['Creating SwinGame Templates'])
 
-  print("--------------------------------------------------")
-  print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
-  print("--------------------------------------------------\n")
-  
-  
-  
-  create_swingame_pas()
-  
-  build_sgsdk()
-  print("--------------------------------------------------")
-  for build in CopyList:
-    if get_os_name() in build['os']:
-      print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
-      assemble_dist(build['target'],build['language'],build['sgsdk'])  
-  print("\nFinished!")
+    # Create the framework/dll
+    create_sgsdk_library()
+    create_lang_libraries()
+    return
+    
+    
+    print("--------------------------------------------------")
+    print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
+    print("--------------------------------------------------\n")
+    
+    
+    
+    create_swingame_pas()
+    
+    build_sgsdk()
+    print("--------------------------------------------------")
+    for build in CopyList:
+        if get_os_name() in build['os']:
+            print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
+            assemble_dist(build['target'],build['language'],build['sgsdk'])  
+    print("\nFinished!")
   
   
   

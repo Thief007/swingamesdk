@@ -10,6 +10,7 @@ Copyright (c) 2011 Swinburne University. All rights reserved.
 import sys
 import os
 import logging
+from datetime import datetime
 
 from lang_data import LangMethodData, LangParamData, LangBasicData
 from local_var import LocalVar
@@ -140,23 +141,14 @@ def write_pas_code_files(the_file, other):
     other['writer'] = _my_writer
     other['lang_key'] = 'pas'
     the_file.members[0].visit_methods(lang_helper.write_method_code, other)
-    
 
-
-# ===============
-# = Entry Point =
-# ===============
-
-def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
-    
-    parser_runner.parse_all_units()
-    
-    parser_runner.visit_all_units(create_pas_code_for_file)
+def write_pas_unit_code():
+    """Write the code for the SwinGame.pas unit"""
     
     global _my_writer
     _my_writer = FileWriter('../../Generated/Pascal/lib/SwinGame.pas')
-    
+    _my_writer.writeln('// SwinGame.pas was generated on %s' % datetime.now())
+    _my_writer.writeln('// ')
     _my_writer.writeln(pas_lib.unit_header_pas % { 
         'uses' : '%s' % ', '.join( [ tpl[0] for tpl in parser_runner.all_units]),
         })
@@ -172,7 +164,21 @@ def main():
     
     _my_writer.writeln(pas_lib.footer_txt)
     _my_writer.close()
+    
 
+
+# ===============
+# = Entry Point =
+# ===============
+
+def main():
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    
+    parser_runner.parse_all_units()
+    
+    parser_runner.visit_all_units(create_pas_code_for_file)
+    
+    write_pas_unit_code()
 
 if __name__ == '__main__':
     main()

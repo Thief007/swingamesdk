@@ -18,9 +18,12 @@ interface
 	
 implementation
 	uses sgDriveriOS;
+
+  {$IFDEF IOS}
   var
   	accelerometer :PSDL_Joystick;
-
+  {$ENDIF}
+  
 	procedure InitProcedure();
 	begin
 		{$IFDEF IOS}
