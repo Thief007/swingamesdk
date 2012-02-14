@@ -1,6 +1,14 @@
 program TestSDL_NetServer;
 uses SDL13, SDL_Net, SysUtils, sgNetworking, sgShared, sgUtils, sgSharedUtils, SwinGame, sgTypes;
 
+type 
+  MessageData = packed record
+    msg       : String;
+    IP        : String;
+    port      : LongInt;
+  end;
+  MessageDataArray = Array of MessageData;
+
 var
   lPorts : Array of Integer;
   _Quit : Boolean;
@@ -47,6 +55,25 @@ begin
   WriteLn('Connections: ', lConnectedToClient);
 end;
 
+function DequeueMessage() : MessageData;
+begin    
+  result.msg := GetMessage();
+  result.ip  := GetIPFromMessage();
+  result.port  := GetPortFromMessage();
+  DequeueTopMessage();
+end;
+
+function PopAllMessages() : MessageDataArray;
+var
+  i : LongInt;
+begin
+  SetLength(result, GetMessageCount());
+  for i := Low(result) to High(result) do
+  begin
+    result[i] := DequeueMessage();
+  end;
+end; 
+
 function ReceiveMessage() : Boolean;
 var
   lReceivedData : MessageDataArray;
@@ -77,7 +104,6 @@ begin
   ReadLn(lInput);
   close := SendTCPMessageTo(lInput, '127.0.0.1', 2000);
 
-      WriteLn('TCP FailedX: ', close);
   if (close <> '') then
   begin
     WriteLn('CLosing: ', close);

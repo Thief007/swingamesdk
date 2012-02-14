@@ -1,4 +1,4 @@
-FONT,courierLarge,cour.ttf,40
+FONT,courierLarge,cour.ttf,16
 FONT,courier,cour.ttf,24
 FONT,courierSmall,cour.ttf,10
 BITMAP,testImageInactive,testerface.png

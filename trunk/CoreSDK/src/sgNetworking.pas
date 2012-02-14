@@ -19,7 +19,8 @@
 unit sgNetworking;
 //=============================================================================
 interface
-  uses sgShared, sgTypes, sgNamedIndexCollection;
+uses
+  sgTypes;
 //=============================================================================
 
 //----------------------------------------------------------------------------
@@ -56,7 +57,7 @@ interface
   ///
   /// @lib
   /// @uname ServerAcceptTCPConnection
-  function ServerAcceptTCPConnection  () : Boolean; 
+  function ServerAcceptTCPConnection  () : String; 
    
   /// Checks if a message has been received. If a message has been received,
   /// It will automatically add it to the message queue, with the message,
@@ -72,7 +73,7 @@ interface
   ///
   /// @lib
   /// @uname BroadcastTCPMessage
-  function BroadcastTCPMessage        (msg : String) : Boolean;
+  function BroadcastTCPMessage        (msg : String) : StringArray;
 
   /// Sends the message to the specified client, dictated the by ip and port
   /// passed in as an arguement. This will either return an empty string if 
@@ -100,7 +101,6 @@ interface
   /// @param port The port to bind the socket to.
   ///
   /// @lib
-  /// @uname openUDPListenerSocket
   /// @sn openUDPListenerSocket:%s port:%s
   function OpenUDPListenerSocket      (port : LongInt) : Boolean;
 
@@ -108,7 +108,6 @@ interface
   /// uses a random port for the socket.
   ///
   /// @lib
-  /// @uname OpenUDPListenerSocket
   function OpenUDPSendSocket          () : Boolean;
 
   /// Checks all UDP listening sockets to see if a packet has been received.
@@ -137,17 +136,35 @@ interface
 // Messages
 //----------------------------------------------------------------------------
 
-  /// Dequeues the top message and returns it as a MessageData.
+  /// Gets the String Message from the first MessageData
   ///
   /// @lib
-  /// @uname DequeueMessage 
-  function DequeueMessage             () : MessageData;
+  function  GetMessage                 () : String;
 
-  /// Dequeues ALL messages and returns it as a MessageDataArray
+  /// Gets the String IP from the first MessageData
   ///
   /// @lib
-  /// @uname PopAllMessages 
-  function PopAllMessages             () : MessageDataArray;
+  function  GetIPFromMessage           () : String;
+
+  /// Gets the Int Port from the first MessageData
+  ///
+  /// @lib
+  function  GetPortFromMessage         () : LongInt;
+
+  /// Dequeues the Top Messagew
+  ///
+  /// @lib
+  procedure DequeueTopMessage          () ;
+
+  /// Clears the Message Queue
+  ///
+  /// @lib
+  procedure ClearMessageQueue          () ;
+
+  /// Gets the Size of the Message Queue
+  ///
+  /// @lib
+  function  GetMessageCount            () : LongInt;
 
   /// Queues a message to the end of the Message Queue
   ///
@@ -238,31 +255,46 @@ interface
   /// @lib
   /// @uname CloseUDPListenSocket
   /// @sn CloseUDPListenSocket:%s aPort:%s
-  function CloseUDPListenerSocket      (aPort : LongInt) : Boolean;
+  function CloseUDPListenSocket      (aPort : LongInt) : Boolean;
 
   /// Closes the UDP Sender Socket.
   ///
   /// @lib
-  /// @uname CloseUDPSenderSocket
-  function CloseUDPSenderSocket      () : Boolean;
+  /// @uname CloseUDPSendSocket
+  function CloseUDPSendSocket      () : Boolean;
+
+//----------------------------------------------------------------------------
+// Other
+//----------------------------------------------------------------------------
+  /// Returns the caller's IP.
+  ///
+  /// @lib
+  function MyIP                  () : String;
           
 //=============================================================================
 implementation
-  uses SysUtils, sgUtils, sgDriverNetworking;
+  uses SysUtils, sgUtils, sgDriverNetworking, sgNamedIndexCollection, sgShared;
 //=============================================================================
 
 type
+  MessageData = packed record
+    msg       : String;
+    IP        : String;
+    port      : LongInt;
+  end;
+  MessageDataArray = Array of MessageData;
+
   MessagePtr = ^MessageLink;
   MessageLink = packed record
     data  : MessageData;
     next  : MessagePtr;
-  end;
+  end;  
 
 var  
   _ConSocketIndexes       : NamedIndexCollection;
   _ReceiveSocketIndexes   : NamedIndexCollection;
   _SendSocketIndexes      : NamedIndexCollection;
-  _UDPSocketIndexes       : NamedIndexCollection;
+  _UDPListenSocketIndexes : NamedIndexCollection;
   _LastMessage            : MessagePtr = nil;
   _FirstMessage           : MessagePtr = nil;
   _MessageCount           : LongInt = 0;
@@ -341,7 +373,7 @@ var
     result := NetworkingDriver.OpenTCPConnectionToHost(ip, port, _SendSocketIndexes);
   end;   
   
-  function ServerAcceptTCPConnection() : Boolean;
+  function ServerAcceptTCPConnection() : String;
   begin
     result := NetworkingDriver.ServerAcceptTCPConnection(_ReceiveSocketIndexes, _ConSocketIndexes);
   end;
@@ -356,7 +388,6 @@ var
   begin
     New(MsgData);  
     
-    WriteLn('Message From: ', ip, ' : ', port);
     MsgData^.data.msg := msg;
     MsgData^.data.IP := ip;
     MsgData^.data.port := port;
@@ -398,14 +429,51 @@ var
     end;
   end;  
 
+  function GetMessage() : String;
+  begin
+    result := '';
+    if _FirstMessage = nil then exit;
+    result := _FirstMessage^.data.msg;
+  end;
+
+  function GetIPFromMessage() : String;
+  begin
+    result := '';
+    if _FirstMessage = nil then exit;
+    result := _FirstMessage^.data.IP;
+    
+  end;
+
+  function GetPortFromMessage() : LongInt;
+  begin
+    result := 0;
+    if _FirstMessage = nil then exit;
+    result := _FirstMessage^.data.port;    
+  end;
+
+  function GetMessageCount() : LongInt;
+  begin
+    result := _MessageCount;
+  end;
+
+  procedure DequeueTopMessage();
+  begin
+    DequeueMessage();
+  end;
+
+  procedure ClearMessageQueue();
+  begin
+    PopAllMessages();
+  end;
+
   function TCPMessageReceived() : Boolean;
   begin
     result := NetworkingDriver.TCPMessageReceived(_ReceiveSocketIndexes);
   end;
   
-  function BroadcastTCPMessage(msg : String) : Boolean;
+  function BroadcastTCPMessage(msg : String) : StringArray;
   begin
-    result := NetworkingDriver.BroadcastTCPMessage(msg);
+    result := NetworkingDriver.BroadcastTCPMessage(msg, _SendSocketIndexes);
   end;
   
   function SendTCPMessageTo(msg, ip : String; port : LongInt) : String;
@@ -419,7 +487,7 @@ var
 
   function OpenUDPListenerSocket(port : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.OpenUDPListenerSocket(port, _UDPSocketIndexes);
+    result := NetworkingDriver.OpenUDPListenerSocket(port, _UDPListenSocketIndexes);
   end;
   
   function OpenUDPSendSocket() : Boolean;
@@ -456,14 +524,23 @@ var
     result := NetworkingDriver.CloseTCPSenderSocket(_SendSocketIndexes, aIP, aPort);    
   end;
 
-  function CloseUDPListenerSocket(aPort : LongInt) : Boolean;
+  function CloseUDPListenSocket(aPort : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.CloseUDPSocket(_UDPSocketIndexes, aPort);    
+    result := NetworkingDriver.CloseUDPListenSocket(_UDPListenSocketIndexes, aPort);    
   end;
 
-  function CloseUDPSenderSocket() : Boolean;
+  function CloseUDPSendSocket() : Boolean;
   begin
-    result := False;//NetworkingDriver.CloseUDPSenderSocket();    
+    result := NetworkingDriver.CloseUDPSendSocket();    
+  end;
+
+//----------------------------------------------------------------------------
+// Other
+//----------------------------------------------------------------------------
+
+  function MyIP() : String;
+  begin
+    result := NetworkingDriver.GetMyIP();
   end;
 
 //=============================================================================
@@ -473,7 +550,7 @@ var
     InitNamedIndexCollection(_ReceiveSocketIndexes);
     InitNamedIndexCollection(_SendSocketIndexes);
     InitNamedIndexCollection(_ConSocketIndexes);    
-    InitNamedIndexCollection(_UDPSocketIndexes);
+    InitNamedIndexCollection(_UDPListenSocketIndexes);
   end;
 
   finalization
@@ -481,6 +558,6 @@ var
     FreeNamedIndexCollection(_ReceiveSocketIndexes);
     FreeNamedIndexCollection(_SendSocketIndexes);
     FreeNamedIndexCollection(_ConSocketIndexes);
-    FreeNamedIndexCollection(_UDPSocketIndexes);
+    FreeNamedIndexCollection(_UDPListenSocketIndexes);
   end;
 end.
