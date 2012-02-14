@@ -47,7 +47,7 @@ SG_INC="-I${APP_PATH}/lib/"
 GCC_BIN=`which clang`
 if [ -z "$GCC_BIN" ]; then
     #try locating gcc
-    GCC_BIN=`which gpp`
+    GCC_BIN=`which g++`
     
     if [ -z "$GCC_BIN" ]; then
         #no compiler found :(
