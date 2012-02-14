@@ -903,6 +903,11 @@ procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
 /// @lib SetTextBoxAlignmentFromRegion
 procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
+/// The the TextBox from an ID
+///
+/// @lib TextBoxFromId
+function TextBoxFromID(id : String) : GUITextbox;
+
 //---------------------------------------------------------------------------
 //Lists
 //---------------------------------------------------------------------------
@@ -2911,6 +2916,14 @@ begin
   if not assigned(tb) then exit;
   
   result := tb^.contentString;
+end;
+
+/// The the TextBox from an ID
+///
+/// @lib TextBoxFromId
+function TextBoxFromId(id : String) : GUITextbox;
+begin
+  result := TextBoxFromRegion(RegionWithId(id));
 end;
 
 function LastTextRead(): string;

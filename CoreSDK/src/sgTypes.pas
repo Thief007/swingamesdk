@@ -1053,27 +1053,6 @@ interface
       DrawAsVectors:        Boolean;
     end;
     
-    /// A record for Message data sent and received in sgNetworking
-    /// 
-    /// @struct MessageData
-    MessageData = packed record
-      msg       : String;
-      IP        : String;
-      port      : LongInt;
-    end;
-    
-    /// THe array of record for message data
-    ///
-    /// @type MessageDataArray
-    /// @array_wrapper
-    /// @field data: array of MessageData
-    MessageDataArray = Array of MessageData;
-  
-    
-    
-    
-
-
 //=============================================================================
 implementation
 //=============================================================================
