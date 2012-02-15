@@ -758,35 +758,28 @@ procedure TextboxSetText(r: Region; i: Longint); overload;
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToInt
-///
-
 procedure TextboxSetText(tb: GUITextBox; i: Longint); overload;
   
   
 /// Sets the textbox text from Id
 /// 
 /// @lib TextboxSetTextToIntWithId
-///
 procedure TextboxSetText(id : String; i : LongInt); overload;
 
 
 /// Sets the textbox text from panel and Id
 /// 
 /// @lib TextboxSetTextToIntFromPanelWithId
-
-  
 procedure TextboxSetText(pnl : Panel; id : String; i : LongInt); overload;
+    
 /// Sets the textbox text from Textbox
 /// 
 /// @lib TextboxSetTextToSingle
-///
-
 procedure TextboxSetText(tb: GUITextBox; single: Single); overload;
   
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToSingleFromRegion
-
 procedure TextboxSetText(r: Region; single: Single); overload;
   
 /// Sets the textbox text from region
@@ -799,14 +792,12 @@ procedure TextboxSetText(id : String; single: Single); overload;
 /// Sets the textbox text from Panel and Id
 /// 
 /// @lib TextboxSetTextToSingleFromPanel
-
 procedure TextboxSetText(pnl : Panel; id : String; single: Single); overload;
 
 
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxFromRegion
-///
 function TextBoxFromRegion(r: Region): GUITextBox;
 
 
@@ -900,12 +891,12 @@ procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
 
 /// Set the textbox alignment of the textbox passed in
 ///
-/// @lib SetTextBoxAlignmentFromRegion
+/// @lib TextBoxSetAlignmentFromRegion
 procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
 /// The the TextBox from an ID
 ///
-/// @lib TextBoxFromId
+/// @lib
 function TextBoxFromID(id : String) : GUITextbox;
 
 //---------------------------------------------------------------------------

@@ -23,7 +23,6 @@ implementation
 	
 	const EOL = LineEnding; // from sgShared
 
-	
 	function LoadFontProcedure(fontName, filename: String; size: Longint): Font;
 	begin
 		New(result);

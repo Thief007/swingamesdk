@@ -74,7 +74,7 @@ if [ "$OS" = "$MAC" ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
       TMP_DIR="${APP_PATH}/tmp/godly"
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/lib/godly/mac"
     else
       TMP_DIR="${APP_PATH}/tmp/badass"
       LIB_DIR="${APP_PATH}/lib/mac"
@@ -119,7 +119,7 @@ CLEAN="N"
 if [[ ! -f ./test/SwinGame.pas ]]; then
   echo " Creating SwinGame.pas"
   cd ../Tools/SGWrapperGen
-  python lang_pas_unit.py
+  python lang_pascal_library.py
   cd "${FULL_APP_PATH}"
   cp ../Generated/Pascal/lib/SwinGame.pas ./test/SwinGame.pas
 fi
@@ -296,7 +296,7 @@ doMacPackage()
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
-    ICON="${GAMEAPP_PATH}/Contents/Resources/SwinGame.icns"
+    ICON="SwinGame"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\
@@ -409,7 +409,7 @@ then
     echo "          Creating $GAME_NAME"
     echo "          for $OS"
     echo "--------------------------------------------------"
-    echo "  Running script from $APP_PATH"
+    echo "  Running script from $FULL_APP_PATH"
     echo "  Saving output to $OUT_DIR"
     echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
     echo "--------------------------------------------------"

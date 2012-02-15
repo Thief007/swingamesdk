@@ -20,7 +20,6 @@ interface
 		
 		{$IFDEF SWINGAME_OPENGL}
 			sgDriverTextOpenGL
-
 		{$ELSE}
 			{$IFDEF SWINGAME_SDL13}
 				sgDriverTextSDL13

@@ -16,7 +16,7 @@ unit sgDriverSDL13;
 //=============================================================================
 interface
 uses
-  sgTypes, SDL13;
+  sgTypes, sdl13;
   
   type	  
     SDL13Surface = record

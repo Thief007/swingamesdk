@@ -74,7 +74,7 @@ echo "--------------------------------------------------"
 echo "          Creating $GAME_NAME"
 echo "          for iOS"
 echo "--------------------------------------------------"
-echo "  Running script from $APP_PATH"
+echo "  Running script from $FULL_APP_PATH"
 FILE=UUID.txt
 UUID=""
 if [ ! -f $FILE ];

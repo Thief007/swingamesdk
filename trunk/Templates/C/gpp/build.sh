@@ -24,7 +24,6 @@ GAME_NAME=${APP_PATH##*/}
 FULL_APP_PATH=$APP_PATH
 APP_PATH="."
 
-
 LIBSRC_DIR="${APP_PATH}/lib"
 
 #Set the basic paths
@@ -33,14 +32,9 @@ FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 
-if [ "$OS" = "$MAC" ]; then
-    LIB_DIR="${APP_PATH}/lib/mac"
-elif [ "$OS" = "$WIN" ]; then
-    LIB_DIR="${APP_PATH}/lib/win"
-fi
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-std=c99"
+C_FLAGS="-x c++"
 SG_INC="-I${APP_PATH}/lib/"
 
 #Locate the compiler...
@@ -56,9 +50,13 @@ if [ -z "$GCC_BIN" ]; then
     fi
 fi
 
-ICON=SwinGame
-
 CLEAN="N"
+
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=false
 
 Usage()
 {
@@ -71,19 +69,25 @@ Usage()
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message"
     echo " -r   Create a release build"
-    echo " -i [icon] Change the icon file"
     exit 0
 }
 
 RELEASE=""
 
-while getopts chri: o
+while getopts chrg:b: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
     h)  Usage ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     r)  RELEASE="Y" ;;
-    i)  ICON="$OPTARG";;
     ?)  Usage
     esac
 done
@@ -99,15 +103,41 @@ fi
 #
 
 if [ -n "${RELEASE}" ]; then
-    C_FLAGS="-std=c99 -O3 -Wall"
+    C_FLAGS="${C_FLAGS} -O3 -Wall"
     OUT_DIR="${OUT_DIR}/Release"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
 else
-    C_FLAGS="-std=c99 -g -Wall"
+    C_FLAGS="${C_FLAGS} -g -Wall"
     OUT_DIR="${OUT_DIR}/Debug"
     FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
     TMP_DIR="${TMP_DIR}/Debug"
+fi
+
+if [ "$OS" = "$MAC" ]; then
+    if [ ${SDL_13} = true ]; then
+      TMP_DIR="${TMP_DIR}/badass"
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL} = true ]; then
+        TMP_DIR="${TMP_DIR}/godly"
+      LIB_DIR="${APP_PATH}/lib/godly/mac"
+    else
+      TMP_DIR="${TMP_DIR}/sdl12"
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    #
+    # This needs 1.3 versions of SDL for Windows...
+    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    #
+    
+    # if [ ${SDL_13} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # elif [ ${OPENGL} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # else
+    LIB_DIR="${APP_PATH}/lib/win"
+    # fi
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -115,6 +145,16 @@ then
     rm -f "${LOG_FILE}"
 fi
 
+DoDriverMessage()
+{
+  if [ ${SDL_13} = true ]; then
+    echo "  ... Using SDL 1.3 Driver"
+  elif [ ${OPENGL} = true ]; then
+    echo "  ... Using OpenGL Driver"
+  else
+    echo "  ... Using SDL 1.2 Driver"
+  fi
+}
 
 CleanTmp()
 {
@@ -158,12 +198,12 @@ doCompileGameMain()
 doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
-    
-    for file in `find "${LIBSRC_DIR}" | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
+
     done
     
     doCompileGameMain "-arch i386"
@@ -232,7 +272,7 @@ doMacPackage()
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
-    ICON="${GAMEAPP_PATH}/Contents/Resources/SwinGame.icns"
+    ICON="SwinGame"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\
@@ -301,7 +341,6 @@ doWindowsCompile()
     
     #Assemble all of the .s files
     echo "  ... Creating game"
-    
     ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
@@ -383,7 +422,7 @@ then
     echo "          Creating $GAME_NAME"
     echo "          for $OS"
     echo "--------------------------------------------------"
-    echo "  Running script from $APP_PATH"
+    echo "  Running script from $FULL_APP_PATH"
     echo "  Saving output to $OUT_DIR"
     echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
     echo "--------------------------------------------------"
@@ -396,11 +435,11 @@ then
         HAS_LEOPARD_SDK=false
         OS_VER=`sw_vers -productVersion`
         
-        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+        if [ -f /usr/libexec/as/ppc/as ]; then
             HAS_PPC=true
         fi
         
-        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+        if [ -f /usr/libexec/as/i386/as ]; then
             HAS_i386=true
         fi
         

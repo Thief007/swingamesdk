@@ -38,14 +38,15 @@ INSTALL="N"
 #
 OPENGL=false
 SDL_13=false
-
+STATIC=false
+STATIC_NAME="sgsdk-sdl12.a"
 
 #
 # Step 4: Usage message and process command line arguments
 #
 Usage()
 {
-    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [version]"
+    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [-static] [version]"
     echo 
     echo "Creates and Compiles the native SGSDK library."
     echo
@@ -54,6 +55,7 @@ Usage()
     echo " -d       Compile with debug symbols"
     echo " -basass  Compile with SDL2 backend"
     echo " -godly   Compile with SDL2/OpenGL backend"
+    echo " -static  Compile as a static library"
     echo " -h       Show this help message"
     echo " -i       Install after compiling"
     echo
@@ -70,17 +72,23 @@ Usage()
     exit 0
 }
 
-while getopts chdib:g: o
+while getopts chdib:g:s: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     b)  if [ "${OPTARG}" = "adass" ]; then
             SDL_13=true
+            STATIC_NAME="sgsdk-sdl13.a"
         fi 
         ;;
     h)  Usage ;;
     g)  if [ "${OPTARG}" = "odly" ]; then
             OPENGL=true
+            STATIC_NAME="sgsdk-godly.a"
+        fi 
+        ;;
+    s)  if [ "${OPTARG}" = "tatic" ]; then
+            STATIC=true
         fi 
         ;;
     d)  EXTRA_OPTS="-vwn -gw -dTRACE -dSWINGAME_LIB"
@@ -101,17 +109,19 @@ fi
 # Step 5: Set the paths to local variables
 #
 
-TMP_DIR="${APP_PATH}/tmp"
+TMP_DIR="${APP_PATH}/tmp/sdl12"
 SDK_SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/tmp/out.log"
 FPC_BIN=`which fpc`
 
 if [ ${SDL_13} = true ]; then
+  TMP_DIR="${APP_PATH}/tmp/sdl13"
   EXTRA_OPTS="${EXTRA_OPTS} -dSWINGAME_SDL13"
   VERSION="${VERSION}badass"
 fi
 
 if [ ${OPENGL} = true ]; then
+  TMP_DIR="${APP_PATH}/tmp/godly"
   EXTRA_OPTS="${EXTRA_OPTS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
   VERSION="${VERSION}godly"
 fi
@@ -128,7 +138,7 @@ if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       LIB_DIR="${APP_PATH}/lib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/lib/godly/mac"
     else
       LIB_DIR="${APP_PATH}/lib/mac"
     fi
@@ -198,7 +208,7 @@ DisplayHeader()
     echo "          Creating SwinGame Dynamic Library"
     echo "                 for $OS"
     echo "--------------------------------------------------"
-    echo "  Running script from $APP_PATH"
+    echo "  Running script from $FULL_APP_PATH"
     echo "  Saving output to $OUT_DIR"
     if [ "$OS" = "$MAC" ]; then
         echo "  Copying Frameworks from ${LIB_DIR}"
@@ -228,7 +238,7 @@ CleanTmp()
 PrepareTmp()
 {
     CleanTmp
-    mkdir "${TMP_DIR}"
+    mkdir -p "${TMP_DIR}"
 }
 
 #
@@ -253,8 +263,6 @@ doMacCompile()
     rm -f "${LOG_FILE}"
     
     mv ${TMP_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${1}.dylib
-    
-    CleanTmp
 }
 
 # 
@@ -403,6 +411,10 @@ then
             mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
         fi
         
+        if [ $STATIC = true ]; then
+             ar -rcs ${OUT_DIR}/${STATIC_NAME} ${TMP_DIR}/*.o
+        fi
+        
         #Convert into a Framework
         doCreateFramework
         
@@ -413,13 +425,13 @@ then
             then
                 mkdir -p "${INSTALL_DIR}"
             fi
-            
+        
             doCopyFramework()
             {
                 # $1 = framework
                 # $2 = dest
                 fwk_name=${1##*/} # ## = delete longest match for */... ie all but file name
-                
+            
                 if [ -d "${2}/${fwk_name}" ]
                 then
                     #framework exists at destn, just copy the version details
@@ -429,13 +441,13 @@ then
                     cp -p -R "$1" "$2"
                 fi
             }
-            
+        
             doCopyFramework "${FULL_OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
             for file in `find ${LIB_DIR} -depth 1 | grep [.]framework$`
             do
                 doCopyFramework ${file} "${INSTALL_DIR}"
             done
-        fi
+        fi # install
     elif [ "$OS" = "$WIN" ] 
     then
         DisplayHeader

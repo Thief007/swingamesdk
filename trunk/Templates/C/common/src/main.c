@@ -12,7 +12,7 @@ int main()
     {
         process_events();
         
-        clear_screen(ColorWhite);
+        clear_screen_to(ColorWhite);
         
         draw_framerate_with_simple_font(0,0);
         

@@ -12,7 +12,7 @@ color ColorTurquoise= 0xffced1ff;
 color ColorGrey     = 0xff808080;
 color ColorMagenta  = 0xffff00ff;
 color ColorTransparent = 0x0;
-color ColorLightGrey = = 0xffc8c8c8;
+color ColorLightGrey   = 0xffc8c8c8;
 
 void load_default_colors()
 {
