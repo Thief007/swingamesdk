@@ -1,6 +1,6 @@
 program HowToUseAnimationWithMultipleSprites;
 uses
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -34,8 +34,8 @@ begin
 
         ProcessEvents();
     until WindowCloseRequested();
-	FreeSprite(myLizard);
-	FreeSprite(myFrog);
+    FreeSprite(myLizard);
+    FreeSprite(myFrog);
     CloseAudio();
     ReleaseAllResources();
 end;

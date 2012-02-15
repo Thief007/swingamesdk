@@ -1,6 +1,6 @@
 program HowToCollideASpriteWithRectangle;
 uses
-    sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -49,7 +49,7 @@ begin
 
         RefreshScreen();
     until WindowCloseRequested();
-
+    FreeSprite(ball);
     ReleaseAllResources();
 end;
 

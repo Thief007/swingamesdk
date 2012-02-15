@@ -1,6 +1,6 @@
 program HowToMoveSpriteWithKeyboardInput;
 uses
-    sgGraphics, sgInput, sgPhysics, sgSprites, sgTypes, sgImages, sgUtils, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -52,7 +52,7 @@ begin
     UpdateSprite(ball);
     RefreshScreen();
     until WindowCloseRequested();
-
+    FreeSprite(ball);
     ReleaseAllResources();
 end;
 

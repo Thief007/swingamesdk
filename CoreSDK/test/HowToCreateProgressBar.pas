@@ -1,6 +1,6 @@
 program HowToCreateAProgressBar;
 uses 
-    sgGraphics, sgText, sgTypes, sgInput, sgImages, sgGeometry, sgUtils, sgAudio, sgResources;
+    SwinGame, sgTypes;
     
 procedure Main();
 var

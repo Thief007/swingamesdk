@@ -1,6 +1,6 @@
 program HowToMoveSpriteUsingAnimation;
 uses
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgTimers, sgAudio, sgAnimations, sgResources;
+    SwinGame, sgTypes;
 
 procedure DoWalking(sprt: Sprite; key: KeyCode; animationName: String; dx, dy: Single);
 begin
@@ -62,7 +62,7 @@ begin
             DoWalking(myFrog, VK_D, 'MoonWalkRight',  +0.25, 0);
         end;
     until WindowCloseRequested();
-
+    FreeSprite(myFrog);
     CloseAudio();
     ReleaseAllResources();
 end;

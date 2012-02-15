@@ -1,6 +1,6 @@
 program HowToDrawSimpleText;
 uses 
-    sgText, sgGraphics, sgUtils, sgResources, sgTypes;
+    SwinGame, sgTypes;
 
 procedure Main();
 begin    
@@ -9,7 +9,6 @@ begin
     ClearScreen();
 
     DrawText('You Win!!!', ColorWhite, 300, 200);
-    DrawTextLines('OR DO YOU???', ColorRed, ColorWhite, 'Arial', 40, AlignCenter, 400, 400, 160, 100);
 
     RefreshScreen();
     

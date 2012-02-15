@@ -1,10 +1,10 @@
 program HowToDrawCustomText;
 uses 
-    sgText, sgGraphics, sgUtils, sgResources, sgTypes;
+    SwinGame, sgTypes;
 
 procedure Main();
 begin    
-    OpenGraphicsWindow('Drawing Text', 800, 600);
+    OpenGraphicsWindow('Draw Custom Text', 800, 600);
     
     ClearScreen();
 
