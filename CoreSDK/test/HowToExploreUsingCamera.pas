@@ -18,8 +18,8 @@ begin
     //Draw the scene
     ClearScreen(ColorWhite);
     
-    FillCircle(ColorRed, 0, 0, 4);
-    DrawText('Starting position of Game World at 0,0', ColorRed, 7, -2);    
+    //FillCircle(ColorRed, 0, 0, 4);
+    //DrawText('Starting position of Game World at 0,0', ColorRed, 7, -2);    
     
     FillRectangle(RGBColor(205,201,201), -150, 250, 1150, 20);    
     FillRectangle(RGBColor(205,201,201), -150, 330, 1150, 20);
@@ -42,9 +42,9 @@ begin
     FillRectangle(ColorBlack, 100, 450, 10, 50);        
     
     FillEllipse(ColorBlue, 300, 50, 60, 30);
-    DrawText('Ellipse in blue at position 300,50', ColorRed, 380, 60);    
+    DrawText('Ellipse in blue at position 300,50', ColorRed, 380, 60);        
     
-    DrawText(PointToString(CameraPos()), ColorBlack, CameraPos());    
+    DrawTextOnScreen(PointToString(CameraPos()), ColorBlack, 0, 0);    
     
     RefreshScreen();    
     
