@@ -801,6 +801,10 @@ implementation
   ///  * It does not pad the text.
   procedure PrintStrings(dest: Bitmap; font: Font; str: String; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment) ;
   begin
+    // If there's nothing to draw, return NULL
+    if (Length(str) = 0) or (font = nil) then exit;
+    if (rc.width <= 0) or (rc.height <= 0) then exit;
+
   	TextDriver.PrintStrings(dest,font,str,rc,clrFg, clrBg,flags)
   end;
   /// This function prints "str" with font "font" and color "clrFg"
@@ -808,6 +812,10 @@ implementation
   ///  * It does not pad the text.
   procedure PrintWideStrings(dest: Bitmap; font: Font; str: WideString; rc: Rectangle; clrFg, clrBg:Color; flags:FontAlignment);
   begin
+    // If there's nothing to draw, return NULL
+    if (Length(str) = 0) or (font = nil) then exit;
+    if (rc.width <= 0) or (rc.height <= 0) then exit;
+
 	  TextDriver.PrintWideStrings(dest,font,str,rc,clrFg,clrBg,flags);
   end;
   
@@ -816,6 +824,10 @@ implementation
     resultBitmap : Bitmap;
     bitmapSize : Rectangle;
   begin
+    result := nil;
+    // If there's nothing to draw, return NULL
+    if (Length(str) = 0) or (font = nil) then exit;
+
     bitmapSize.x := 0;
     bitmapSize.y := 0;
     bitmapSize.width := TextWidth(font, str) + 2;
@@ -843,6 +855,7 @@ implementation
   begin
     if not Assigned(theFont) then exit;
     if dest = nil then begin RaiseWarning('Cannot draw text, as no destination was supplied'); exit; end;
+    if Length(theText) <= 0 then exit;
       
     rect.x := x + 1;
    	rect.y := y + 1;
@@ -857,6 +870,7 @@ implementation
   begin
     if theFont = nil then begin RaiseWarning('The specified font is nil'); exit; end;
     if dest = nil then begin RaiseWarning('Cannot draw text, as no destination was supplied'); exit; end;
+    if Length(theText) <= 0 then exit;
       
     rect.x := x;
  	rect.y := y;
@@ -901,6 +915,9 @@ implementation
     rect: Rectangle;
   begin
     if not Assigned(theFont) then exit;
+    if Length(theText) <= 0 then exit;
+    if (w <= 0) or (h <= 0) then exit;
+
     rect.x := x + 1;
  	rect.y := y + 1;
  	rect.width := w - 2;
