@@ -211,7 +211,7 @@ then
     echo "          Creating $GAME_NAME"
     echo "          for $OS"
     echo "--------------------------------------------------"
-    echo "  Running script from $APP_PATH"
+    echo "  Running script from $FULL_APP_PATH"
     echo "  Saving output to $OUT_DIR"
     echo "  Compiler flags ${VB_FLAGS}"
     echo "--------------------------------------------------"

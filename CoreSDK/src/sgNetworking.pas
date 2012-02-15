@@ -67,13 +67,13 @@ uses
   /// @uname TCPMessageReceived
   function TCPMessageReceived         () : Boolean;    
 
-  /// TODO
-  ///
-  /// @param msg The message to be sent
-  ///
-  /// @lib
-  /// @uname BroadcastTCPMessage
-  function BroadcastTCPMessage        (msg : String) : StringArray;
+  // /// TODO
+  // ///
+  // /// @param msg The message to be sent
+  // ///
+  // /// @lib
+  // /// @uname BroadcastTCPMessage
+  // function BroadcastTCPMessage        (msg : String) : StringArray;
 
   /// Sends the message to the specified client, dictated the by ip and port
   /// passed in as an arguement. This will either return an empty string if 

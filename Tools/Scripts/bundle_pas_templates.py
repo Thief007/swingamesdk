@@ -7,44 +7,10 @@ _script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
 _swingame_path      = os.path.realpath(_script_path + '../..') + '/'
 _python_script_dir  = os.path.realpath(_script_path + '../SGWrapperGen') + '/'
 
-CopyList = [
-  { 
-    'target':     'FPC',
-    'language':   'Pascal', 
-    'sgsdk':      False,
-    'os':         ['Mac OS X', 'Windows', 'Linux'],
-  },
-  {
-    'target':     'iOS',
-    'language':   'Pascal', 
-    'sgsdk':      False,
-    'os':         ['Mac OS X'],
-  },
-  {
-    'target':     'Mono',
-    'language':   'CSharp', 
-    'sgsdk':      True,
-    'os':         ['Mac OS X', 'Linux'],
-  },
-  # {
-  #   'target':     'VS08',
-  #   'language':   'CSharp', 
-  #   'sgsdk':      True,
-  #   'os':         ['Windows'],
-  # },
-  {
-    'target':     'gcc',
-    'language':   'C', 
-    'sgsdk':      True,
-    'os':         ['Mac OS X', 'Windows', 'Linux'],
-  },
-  {
-    'target':     'gpp',
-    'language':   'C', 
-    'sgsdk':      True,
-    'os':         ['Mac OS X', 'Windows', 'Linux'],
-  },
-]
+_dist_folder        = _swingame_path + "Dist/"
+_generated_folder   = _swingame_path + "Generated/"
+_tempate_folder     = _swingame_path + "Templates/"
+
 
 # ====================
 # = Helper functions =
@@ -87,11 +53,18 @@ def run_python(script_name):
         quit()
 
 def run_bash(script_name, opts):
-    output_line('Running bash script: ' + script_name + ' ' + (opts if opts else ''))
     if get_os_name() == "Windows":
-        exec_list = ["bash", script_name, opts] if opts else [script_name]
+        exec_list = ["bash", script_name]
     else:
-        exec_list = [script_name, opts] if opts else [script_name]
+        exec_list = [script_name]
+    
+    if opts:
+        if isinstance(opts, list):
+            exec_list.extend(opts)
+        else:
+            exec_list.append(opts)
+    
+    output_line('Running bash script: ' + str(exec_list))
     
     proc = subprocess.Popen(exec_list, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = proc.communicate()
@@ -126,6 +99,13 @@ def flat_copy_without_svn(src, dest):
             if(root.find('.svn') == -1):
                 fullpath = os.path.join(root, f)
                 swin_shutil.copy(fullpath,dest)
+
+# ===================
+# = Clear functions =
+# ===================
+
+def clear_generated():
+    pass
 
 # =================================================
 # = Language specific functions called from above =
@@ -170,14 +150,15 @@ def build_csharp_lib():
 
 # for compiling SGSDK
 def copy_coresdk_to_dist_source():
-    generated_source_folder =   _swingame_path + "Generated/Source/src/"
-    template_source_folder =    _swingame_path + "Templates/Source"
-    dist_source_folder =        _swingame_path + "Dist/Source/"
-    dist_source_src_folder =    _swingame_path + "Dist/Source/src/"
-    dist_source_lib_folder =    _swingame_path + "Dist/Source/lib/"
+    generated_source_folder =   _generated_folder + "Source/src/"
+    template_source_folder =    _tempate_folder + "Source/"
     lib_src_folder =            _swingame_path + "CoreSDK/libsrc/"
     src_folder =                _swingame_path + "CoreSDK/src/"
     lib_folder =                _swingame_path + "CoreSDK/lib/"
+    
+    dist_source_folder =        _dist_folder + "Source/"
+    dist_source_src_folder =    dist_source_folder + "src/"
+    dist_source_lib_folder =    dist_source_folder + "lib/"
     
     copy_without_svn(template_source_folder, dist_source_folder)
     copy_without_svn(lib_folder, dist_source_lib_folder, overwrite = False)
@@ -187,7 +168,7 @@ def copy_coresdk_to_dist_source():
 
 
 _sgsdk_creation_script_options = {
-    'Mac OS X': ['-badass', '-godly', None],            # default must be last
+    'Mac OS X': [['-badass','-static'], ['-godly','-static'], None],            # default must be last
     'Windows':  [None], #, '-badass', '-godly'],
 }
 
@@ -221,12 +202,14 @@ _lang_generation_scripts = {
                 'use_sgsdk':    False,
                 'copy_dist':    [
                     { 
-                      'target':     'FPC',
+                      'target':     'fpc',
                       'os':         ['Mac OS X', 'Windows', 'Linux'],
+                      'lib':        {'Mac OS X': 'lib', 'Windows': 'lib', 'Linux': 'lib'},
                     },
                     {
                       'target':     'iOS',
                       'os':         ['Mac OS X'],
+                      'lib':        {'Mac OS X': 'staticlib'},
                     },
                 ],
                 'pre_copy_script': None,
@@ -236,12 +219,28 @@ _lang_generation_scripts = {
                 'use_sgsdk':    True,
                 'copy_dist':    [
                     { 
-                      'target':     'GPP',
+                      'target':     'gpp',
                       'os':         ['Mac OS X', 'Windows', 'Linux'],
+                      'lib':        {'Mac OS X': 'lib', 'Windows': 'lib', 'Linux': 'lib'},
+                      'staticsgsdk':    False,
                     },
                     { 
-                      'target':     'GCC',
+                      'target':     'gcc',
                       'os':         ['Mac OS X', 'Windows', 'Linux'],
+                      'lib':        {'Mac OS X': 'lib', 'Windows': 'lib', 'Linux': 'lib'},
+                      'staticsgsdk':    False,
+                    },
+                    { 
+                      'target':     'xcode 3',
+                      'os':         ['Mac OS X'],
+                      'lib':        {'Mac OS X': 'lib'},
+                      'staticsgsdk':    False,
+                    },
+                    { 
+                      'target':     'iOS',
+                      'os':         ['Mac OS X'],
+                      'lib':        {'Mac OS X': 'staticlib'},
+                      'staticsgsdk':    True,
                     },
                 ],
                 'pre_copy_script': None,
@@ -252,12 +251,16 @@ _lang_generation_scripts = {
                 'use_sgsdk':    True,
                 'copy_dist':    [
                     { 
-                      'target':     'Mono',
+                      'target':     'mono',
                       'os':         ['Mac OS X', 'Linux'],
+                      'lib':        {'Mac OS X': 'lib', 'Linux': 'lib'},
+                      'staticsgsdk':    False,
                     },
                     { 
-                      'target':     'VS08',
+                      'target':     'vs08',
                       'os':         ['Windows'],
+                      'lib':        {'Windows': 'lib/win'},
+                      'staticsgsdk':    False,
                     },
                 ],
                 'pre_copy_script': build_csharp_lib,
@@ -275,12 +278,14 @@ def create_lang_libraries():
           lang_template_dict['pre_copy_script']()
       
       for copy_dist in lang_template_dict['copy_dist']:
-          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'])
+          if get_os_name() in copy_dist['os']:
+              output_line("Packaging " + copy_dist["target"])
+              assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'])
       
 
 #assembles the files for the dist folder
-def assemble_dist(language, dict, use_sgsdk):
-    lib_folder =                _swingame_path + "CoreSDK/lib/"
+def assemble_dist(language, dist_dict, use_sgsdk):
+    coresdk_folder =            _swingame_path + "CoreSDK/"
     lib_src_folder =            _swingame_path + "CoreSDK/libsrc/"
     src_folder =                _swingame_path + "CoreSDK/src/"
     generated_folder =          _swingame_path + "Generated/%s/lib/" % language
@@ -291,10 +296,14 @@ def assemble_dist(language, dict, use_sgsdk):
     lang_template_folder =          template_folder + language +'/'
     
     common_lang_template_folder =   lang_template_folder + "Common/"
-    specific_template_folder =      lang_template_folder + dict['target'] + '/'
+    specific_template_folder =      lang_template_folder + dist_dict['target'] + '/'
     
-    specific_dist_folder =          lang_dist_folder + dict['target'] + '/'
+    specific_dist_folder =          lang_dist_folder + dist_dict['target'] + '/'
     specific_dist_lib_folder =      specific_dist_folder + "lib/"
+    
+    copy_lib_dir =  dist_dict["lib"][get_os_name()]
+    lib_folder =    coresdk_folder + copy_lib_dir
+    
     
     #clean dist folder
     # print("\n  Copying common files...")
@@ -324,50 +333,38 @@ def assemble_dist(language, dict, use_sgsdk):
         if (get_os_name() == "Windows"):
             copy_without_svn(dist_source_folder+"bin/win", specific_dist_folder+"lib/win", overwrite = False)
         elif (get_os_name() == "Mac OS X"):
-            # print dist_source_folder+"bin/mac/SGSDK.framework"
-            # print specific_dist_folder+"lib/mac/SGSDK.framework"
-            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
-            
-            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
-            cur = os.getcwd()
-            os.chdir(specific_dist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
-            # print os.getcwd()
-            os.remove('Current')
-            os.symlink('./3.0badass', 'Current')
-            
-            copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/opengl/mac/SGSDK.framework")
-            os.chdir(specific_dist_folder+"lib/opengl/mac/SGSDK.framework/Versions")
-            # print os.getcwd()
-            os.remove('Current')
-            os.symlink('./3.0godly', 'Current')
-            os.chdir(cur)
+            if dist_dict['staticsgsdk']:
+                # Copy staticlibs
+                swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-sdl13.a", specific_dist_folder+"lib/sdl13/mac/libSGSDK.a")
+                swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-godly.a", specific_dist_folder+"lib/godly/mac/libSGSDK.a")
+            else:
+                # Copy frameworks
+                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/mac/SGSDK.framework")
+                
+                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/sdl13/mac/SGSDK.framework")
+                cur = os.getcwd()
+                os.chdir(specific_dist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
+                # print os.getcwd()
+                os.remove('Current')
+                os.symlink('./3.0badass', 'Current')
+                
+                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specific_dist_folder+"lib/godly/mac/SGSDK.framework")
+                os.chdir(specific_dist_folder+"lib/godly/mac/SGSDK.framework/Versions")
+                # print os.getcwd()
+                os.remove('Current')
+                os.symlink('./3.0godly', 'Current')
+                os.chdir(cur)
 
 def main():
     output_header(['Creating SwinGame Templates'])
-
+    
     # Create the framework/dll
     create_sgsdk_library()
     create_lang_libraries()
-    return
     
-    
-    print("--------------------------------------------------")
-    print("  Creating "+get_os_name()+" SwinGame Pascal Templates")
-    print("--------------------------------------------------\n")
-    
-    
-    
-    create_swingame_pas()
-    
-    build_sgsdk()
-    print("--------------------------------------------------")
-    for build in CopyList:
-        if get_os_name() in build['os']:
-            print("  Assembling Dist Folder for %s (%s)..." % (build['target'], build['language']))
-            assemble_dist(build['target'],build['language'],build['sgsdk'])  
     print("\nFinished!")
-  
-  
-  
+    
+    
+    
 if __name__ == '__main__':
     main()

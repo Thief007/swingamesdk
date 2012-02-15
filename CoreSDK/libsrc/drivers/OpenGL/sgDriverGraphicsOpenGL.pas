@@ -15,7 +15,7 @@ unit sgDriverGraphicsOpenGL;
 //
 //=============================================================================
 interface
-uses sgTypes, SDL13, sgNetworking, SysUtils,gl;
+uses sgTypes, sdl13, sgNetworking, SysUtils, gl;
 
   type
     OpenGLWindow = record
