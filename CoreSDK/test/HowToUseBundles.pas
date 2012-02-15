@@ -18,21 +18,21 @@ begin
 
     Repeat
         ProcessEvents(); 
-		ClearScreen(ColorWhite);
-		DrawText('[A]nimation', ColorBlack, 0, 0);
-		DrawText('[T]ext', ColorBlack, 0, 10);
-		DrawText('[S]ound Effect', ColorBlack, 0, 20);
-		DrawText('[M]usic', ColorBlack, 0, 30);
-		DrawSprite(explosion);
+        ClearScreen(ColorWhite);
+        DrawText('[A]nimation', ColorBlack, 0, 0);
+        DrawText('[T]ext', ColorBlack, 0, 10);
+        DrawText('[S]ound Effect', ColorBlack, 0, 20);
+        DrawText('[M]usic', ColorBlack, 0, 30);
+        DrawSprite(explosion);
 
-		UpdateSprite(explosion);
+        UpdateSprite(explosion);
 
-		if KeyTyped(VK_A) then SpriteStartAnimation(explosion, 'FireExplosion')
-		else if KeyDown(VK_T) then DrawText('Hi!!!', ColorRed, FontNamed('harabaraText'), 0, 200)
-		else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))
-		else if KeyTyped(VK_M) then PlayMusic(MusicNamed('danceMusic'), 1);
-		
-	    RefreshScreen(60);
+        if KeyTyped(VK_A) then SpriteStartAnimation(explosion, 'FireExplosion')
+        else if KeyDown(VK_T) then DrawText('Hi!!!', ColorRed, FontNamed('harabaraText'), 120, 125)
+        else if KeyTyped(VK_S) then PlaySoundEffect(SoundEffectNamed('danceBeat'))
+        else if KeyTyped(VK_M) then PlayMusic(MusicNamed('danceMusic'), 1);
+
+        RefreshScreen(60);
     until WindowCloseRequested();
 	FreeSprite(explosion);
     CloseAudio();
