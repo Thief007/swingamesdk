@@ -7,7 +7,7 @@ var
     explosion: Sprite;
 begin
     OpenAudio();
-    OpenGraphicsWindow('Create Animation', 200, 200);
+    OpenGraphicsWindow('Create multiple animations', 200, 200);
 
     LoadResourceBundle('explosion_bundle.txt');
 

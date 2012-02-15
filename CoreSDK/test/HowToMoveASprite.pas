@@ -6,7 +6,7 @@ procedure Main();
 var
     ball: Sprite;
 begin
-    OpenGraphicsWindow('Create a Sprite', 150, 150);
+    OpenGraphicsWindow('Move a Sprite', 150, 150);
 
     LoadBitmapNamed('ball', 'ball_small.png');
 

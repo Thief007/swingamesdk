@@ -1,7 +1,7 @@
 program HowToCreateASprite;
 uses
     sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
-	
+    
 procedure KeepOnScreen(s: Sprite);
 begin
   if SpriteX(s) > ScreenWidth() - SpriteWidth(s) then
@@ -31,7 +31,7 @@ procedure Main();
 var
     asteroid: Sprite;
 begin
-    OpenGraphicsWindow('Create a Sprite', 800, 600);
+    OpenGraphicsWindow('Keeping sprite on screen', 800, 600);
 
     ClearScreen(ColorWhite);
 
@@ -41,16 +41,16 @@ begin
     SpriteSetX(asteroid, 100);
     SpriteSetY(asteroid, 500);
     SpriteSetMass(asteroid, 1);
-    SpriteSetVelocity(asteroid, VectorTo(1, -0.6));
+    SpriteSetVelocity(asteroid, VectorTo(4, -2.4));
 
     repeat
         ProcessEvents();
         ClearScreen(ColorWhite);
         DrawSprite(asteroid);
         UpdateSprite(asteroid);
-		
-		KeepOnScreen(asteroid);
-		RefreshScreen(60);
+        
+        KeepOnScreen(asteroid);
+        RefreshScreen(60);
     until WindowCloseRequested();
 
     ReleaseAllResources();
