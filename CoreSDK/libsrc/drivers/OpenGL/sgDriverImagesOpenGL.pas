@@ -279,7 +279,7 @@ implementation
     end;
  //   if (destBmp <> nil) then exit;
     glBindTexture( GL_TEXTURE_2D, GLUInt(srcBmp^.surface^) );
- 
+    glColor4f( 1.0, 1.0, 1.0, 1.0 );
     glBegin( GL_QUADS );
       //Bottom-left vertex (corner)
       glTexCoord2f( lRatioX, lRatioY );

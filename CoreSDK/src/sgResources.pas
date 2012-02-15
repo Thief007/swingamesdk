@@ -717,7 +717,7 @@ implementation
                 txt := 'SwinGame API by Swinburne University of Technology';
                 DrawText(txt, ColorBlack, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
                 f := FontNamed('LoadingFont');
-                DrawText(DLL_VERSION, ColorBlack, f, 5, 580);
+                DrawText(DLL_VERSION, ColorBlack, f, 0, 0);
                 
                 i := 1;
                 while isPaused or (i < 120) do

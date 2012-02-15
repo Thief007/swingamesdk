@@ -36,7 +36,7 @@ implementation
 	      if result^.fptr = nil then
 	      begin
 	        Dispose(result);
-	        RaiseException('LoadFont failed: ' + TTF_GetError());
+	        RaiseWarning('LoadFont failed: ' + TTF_GetError());
 	        exit;
 	      end;
 
@@ -235,9 +235,6 @@ implementation
 
 	    colorFG := ToSDLColor(clrFg);
 	    bgTransparent := TransparencyOf(clrBg) < 255;
-
-	    // If there's nothing to draw, return NULL
-	    if (Length(str) = 0) or (font = nil) then exit;
 
 	    // This is the surface that everything is printed to.
 	    lineSkip  := TTF_FontLineSkip( font^.fptr );

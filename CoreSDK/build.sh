@@ -119,7 +119,7 @@ CLEAN="N"
 if [[ ! -f ./test/SwinGame.pas ]]; then
   echo " Creating SwinGame.pas"
   cd ../Tools/SGWrapperGen
-  python lang_pascal_library.py
+  python create_pascal_library.py
   cd "${FULL_APP_PATH}"
   cp ../Generated/Pascal/lib/SwinGame.pas ./test/SwinGame.pas
 fi
