@@ -17,7 +17,7 @@ begin
 
     ReleaseAllResources();    
 end;
-	
+    
 begin
     Main();
 end.

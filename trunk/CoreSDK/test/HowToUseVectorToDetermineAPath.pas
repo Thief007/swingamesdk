@@ -5,10 +5,10 @@ uses
 procedure Main();
 var
     origin: Point2D;
-	planetVector, ufoVector, resultant: Vector;
+    planetVector, ufoVector, resultant: Vector;
     distance: LineSegment;
 begin    
-    OpenGraphicsWindow('How to draw a bitmap', 800, 600);
+    OpenGraphicsWindow('Determine path with vector', 800, 600);
     
     ClearScreen(ColorWhite);
   

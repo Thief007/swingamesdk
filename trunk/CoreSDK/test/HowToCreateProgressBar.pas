@@ -1,7 +1,7 @@
 program HowToCreateAProgressBar;
 uses 
     sgGraphics, sgText, sgTypes, sgInput, sgImages, sgGeometry, sgUtils, sgAudio, sgResources;
-	
+    
 procedure Main();
 var
     partRect: Rectangle;

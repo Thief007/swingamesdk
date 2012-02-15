@@ -8,7 +8,7 @@ begin
     begin
         SpriteStartAnimation(sprt, animationName);
         SpriteSetDX(sprt, dx);
-        SpriteSetDY(sprt, dy);		
+        SpriteSetDY(sprt, dy);      
     end;
 end;
 

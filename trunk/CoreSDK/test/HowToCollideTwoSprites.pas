@@ -7,7 +7,7 @@ var
     earth: Sprite;
     asteroid: Sprite;
 begin
-    OpenGraphicsWindow('Create a Sprite', 800, 600);
+    OpenGraphicsWindow('Colliding Sprites', 800, 600);
 
     ClearScreen(ColorWhite);
 
