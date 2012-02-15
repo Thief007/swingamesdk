@@ -1,6 +1,6 @@
  program HowToUseBundles;
 uses 
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources, sgText;
+    SwinGame, sgTypes;
 procedure Main();
 var
     explosion: sprite;
@@ -34,7 +34,7 @@ begin
 
         RefreshScreen(60);
     until WindowCloseRequested();
-	FreeSprite(explosion);
+    FreeSprite(explosion);
     CloseAudio();
     ReleaseAllResources();
 end;

@@ -1,13 +1,13 @@
 program HowToCreateASprite;
 uses
-    sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
     earth: Sprite;
     asteroid: Sprite;
 begin
-    OpenGraphicsWindow('Sprites with different mass', 800, 600);
+    OpenGraphicsWindow('Sprites With Different Mass', 800, 600);
 
     ClearScreen(ColorWhite);
 
@@ -37,7 +37,8 @@ begin
 
         RefreshScreen();
     until WindowCloseRequested();
-
+    FreeSprite(earth);
+    FreeSprite(asteroid);
     ReleaseAllResources();
 end;
 

@@ -1,6 +1,6 @@
 program HowToDetectCollisionBetweenSprites;
 uses 
-    sgGraphics, sgText, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources, sgPhysics;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -39,7 +39,8 @@ begin
         RefreshScreen();
         ProcessEvents();
     until WindowCloseRequested();
-
+    FreeSprite(ball1);
+    FreeSprite(ball2);
     ReleaseAllResources();  
 end;
 

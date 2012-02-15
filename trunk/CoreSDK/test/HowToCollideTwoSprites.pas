@@ -1,6 +1,6 @@
 program HowToCreateASprite;
 uses
-    sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -35,7 +35,8 @@ begin
 
         RefreshScreen();
     until WindowCloseRequested();
-
+    FreeSprite(earth);
+    FreeSprite(asteroid);
     ReleaseAllResources();
 end;
 

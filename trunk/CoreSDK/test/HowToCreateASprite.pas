@@ -1,6 +1,6 @@
 program HowToCreateASprite;
 uses
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
@@ -20,7 +20,7 @@ begin
     UpdateSprite(ball);
     RefreshScreen();
     Delay(5000);
-
+    FreeSprite(ball);
     ReleaseAllResources();
 end;
 

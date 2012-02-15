@@ -1,6 +1,6 @@
 program HowToCreateAnAnimation;
 uses 
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 var

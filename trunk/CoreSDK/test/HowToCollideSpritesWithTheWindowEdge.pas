@@ -1,6 +1,6 @@
 program HowToCreateASprite;
 uses
-    sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
+    SwinGame, sgTypes;
     
 procedure KeepOnScreen(s: Sprite);
 begin
@@ -31,7 +31,7 @@ procedure Main();
 var
     asteroid: Sprite;
 begin
-    OpenGraphicsWindow('Keeping sprite on screen', 800, 600);
+    OpenGraphicsWindow('Keeping Sprite On Screen', 800, 600);
 
     ClearScreen(ColorWhite);
 
@@ -52,7 +52,7 @@ begin
         KeepOnScreen(asteroid);
         RefreshScreen(60);
     until WindowCloseRequested();
-
+    FreeSprite(asteroid);
     ReleaseAllResources();
 end;
 

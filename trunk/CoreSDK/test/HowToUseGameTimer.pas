@@ -1,6 +1,6 @@
 program HowToUseGameTimer;
 uses 
-    sgGraphics, sgTypes, sgImages, sgUtils, sgTimers, sgAudio, sgResources, sgText, sgInput;
+    SwinGame, sgTypes;
 
 procedure Main();
 var

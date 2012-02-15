@@ -1,10 +1,10 @@
 program HowToDrawFramesPerSecond;
 uses 
-    sgGraphics, sgInput, sgText, sgUtils, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 begin
-    OpenGraphicsWindow('How To Draw Framerate To The Screen', 400, 300);
+    OpenGraphicsWindow('Draw Framerate', 400, 300);
 
     repeat
         ProcessEvents();

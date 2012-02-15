@@ -1,6 +1,6 @@
 program HowToMoveASprite;
 uses 
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 var

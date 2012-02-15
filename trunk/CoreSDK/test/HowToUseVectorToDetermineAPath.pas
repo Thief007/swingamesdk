@@ -1,6 +1,6 @@
 program HowToUseVectorToDetermineAPath;
 uses
-    sgUtils, sgTypes, sgAudio, sgText, sgGraphics, sgResources, sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgSprites, sgTimers;
+    SwinGame, sgTypes;
   
 procedure Main();
 var
@@ -8,7 +8,7 @@ var
     planetVector, ufoVector, resultant: Vector;
     distance: LineSegment;
 begin    
-    OpenGraphicsWindow('Determine path with vector', 800, 600);
+    OpenGraphicsWindow('Determine Vector Path', 800, 600);
     
     ClearScreen(ColorWhite);
   

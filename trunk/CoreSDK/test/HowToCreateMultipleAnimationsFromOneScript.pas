@@ -1,13 +1,13 @@
 program HowToCreateMultipleAnimationsFromOneScript;
 uses
-    sgGraphics, sgSprites, sgTypes, sgImages, sgUtils, sgInput, sgAudio, sgAnimations, sgResources, sgText;
+    SwinGame, sgTypes;
 
 procedure Main();
 var
     explosion: Sprite;
 begin
     OpenAudio();
-    OpenGraphicsWindow('Create multiple animations', 200, 200);
+    OpenGraphicsWindow('Create Multiple Animations', 200, 200);
 
     LoadResourceBundle('explosion_bundle.txt');
 
@@ -32,7 +32,7 @@ begin
         if KeyTyped(VK_L) then SpriteStartAnimation(explosion, 'explosion_loop');
 
     until WindowCloseRequested();
-
+    FreeSprite(explosion);
     CloseAudio();
     ReleaseAllResources();
 end;

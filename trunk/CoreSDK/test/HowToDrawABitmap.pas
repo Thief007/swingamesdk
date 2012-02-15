@@ -1,12 +1,12 @@
 program HowToDrawABitmap;
 uses 
-    sgGraphics, sgTypes, sgImages, sgUtils, sgAudio, sgResources;
+    SwinGame, sgTypes;
 
 procedure Main();
 begin    
-    OpenGraphicsWindow('How to draw a bitmap', 800, 600);
+    OpenGraphicsWindow('Draw Bitmap', 800, 600);
     
-    ClearScreen(ColorWhite);
+    ClearScreen(ColorWhite);/
 
     LoadBitmapNamed('rocket image', 'rocket_large.png');
     DrawBitmap ('rocket image', 111, 4);
