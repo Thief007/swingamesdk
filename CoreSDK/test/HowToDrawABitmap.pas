@@ -6,7 +6,7 @@ procedure Main();
 begin    
     OpenGraphicsWindow('Draw Bitmap', 800, 600);
     
-    ClearScreen(ColorWhite);/
+    ClearScreen(ColorWhite);
 
     LoadBitmapNamed('rocket image', 'rocket_large.png');
     DrawBitmap ('rocket image', 111, 4);
