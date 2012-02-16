@@ -2483,16 +2483,21 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ColorComponents');
     {$ENDIF}
+
+    {$IFNDEF SWINGAME_OPENGL}
     if not ImagesDriver.SurfaceExists(screen) then
     begin
-      RaiseWarning('Estimating color components as Windows has not been opened.');
+      RaiseWarning('Estimating color, screen not available.');
+    {$ENDIF}
       a := (c and $FF000000) shr 24;
       r := (c and $00FF0000) shr 16;
       g := (c and $0000FF00) shr 8;
       b := (c and $000000FF);
-      exit;
+    {$IFNDEF SWINGAME_OPENGL}
     end;
     GraphicsDriver.ColorComponents(c, r, g, b, a);
+    {$ENDIF}
+
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'ColorComponents');
     {$ENDIF}
@@ -2662,11 +2667,15 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'RGBAColor');
     {$ENDIF}
+
+    {$IFNDEF SWINGAME_OPENGL}
     if not ImagesDriver.SurfaceExists(screen) or (not GraphicsDriver.SurfaceFormatAssigned(screen)) then
     begin
       RaiseWarning('Estimating RGBAColor as the window is not open');
+    {$ENDIF}
       result := (alpha shl 24) or (red shl 16) or (green shl 8) or (blue);
       exit;
+    {$IFNDEF SWINGAME_OPENGL}
     end;
 
     try
@@ -2675,6 +2684,7 @@ implementation
       RaiseException('Error occured while trying to get a color from RGBA components');
       exit;
     end;
+    {$ENDIF}
     {$IFDEF TRACE}
       TraceExit('sgGraphics', 'RGBAColor');
     {$ENDIF}

@@ -1,3 +1,4 @@
+
 // 
 // Exported by exth2pas
 // 
@@ -132,7 +133,7 @@ type
         SDL_ASSERTION_ALWAYS_IGNORE := 4
       );
 
-      SDL_assert_data = packed record
+      SDL_assert_data = record
           always_ignore : longint;
           trigger_count : dword;
           condition : Pchar;
@@ -146,7 +147,7 @@ type
 
       SDL_SpinLock = longint;
 
-      SDL_atomic_t = packed record
+      SDL_atomic_t = record
           value : longint;
         end;
 
@@ -174,24 +175,24 @@ type
 
       SDL_ThreadFunction = function (data:pointer):longint;cdecl;
 
-      SDL_RWops = packed record
+      SDL_RWops = record
           seek : function (context:PSDL_RWops; offset:longint; whence:longint):longint;cdecl;
           read : function (context:PSDL_RWops; ptr:pointer; size:size_t; maxnum:size_t):size_t;cdecl;
           write : function (context:PSDL_RWops; ptr:pointer; size:size_t; num:size_t):size_t;cdecl;
           close : function (context:PSDL_RWops):longint;cdecl;
           _type : Uint32;
-          hidden : packed record
+          hidden : record
               case longint of
-                0 : ( stdio : packed record
+                0 : ( stdio : record
                     autoclose : SDL_bool;
                     fp : PFILE;
                   end );
-                1 : ( mem : packed record
+                1 : ( mem : record
                     base : PUint8;
                     here : PUint8;
                     stop : PUint8;
                   end );
-                2 : ( unknown : packed record
+                2 : ( unknown : record
                     data1 : pointer;
                   end );
               end;
@@ -201,7 +202,7 @@ type
 
       SDL_AudioCallback = procedure (userdata:pointer; stream:PUint8; len:longint);cdecl;
 
-      SDL_AudioSpec = packed record
+      SDL_AudioSpec = record
           freq : longint;
           format : SDL_AudioFormat;
           channels : Uint8;
@@ -215,7 +216,7 @@ type
 
       SDL_AudioFilter = procedure (cvt:PSDL_AudioCVT; format:SDL_AudioFormat);cdecl;
 
-      SDL_AudioCVT = packed record
+      SDL_AudioCVT = record
           needed : longint;
           src_format : SDL_AudioFormat;
           dst_format : SDL_AudioFormat;
@@ -237,21 +238,21 @@ type
         SDL_AUDIO_PAUSED := 2
       );
 
-      SDL_Color = packed record
+      SDL_Color = record
           r : Uint8;
           g : Uint8;
           b : Uint8;
           unused : Uint8;
         end;
 
-      SDL_Palette = packed record
+      SDL_Palette = record
           ncolors : longint;
           colors : PSDL_Color;
           version : Uint32;
           refcount : longint;
         end;
 
-      SDL_PixelFormat = packed record
+      SDL_PixelFormat = record
           format : Uint32;
           palette : PSDL_Palette;
           BitsPerPixel : Uint8;
@@ -273,12 +274,12 @@ type
           next : PSDL_PixelFormat;
         end;
 
-      SDL_Point = packed record
+      SDL_Point = record
           x : longint;
           y : longint;
         end;
 
-      SDL_Rect = packed record
+      SDL_Rect = record
           x : longint;
           y : longint;
           w : longint;
@@ -292,7 +293,7 @@ type
         SDL_BLENDMODE_MOD := $00000004
       );
 
-      SDL_Surface = packed record
+      SDL_Surface = record
           flags : Uint32;
           format : PSDL_PixelFormat;
           w : longint;
@@ -309,7 +310,7 @@ type
 
       SDL_blit = function (src:PSDL_Surface; srcrect:PSDL_Rect; dst:PSDL_Surface; dstrect:PSDL_Rect):longint;cdecl;
 
-      SDL_DisplayMode = packed record
+      SDL_DisplayMode = record
           format : Uint32;
           w : longint;
           h : longint;
@@ -635,7 +636,7 @@ type
         KMOD_RESERVED := $8000
       );
 
-      SDL_Keysym = packed record
+      SDL_Keysym = record
           scancode : SDL_Scancode;
           sym : SDL_Keycode;
           kmod : Uint16;
@@ -648,7 +649,7 @@ type
 
       SDL_FingerID = Sint64;
 
-      SDL_Finger = packed record
+      SDL_Finger = record
           id : SDL_FingerID;
           x : Uint16;
           y : Uint16;
@@ -661,7 +662,7 @@ type
           down : SDL_bool;
         end;
 
-      SDL_Touch = packed record
+      SDL_Touch = record
           FreeTouch : procedure (touch:PSDL_Touch);cdecl;
           pressure_max : single;
           pressure_min : single;
@@ -732,7 +733,7 @@ type
         SDL_LASTEVENT := $FFFF
       );
 
-      SDL_WindowEvent = packed record
+      SDL_WindowEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -744,7 +745,7 @@ type
           data2 : longint;
         end;
 
-      SDL_KeyboardEvent = packed record
+      SDL_KeyboardEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -755,7 +756,7 @@ type
           keysym : SDL_Keysym;
         end;
 
-      SDL_TextEditingEvent = packed record
+      SDL_TextEditingEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -764,14 +765,14 @@ type
           length : longint;
         end;
 
-      SDL_TextInputEvent = packed record
+      SDL_TextInputEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
           text : array[0..31] of char;
         end;
 
-      SDL_MouseMotionEvent = packed record
+      SDL_MouseMotionEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -785,7 +786,7 @@ type
           yrel : longint;
         end;
 
-      SDL_MouseButtonEvent = packed record
+      SDL_MouseButtonEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -797,7 +798,7 @@ type
           y : longint;
         end;
 
-      SDL_MouseWheelEvent = packed record
+      SDL_MouseWheelEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -805,7 +806,7 @@ type
           y : longint;
         end;
 
-      SDL_JoyAxisEvent = packed record
+      SDL_JoyAxisEvent = record
           _type : Uint32;
           timestamp : Uint32;
           which : Uint8;
@@ -815,7 +816,7 @@ type
           value : longint;
         end;
 
-      SDL_JoyBallEvent = packed record
+      SDL_JoyBallEvent = record
           _type : Uint32;
           timestamp : Uint32;
           which : Uint8;
@@ -826,7 +827,7 @@ type
           yrel : longint;
         end;
 
-      SDL_JoyHatEvent = packed record
+      SDL_JoyHatEvent = record
           _type : Uint32;
           timestamp : Uint32;
           which : Uint8;
@@ -835,7 +836,7 @@ type
           padding1 : Uint8;
         end;
 
-      SDL_JoyButtonEvent = packed record
+      SDL_JoyButtonEvent = record
           _type : Uint32;
           timestamp : Uint32;
           which : Uint8;
@@ -844,7 +845,7 @@ type
           padding1 : Uint8;
         end;
 
-      SDL_TouchFingerEvent = packed record
+      SDL_TouchFingerEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -861,7 +862,7 @@ type
           pressure : Uint16;
         end;
 
-      SDL_TouchButtonEvent = packed record
+      SDL_TouchButtonEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -872,7 +873,7 @@ type
           padding2 : Uint8;
         end;
 
-      SDL_MultiGestureEvent = packed record
+      SDL_MultiGestureEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -885,7 +886,7 @@ type
           padding : Uint16;
         end;
 
-      SDL_DollarGestureEvent = packed record
+      SDL_DollarGestureEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -895,18 +896,18 @@ type
           error : single;
         end;
 
-      SDL_DropEvent = packed record
+      SDL_DropEvent = record
           _type : Uint32;
           timestamp : Uint32;
           _file : Pchar;
         end;
 
-      SDL_QuitEvent = packed record
+      SDL_QuitEvent = record
           _type : Uint32;
           timestamp : Uint32;
         end;
 
-      SDL_UserEvent = packed record
+      SDL_UserEvent = record
           _type : Uint32;
           timestamp : Uint32;
           windowID : Uint32;
@@ -916,27 +917,27 @@ type
         end;
 
 
-      SDL_SysWMEvent = packed record
+      SDL_SysWMEvent = record
           _type : Uint32;
           timestamp : Uint32;
           msg : PSDL_SysWMmsg;
         end;
 
-      SDL_ActiveEvent = packed record
+      SDL_ActiveEvent = record
           _type : Uint32;
           timestamp : Uint32;
           gain : Uint8;
           state : Uint8;
         end;
 
-      SDL_ResizeEvent = packed record
+      SDL_ResizeEvent = record
           _type : Uint32;
           timestamp : Uint32;
           w : longint;
           h : longint;
         end;
 
-      SDL_Event = packed record
+      SDL_Event = record
           case longint of
             0 : ( _type : Uint32 );
             1 : ( window : SDL_WindowEvent );
@@ -1002,7 +1003,7 @@ type
         SDL_RENDERER_PRESENTVSYNC := $00000004
       );
 
-      SDL_RendererInfo = packed record
+      SDL_RendererInfo = record
           name : Pchar;
           flags : Uint32;
           num_texture_formats : Uint32;
@@ -1028,13 +1029,13 @@ type
 
       SDL_TimerID = longint;
 
-      SDL_version = packed record
+      SDL_version = record
           major : Uint8;
           minor : Uint8;
           patch : Uint8;
         end;
 
-      SDL_VideoInfo = packed record
+      SDL_VideoInfo = record
           flag0 : longint;
           video_mem : Uint32;
           vfmt : PSDL_PixelFormat;
@@ -1042,7 +1043,7 @@ type
           current_h : longint;
         end;
 
-      SDL_Overlay = packed record
+      SDL_Overlay = record
           format : Uint32;
           w : longint;
           h : longint;
@@ -1773,7 +1774,16 @@ const
   procedure SDL_SetTextInputRect(rect:PSDL_Rect);cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   function SDL_GetMouseFocus:PSDL_Window;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   function SDL_GetMouseState(x:Plongint; y:Plongint):Uint8;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
-  function SDL_GetRelativeMouseState(x:Plongint; y:Plongint):Uint8;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
+  
+
+
+
+  function SDL_GetRelativeMouseState(var x:longint; var y:longint):Uint8;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
+
+
+
+
+
   procedure SDL_WarpMouseInWindow(window:PSDL_Window; x:longint; y:longint);cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   function SDL_SetRelativeMouseMode(enabled:SDL_bool):longint;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   function SDL_GetRelativeMouseMode:SDL_bool;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};

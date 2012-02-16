@@ -74,9 +74,17 @@ implementation
   // and returns a null pointer.
   function LoadSoundEffectProcedure(filename, name: String) : SoundEffect;
   begin
+    {$IFDEF IOS}
+      if ExtractFileExt(filename) = '.ogg' then
+      begin
+        RaiseWarning('Did not attempt to load ogg as it is not supported on iOS.');
+        result:=nil;
+        exit;
+      end;
+    {$ENDIF}
     New(result); 
     try
-
+      
       result^.effect := Mix_LoadWAV(PChar(filename));
       if result^.effect = nil then RaiseException('Error loading sound effect');
 

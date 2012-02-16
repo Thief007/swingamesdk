@@ -15,7 +15,7 @@ unit sgDriverGraphicsOpenGL;
 //
 //=============================================================================
 interface
-uses sgTypes, sdl13, sgNetworking, SysUtils, gl;
+uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl;{$ENDIF}
 
   type
     OpenGLWindow = record
@@ -23,7 +23,10 @@ uses sgTypes, sdl13, sgNetworking, SysUtils, gl;
         context : SDL_GLContext;  
     end;
   
+
+
     POPenGLWindow = ^OpenGLWindow;
+
 
 
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
@@ -34,7 +37,10 @@ uses sgTypes, sdl13, sgNetworking, SysUtils, gl;
   procedure DrawDirtyScreen();
   
 implementation
-  uses sgDriverGraphics, sgShared, Math, sgDriverImages;  
+  uses sgDriverGraphics, sgShared, Math, sgDriverImages, sgGraphics;  
+
+  var
+    _screenWidth, _screenHeight : LongInt;
 
   procedure DrawDirtyScreen();
   begin  
@@ -108,25 +114,10 @@ implementation
     exit;
   end;
   
-  procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
-  var
-    r,g,b,a : Byte;
-
-  begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
-    
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
 
 
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x3, y3);
-    glVertex2f(x1, y1);
-    glEnd();
-  end;
+
+  
   
   procedure GetLengthFromPoints(pos : array of Single; var lnth : LongInt; var lowest : Single );
   begin
@@ -141,194 +132,251 @@ implementation
     exit;
   end;
 
-  procedure FillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  procedure SetColor(clr : Color);
   var
     r,g,b,a : Byte;
+  begin
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    glColor4f(r/255, g/255, b/255, a/255);
+  end;
+
+
+  procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  var
+    
+    vertices : Array[0..2] of Point2D;
+  begin
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
+    vertices[0].x := x1;  vertices[0].y := y1;
+    vertices[1].x := x2;  vertices[1].y := y2;
+    vertices[2].x := x3;  vertices[2].y := y3;
+    
+    SetColor(clr);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_LINE_LOOP, 0, Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
+  end;
+
+
+  procedure FillTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
+  var
+    vertices : Array[0..2] of Point2D;
 
   begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
+
+
     
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    vertices[0].x := x1;  vertices[0].y := y1;
+    vertices[1].x := x2;  vertices[1].y := y2;
+    vertices[2].x := x3;  vertices[2].y := y3;
+    
+    SetColor(clr);
 
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_TRIANGLES);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x3, y3);
-    glEnd();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_TRIANGLES, 0, Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   procedure DrawCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
-
   var
-    rad : Single;
-    r,g,b,a : Byte;
     angle : LongInt;
+    vertices : Array[0..360] of Point2D;
+    rad : Single;
+
   begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
 
+    SetColor(clr);
 
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINE_LOOP);
-      for angle := 0 to 360 do
-      begin
-        rad := DegToRad(angle);
-        glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
-      end;
-    glEnd();
+    for angle := 0 to High(vertices) do
+    begin
+      rad               := DegToRad(angle);
+      vertices[angle].x := (xc + sin(rad) * radius);
+      vertices[angle].y := (yc + cos(rad) * radius);
+    end;
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_LINE_LOOP,0,Length(vertices));
   end;
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
-
   var
-    rad : Single;
-    r,g,b,a : Byte;
     angle : LongInt;
+    vertices : Array[0..360] of Point2D;
+    rad : Single;
   begin
-    if(dest <> screen) then
-      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
 
-
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_TRIANGLE_FAN);
-      glVertex2f(xc, yc);
-      for angle := 0 to 360 do
-      begin
-        rad := DegToRad(angle);
-        glVertex2f(xc + sin(rad) * radius, yc + cos(rad) * radius);
-      end;
-    glEnd();
+    SetColor(clr);
+    
+    for angle := 0 to High(vertices) do
+    begin
+      rad := DegToRad(angle);
+      vertices[angle].x := (xc + sin(rad) * radius);
+      vertices[angle].y := (yc + cos(rad) * radius);
+    end;
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_TRIANGLE_FAN,0,Length(vertices));
   end;
   
-  // This procedure draws an Ellipse to a bitmap
+  // // This procedure draws an Ellipse to a bitmap
   procedure FillEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
-
   var
-    
+    angle, width, height : LongInt;
+
+    vertices : Array[0..360] of Point2D;
     rad : Single;
-    r,g,b,a : Byte;
-    angle : LongInt;
   begin
-    if(dest <> screen) then
-      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
 
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_TRIANGLE_FAN);
-    for angle := 0 to 360 do
-      begin
-        rad := DegToRad(angle);
-        glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
-      end;
-    glEnd();
+    width := halfWidth*2;
+    height := halfHeight*2;
 
+    SetColor(clr);
+    
+    for angle := 0 to High(vertices) do
+    begin
+      rad := DegToRad(angle);
+      vertices[angle].x := (xPos + cos(rad)*width);
+      vertices[angle].y := (yPos + sin(rad)*height);
+    end;
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_TRIANGLE_FAN,0,Length(vertices));
   end;
+
   
   // This procedure draws an Ellipse to a bitmap
   procedure DrawEllipseProcedure(dest: Bitmap; clr: Color;  xPos, yPos, halfWidth, halfHeight: Longint);
-
   var
+    angle, width, height : LongInt;
+
+    vertices : Array[0..360] of Point2D;
     rad : Single;
-    r,g,b,a : Byte;
-    angle : LongInt;
   begin
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
+
+    width := halfWidth*2;
+    height := halfHeight*2;
+
+    SetColor(clr);
     
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
-
-
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINE_LOOP);
-      for angle := 0 to 360 do
-      begin
-        rad := DegToRad(angle);
-        glVertex2f(xPos + cos(rad)*halfWidth*2, yPos + sin(rad)*halfHeight*2);
-      end;
-    glEnd();
-
+    for angle := 0 to High(vertices) do
+    begin
+      rad               := DegToRad(angle);
+      vertices[angle].x := (xPos + cos(rad)*width);
+      vertices[angle].y := (yPos + sin(rad)*height);
+    end;
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_LINE_LOOP,0,Length(vertices));
   end;
   
-  // This procedure draws a filled rectangle to a bitmap
+  // // This procedure draws a filled rectangle to a bitmap
   procedure FillRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
   var
-    
     x1,x2,y1,y2 : LongInt;
-    r,g,b,a : Byte;
-
+    vertices : Array[0..3] of Point2D;
   begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
     x1 := Round(rect.x);
     x2 := x1 + rect.width;
     y1 := Round(rect.y);
     y2 := y1 + rect.height;
+    vertices[0].x := x1;  vertices[0].y := y1;
+    vertices[1].x := x1;  vertices[1].y := y2;
+    vertices[2].x := x2;  vertices[2].y := y1;
+    vertices[3].x := x2;  vertices[3].y := y2;
 
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    SetColor(clr);
 
-
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex2f(x1, y1);
-    glVertex2f(x1, y2);
-    glVertex2f(x2, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x1,y2);
-
-    glEnd();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   procedure DrawRectangleProcedure(dest : Bitmap; rect : Rectangle; clr : Color);
   var
     x1,x2,y1,y2 : LongInt;
-    r,g,b,a : Byte;
-
+    vertices : Array[0..3] of Point2D;
   begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
     x1 := Round(rect.x);
     x2 := x1 + rect.width;
     y1 := Round(rect.y);
     y2 := y1 + rect.height;
 
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    vertices[0].x := x1;  vertices[0].y := y1;
+    vertices[1].x := x2;  vertices[1].y := y1;
+    vertices[2].x := x2;  vertices[2].y := y2;
+    vertices[3].x := x1;  vertices[3].y := y2;
 
+    SetColor(clr);
 
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y1);
-    glVertex2f(x2, y2);
-    glVertex2f(x1, y2);
-    glEnd();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_LINE_LOOP, 0, Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   // This procedure draws a line on a bitmap between two points
   procedure DrawLineProcedure(dest : Bitmap; x1, y1, x2, y2 : LongInt; clr : Color);
   var
-    r,g,b,a : Byte;
-
+    
+    vertices : Array[0..1] of Point2D;
   begin
-  if(dest <> screen) then
-    RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');exit;
+    if(dest <> Screen) then
+    begin
+      RaiseWarning('Drawing primitives to bitmap is currently not supported with the OpenGL driver');
+      exit;
+    end;
+    vertices[0].x := x1;  vertices[0].y := y1;
+    vertices[1].x := x2;  vertices[1].y := y2;
+    
+    SetColor(clr);
 
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
-
-
-
-    glColor4f(r/255, g/255, b/255, a/255);
-    glBegin(GL_LINES);
-    glVertex2f(x1, y1);
-    glVertex2f(x2, y2);
-    glEnd();
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glDrawArrays(GL_LINES, 0, Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   // This procedure sets the color of a pixel on a bitmap
@@ -362,23 +410,42 @@ implementation
   begin
   end;
   
-  function AvailableResolutions() : ResolutionArray;
+  function AvailableResolutionsProcedure() : ResolutionArray;
   var
+    mode : SDL_DisplayMode;
+    i, modes    : LongInt;
     resolutions : ResolutionArray;
   begin
     setLength(resolutions,0);
-
+    //built in screen = 0
+    modes := SDL_GetNumDisplayModes(0);
+    writeln('here ',modes);
+    for i:= 0 to modes do
+    begin
+      SDL_GetDisplayMode(0, i, @mode);
+      setLength(resolutions, length(resolutions)+1);
+      resolutions[i].width       := mode.w;
+      resolutions[i].height      := mode.h;
+      resolutions[i].refreshRate := mode.refresh_rate;
+      resolutions[i].format      := mode.format;
+    end;
     result := resolutions;
     
   end;
+
+
     procedure RefreshScreenProcedure(screen : Bitmap);
   begin
     SDL_GL_SwapWindow(POpenGLWindow(_screen)^.window);
   end;
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
-  // var
-  //     sdlScreen : PSDL13Screen;
+  {$IFDEF IOS}
+  var
+    deviceResolution : ResolutionArray;
+  {$ENDIF}
   begin
+    _screenWidth := screenWidth;
+    _screenHeight := screenHeight;
     // Initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO) < 0) then exit;
     
@@ -420,9 +487,30 @@ implementation
     glEnable (GL_BLEND);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
-    glOrtho (0, screenWidth, screenHeight, 0, 0, 1);
+    // left and top has to be -1 otherwise 0,0 is offscreen.
+    {$IFDEF IOS}
+      glOrthof (0, screenWidth, screenHeight-1, 0, 0, 1);
+    {$ELSE}
+    //         l   right          bottom    top n  f
+      glOrtho (0, screenWidth, screenHeight-1, -1, 0, 1);
+    {$ENDIF}
+    
     glDisable(GL_DEPTH_TEST);
+
+
+    {$IFDEF IOS}
+      deviceResolution := AvailableResolutionsProcedure();
+      if (Length (deviceResolution) > 0) then
+      begin
+        glViewport(0,0,deviceResolution[0].width, deviceResolution[0].height);
+      end
+      else
+        glViewport(0,0,screenWidth,screenHeight);
+    {$ELSE}
+      glViewport(0,0,screenWidth,screenHeight);
+    {$ENDIF}
     _SetupScreen(screenWidth, screenHeight);
+    //Load_GL_version_2_0();
   end;
   
   // This resizes the graphics window used by SwinGame
@@ -472,19 +560,13 @@ implementation
   end;
 
   function GetScreenWidthProcedure(): LongInt; 
-  var
-    w, h : LongInt;
   begin
-    SDL_GetWindowSize(POpenGLWindow(_screen)^.window,@w, @h);
-    result := w;
+    result := _screenWidth;
   end;
   
   function GetScreenHeightProcedure(): LongInt;
-  var
-    w, h : LongInt;
   begin
-    SDL_GetWindowSize(POpenGLWindow(_screen)^.window,@w, @h);
-    result := h;
+    result := _screenHeight;
   end;
   
 
@@ -520,6 +602,6 @@ implementation
     GraphicsDriver.SurfaceFormatAssigned    := @SurfaceFormatAssignedProcedure;
     GraphicsDriver.GetScreenWidth           := @GetScreenWidthProcedure;
     GraphicsDriver.GetScreenHeight          := @GetScreenHeightProcedure;
-    GraphicsDriver.AvailableResolutions := @AvailableResolutions;
+    GraphicsDriver.AvailableResolutions     := @AvailableResolutionsProcedure;
   end;
 end.
