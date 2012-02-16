@@ -15,17 +15,32 @@ unit sgDriverImagesOpenGL;
 //
 //=============================================================================
 interface
-  uses glu, glut, glext, gl;
+  uses {$IFDEF IOS}gles11;{$ELSE}gl;{$ENDIF}
 
   type
-    PTexture = ^GLUint;
+    PTexture = ^Cardinal;
   
   procedure LoadOpenGLImagesDriver();
     
 implementation
   uses sgTypes,
        sgDriverGraphics, sdl13, sgShared, sgDriverImages, sdl13_image, SysUtils, sgSharedUtils; // sdl;
-    
+  const
+    // PixelFormat
+    GL_COLOR_INDEX     = $1900;
+    GL_STENCIL_INDEX   = $1901;
+    GL_DEPTH_COMPONENT = $1902;
+    GL_RED             = $1903;
+    GL_GREEN           = $1904;
+    GL_BLUE            = $1905;
+    GL_ALPHA           = $1906;
+    GL_RGB             = $1907;
+    GL_RGBA            = $1908;
+    GL_LUMINANCE       = $1909;
+    GL_LUMINANCE_ALPHA = $190A;
+    GL_BGR             = $80E0;
+    GL_BGRA            = $80E1;
+
   procedure InitBitmapColorsProcedure(bmp : Bitmap);
   begin   
     exit;
@@ -56,21 +71,53 @@ implementation
   begin   
     exit;
   end;
+
+  function BGRAToRGBA(srcImg : PSDL_Surface) : PSDL_Surface;
+  var
+    
+    pixelFormat : SDL_PIXELFORMAT;
+  begin
+    pixelFormat := srcImg^.format^;
+    
+    pixelFormat.format := SDL_PIXELFORMAT_RGBA8888;
+    pixelFormat.Rmask  := $FF;
+    pixelFormat.Bmask  := $FF0000;
+    pixelFormat.Amask  := $ff000000;
+    pixelFormat.Rloss  := srcImg^.format^.Bloss;
+    pixelFormat.Bloss  := srcImg^.format^.Rloss;
+    pixelFormat.Rshift := srcImg^.format^.Bshift;
+    pixelFormat.Bshift := srcImg^.format^.Rshift;
+
+    result := SDL_ConvertSurface(srcImg,@pixelFormat, 0);
+  end;
+
+  function PowerOfTwo(dimension : LongInt) : LongInt;
+  begin
+    result := 1;
+    while (result <= dimension) do 
+    begin
+      result *= 2;
+    end;
+  end;
   
+
+
   function CreateGLTextureFromSurface(lLoadedImg : PSDL_Surface) : PTexture;
   var
     lFormat : GLenum;
     lNoOfColors : GLint;
   begin
     result := nil;
-    New(result);
     if (Assigned(lLoadedImg) ) then
     begin     
       // Check that the image's width is a power of 2
       if ( lLoadedImg^.w  = 0 ) or ( lLoadedImg^.h = 0 ) then
       begin
         WriteLn('BadStuff');
+        exit;
       end;
+      New(result);
+
 
       // get the number of channels in the SDL surface
       lNoOfColors := lLoadedImg^.format^.BytesPerPixel;
@@ -86,13 +133,21 @@ implementation
           lFormat := GL_RGB
         else
           lFormat := GL_BGR;
-      end;    
- 
+      end;  
+      
+      {$IFDEF IOS}
+        if(lFormat = GL_BGRA) then
+        begin    
+          lLoadedImg := BGRAToRGBA(lLoadedImg);
+        end;
+      {$ENDIF}  
+    
       // Have OpenGL generate a texture object handle for us
-      glGenTextures( 1, @result^ );
+      glGenTextures( 1, result );
      
       // Bind the texture object
       glBindTexture( GL_TEXTURE_2D, result^ );
+
       glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
      
       // Set the texture's stretching properties
@@ -100,9 +155,14 @@ implementation
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
      
       // Edit the texture object's image data using the information SDL_Surface gives us
-      glTexImage2D( GL_TEXTURE_2D, 0, lNoOfColors, lLoadedImg^.w, lLoadedImg^.h, 0,
+      {$IFDEF IOS}
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0,
+                          GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
+      {$ELSE}
+        glTexImage2D( GL_TEXTURE_2D, 0, lNoOfColors, lLoadedImg^.w, lLoadedImg^.h, 0,
                           lFormat, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
       glBindTexture( GL_TEXTURE_2D, 0 );
+      {$ENDIF}
     end;
   end; 
   
@@ -184,18 +244,37 @@ implementation
     //offset : Rectangle;
     //lTransparentSurface : PSDL_Surface;
     lColorToSetTo : Color = $00000000;
+    optimizeSizedImage : PSDL_Surface;
+    dRect: SDL_Rect;
   begin
     result := nil; //start at nil to exit cleanly on error
     
     //Load the image
     loadedImage := IMG_Load(PChar(filename));
 
+    optimizeSizedImage := SDL_CreateRGBSurface(0,PowerOfTwo(loadedImage^.w),
+                                          PowerOfTwo(loadedImage^.h),
+                                          loadedImage^.format^.BitsPerPixel,
+                                          loadedImage^.format^.Rmask,
+                                          loadedImage^.format^.Gmask,
+                                          loadedImage^.format^.Bmask,
+                                          loadedImage^.format^.Amask
+                                           );
+    //optimizeSizedImage := IMG_Load(PChar(filename));
+    dRect.x := 0;               dRect.y := 0;
+    dRect.w := loadedImage^.w;  dRect.h := loadedImage^.h;
+    SDL_UpperBlit(loadedImage, nil, optimizeSizedImage, @dRect);
+    SDL_FreeSurface(loadedImage);
+
     CheckAssigned('OpenGL ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage);
 
     // Image loaded, so create SwinGame bitmap    
     new(result);
-    result^.width     := loadedImage^.w;
-    result^.height    := loadedImage^.h;   
+    result^.width              := dRect.w;
+    result^.height             := dRect.h;   
+    result^.textureWidthRatio  := result^.width / optimizeSizedImage^.w;
+    result^.textureHeightRatio := result^.height / optimizeSizedImage^.h;
+
      
     //Determine pixel level collision data
     if transparent then
@@ -204,16 +283,16 @@ implementation
       //offset.y := 0;
       //offset.width := result^.width;
       //offset.height := result^.height;
-      ReplaceColors(loadedImage, transparentColor, lColorToSetTo, result^.width, result^.height);
+      ReplaceColors(optimizeSizedImage, transparentColor, lColorToSetTo, result^.width, result^.height);
 
-      result^.surface := CreateGLTextureFromSurface(loadedImage);
+      result^.surface := CreateGLTextureFromSurface(optimizeSizedImage);
     end else begin    
       SetNonAlphaPixelsProcedure(result);
     end;
 
     // Free the loaded image; if its not the result's surface
-    result^.surface := CreateGLTextureFromSurface(loadedImage);
-    SDL_FreeSurface(loadedImage);
+    result^.surface := CreateGLTextureFromSurface(optimizeSizedImage);
+    SDL_FreeSurface(optimizeSizedImage);
   end; 
     
   procedure FreeSurfaceProcedure(bmp : Bitmap);
@@ -251,7 +330,7 @@ implementation
    result := false;
   end;
 
-  function GetCoords(bmpSize : LongInt; srcRectSize : Single) : Single;
+  function GetCoords(bmpSize : Single; srcRectSize : Single) : Single;
   begin
     result := 0;
     if (bmpSize = 0) or (srcRectSize = 0) then
@@ -263,41 +342,58 @@ implementation
   procedure BlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr); 
   var
     //lTexture : GLuint;
-    lRatioX, lRatioY, lRatioW, lRatioH : Single;
+    textureCoord : Array[0..3] of Point2D;
+    vertices : Array[0..3] of Point2D;
+    lRatioX, lRatioY, lRatioW, lRatioH, lTexWidth, lTexHeight : Single;
   begin
-    if (srcRect = nil) then
+    if ((srcRect = nil)) then //check for /0 s
     begin
       lRatioX := 0;
       lRatioY := 0;
-      lRatioW := 1;
-      lRatioH := 1;
+      lRatioW := srcBmp^.textureWidthRatio;
+      lRatioH := srcBmp^.textureHeightRatio;
     end else begin
-      lRatioX := GetCoords(srcBMP^.width, srcRect^.x);
-      lRatioY := GetCoords(srcBMP^.height, srcRect^.y);
-      lRatioW := lRatioX + GetCoords(srcBMP^.width, srcRect^.width);
-      lRatioH := lRatioY + GetCoords(srcBMP^.height, srcRect^.height);
+      lTexWidth   := srcBmp^.width / srcBmp^.textureWidthRatio;
+      lTexHeight := srcBmp^.height / srcBmp^.textureHeightRatio;
+      
+      lRatioX := GetCoords(lTexWidth, srcRect^.x);
+      lRatioY := GetCoords(lTexHeight, srcRect^.y);
+      
+      lRatioW := lRatioX + GetCoords(lTexWidth, srcRect^.width);
+      lRatioH := lRatioY + GetCoords(lTexHeight, srcRect^.height);
     end;
+    //set up texture co-ords
+    textureCoord[0].x := lRatioX;      textureCoord[0].y := lRatioY;
+    textureCoord[1].x := lRatioX;      textureCoord[1].y := lRatioH;
+    textureCoord[2].x := lRatioW;      textureCoord[2].y := lRatioY;
+    textureCoord[3].x := lRatioW;      textureCoord[3].y := lRatioH;
+
+    //set up vertices co-ords
+    vertices[0].x := destRect^.x;                        vertices[0].y := destRect^.y;
+    vertices[1].x := destRect^.x;                        vertices[1].y := destRect^.y + destRect^.height;
+    vertices[2].x := destRect^.x + destRect^.width;      vertices[2].y := destRect^.y;
+    vertices[3].x := destRect^.x + destRect^.width;      vertices[3].y := destRect^.y + destRect^.height;
+    
+    //reset color
+    glColor4f(1,1,1,1);
+    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+
+    //enable vertex and texture array
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+
+    glBindTexture( GL_TEXTURE_2D, Cardinal(srcBmp^.surface^) );
+    
+    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
+    glTexCoordPointer(2, GL_FLOAT, 0, @textureCoord[0]);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, Length(vertices));
+    glBindTexture( GL_TEXTURE_2D,0);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
  //   if (destBmp <> nil) then exit;
-    glBindTexture( GL_TEXTURE_2D, GLUInt(srcBmp^.surface^) );
-    glColor4f( 1.0, 1.0, 1.0, 1.0 );
-    glBegin( GL_QUADS );
-      //Bottom-left vertex (corner)
-      glTexCoord2f( lRatioX, lRatioY );
-      glVertex2f( destRect^.x, destRect^.y );
-     
-      //Bottom-right vertex (corner)
-      glTexCoord2f( lRatioW, lRatioY );
-      glVertex2f( destRect^.x + destRect^.width, destRect^.y);
-     
-      //Top-right vertex (corner)
-      glTexCoord2f( lRatioW, lRatioH );
-      glVertex2f( destRect^.x + destRect^.width, destRect^.y + destRect^.height);
-     
-      //Top-left vertex (corner)
-      glTexCoord2f( lRatioX, lRatioH );
-      glVertex2f( destRect^.x , destRect^.y + destRect^.height );
-    glEnd();
-    glBindTexture( GL_TEXTURE_2D, 0 );
+   
   end;
   
   procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 
@@ -330,19 +426,19 @@ implementation
     
   procedure LoadOpenGLImagesDriver();
   begin
-    ImagesDriver.InitBitmapColors                         := @InitBitmapColorsProcedure;
-    ImagesDriver.SurfaceExists                            := @SurfaceExistsProcedure;
-    ImagesDriver.CreateBitmap                             := @CreateBitmapProcedure;
-    ImagesDriver.DoLoadBitmap                             := @DoLoadBitmapProcedure;
-    ImagesDriver.FreeSurface                              := @FreeSurfaceProcedure;
-    ImagesDriver.MakeOpaque                               := @MakeOpaqueProcedure;
-    ImagesDriver.SetOpacity                               := @SetOpacityProcedure;
-    ImagesDriver.SameBitmap                               := @SameBitmapProcedure;
-    ImagesDriver.BlitSurface                              := @BlitSurfaceProcedure;
-    ImagesDriver.MakeTransparent                          := @MakeTransparentProcedure;
-    ImagesDriver.RotateScaleSurface                       := @RotateScaleSurfaceProcedure;
-    ImagesDriver.ClearSurface                             := @ClearSurfaceProcedure;
-    ImagesDriver.OptimiseBitmap                           := @OptimiseBitmapProcedure;
-    ImagesDriver.SetNonAlphaPixels                        := @SetNonAlphaPixelsProcedure;
+    ImagesDriver.InitBitmapColors   := @InitBitmapColorsProcedure;
+    ImagesDriver.SurfaceExists      := @SurfaceExistsProcedure;
+    ImagesDriver.CreateBitmap       := @CreateBitmapProcedure;
+    ImagesDriver.DoLoadBitmap       := @DoLoadBitmapProcedure;
+    ImagesDriver.FreeSurface        := @FreeSurfaceProcedure;
+    ImagesDriver.MakeOpaque         := @MakeOpaqueProcedure;
+    ImagesDriver.SetOpacity         := @SetOpacityProcedure;
+    ImagesDriver.SameBitmap         := @SameBitmapProcedure;
+    ImagesDriver.BlitSurface        := @BlitSurfaceProcedure;
+    ImagesDriver.MakeTransparent    := @MakeTransparentProcedure;
+    ImagesDriver.RotateScaleSurface := @RotateScaleSurfaceProcedure;
+    ImagesDriver.ClearSurface       := @ClearSurfaceProcedure;
+    ImagesDriver.OptimiseBitmap     := @OptimiseBitmapProcedure;
+    ImagesDriver.SetNonAlphaPixels  := @SetNonAlphaPixelsProcedure;
   end;
 end.

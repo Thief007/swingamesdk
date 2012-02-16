@@ -108,15 +108,14 @@ uses
 	procedure LoadDefaultGraphicsDriver();
 	begin
     {$IFDEF SWINGAME_OPENGL}
-      WriteLn('OpenGL Defined');
+      {$INFO Using OpenGL Driver}
       LoadOpenGLGraphicsDriver();
 		{$ELSE}
       {$IFDEF SWINGAME_SDL13}
-      WriteLn('SDL 1.3 Defined');
-      LoadSDL13GraphicsDriver();  
- {$ELSE}
-        // WriteLn('SDL 1.3 Not Defined');
-        WriteLn('SDL 1.2 Defined');
+        {$INFO Using SDL 2 Driver}
+        LoadSDL13GraphicsDriver();  
+      {$ELSE}
+        {$INFO Using SDL 1.2 Driver}
 		    LoadSDLGraphicsDriver();
       {$ENDIF}
 		{$ENDIF}

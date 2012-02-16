@@ -39,7 +39,7 @@ unit sgResources;
 
 //=============================================================================
 interface
-    uses sgTypes;
+    uses sgTypes, sdl13;
 //=============================================================================
 
 //----------------------------------------------------------------------------
@@ -689,7 +689,7 @@ implementation
             if WindowCloseRequested() or KeyDown(sgTypes.vk_Escape) then isSkip := true;
         end;
     begin
-        
+
         isPaused := false;
         isSkip := false;
         
@@ -706,8 +706,8 @@ implementation
                 LoadResourceBundle('splash.txt', False);
                 
                 aniBmp := BitmapNamed('Swinburne');
-                aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
-                aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
+                aniX := (1024 - BitmapCellWidth(aniBmp)) div 2;
+                aniY := (768 - BitmapCellHeight(aniBmp)) div 2;
                 
                 ClearScreen(ColorWhite);
                 RefreshScreen();

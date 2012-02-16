@@ -10,7 +10,7 @@ unit sgDriveriOSSDL13;
 //=============================================================================
 
 interface 
-	uses SDL13, sgTypes, sgShared;
+	uses SDL13, sgTypes, sgShared, sgGraphics;
 	procedure LoadSDL13iOSDriver();
 	
 	//iphone max g force.
@@ -69,13 +69,13 @@ implementation
 		result := value / MAX_G;
 	end;
 
-	function SDLFingerToFinger(sdlFinger : PSDL_Finger ): Finger;
+	function SDLFingerToFinger(sdlFinger : PSDL_Finger; touchState : PSDL_Touch ): Finger;
 	begin
 		if not assigned(sdlFinger) then exit;
 		
 		result.id               := sdlFinger^.id;
-	  result.position.x       := sdlFinger^.x;
-	  result.position.y       := sdlFinger^.y;
+	  result.position.x       := sdlFinger^.x / touchState^.xres *ScreenWidth();
+	  result.position.y       := sdlFinger^.y / touchState^.yres *ScreenHeight();
 	  result.positionDelta.x  := sdlFinger^.xdelta;
 	  result.positionDelta.y  := sdlFinger^.ydelta;
 	  result.lastPosition.x		:= sdlFinger^.last_x;
@@ -100,7 +100,7 @@ implementation
 
 		for count := 0 to numberOfFingers - 1 do
 		begin
-			result[count] := SDLFingerToFinger((sdlFingerArray + count)^);
+			result[count] := SDLFingerToFinger((sdlFingerArray + count)^, touch);
 		end;
 	end;
 	

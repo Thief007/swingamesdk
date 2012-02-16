@@ -494,7 +494,7 @@ implementation
     SDL_RenderPresent(PSDL13Screen(_screen)^.renderer);
   end;
   
-  function AvailableResolutions() : ResolutionArray;
+  function AvailableResolutionsProcedure() : ResolutionArray;
 	var
   	mode : SDL_DisplayMode;
   	i, modes    : LongInt;
@@ -630,17 +630,17 @@ implementation
 
 	procedure LoadSDL13GraphicsDriver();
 	begin
-		GraphicsDriver.GetPixel32               := @GetPixel32Procedure;
-		GraphicsDriver.PutPixel                 := @PutPixelProcedure;		
-		GraphicsDriver.FillTriangle             := @FillTriangleProcedure;
-		GraphicsDriver.DrawTriangle             := @DrawTriangleProcedure;		
-		GraphicsDriver.FillCircle               := @FillCircleProcedure;
-		GraphicsDriver.DrawCircle               := @DrawCircleProcedure;		
-		GraphicsDriver.FillEllipse              := @FillEllipseProcedure;
-		GraphicsDriver.DrawEllipse              := @DrawEllipseProcedure;		
-		GraphicsDriver.FillRectangle            := @FillRectangleProcedure;
-		GraphicsDriver.DrawLine                 := @DrawLineProcedure;
-		GraphicsDriver.SetPixelColor            := @SetPixelColorProcedure;
+    GraphicsDriver.GetPixel32               := @GetPixel32Procedure;
+    GraphicsDriver.PutPixel                 := @PutPixelProcedure;		
+    GraphicsDriver.FillTriangle             := @FillTriangleProcedure;
+    GraphicsDriver.DrawTriangle             := @DrawTriangleProcedure;		
+    GraphicsDriver.FillCircle               := @FillCircleProcedure;
+    GraphicsDriver.DrawCircle               := @DrawCircleProcedure;		
+    GraphicsDriver.FillEllipse              := @FillEllipseProcedure;
+    GraphicsDriver.DrawEllipse              := @DrawEllipseProcedure;		
+    GraphicsDriver.FillRectangle            := @FillRectangleProcedure;
+    GraphicsDriver.DrawLine                 := @DrawLineProcedure;
+    GraphicsDriver.SetPixelColor            := @SetPixelColorProcedure;
     GraphicsDriver.DrawRectangle            := @DrawRectangleProcedure;
     GraphicsDriver.SetClipRectangle         := @SetClipRectangleProcedure;
     GraphicsDriver.ResetClip                := @ResetClipProcedure;
@@ -660,6 +660,6 @@ implementation
     GraphicsDriver.SurfaceFormatAssigned    := @SurfaceFormatAssignedProcedure;
     GraphicsDriver.GetScreenWidth           := @GetScreenWidthProcedure;
     GraphicsDriver.GetScreenHeight          := @GetScreenHeightProcedure;
-    GraphicsDriver.AvailableResolutions := @AvailableResolutions;
+    GraphicsDriver.AvailableResolutions     := @AvailableResolutionsProcedure;
 	end;
 end.

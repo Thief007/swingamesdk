@@ -19,9 +19,9 @@ interface
     
 //=============================================================================   
 implementation
-  uses sdl13, sgTypes, sgShared, sgDriverText, math, gl, glext, glu, FreeType, GLDriverUtils, 
+  uses sdl13, sgTypes, sgShared, sgDriverText, math, {$IFNDEF IOS}gl, glext, glu{$ELSE}gles11{$ENDIF}, FreeType, GLDriverUtils, 
     sgDriverGraphics;
-
+{$ifndef IOS}
   type GLFontData = record
       textures:     array [0..127] of GLuint ;
       displaylist:  GLuint ;
@@ -47,7 +47,7 @@ var
     w, h, xpos, ypos:   LongInt;
     i:          LongInt;
     buffer:       array of GLUByte;
-    texpropx, texpropy, scale: Single;
+    texpropx, texpropy: Single;
     pixel_size, pixel_coord: Single;
 begin
     New(temp);
@@ -133,7 +133,7 @@ begin
             pixel_size := height * 96 / 72;
             pixel_coord := (face^.ascender) * pixel_size / face^.units_per_EM;
             // WriteLn('pixel: ', pixel_coord:4:2);
-            scale := face^.height / bitmap^.rows;
+            //scale := face^.height / bitmap^.rows;
 
             glTranslatef((bitglyph^)^.left, (bitglyph^)^.top - bitmap^.rows - pixel_coord, 0);
             // proportions of the texture that are the font (not padding)
@@ -184,10 +184,11 @@ begin
     temp := nil;
 end;
 
-
+{$endif}
   
   function LoadFontProcedure(fontName, filename: String; size: Longint): Font;
   begin
+    {$ifndef IOS}
     New(result);
     if result = nil then 
     begin
@@ -206,12 +207,15 @@ end;
     end;
 
     result^.name := fontName;
+    {$else}
+    result := nil;
+    {$endif}
   end;
   
   procedure CloseFontProcedure(fontToClose : font);
   begin
-    if assigned(fontToClose) then
-      FreeFont(fontToClose^.fptr);
+    //if assigned(fontToClose) then
+    //  FreeFont(fontToClose^.fptr);
   end;
   
 
@@ -227,11 +231,11 @@ end;
     GraphicsDriver.DrawRectangle(dest, rc, $ffff00ff);
     FloatColors(clrFg, r, g, b, a);
     glColor4f( r, g, b, a );
-    PrintFont(font^.fptr, str, rc.x, rc.y);
+    //PrintFont(font^.fptr, str, rc.x, rc.y);
 
 
 
-    WriteLn(rc.x:4:2, ':', rc.y:4:2);
+    //WriteLn(rc.x:4:2, ':', rc.y:4:2);
   end;
   
   
@@ -267,7 +271,7 @@ end;
   
   function GetErrorProcedure() : string;
   begin
-    result := _lastError;
+    result := ''; //_lastError;
   end;
   
   function InitProcedure() : Integer;

@@ -320,7 +320,7 @@ implementation
 	end;
   
   procedure QuitProcedure(); 
-  begin    
+  begin
     if Assigned(PSDL13Screen(_screen)) then
     begin
       if Assigned(PSDL13Screen(_screen)^.renderer) then 
@@ -329,7 +329,9 @@ implementation
         SDL_DestroyWindow(PSDL13Screen(_screen)^.window);
       Dispose(PSDL13Screen(_screen));
     end;
+    {$ifndef IOS}
     SDL_Quit();
+    {$endif}
   end;
   
   procedure InitProcedure(); 
