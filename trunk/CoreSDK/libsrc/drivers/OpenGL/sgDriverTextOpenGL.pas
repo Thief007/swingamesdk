@@ -133,27 +133,27 @@ begin
             pixel_size := height * 96 / 72;
             pixel_coord := (face^.ascender) * pixel_size / face^.units_per_EM;
             // WriteLn('pixel: ', pixel_coord:4:2);
-            //scale := face^.height / bitmap^.rows;
-
+            // scale := face^.height / bitmap^.rows;
+            
             glTranslatef((bitglyph^)^.left, (bitglyph^)^.top - bitmap^.rows - pixel_coord, 0);
             // proportions of the texture that are the font (not padding)
             texpropx := bitmap^.width / w;
             texpropy := bitmap^.rows / h;
-
+            
             glBegin(GL_QUADS);
              glTexCoord2f(0, 0);                glVertex3f(0, bitmap^.rows, 0);
              glTexCoord2f(0, texpropy);         glVertex3f(0, 0, 0);
              glTexCoord2f(texpropx, texpropy);  glVertex3f(bitmap^.width, 0, 0);
              glTexCoord2f(texpropx, 0);         glVertex3f(bitmap^.width, bitmap^.rows, 0);
             glEnd();
-
+            
             glPopMatrix();
-
+            
             glTranslatef(face^.glyph^.advance.x shr 6, face^.glyph^.advance.y shr 6, 0);
         glEndList();
-
+        
         glPopMatrix();
-
+        
         SetLength(buffer, 0);
     end;
 

@@ -21,9 +21,9 @@ interface
 
     _StringObjectFactory = class(TObject)
     private
-      fCaseSensitive: boolean;
+      fCaseSensitive: Boolean;
     public
-      constructor create(isCaseSensitive: boolean);
+      constructor create(isCaseSensitive: Boolean);
       function createObject(value: string): tString;
     end;
 
@@ -35,20 +35,20 @@ interface
       procedure fSetValue(key: string; value: TObject); virtual;
     public
       function getIterator: tStrHashIterator; virtual;
-      function containsKey(key: string): boolean; virtual;
-      function containsValue(value: TObject): boolean; virtual;
+      function containsKey(key: string): Boolean; virtual;
+      function containsValue(value: TObject): Boolean; virtual;
       function getValue(key: string): TObject; virtual;
-      function setValue(key: string; value: TObject): boolean; virtual;
+      function setValue(key: string; value: TObject): Boolean; virtual;
       function remove(key: string): TObject; virtual;
       function getCount: integer; virtual;
       property values[key: string]: TObject read getValue write fsetValue;
       property count: integer read getCount;
       {$IFNDEF FPC}
-      constructor create(caseSensitive: boolean = false; initialcapacity: integer = 10);
+      constructor create(caseSensitive: Boolean = false; initialcapacity: integer = 10);
       {$ELSE FPC}
       constructor create; overload;
-      constructor create(caseSensitive: boolean); overload;
-      constructor create(caseSensitive: boolean; initialcapacity: integer); overload;
+      constructor create(caseSensitive: Boolean); overload;
+      constructor create(caseSensitive: Boolean; initialcapacity: integer); overload;
       {$ENDIF FPC}
 
       destructor destroy; override;
@@ -96,7 +96,7 @@ implementation
 // _StringObjectFactory
 //---------------------------------------------------------------------------
 
-  constructor _StringObjectFactory.create(isCaseSensitive: boolean);
+  constructor _StringObjectFactory.create(isCaseSensitive: Boolean);
   begin
     inherited create;
     fCaseSensitive := isCaseSensitive;
@@ -124,7 +124,7 @@ implementation
     result := tStrHashIterator.create(fHashTable);
   end;
 
-  function TStringHash.containsKey(key: string): boolean;
+  function TStringHash.containsKey(key: string): Boolean;
   var
     s: tString;
   begin
@@ -136,7 +136,7 @@ implementation
     end;
   end;
 
-  function TStringHash.containsValue(value: TObject): boolean;
+  function TStringHash.containsValue(value: TObject): Boolean;
   begin
     result := fHashTable.containsValue(tComparable(value))
   end;
@@ -153,7 +153,7 @@ implementation
     end;
   end;
 
-  function TStringHash.setValue(key: string; value: TObject): boolean;
+  function TStringHash.setValue(key: string; value: TObject): Boolean;
   begin
     {$IFDEF TRACE}
       //TraceEnter('stringhash', 'TStringHash.setValue');
@@ -184,7 +184,7 @@ implementation
   end;
 
   {$IFNDEF FPC}
-  constructor TStringHash.create(caseSensitive: boolean = false; initialcapacity: integer = 10);
+  constructor TStringHash.create(caseSensitive: Boolean = false; initialcapacity: integer = 10);
   begin
     inherited create;
     fObjectFactory := _StringObjectFactory.create(caseSensitive);
@@ -199,14 +199,14 @@ implementation
     fObjectFactory := _StringObjectFactory.create(false);
     fHashTable := tHashTable.create;
   end;
-  constructor TStringHash.create(caseSensitive: boolean);
+  constructor TStringHash.create(caseSensitive: Boolean);
   begin
     inherited create;
     fObjectFactory := _StringObjectFactory.create(caseSensitive);
     fHashTable := tHashTable.create;
   end;
 
-  constructor TStringHash.create(caseSensitive: boolean; initialcapacity: integer);
+  constructor TStringHash.create(caseSensitive: Boolean; initialcapacity: integer);
   begin
     inherited create;
     fObjectFactory := _StringObjectFactory.create(caseSensitive);

@@ -549,7 +549,7 @@ cdecl; external{$IFDEF __GPC__}name 'SDLNet_CheckSockets'{$ELSE}SDLNetLibName{$E
    socket that was in the socket set, to find out if data is available
    for reading.
 *}
-function SDLNet_SocketReady( sock : PSDLNet_GenericSocket ) : boolean;
+function SDLNet_SocketReady( sock : PSDLNet_GenericSocket ) : Boolean;
 
 {* Free a set of sockets allocated by SDL_NetAllocSocketSet() *}
 procedure SDLNet_FreeSocketSet( set_ : PSDLNet_SocketSet );
@@ -636,7 +636,7 @@ end;
    for reading.
 *}
 
-function SDLNet_SocketReady( sock : PSDLNet_GenericSocket ) : boolean;
+function SDLNet_SocketReady( sock : PSDLNet_GenericSocket ) : Boolean;
 begin
   result := ( ( sock <> nil ) and ( sock^.ready = 1 ) );
 end;

@@ -77,7 +77,7 @@ interface
 
   //---------------------------------------------------------------------------
 
-  function equal(obj1, obj2: TComparable): boolean;
+  function equal(obj1, obj2: TComparable): Boolean;
   function compare(Item1, Item2: TComparable): integer;
 
   procedure throwComparableException(obj: TComparable; targetClass: tClass);
@@ -227,7 +227,7 @@ implementation
 //  FUNCTIONS
 //---------------------------------------------------------------------------
 
-  function equal(obj1, obj2: TComparable): boolean;
+  function equal(obj1, obj2: TComparable): Boolean;
   begin
     if ((obj1 = nil) and (obj2 = nil)) or (obj1 = obj2) then
       result := true

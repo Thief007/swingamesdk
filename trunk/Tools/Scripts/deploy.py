@@ -1,98 +1,118 @@
+#
+# Requires ssh module: easy_install paramiko
+#
+
 import os
 import glob
 import platform
 import ssh
+import getpass
+
+from swin_template_utils import *
+
+
+local_how_to_folder = dist_folder + 'HowTo/'
+server = "ictnetcontrolsvm2.ict.swin.edu.au"
+
+server_base_path        = '/home/shared/g_sgdocs/www/htdocs/'
+server_downloads_path   = server_base_path + 'images/downloads/'
+server_api_path         = server_base_path + 'apidocs/'
+server_howto_path       = server_base_path + 'howto/'
+
 
 _languages = [
-	{
-		language : "Pascal",
-		target : "FPC",
-	},
-	{
-		language : "C",
-		target : "gcc",
-	},
-	{
-		language : "C",
-		target : "gpp",
-	},
-		]
+    {
+        'language' : "Pascal",
+        'target' : "FPC",
+    },
+    {
+        'language' : "C",
+        'target' : "gcc",
+    },
+    {
+        'language' : "C",
+        'target' : "gpp",
+    },
+        ]
 
 """
 Stores the files to transfer to the server in a list of tuples.
-	(local_source, server_destination)
+    (local_source, server_destination)
 """
-_files_to_transfer = [()]
+_files_to_transfer = list() 
 
-def get_local_dist_directory():
-	return "../../Dist"
 
-def get_local_how_to_directory():
-	return get_dist_directory() + "/HowTo"
 
 def get_local_template_directory():
-	return "../../Templates"
+    return "../../Templates"
 
 # need to change this shit later
 def get_server_source_directory():
-	return "source/"
+    return "source/"
 # also change this...
 def get_server_template_directory():
-	return "templates/"
+    return "templates/"
 #also this...
 def get_server_source_bundles_directory():
-	return "source/bundles/"
+    return "source/bundles/"
 
 def gather_how_to_source():
-	"""
-	Finds all the how_to source files and appends
-	them to the list of files to transfer.
-	"""
-	for lang in _languages:
-		# Source_Code/lang_name
-		lang_source = get_how_to_directory() + "/Source_Code/" + lang['language']
-		how_to_files = glob.glob(os.path.join(lang_source, "HowTo*"))
+    """
+    Finds all the how_to source files and appends
+    them to the list of files to transfer.
+    """
+    for lang in _languages:
+        # Source_Code/lang_name
+        lang_source = local_how_to_folder + "/Source_Code/" + lang['language']
+        how_to_files = glob.glob(os.path.join(lang_source, "HowTo*"))
         for how_to in how_to_files:
-        	server_path = get_server_source_directory() + lang['language'] + os.path.basename(how_to)
-        	_files_to_transfer.append(how_to, server_path)
-        	
+            server_path = server_howto_path + os.path.basename(how_to)
+            _files_to_transfer.append( (how_to, server_path) )
+            
 def gather_how_to_projects():
-	"""
-	Finds all the how to projects and appends them to the list
-	of files to transfer
-	"""
-	# zip each set of how tos?
-	# unzip on server? -> probably easier to keep the files all together that way
-	for lang in _languages:
-		lang_source = get_how_to_directory() + lang['language'] + '/Archive'
-		server_path = get_server_source_bundles_directory() + lang['language']
-		# zip archive?
-		# add zipped archive to list?
+    """
+    Finds all the how to projects and appends them to the list
+    of files to transfer
+    """
+    
+    for lang in _languages:
+        lang_source = local_how_to_folder + lang['language'] + '/Archive/'
+        server_path = server_downloads_path + lang['language'] + '/'
+        # zip archive?
+        # add zipped archive to list?
 
 def gather_templates():
-	"""
-	Finds all the templates, zips them, and appends them
-	to the list of files to transfer
-	"""
-	pass
+    """
+    Finds all the templates, zips them, and appends them
+    to the list of files to transfer
+    """
+    
+    temp_files = deploy_list()
+    
+    for temp in temp_files:
+        server_path = server_downloads_path + os.path.basename(temp)
+        _files_to_transfer.append( (temp, server_path) )
 
 def deploy_to_server():
-	"""
-	Copies the files from the local machine to the server.
-	Files transfered from _files_to_transfer.
-	_files_to_transfer - (source_file, server_destination_path)
-		TODO: Implement...
-	"""
-	raise Exception('Not Implemented...')
-	# server = ssh.Connection(host = 'example.com', username = 'warrior', password = 'lennalenna')
-	# server.put('/home/warrior/hello.txt', '/home/zombie/textfiles/report.txt')
-	# server.execute('ls -l')
-	# server.close()
+    """
+    Copies the files from the local machine to the server.
+    Files transfered from _files_to_transfer.
+    _files_to_transfer - (source_file, server_destination_path)
+        TODO: Implement...
+    """
+    # usr = raw_input('Enter username: ')
+    # pwd = getpass.getpass('Enter server password: ')
+    # s = ssh.Connection(server, username=usr, password=pwd)
+    
+    for (from_file, to_file) in _files_to_transfer:
+        print from_file, ' -> ', to_file
+    
+    # s.close()
 
 def main():
-	gather_how_to_source()
-	gather_templates()
-	gather_how_to_projects()
-	deploy_to_server()
+    gather_how_to_source()
+    gather_templates()
+    gather_how_to_projects()
+    deploy_to_server()
 
 main()

@@ -45,12 +45,12 @@ interface
     public
       procedure next; virtual; abstract;
       procedure remove; virtual; abstract;
-      function hasNext: boolean; virtual; abstract;
+      function hasNext: Boolean; virtual; abstract;
       function getKey: TComparable; virtual; abstract;
       function getValue: TObject; virtual; abstract;
-      function validEntry: boolean; virtual; abstract;
+      function validEntry: Boolean; virtual; abstract;
       procedure setValue(value: TObject); virtual; abstract;
-      function isValid: boolean; virtual; abstract;
+      function isValid: Boolean; virtual; abstract;
       property key: TComparable read getKey;
       property value: TObject read getValue write setValue;
     end;
@@ -71,7 +71,7 @@ interface
       fThreshHold: integer;
       fLoadFactor: real;
       fCount     : integer;
-      fOwnKeys   : boolean;
+      fOwnKeys   : Boolean;
       function hashToIndex(key: TComparable): integer;
       procedure rehash; virtual;
 
@@ -86,23 +86,23 @@ interface
       // Another possibility for a leak - what happens if the value that is
       // already in the table is not managed outside? Should be deleted, but how?
       procedure fSetValue(key: TComparable; value: TObject); virtual;
-      procedure clearTable(deleteValues: boolean);
+      procedure clearTable(deleteValues: Boolean);
     public
       function getIterator: TMapIterator; virtual;
-      function containsKey(key: TComparable): boolean; virtual;
-      function containsValue(value: TObject): boolean; virtual;
+      function containsKey(key: TComparable): Boolean; virtual;
+      function containsValue(value: TObject): Boolean; virtual;
       function getValue(key: TComparable): TObject; virtual;
-      function setValue(key: TComparable; value: TObject): boolean; virtual;
+      function setValue(key: TComparable; value: TObject): Boolean; virtual;
       function remove(key: TComparable): TObject; virtual;
       function getCount: integer; virtual;
       property values[key: TComparable]: TObject read getValue write fsetValue;
       property count: integer read getCount;
       {$IFNDEF FPC}
       constructor create(initialcapacity: integer = 10; loadfactor: real = 0.75;
-                         entryfactory: THashEntryFactory = nil; ownKeys: boolean = true);
+                         entryfactory: THashEntryFactory = nil; ownKeys: Boolean = true);
       {$ELSE FPC}
       constructor create(initialcapacity: integer; loadfactor: real;
-                         entryfactory: THashEntryFactory; ownKeys: boolean); overload;
+                         entryfactory: THashEntryFactory; ownKeys: Boolean); overload;
       constructor create; overload;
       {$ENDIF}
       destructor destroy; override;
@@ -115,19 +115,19 @@ interface
       fIndex: integer;
       fEntry: THashEntry;
       fModCount: integer;
-      fIsRemoved: boolean;
+      fIsRemoved: Boolean;
       fCurrent: integer;
       fHashTable: THashTable;
     public
       constructor create(table: THashTable);
       procedure next; override;
       procedure remove; override;
-      function hasNext: boolean; override;
+      function hasNext: Boolean; override;
       function getKey: TComparable; override;
       function getValue: TObject; override;
       procedure setValue(avalue: TObject); override;
-      function validEntry: boolean; override;
-      function isValid: boolean; override;
+      function validEntry: Boolean; override;
+      function isValid: Boolean; override;
     end;
 
 
@@ -199,7 +199,7 @@ implementation
   {$ENDIF FPC}
 
 
-  function equal(item1, item2 :TObject): boolean;
+  function equal(item1, item2 :TObject): Boolean;
   begin
     if ((item1 = nil) or (item1 is TComparable)) and ((item2 = nil) or (item2 is TComparable)) then
       result := comparable.equal(TComparable(item1), TComparable(item2))
@@ -316,7 +316,7 @@ implementation
     result := THashTableIterator.create(self);
   end;
 
-  function THashTable.containsKey(key: TComparable): boolean;
+  function THashTable.containsKey(key: TComparable): Boolean;
   var
     idx: integer;
     entry: THashEntry;
@@ -330,7 +330,7 @@ implementation
     end;
   end;
 
-  function THashTable.containsValue(value: TObject): boolean;
+  function THashTable.containsValue(value: TObject): Boolean;
   var
     idx: integer;
     entry: THashEntry;
@@ -363,7 +363,7 @@ implementation
     end;
   end;
 
-  function THashTable.setValue(key: TComparable; value: TObject): boolean;
+  function THashTable.setValue(key: TComparable; value: TObject): Boolean;
   var
     idx: integer;
     entry: THashEntry;
@@ -457,7 +457,7 @@ implementation
 
   {$IFDEF FPC}
   constructor THashTable.create(initialcapacity: integer; loadfactor: real;
-                                entryfactory: THashEntryFactory; ownKeys: boolean);
+                                entryfactory: THashEntryFactory; ownKeys: Boolean);
   begin
     inherited create;
     fLoadFactor := loadfactor;
@@ -480,7 +480,7 @@ implementation
 
   {$ELSE FPC}
   constructor THashTable.create(initialcapacity: integer = 10; loadfactor: real = 0.75;
-                                entryfactory: THashEntryFactory = nil; ownKeys: boolean = true);
+                                entryfactory: THashEntryFactory = nil; ownKeys: Boolean = true);
   begin
     inherited create;
     fLoadFactor := loadfactor;
@@ -515,7 +515,7 @@ implementation
     clearTable(true);
   end;
 
-  procedure THashTable.clearTable(deleteValues: boolean);
+  procedure THashTable.clearTable(deleteValues: Boolean);
   var
     idx: integer;
     entry: THashEntry;
@@ -586,7 +586,7 @@ implementation
     end;
   end;
 
-  function THashTableIterator.isValid: boolean;
+  function THashTableIterator.isValid: Boolean;
   begin
     result := fModCount = fHashTable.fModCount;
   end;
@@ -621,7 +621,7 @@ implementation
   end;
 
 
-  function THashTableIterator.hasNext: boolean;
+  function THashTableIterator.hasNext: Boolean;
   begin
     if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
@@ -660,7 +660,7 @@ implementation
       result := nil;
   end;
 
-  function THashTableIterator.validEntry: boolean;
+  function THashTableIterator.validEntry: Boolean;
   begin
     if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');

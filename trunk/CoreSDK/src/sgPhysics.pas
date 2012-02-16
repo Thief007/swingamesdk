@@ -300,7 +300,7 @@ interface
   function BitmapCollision(bmp1: Bitmap; x1, y1: Longint; bmp2: Bitmap; x2, y2: Longint): Boolean; overload;
   
   /// Returns True if two bitmaps have collided using per pixel testing if required. 
-  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
+  /// The ``pt1`` and ``pt2`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   /// 
   /// @lib BitmapAtPointsCollision
   /// @sn bitmap:%s at:%s collisionWithBitmap:%s atPt:%s
@@ -312,7 +312,7 @@ interface
   
   /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) of the two 
   /// bitmaps (``bmp1`` and ``bmpt2``) have collided, using pixel level collision if required. 
-  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  /// The ``pt1`` and ``pt2`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
   /// 
   /// @lib BitmapsPartsCollision
   /// @sn bitmap:%s at:%s part:%s collisionWith:%s at:%s part:%s

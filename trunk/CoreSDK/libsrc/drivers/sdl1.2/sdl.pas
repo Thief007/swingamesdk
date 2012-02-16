@@ -2459,7 +2459,7 @@ cdecl; external {$IFNDEF NDS}{$IFDEF __GPC__}name 'SDL_AddTimer'{$ELSE} SDLLibNa
 {$EXTERNALSYM SDL_AddTimer}
 
 { Remove one of the multiple timers knowing its ID. }
-{ Returns a boolean value indicating success. }
+{ Returns a Boolean value indicating success. }
 function SDL_RemoveTimer(t: PSDL_TimerID): TSDL_Bool;
 cdecl; external {$IFNDEF NDS}{$IFDEF __GPC__}name 'SDL_RemoveTimer'{$ELSE} SDLLibName{$ENDIF __GPC__}{$ENDIF};
 {$EXTERNALSYM SDL_RemoveTimer}
@@ -4044,7 +4044,7 @@ procedure FreeAndNil(var Obj);
 procedure AddExitProc(Proc: TProcedure);
 
 // Bitwise Checking functions
-function IsBitOn( value : integer; bit : Byte ) : boolean;
+function IsBitOn( value : integer; bit : Byte ) : Boolean;
 
 function TurnBitOn( value : integer; bit : Byte ) : integer;
 
@@ -4301,7 +4301,7 @@ begin
   ExitProc := @DoExitProc;
 end;
 
-function IsBitOn( value : integer; bit : Byte ) : boolean;
+function IsBitOn( value : integer; bit : Byte ) : Boolean;
 begin
   result := ( ( value and ( 1 shl bit ) ) <> 0 );
 end;

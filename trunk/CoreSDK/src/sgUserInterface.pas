@@ -154,7 +154,7 @@ interface
   ///
   /// @class Panel
   /// @getter Active
-  function PanelActive(pnl: panel): boolean;
+  function PanelActive(pnl: panel): Boolean;
   
   /// Returns true if panel is currently visible.
   ///
@@ -162,7 +162,7 @@ interface
   ///
   /// @class Panel
   /// @getter Visible
-  function PanelVisible(p: Panel): boolean;
+  function PanelVisible(p: Panel): Boolean;
   
   /// Returns the last panel clicked.
   ///
@@ -177,14 +177,14 @@ interface
   /// @getter Clicked
   function PanelClicked(pnl: Panel): Boolean; overload;
   
-  /// Sets panel's draggability to the passed boolean
+  /// Sets panel's draggability to the passed Boolean
   ///
   /// @lib
   /// @sn panel:%s setDraggable:%s
   ///
   /// @class Panel
   /// @setter Draggable
-  procedure PanelSetDraggable(p: panel; b:boolean);
+  procedure PanelSetDraggable(p: panel; b:Boolean);
   
   /// Returns whether or not the passed panel is currently draggable
   ///
@@ -193,7 +193,7 @@ interface
   ///
   /// @class Panel
   /// @getter Draggable
-  function PanelDraggable(p: panel): boolean;
+  function PanelDraggable(p: panel): Boolean;
   
   /// Move panel along vector
   ///
@@ -215,7 +215,7 @@ interface
   /// @class Panel
   /// @self 2
   /// @overload PointInRegion PointInRegionWithKind
-  function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
+  function PointInRegion(pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
   
   /// Returns true if point is in any region within the panel
   ///
@@ -408,13 +408,13 @@ interface
   /// @class Region
   procedure ToggleRegionActive(forRegion: Region);
 
-  /// Sets the region active to boolean
+  /// Sets the region active to Boolean
   ///
   /// @lib
   ///
   /// @class Region
   /// @setter RegionActive
-  procedure SetRegionActive(forRegion: Region; b: boolean);
+  procedure SetRegionActive(forRegion: Region; b: Boolean);
 
   /// Returns the Region Y value
   ///
@@ -831,7 +831,7 @@ function ActiveTextIndex(): Longint;
 /// Checks if TextEntry finished, returns true/false
 ///
 /// @lib
-function GUITextEntryComplete(): boolean;
+function GUITextEntryComplete(): Boolean;
 
 /// Returns the textbox in which text was changed/added into most recently.
 ///
@@ -856,7 +856,7 @@ procedure UpdateInterface();
 /// Sets the GUI whether or not to use Vector Drawing
 ///
 /// @lib
-procedure DrawGUIAsVectors(b : boolean);
+procedure DrawGUIAsVectors(b : Boolean);
 
 /// Finishes reading text and stores in the active textbox
 ///
@@ -1657,7 +1657,7 @@ end;
 
 procedure HandlePanelInput(pnl: Panel); forward;
 
-function GUITextEntryComplete(): boolean;
+function GUITextEntryComplete(): Boolean;
 begin
   result := GUIC.doneReading;
 end;
@@ -2248,7 +2248,7 @@ begin
   result := r^.area.y;
 end;
 
-procedure SetRegionActive(forRegion: Region; b: boolean);
+procedure SetRegionActive(forRegion: Region; b: Boolean);
 begin
   if not assigned(forRegion) then exit;
 
@@ -3508,14 +3508,14 @@ end;
 // Panel Code
 //---------------------------------------------------------------------------------------
 
-function PanelDraggable(p: panel): boolean;
+function PanelDraggable(p: panel): Boolean;
 begin
   if not assigned(p) then exit;
   
   Result := p^.draggable;
 end;
 
-procedure PanelSetDraggable(p: panel; b:boolean);
+procedure PanelSetDraggable(p: panel; b:Boolean);
 begin
   if not assigned(p) then exit;
   
@@ -3578,7 +3578,7 @@ begin
   result := p^.area.y;
 end;
 
-function PanelVisible(p: Panel): boolean;
+function PanelVisible(p: Panel): Boolean;
 begin
   result := false;
   if not(assigned(p)) then exit;
@@ -4212,7 +4212,7 @@ begin
   GUIC.backgroundClr := c;
 end;
 
-procedure DrawGUIAsVectors(b : boolean);
+procedure DrawGUIAsVectors(b : Boolean);
 begin
   GUIC.VectorDrawing := b;
 end;
@@ -4224,12 +4224,12 @@ begin
   else result := false;
 end;
 
-function IsSet(toCheck, checkFor: GuiElementKind): Boolean; overload;
+function IsSet(toCheck, checkFor: GUIElementKind): Boolean; overload;
 begin
   result := (Longint(toCheck) and Longint(checkFor)) = Longint(checkFor);
 end;
 
-function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
+function PointInRegion(pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
 var
   i: Longint;
   curr: Region;
@@ -4304,7 +4304,7 @@ begin
   mp := MousePosition();
   curPanel := PanelAtPoint(mp);
   
-  if not PointInRegion(mp, curPanel, GuiElementKind(Longint(gkAnyKind) and not Longint(gkLabel))) then
+  if not PointInRegion(mp, curPanel, GUIElementKind(Longint(gkAnyKind) and not Longint(gkLabel))) then
   begin
     GUIC.panelDragging := curPanel;
   end

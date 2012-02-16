@@ -730,7 +730,7 @@ implementation
   procedure ToggleLayerVisibility(c: Character; index: Longint);
   begin
     if not Assigned(c) then exit;
-    c^.ShownLayers[index] := not c^.ShownLayers[index];     // Invert the boolean of the shown layer  for the specified index
+    c^.ShownLayers[index] := not c^.ShownLayers[index];     // Invert the Boolean of the shown layer  for the specified index
     c^.ShownLayerCache := UpdateShownLayerCache(c);         // Since a shown layer has been changed,  the cache needs to be updated
     SetActiveLayer(c);                                      // Set the active layer in the sprites visibile layer array
   end;

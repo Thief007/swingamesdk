@@ -185,7 +185,7 @@ implementation
         procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}  
         function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
         function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
-        function class_respondsToSelector(cls, sel: Pointer): boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
+        function class_respondsToSelector(cls, sel: Pointer): Boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
         function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
     {$ENDIF}
   {$endif}

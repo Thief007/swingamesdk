@@ -537,7 +537,7 @@ procedure Main();
 var
   pnls: PanelArray;
   myMap: Map;
-  openingFile,savingFile,openingBmp : boolean;
+  openingFile,savingFile,openingBmp : Boolean;
   offset : Vector;
 begin
   offset := VectorTo(150,30);

@@ -215,7 +215,7 @@ interface
   ///
   /// @lib
   /// @sn lineSegment:%s intersectsLinesSegment:%s
-  function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
+  function LineSegmentsIntersect(const line1, line2: LineSegment): Boolean;
   
   /// Returns true if the triangle intersects with the rectangle.
   /// 
@@ -735,7 +735,7 @@ interface
   /// @class LineSegment
   /// @method IntersectionPoint
   /// @csn intersectionWith:%s result:%s
-  function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
+  function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : Boolean;
   
   /// Returns the intersection point of a ray with a line, returning true if the ray intesects with the line.
   ///
@@ -746,7 +746,7 @@ interface
   /// @self 3
   /// @method RayIntersectionPoint
   /// @csn rayFrom:%s heading:%s intersectsAt:%s
-  function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
+  function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : Boolean;
   
   /// Returns true if the line intersect any of the lines in the array.
   ///
@@ -755,7 +755,7 @@ interface
   ///
   /// @class LineSegment
   /// @method IntersectsLines
-  function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
+  function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): Boolean;
   
   /// Returns true if the line intersects the rectangle.
   ///
@@ -764,7 +764,7 @@ interface
   ///
   /// @class LineSegment
   /// @method IntersectsRect
-  function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
+  function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): Boolean;
   
   
   
@@ -823,7 +823,7 @@ interface
   /// @method InCircle
   function PointInCircle(const pt: Point2D; const c: Circle): Boolean;
   
-  /// Returns True if the point ``pt`` is in the circle.
+  /// Returns True if the point ``ptX``, ``ptY`` is in the circle.
   ///
   /// @lib PointXYInCircle
   /// @sn pointX:%s y:%s inCircleX:%s y:%s radius:%s
@@ -838,7 +838,7 @@ interface
   /// @method OnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
   
-  /// Returns True of `pt` is at the same point as `pt2`.
+  /// Returns True of `pt1` is at the same point as `pt2`.
   ///
   /// @lib
   /// @sn point:%s atSamePointAs:%s
@@ -870,7 +870,7 @@ interface
   /// @uname VectorToWithInvertY
   /// 
   /// @sn vectorToX:%s y:%s invertY:%s
-  function VectorTo(x, y: Single; invertY: boolean): Vector; overload;
+  function VectorTo(x, y: Single; invertY: Boolean): Vector; overload;
 
   /// Adds the two parameter vectors (``v1`` and ``v2``) together and returns 
   /// the result as a new `Vector`.
@@ -1872,7 +1872,7 @@ implementation
 // Vector operations on Vectors (usally returning vectors)
 //---------------------------------------------------------------------------
   
-  function VectorTo(x, y: Single; invertY: boolean): Vector; overload;
+  function VectorTo(x, y: Single; invertY: Boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorTo(x, y: Single', '');
@@ -3904,7 +3904,7 @@ implementation
     {$ENDIF}
   end;
 
-  function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
+  function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : Boolean;
   var
     rayLine: LineSegment;
     combMag: Single;
@@ -3932,7 +3932,7 @@ implementation
     {$ENDIF}
   end;
 
-  function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
+  function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : Boolean;
   var
     // convert lines to the eqn
     // c = ax + by
@@ -3972,22 +3972,22 @@ implementation
     {$ENDIF}
   end;
 
-  function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
+  function LineSegmentsIntersect(const line1, line2: LineSegment): Boolean;
   var
     pt: Point2D;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): boolean', '');
+      TraceEnter('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): Boolean', '');
     {$ENDIF}
     
     result := LineIntersectionPoint(line1, line2, pt) and PointOnLine(pt, line2) and PointOnLine(pt, line1);
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): boolean', '');
+      TraceExit('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): Boolean', '');
     {$ENDIF}
   end;
 
-  function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
+  function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): Boolean;
   var
     i: Longint;
     pt: Point2D;
@@ -4011,7 +4011,7 @@ implementation
     {$ENDIF}
   end;
 
-  function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
+  function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): Boolean;
   var
     lines: LinesArray;
   begin

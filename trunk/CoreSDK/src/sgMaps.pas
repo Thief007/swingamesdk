@@ -227,7 +227,7 @@ interface
   /// @method GetPotentialCollisions
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
 
-  /// Returns a boolean of whether a sprite has collided with a tile of specified kind
+  /// Returns a Boolean of whether a sprite has collided with a tile of specified kind
   /// it also returns the cell column and row of the tile that the sprite collided with.
   ///
   /// @lib SpriteHasCollidedWithTile
@@ -568,7 +568,7 @@ interface
   /// @class map
   /// @method MapSetDimension
   /// @csn width:%s height:%s layers:%s tileWidth:%s tileHeight:%s isometric:%s
-  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:boolean);
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:Boolean);
 
   /// Allocates Default values to given tile depending on the tile's kind
   ///
@@ -1796,7 +1796,7 @@ interface
     //DrawRectangle(ColorGreen, result);
   end;
 
-// outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
+// outs the tile X and Y that the sprite has collided with  map and result is a Boolean if it did collide.
   function SpriteHasCollidedWithTile(map: Map; k: Longint; s: Sprite; out collidedX, collidedY: Longint): Boolean; overload;
   var
     y, x, dy, dx, i, j, initY, initX: Longint;
@@ -2451,7 +2451,7 @@ interface
       end;// end row loop
     end; // end of procedure.
   
-  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:boolean);
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:Boolean);
   begin
     if not assigned(m) or (Width < 0) or  (height < 0) or  (Layers < 0) or  (tWidth < 0) or  (tHeight < 0) then exit;
     m^.MapHeight := height;

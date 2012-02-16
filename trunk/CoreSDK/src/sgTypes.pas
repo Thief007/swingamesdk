@@ -104,7 +104,7 @@ interface
       lastPosition : Point2D;
       pressure : Word;
       lastPressure :Word;
-      down : boolean;
+      down : Boolean;
     end;
 
     
@@ -836,7 +836,7 @@ interface
     /// 
     ///
     /// @enum GUIElementKind
-    GuiElementKind = ( 
+    GUIElementKind = ( 
       gkLabel = 1, 
       gkButton = 2, 
       gkCheckBox = 4, 
@@ -921,7 +921,7 @@ interface
     /// @struct GUICheckboxData
     /// @via_pointer
     GUICheckboxData = packed record
-      state:        boolean;
+      state:        Boolean;
     end;
     
     /// GUICheckbox is a Checkbox GUI Element which contains a bool

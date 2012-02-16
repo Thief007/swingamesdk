@@ -46,7 +46,7 @@ implementation
   end;
 
   // The OpenAudioProcedure is responsible for enabling audio to be used
-  // it returns boolean true if it succeeded and false if it failed.
+  // it returns Boolean true if it succeeded and false if it failed.
   // SDL1.2 OpenAudio returns 0 for success and -1 for failure
   function OpenAudioProcedure() : Boolean;
   begin
@@ -109,7 +109,7 @@ implementation
   
   // PlaySoundEffectProcedure plays a sound effect a number of times
   // it returns the channel that the sound effect will be played on
-  // returns boolean false if there is an error and true if it suceeded
+  // returns Boolean false if there is an error and true if it suceeded
   function PlaySoundEffectProcedure(effect : SoundEffect; loops : Integer; volume : Single) : Boolean;
   var
     channel : Integer;
@@ -238,7 +238,7 @@ implementation
   end;  
     
   // PlayMusicProcedure plays music a number of times,
-  // it returns a boolean, true if it suceeded and false if it failed
+  // it returns a Boolean, true if it suceeded and false if it failed
   function PlayMusicProcedure(music : Music; loops : Integer) : Boolean;
   begin
     result := Mix_PlayMusic(music^.music, loops) >= 0; //PlayMusic returns 0 on success -1 on fail
