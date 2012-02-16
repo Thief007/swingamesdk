@@ -5,7 +5,6 @@ uses
 procedure Main();
 begin
     OpenGraphicsWindow('How To Draw Something To The Screen', 320, 240); 
-    LoadDefaultColors();
   
     ClearScreen();    // clear the background canvas (black by default)
     RefreshScreen();  // make it appear on screen...

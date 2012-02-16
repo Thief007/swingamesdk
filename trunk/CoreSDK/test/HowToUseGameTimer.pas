@@ -1,6 +1,6 @@
 program HowToUseGameTimer;
 uses 
-    SwinGame, sgTypes;
+    SwinGame, sgTypes, sysUtils;
 
 procedure Main();
 var
