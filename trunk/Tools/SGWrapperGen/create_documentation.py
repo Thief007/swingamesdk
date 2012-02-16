@@ -485,8 +485,8 @@ class UnitPresenter(object):
             # removed the Show/Hide link from the header. its below if I change my mind
             #<a href="javascript:toggleMethods(\'%(name)s\')" alt ="" class="" id="lnk%(name)s">[show]</a>
             #
-            tmp = '<div class="method" id="parent_%(name)s">\n<h3>%(spaced_name)s </h3>\n' + \
-                  '%(desc)s\n<div id="%(name)s"><ul>\n'
+            tmp = '<div class="method"  id="parent_%(name)s">\n<h3>%(spaced_name)s </h3>\n' + \
+                  '%(desc)s\n<div class="module mod-color style-color deepest" id="%(name)s"><ul>\n'
             desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
             out_doc.append(tmp % {'uname': method.uname, # unique id's for overloads
                                    'name': method.name, 
