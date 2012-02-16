@@ -41,7 +41,7 @@ SVN_VERSION = get_svn_version()
 
 #global menu types array
 _MENU_TYPES = []
-
+_Menu_Items = []
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
 # List the pascal types that we do not want to document and link to
@@ -306,13 +306,13 @@ class IdentifierCollector(object):
             return '%s<span class="code">%s</span>' % (self.link_type(name[:pos]), name[pos:]) 
         elif name in self.ids['umethods']:
             doc_url = self.ids['umethods'][name]['doc_url']
-            return '<a class="code" href="%s">%s</a>' % (doc_url, name) 
+            return '<a class="code" href="index.php/api/%s">%s</a>' % (doc_url.lower(), name) 
         elif name in self.ids['types']:
             doc_url = self.ids['types'][name]['doc_url']
-            return '<a class="code" href="%s">%s</a>' % (doc_url, name) 
+            return '<a class="code" href="index.php/api/%s">%s</a>' % (doc_url.lower(), name) 
         else:
             print '## unknown id:', name
-            return '<span class="code">%s</span>' % name
+            return '<span class="code">index.php/api/%s</span>' % name
         
     def format_text(self, text):
         '''Convert text to valid xhtml+css markup'''
@@ -465,17 +465,19 @@ class UnitPresenter(object):
         #Wrap detail methods
         # if method.doc_details:
         #     out_doc.append('<div class="details">')
+        
             
         if self.last_method != method.name:
             if self.last_method:
                 # TODO: need to add close after last function!
                 out_doc.append('</ul></div></div>')
-            
             sql_menu_items = []
             temp_title = method.name
-            sql_menu_items.append('(\''+self.doc.title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, 0, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),')
+            _Menu_Items.append(method.name)
+            print " -- index number of %s[%i]" % (temp_title, _Menu_Items.index(temp_title))
+            sql_menu_items.append(('(\''+self.doc.title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Menu_Items.index(temp_title)))
             f_items = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","a")
-            for line in sql_menu_items:
+            for line in sorted(set(sql_menu_items)):
                 f_items.write(line+'\n')
             f_items.close
             #
@@ -639,8 +641,8 @@ class IndexPresenter(object):
             <dd>An alphbetical list of all method names and type identifiers. 
             A text "search" in this page for key words might help you find just what 
             you need...</dd>
-    
-            <dt><a href="Types.html">Types</a></dt>
+            <!-- added index.php/api/ -->
+            <dt><a href="index.php/api/types.html">Types</a></dt>
             <dd>Data type details so you know who contains what!</dd>
         </dl>
         ''')        
