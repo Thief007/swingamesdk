@@ -1,4 +1,4 @@
-program HowToCreateASprite;
+program HowToChangeTheMassOfSprites;
 uses
     SwinGame, sgTypes;
 

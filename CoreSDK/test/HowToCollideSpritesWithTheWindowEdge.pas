@@ -1,4 +1,4 @@
-program HowToCreateASprite;
+program HowToCollideSpritesWithWindowEdge;
 uses
     SwinGame, sgTypes;
     

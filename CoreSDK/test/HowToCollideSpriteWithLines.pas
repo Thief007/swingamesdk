@@ -1,4 +1,4 @@
-program HowToCollideSpriteWithLine;
+program HowToCollideSpriteWithLines;
 uses
     SwinGame, sgTypes;
 
