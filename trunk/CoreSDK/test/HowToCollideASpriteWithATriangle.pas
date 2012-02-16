@@ -1,4 +1,4 @@
-program HowToCollideSpriteWithTri;
+program HowToCollideASpriteWithATriangle;
 uses
     SwinGame, sgTypes;
 

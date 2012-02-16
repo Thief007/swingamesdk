@@ -1,4 +1,4 @@
-program HowToCreateASprite;
+program HowToCollideTwoSprites;
 uses
     SwinGame, sgTypes;
 

@@ -1,4 +1,4 @@
-program HowToCreateAProgressBar;
+program HowToCreateProgressBar;
 uses 
     SwinGame, sgTypes;
     

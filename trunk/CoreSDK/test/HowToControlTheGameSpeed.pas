@@ -1,4 +1,4 @@
-program HowToMoveSpriteUsingAnimation;
+program HowToControlTheGameSpeed;
 uses
     SwinGame, sgTypes;
 
