@@ -446,7 +446,7 @@ implementation
   var
     fullScreen : SDL_Bool = SDL_True;
     flags : Uint32;
-    //noFrame : boolean;
+    //noFrame : Boolean;
   begin    
     flags := SDL_GetWindowFlags(PSDL13Screen(_screen)^.window);
 

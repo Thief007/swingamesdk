@@ -606,7 +606,7 @@ uses
     // Shape drawing code
     //---------------------------------------------------------------------------
 
-      /// Draw the Shape s onto the destination bitmap. The filled boolean indicates
+      /// Draw the Shape s onto the destination bitmap. The filled Boolean indicates
       /// if the Shape should be filled.
       /// 
       /// @lib DrawOrFillShapeOnto

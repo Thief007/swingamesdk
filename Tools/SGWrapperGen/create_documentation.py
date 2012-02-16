@@ -34,10 +34,10 @@ def get_svn_version():
         result = "1284" # rough guess...
     return result
 
-OUT_PATH = "../../Generated/Documentation"
-_dist_base_path = "../../Dist/HowTo"
-
-SVN_VERSION = get_svn_version()
+OUT_PATH        = "../../Generated/Documentation"
+HTML_OUT_PATH   = OUT_PATH + '/html'
+SQL_OUT_PATH    = OUT_PATH + '/html'
+SVN_VERSION     = get_svn_version()
 
 #global menu types array
 _MENU_TYPES = []
@@ -46,7 +46,7 @@ _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/Cor
 
 # List the pascal types that we do not want to document and link to
 _nolink_types = (
-    'Single', 'String', 'Boolean', 'Longint', 'Byte', 'UInt32', 'Longword', 'UInt16',
+    'Single', 'String', 'Boolean', 'Longint', 'Byte', 'UInt32', 'Longword', 'UInt16', 'Word', 'Int64', 
     'PSDL_Surface', 'PMix_Music', 'PMix_Chunk', 'Pointer'
 )
 
@@ -178,7 +178,7 @@ Generated %(datetime)s for svn version %(svnversion)s
         self.extend = self.body.extend
 
     def savetofile(self, filename):
-        file_writer = FileWriter(OUT_PATH + '/' + filename)        
+        file_writer = FileWriter(HTML_OUT_PATH + '/' + filename)        
         file_writer.write(self._html % {
             # header/title details
             'title': self.title,
@@ -221,7 +221,7 @@ Generated %(datetime)s for svn version %(svnversion)s
         sql_insert_menu_type.append('(\''+self.title.lower() +'\', \''+self.title+'\', \''+self.title+' api menu\'),')
         _MENU_TYPES.append(self.title.lower())
 
-        fappend = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","a")
+        fappend = open(SQL_OUT_PATH + "/site_menu_sql_create.sql","a")
         for line in sql_insert_menu_type:
           fappend.write(line+'\n')         
         fappend.close 
@@ -311,7 +311,7 @@ class IdentifierCollector(object):
             doc_url = self.ids['types'][name]['doc_url']
             return '<a class="code" href="index.php/api/%s">%s</a>' % (doc_url.lower(), name) 
         else:
-            print '## unknown id:', name
+            print '## unknown id:', name 
             return '<span class="code">index.php/api/%s</span>' % name
         
     def format_text(self, text):
@@ -321,7 +321,8 @@ class IdentifierCollector(object):
         # Convert single-ticks `-` into kind (identifier) links
         def matcher(m):
             # m is a Match instance - return the text to replace the matched text with
-            return self.link_type(m.groups()[0])             
+            return self.link_type(m.groups()[0])
+            
         text = self.p_kind.sub(matcher, text)
         # Reformat paragraph breaks for pretty presentation
         if len(text.strip()) > 0:
@@ -476,7 +477,7 @@ class UnitPresenter(object):
             _Menu_Items.append(method.name)
             print " -- index number of %s[%i]" % (temp_title, _Menu_Items.index(temp_title))
             sql_menu_items.append(('(\''+self.doc.title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Menu_Items.index(temp_title)))
-            f_items = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","a")
+            f_items = open(SQL_OUT_PATH + "/site_menu_sql_items_create.sql","a")
             for line in sorted(set(sql_menu_items)):
                 f_items.write(line+'\n')
             f_items.close
@@ -769,6 +770,10 @@ def create_types_doc(idcollection):
     keys.sort()
     for key in keys:
         obj = ids['types'][key]
+        
+        if obj.is_pointer_wrapper:  # Hide wrapped data... no one should ever access this!
+            continue
+        
         # keep a TOC entry
         doc.toc.append((key, key))
         # Print the headings    
@@ -870,7 +875,7 @@ def create_types_doc(idcollection):
 
 def create_sql_menu_insert():
     sql_insert_menu_type = []
-    f = open("../../Dist/site_menu_sql/site_menu_sql_create.sql",'w')
+    f = open(SQL_OUT_PATH + "/site_menu_sql_create.sql",'w')
     sql_insert_menu_type.append('(\'mainmenu\', \'Main Menu\', \'The main menu for the site\'),')
     for line in sql_insert_menu_type:
       f.write(line+'\n')         
@@ -878,7 +883,7 @@ def create_sql_menu_insert():
 
 def create_sql_menu_items():
     sql_insert_menu_items = []
-    f = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql",'w')
+    f = open(SQL_OUT_PATH + "/site_menu_sql_items_create.sql",'w')
     for line in sql_insert_menu_items:
       f.write(line+'\n')         
     f.close 
@@ -901,8 +906,8 @@ def countFile(_file):
     return (lines, blanks, sentences, words, nonwhite)
 
 def end_create_sql_menu_script():
-    _file = "../../Dist/site_menu_sql/site_menu_sql_create.sql"
-    fappendEnd = open("../../Dist/site_menu_sql/site_menu_sql_create.sql","r+")
+    _file = SQL_OUT_PATH + "/site_menu_sql_create.sql"
+    fappendEnd = open(SQL_OUT_PATH + "/site_menu_sql_create.sql","r+")
     lines, blanks, sentences, words, nonwhite = countFile(_file)
     print nonwhite + words - 1
     fappendEnd.seek(nonwhite + words-2)
@@ -910,8 +915,8 @@ def end_create_sql_menu_script():
     fappendEnd.close  
 
 def end_create_sql_menu_items():
-    _file = "../../Dist/site_menu_sql/site_menu_sql_items_create.sql"
-    fappendEnd = open("../../Dist/site_menu_sql/site_menu_sql_items_create.sql","r+")
+    _file = SQL_OUT_PATH + "/site_menu_sql_items_create.sql"
+    fappendEnd = open(_file,"r+")
     lines, blanks, sentences, words, nonwhite = countFile(_file)
     print nonwhite + words - 1
     fappendEnd.seek(nonwhite + words-2)

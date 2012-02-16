@@ -25,10 +25,10 @@ interface
       procedure fSetValue(key: integer; value: TObject); virtual;
     public
       function getIterator: TIntHashIterator; virtual;
-      function containsKey(key: integer): boolean; virtual;
-      function containsValue(value: TObject): boolean; virtual;
+      function containsKey(key: integer): Boolean; virtual;
+      function containsValue(value: TObject): Boolean; virtual;
       function getValue(key: integer): TObject; virtual;
-      function setValue(key: integer; value: TObject): boolean; virtual;
+      function setValue(key: integer; value: TObject): Boolean; virtual;
       function remove(key: integer): TObject; virtual;
 
       function getCount: integer; virtual;
@@ -93,7 +93,7 @@ implementation
     result := TIntHashIterator.create(fHashTable);
   end;
 
-  function TIntegerHash.containsKey(key: integer): boolean;
+  function TIntegerHash.containsKey(key: integer): Boolean;
   var
     s: tInteger;
   begin
@@ -105,7 +105,7 @@ implementation
     end;
   end;
 
-  function TIntegerHash.containsValue(value: TObject): boolean;
+  function TIntegerHash.containsValue(value: TObject): Boolean;
   begin
     result := fHashTable.containsValue(tComparable(value))
   end;
@@ -122,7 +122,7 @@ implementation
     end;
   end;
 
-  function TIntegerHash.setValue(key: integer; value: TObject): boolean;
+  function TIntegerHash.setValue(key: integer; value: TObject): Boolean;
   begin
     result := fHashTable.setValue(tInteger.create(key), value);
   end;

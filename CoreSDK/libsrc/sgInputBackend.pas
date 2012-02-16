@@ -24,7 +24,7 @@ interface
     function HasQuit(): Boolean;
     function isReading() : Boolean;
     function EnteredString: String; 
-    function TextEntryWasCancelled: boolean; 
+    function TextEntryWasCancelled: Boolean; 
     function WasKeyDown(kyCode : LongInt) : Boolean;
     function WasKeyJustTyped(kyCode : LongInt) : Boolean;
     procedure HandleTouchEvent(finger : FingerArray);
@@ -97,7 +97,7 @@ implementation
   
   
   
-  function TextEntryWasCancelled: boolean; 
+  function TextEntryWasCancelled: Boolean; 
   begin
     result := _textCancelled;
   end;
