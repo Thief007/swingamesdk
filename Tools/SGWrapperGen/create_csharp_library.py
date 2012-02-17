@@ -71,7 +71,6 @@ _type_switcher = {
         'guicheckbox':              'GUICheckbox %s',
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
-        'messageptr':            'MessagePtr %s',
         'connection':           'Connection %s',    
         
         
@@ -169,7 +168,6 @@ _type_switcher = {
         'guicheckbox':              'GUICheckbox %s',
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
-        'messageptr':            'MessagePtr %s',
         'connection':           'Connection %s',  
         
         'string':       'ref string %s',
@@ -237,7 +235,6 @@ _type_switcher = {
         'guicheckbox':   'GUICheckbox %s',
         'guitextbox':    'GUITextbox %s',
         'guilabel':      'GUILabel %s',
-        'messageptr':   'MessagePtr %s',
         'connection':   'Connection %s',  
         
         
@@ -306,7 +303,6 @@ _data_switcher = {
         'guicheckbox':              'GUICheckbox.Create( %s)',
         'guitextbox':              'GUITextbox.Create( %s)',
         'guilabel':              'GUILabel.Create( %s)',
-        'messageptr':            'MessagePtr.Create(%s)',
         'connection':           'Connection.Create(%s)',  
         
         
@@ -384,7 +380,6 @@ _adapter_type_switcher = {
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',        
-        'messageptr':           'IntPtr %s',
         'connection':           'IntPtr %s',  
         
         #Structs
@@ -456,7 +451,6 @@ _adapter_type_switcher = {
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',    
-        'messageptr':           'IntPtr %s',
         'connection':           'IntPtr %s',  
         
               
@@ -562,7 +556,6 @@ _adapter_type_switcher = {
         'guicheckbox':          'ref IntPtr %s',
         'guitextbox':           'ref IntPtr %s',
         'guilabel':             'ref IntPtr %s',    
-        'messageptr':           'ref IntPtr %s',
         'connection':           'ref IntPtr %s',  
         
         
@@ -602,7 +595,6 @@ _adapter_type_switcher = {
         'guicheckbox':          'ref IntPtr %s',
         'guitextbox':           'ref IntPtr %s',
         'guilabel':             'ref IntPtr %s',    
-        'messageptr':           'ref IntPtr %s',
         'connection':           'ref IntPtr %s',  
               
         
@@ -688,7 +680,6 @@ _adapter_type_switcher = {
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',    
-        'messageptr':           'IntPtr %s',
         'connection':           'IntPtr %s',  
         
         
@@ -1183,7 +1174,10 @@ def method_visitor(the_method, other, as_accessor_name = None):
         #
         for param in the_method.params:
             if param.data_type.pointer_wrapper and param.modifier == 'var':
-                details['pre_call'] = 'if (' + param.name + ' == null) return;\n    ' + details['pre_call']
+                if the_method.is_function:
+                    details['pre_call'] = 'if (' + param.name + ' == null) return false;\n    ' + details['pre_call']
+                else:
+                    details['pre_call'] = 'if (' + param.name + ' == null) return;\n    ' + details['pre_call']
                 # print 'Checks for null var parameter: ', the_method.name
         
         # Morph fn is a function used to alter the output for this method.

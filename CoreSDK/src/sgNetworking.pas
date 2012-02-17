@@ -279,7 +279,7 @@ uses
   /// 
   /// @class Connection
   /// @dispose
-  function FreeConnection            (var aConnection : Connection) : Boolean;
+  procedure FreeConnection(var aConnection : Connection);
   
   /// Closes the specified Socket, removed it from the Socket Array, and removes
   /// the identifier from the NamedIndexCollection.
@@ -597,7 +597,7 @@ var
     result := NetworkingDriver.CloseConnection(aConnection);    
   end;
   
-  function FreeConnection(var aConnection : Connection) : Boolean;
+  procedure FreeConnection(var aConnection : Connection);
   begin
     result := CloseConnection(aConnection);
   end;

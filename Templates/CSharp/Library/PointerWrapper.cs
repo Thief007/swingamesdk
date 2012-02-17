@@ -34,7 +34,8 @@ namespace SwinGame
         GUIList,          
         GUICheckbox,          
         GUITextbox,           
-        GUILabel,            
+        GUILabel,
+        Connection,
         Copy,
 		
     }

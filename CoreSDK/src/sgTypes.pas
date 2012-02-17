@@ -1057,19 +1057,17 @@ interface
 
     /// The Pointer to a MessageLink Creating a String LinkedList
     ///
-    /// @class MessagePtr
-    /// @pointer_wrapper
-    /// @no_free_pointer_wrapper
-    /// @field pointer : ^MessageLink
+    /// @struct MessagePtr
+    /// @via_pointer
     MessagePtr = ^MessageLink;
-
+    
     ///@struct MessageLink
     ///@via_pointer
     MessageLink = packed record
       data  : String;
       next  : MessagePtr;
     end;  
-
+    
     ///@struct ConnectionData
     ///@via_pointer
     ConnectionData = packed record
@@ -1081,12 +1079,11 @@ interface
       msgCount        : LongInt;
       isTCP           : Boolean;
     end;
-
+    
     /// The Pointer to ConnectionData
     ///
     /// @class Connection
     /// @pointer_wrapper
-    /// @no_free_pointer_wrapper
     /// @field pointer : ^ConnectionData
     Connection  = ^ConnectionData;
 
