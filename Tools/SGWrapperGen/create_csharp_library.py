@@ -261,6 +261,7 @@ _type_switcher = {
         'trianglearray':'Triangle[] %s',
         'bitmaparray':  'Bitmap[] %s',
         'stringarray':  'string[] %s',
+        'fingerarray':  'Finger[] %s',
         'regions':  'Region[] %s',
     }
 }
@@ -269,15 +270,17 @@ _data_switcher = {
     'temp_return' :
     {
         'string':       '%s.ToString()',
-        'linesarray':   '%s',
         # 'matrix2d':     'WrapperUtils.MatrixFromArray(%s)',
         'point2darray': '%s',
         # 'triangle':     'WrapperUtils.TriangleFromArray(%s)',
-        'longint':      '%s',
-        'longintarray': '%s',
         'trianglearray':'WrapperUtils.TriangleArrayFrom(%s)',
         'bitmaparray':  'WrapperUtils.BitmapArrayFrom(%s)',
         'stringarray':  'WrapperUtils.StringArrayFrom(%s)',
+        
+        'longint':      '%s',
+        'longintarray': '%s',
+        'linesarray':   '%s',
+        'fingerarray':  '%s',
     },
     'return_val' : 
     {
@@ -386,8 +389,9 @@ _adapter_type_switcher = {
         
         #Structs
         'triangle':     'Triangle %s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
+        'rectangle':    'Rectangle %s',
+        'linesegment':  'LineSegment %s',
+        'finger':       'Finger %s',
         
         
         'longword': 'uint %s',
@@ -411,6 +415,7 @@ _adapter_type_switcher = {
         #Arrays
         'point2darray': 'Point2D[] %s',
         'longintarray': 'int[] %s',
+        'fingerarray':  'Finger[] %s',
         
         #Enums
         'collisiontestkind':    'CollisionTestKind %s',
@@ -640,6 +645,7 @@ _adapter_type_switcher = {
         'trianglearray':    'Triangle[] %s',
         'longintarray':     'int[] %s',
         'bitmaparray':      'IntPtr[] %s',
+        'fingerarray':      'Finger[] %s',
     },
     'lib_result': {
         'string':       '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
@@ -651,6 +657,7 @@ _adapter_type_switcher = {
         # 'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] int[] %s',
         'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Triangle[] %s',
+        'fingerarray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Finger[] %s',
         
         'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] IntPtr[] %s',
     },
@@ -726,6 +733,7 @@ _local_type_switcher = {
     'longint':      'int %s;',
     'trianglearray':'Triangle[] %s;',
     'stringarray':  'string[] %s;',
+    'fingerarray':  'Finger[] %s;',
 }
 
 # mapping for struct fields
@@ -1085,7 +1093,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                     elif the_method.length_call != None:
                         print the_method.name, local_var.data_type.name, ' = ', details['length_call']
                         #FIX THIS...
-                        assert local_var.data_type.name in ['LongintArray','Point2DArray','StringArray','LinesArray','BitmapArray']
+                        assert local_var.data_type.name in ['LongintArray','Point2DArray','StringArray','LinesArray','BitmapArray','FingerArray']
                         
                         if local_var.data_type.name == 'StringArray':
                             temp_process_params = '%s = WrapperUtils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
@@ -1098,6 +1106,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                                 else 'Point2D' if local_var.data_type.name in ['Point2DArray'] \
                                 else 'LineSegment' if local_var.data_type.name in ['LinesArray'] \
                                 else 'IntPtr' if local_var.data_type.name in ['BitmapArray'] \
+                                else 'Finger' if local_var.data_type.name in ['FingerArray'] \
                                 else 'StringBuilder',
                                 details['length_call'].replace('return ', '')
                             )
