@@ -74,17 +74,17 @@ implementation
       event: SDL_EVENT;
     begin
 
-       while SDL_WaitEventTimeout(@event,0) > 0 do
-       begin
-         case SDL_EventType(event._type) of
-           SDL_QUIT_EVENT                   : DoQuit();
-           SDL_KEYDOWN                      : HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
-           SDL_KEYUP                        : HandleKeyupEvent(event.key.keysym.sym);
-           SDL_MOUSEBUTTONUP                : ProcessMouseEvent(event.button.button); 
-           SDL_JOYAXISMOTION                : HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
-           SDL_FINGERDOWN, SDL_FINGERMOTION : HandleTouchEvent(iOSDriver.ProcessTouchEvent(event.tfinger.touchId));
-         end;
-       end;
+      while SDL_WaitEventTimeout(@event,0) > 0 do
+      begin
+        case SDL_EventType(event._type) of
+          SDL_QUIT_EVENT                   : DoQuit();
+          SDL_KEYDOWN                      : HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
+          SDL_KEYUP                        : HandleKeyupEvent(event.key.keysym.sym);
+          SDL_MOUSEBUTTONUP                : ProcessMouseEvent(event.button.button); 
+          SDL_FINGERDOWN, SDL_FINGERMOTION : HandleTouchEvent(iOSDriver.ProcessTouchEvent(event.tfinger.touchId));
+          SDL_JOYAXISMOTION                : HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
+      end;
+      end;
     end;
 
   
@@ -120,15 +120,16 @@ implementation
 
   procedure LoadSDL13InputDriver(); 
   begin
-    InputDriver.IsKeyPressed := @IsKeyPressedProcedure;
-    InputDriver.CheckQuit := @CheckQuitProcedure;
-    InputDriver.ProcessEvents := @ProcessEventsProcedure;
-    InputDriver.GetKeyState := @GetKeyStateProcedure;
-    InputDriver.GetMouseState := @GetMouseStateProcedure;
+
+    InputDriver.IsKeyPressed          := @IsKeyPressedProcedure;
+    InputDriver.CheckQuit             := @CheckQuitProcedure;
+    InputDriver.ProcessEvents         := @ProcessEventsProcedure;
+    InputDriver.GetKeyState           := @GetKeyStateProcedure;
+    InputDriver.GetMouseState         := @GetMouseStateProcedure;
     InputDriver.GetRelativeMouseState := @GetRelativeMouseStateProcedure;
-    InputDriver.ShowCursor := @ShowCursorProcedure;
-    InputDriver.Button := @ButtonProcedure;
-    InputDriver.WarpMouse := @WarpMouseProcedure;
+    InputDriver.ShowCursor            := @ShowCursorProcedure;
+    InputDriver.Button                := @ButtonProcedure;
+    InputDriver.WarpMouse             := @WarpMouseProcedure;
   end;
   
 end.

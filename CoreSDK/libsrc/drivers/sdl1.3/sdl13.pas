@@ -1983,8 +1983,13 @@ const
   procedure SDL_QuitSubSystem(flags:Uint32);cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   function SDL_WasInit(flags:Uint32):Uint32;cdecl;external {$ifdef WINDOWS}'SDL.dll'{$endif};
   procedure SDL_Quit;cdecl; external {$ifdef WINDOWS}'SDL.dll'{$endif};
-    function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
-    function SDL_Swap32(D: Uint32): Uint32;
+  function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
+  function SDL_Swap32(D: Uint32): Uint32;
+  function SDL_iPhoneKeyboardShow(window : PSDL_Window ): Integer;cdecl;external{$ifdef WINDOWS}'SDL.dll'{$endif};
+  function SDL_iPhoneKeyboardHide(window : PSDL_Window ): Integer;cdecl;external{$ifdef WINDOWS}'SDL.dll'{$endif};
+  function SDL_iPhoneKeyboardIsShown(window : PSDL_Window ): SDL_bool;cdecl;external{$ifdef WINDOWS}'SDL.dll'{$endif};
+  function SDL_iPhoneKeyboardToggle(window : PSDL_Window ): Integer;cdecl;external{$ifdef WINDOWS}'SDL.dll'{$endif};
+
 implementation
 function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
 begin

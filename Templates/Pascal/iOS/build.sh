@@ -22,8 +22,7 @@ GAME_NAME=${APP_PATH##*/}
 SRC_DIR="${APP_PATH}/src"
 APP_PATH="."
 LOG_FILE="${APP_PATH}/out.log"
-DRV_LIB=`find ./lib -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
-SG_INC="-Fi${APP_PATH}/lib -Fu${APP_PATH}/lib -Fu${APP_PATH}/src ${DRV_LIB}"
+SG_INC="-Fi${APP_PATH}/lib -Fu${APP_PATH}/lib -Fu${APP_PATH}/src"
 homeDir=`echo ~`
 
 locateGameMain()
@@ -74,11 +73,11 @@ echo "--------------------------------------------------"
 echo "          Creating $GAME_NAME"
 echo "          for iOS"
 echo "--------------------------------------------------"
-echo "  Running script from $FULL_APP_PATH"
+echo "  Running script from $APP_PATH"
 FILE=UUID.txt
 UUID=""
 if [ ! -f $FILE ];
-then
+then 
   echo "  ... UUID file not found."
   echo "  ... Generating UUID."
   echo `uuidgen`>>UUID.txt
@@ -97,12 +96,31 @@ echo "  Saving output to $OUT_DIR"
 echo "--------------------------------------------------"
 echo "  ... Compiling ${GAME_NAME}"
 
-ppc386 -gw -Mobjfpc -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk" -gltw -FE"tmp" -FU"tmp" -Fi"src" -Fu"lib/mac/static_libraries" -k"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk/usr/lib/libbz2.dylib" -k"lib/mac/static_libraries/libSDL.a" -k"lib/mac/static_libraries/libpng.a" -k"lib/mac/static_libraries/libSDL_gfx.a" -k"lib/mac/static_libraries/libSDL_mixer.a" -k"lib/mac/static_libraries/libSDL_image.a" -k"lib/mac/static_libraries/libSDL_ttf.a" -k"lib/mac/static_libraries/libfreetype.a" -k"lib/mac/static_libraries/libogg.a" -k"lib/mac/static_libraries/libvorbis.a"  -Fu/Developer/ObjectivePascal/units/i386-iphonesim -Tiphonesim  -o"./${GAME_NAME}" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
+mkdir ./tmp/arm ./tmp/i386
 
+LIB_DIR="${APP_PATH}/lib/godly/mac"
+
+
+ppcarm -gw -Mobjfpc -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"./${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
+if [ $? != 0 ]; then
+   DoExitCompile; 
+fi
+
+ppc386 -gw -Mobjfpc -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"./${GAME_NAME}.i386" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile;
 fi
 
+lipo -create -output "./Test" "./${GAME_NAME}.i386" "./${GAME_NAME}.arm"
+
+/Developer/usr/bin/dsymutil --verbose ./Test -o ./Test.app.dSYM
+
+if [ $? != 0 ]; then
+   exit 1;
+fi
+
+echo 'fix script!'
+exit 1
 
 
 

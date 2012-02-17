@@ -706,8 +706,8 @@ implementation
                 LoadResourceBundle('splash.txt', False);
                 
                 aniBmp := BitmapNamed('Swinburne');
-                aniX := (1024 - BitmapCellWidth(aniBmp)) div 2;
-                aniY := (768 - BitmapCellHeight(aniBmp)) div 2;
+                aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
+                aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
                 
                 ClearScreen(ColorWhite);
                 RefreshScreen();

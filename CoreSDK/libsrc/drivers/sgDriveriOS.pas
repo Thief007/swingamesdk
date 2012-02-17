@@ -10,18 +10,25 @@ interface
 	uses sgTypes {$IFDEF SWINGAME_SDL13},sgDriveriOSSDL13{$ENDIF};
 	
 	type
-		ShowKeyboardProcedure = procedure();
-		InitProcedure = procedure();
-		ProcessAxisMotionEventProcedure = function() : AccelerometerMotion;
-		AxisToGProcedure = function( value : LongInt ) : Single;
-		ProcessTouchEventProcedure = function (touchID : Int64) : FingerArray;
+		ShowKeyboardProcedure						= procedure();
+		HideKeyboardProcedure						= procedure();
+		ToggleKeyboardProcedure					= procedure();
+		IsShownKeyboardProcedure				= function():Boolean;
+		InitProcedure										= procedure();
+		ProcessAxisMotionEventProcedure	= function() : AccelerometerMotion;
+		AxisToGProcedure								= function( value : LongInt ) : Single;
+		ProcessTouchEventProcedure			= function (touchID : Int64) : FingerArray;
 
 	iOSDriverRecord = record
-		ShowKeyboard     			: ShowKeyboardProcedure;
-		Init	         				: InitProcedure;
-		ProcessAxisMotionEvent : ProcessAxisMotionEventProcedure;
-		AxisToG 							: AxisToGProcedure;
-		ProcessTouchEvent 			: ProcessTouchEventProcedure;
+		
+		ShowKeyboard						: ShowKeyboardProcedure;
+		HideKeyboard						: HideKeyboardProcedure;
+		ToggleKeyboard					: ToggleKeyboardProcedure;
+		IsShownKeyboard					: IsShownKeyboardProcedure;
+		Init										: InitProcedure;
+		ProcessAxisMotionEvent	: ProcessAxisMotionEventProcedure;
+		AxisToG									: AxisToGProcedure;
+		ProcessTouchEvent				: ProcessTouchEventProcedure;
 	end;
 
 
@@ -44,8 +51,29 @@ implementation
 	begin
 		LoadDefaultiOSDriver();
 		exit;
-		//TO DO
-		// iOSDriver.ShowKeyboard();
+		iOSDriver.ShowKeyboard();
+	end;
+
+	procedure DefaultHideKeyboardProcedure();
+	begin
+		LoadDefaultiOSDriver();
+		exit;
+		iOSDriver.HideKeyboard();
+	end;
+
+	procedure DefaultToggleKeyboardProcedure();
+	begin
+
+		LoadDefaultiOSDriver();
+		exit;
+		iOSDriver.ToggleKeyboard();
+	end;
+
+	function DefaultIsShownKeyboardProcedure() : Boolean;
+	begin
+		LoadDefaultiOSDriver();
+		exit;
+		result := iOSDriver.IsShownKeyboard();
 	end;
 
 	function DefaultProcessAxisMotionEventProcedure() : AccelerometerMotion;
@@ -77,11 +105,16 @@ implementation
 	initialization
 	begin
 		iOSDriver.ShowKeyboard						:= @DefaultShowKeyboardProcedure;
+		iOSDriver.HideKeyboard						:= @DefaultHideKeyboardProcedure;
+		iOSDriver.ToggleKeyboard					:= @DefaultToggleKeyboardProcedure;
+		iOSDriver.IsShownKeyboard					:= @DefaultIsShownKeyboardProcedure;
 		iOSDriver.Init										:= @DefaultInitProcedure;
 		iOSDriver.ProcessAxisMotionEvent	:= @DefaultProcessAxisMotionEventProcedure;
 		iOSDriver.AxisToG									:= @DefaultAxisToGProcedure;
 		iOSDriver.ProcessTouchEvent				:= @DefaultProcessTouchEventProcedure;
+		{IFDEF IOS}
     iOSDriver.Init();
+    {ENDIF}
 	end;
 end.
 

@@ -280,12 +280,76 @@ interface
   ///
   /// @lib
   function KeyUp(key: KeyCode): Boolean;
+
+  /// Returns an Array of Fingers that are on the screen.
+  ///
+  /// @lib
+  function FingersOnScreen() : FingerArray;
+
+  /// Returns the number of fingers that are currently
+  /// on the screen.
+  ///
+  /// @lib
+  function NumberOfFingersOnScreen() : LongInt;
+
+  /// Returns false when the key requested is being held down. This is updated
+  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
+  /// to specify the key to be checked.
+  ///
+  /// @lib SetAccelerometerThreshold
+  procedure AccelerometerThreshold(value : Single); overload;
+
+  /// Returns false when the key requested is being held down. This is updated
+  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
+  /// to specify the key to be checked.
+  ///
+  /// @lib GetAccelerometerThreshold
+  function AccelerometerThreshold() : Single; overload;
+
+  /// Returns a value ranging from 0 to 1 showing delta
+  /// in x Axis from level(being flat on the ground).
+  ///
+  /// @lib
+  function DeviceMovedInXAxis() : Single;
+
+  /// Returns a value ranging from 0 to 1 showing delta
+  /// in y Axis from level(being flat on the ground).
+  ///
+  /// @lib
+  function DeviceMovedInYAxis() : Single;
+
+  /// Returns a value ranging from 0 to 1 showing delta
+  /// in z Axis from level(being flat on the ground).
+  ///
+  /// @lib
+  function DeviceMovedInZAxis() : Single;
   
+  /// returns a boolean indicating if the screen was touched.
+  /// @lib
+  function ScreenTouched() : Boolean;
+
+  /// Shows iOS Keyboard
+  /// @lib
+  procedure ShowKeyboard();
+  /// Hides iOS Keyboard
+  /// @lib
+  procedure HideKeyboard();
+  /// Toggles iOS Keyboard
+  /// @lib
+  procedure ToggleKeyboard();
+  /// returns boolean indicating if iOS keyboard is shown
+  /// @lib
+  function KeyboardShown():Boolean;
+
 //=============================================================================
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput, sgDriver;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput, sgDriver, sgDriveriOS;
+
+  var
+  // seems to work well with this value
+    _AccelerometerThreshold : Single = 0.01;
 
 //----------------------------------------------------------------------------
 // Game Loop Essentials
@@ -320,6 +384,91 @@ implementation
       TraceExit('sgInput', 'ProcessEvents');
     {$ENDIF}
   end;
+
+//============//
+//    iOS    //   
+//===========//
+
+//Keyboard
+procedure ShowKeyboard();
+begin
+  iOSDriver.ShowKeyboard();
+end;
+
+procedure HideKeyboard();
+begin
+  iOSDriver.ShowKeyboard();
+end;
+
+procedure ToggleKeyboard();
+begin
+  iOSDriver.ToggleKeyboard();
+end;
+
+function KeyboardShown():Boolean;
+begin
+  result := iOSDriver.IsShownKeyboard();
+end;
+
+
+//Touch
+
+function FingersOnScreen() : FingerArray;
+begin
+  result := GetFingers();
+end;
+
+function NumberOfFingersOnScreen() : LongInt;
+begin
+  result := GetNumberOfFingers();
+end;
+
+function ScreenTouched() : Boolean;
+begin
+  result := iDeviceTouched();
+end;
+
+
+//Accelerometer
+
+procedure AccelerometerThreshold(value : Single); overload;
+begin
+  _AccelerometerThreshold := value;
+end;
+
+function AccelerometerThreshold() : Single; overload;
+begin
+  result := _AccelerometerThreshold;
+end;
+
+//THESE ARE SWITCHED because at the time of coding we only allowed landscape mode.
+function DeviceMovedInXAxis() : Single;
+begin
+  result := GetNormalisedDeltaYAxis();
+  if result < _AccelerometerThreshold then
+  begin
+    result := 0;
+  end;
+end;
+
+function DeviceMovedInYAxis() : Single;
+begin
+  result := GetNormalisedDeltaYAxis();
+  if result < _AccelerometerThreshold then
+  begin
+    result := 0;
+  end;
+end;
+
+function DeviceMovedInZAxis() : Single;
+begin
+  result := GetNormalisedDeltaZAxis();
+  if result < _AccelerometerThreshold then
+  begin
+    result := 0;
+  end;
+end;
+
 
 
   //---------------------------------------------------------------------------
@@ -526,28 +675,28 @@ implementation
   function KeyName(key: KeyCode): String;
   begin
     case key of
-      vk_Unknown: result := 'Unknown';
-      vk_BACKSPACE: result := 'Backspace';
-      vk_TAB: result := 'Tab';
-      vk_CLEAR: result := 'Clear';
-      vk_RETURN: result := 'Return';
-      vk_PAUSE: result := 'Pause';
-      vk_ESCAPE: result := 'Escape';
-      vk_SPACE: result := 'Space';
-      vk_EXCLAIM: result := 'Exclaim';
-      vk_QUOTEDBL: result := 'Double Quote';
-      vk_HASH: result := 'Hash';
-      vk_DOLLAR: result := 'Dollar';
-      vk_AMPERSAND: result := 'Ampersand';
-      vk_QUOTE: result := 'Quote';
-      vk_LEFTPAREN: result := 'Left Parenthesis';
-      vk_RIGHTPAREN: result := 'Right Parenthesis';
-      vk_ASTERISK: result := 'Asterisk';
-      vk_PLUS: result := 'Plus';
-      vk_COMMA: result := 'Comma';
-      vk_MINUS: result := 'Minus';
-      vk_PERIOD: result := 'Period';
-      vk_SLASH: result := 'Slash';
+      vk_Unknown    : result := 'Unknown';
+      vk_BACKSPACE  : result := 'Backspace';
+      vk_TAB        : result := 'Tab';
+      vk_CLEAR      : result := 'Clear';
+      vk_RETURN     : result := 'Return';
+      vk_PAUSE      : result := 'Pause';
+      vk_ESCAPE     : result := 'Escape';
+      vk_SPACE      : result := 'Space';
+      vk_EXCLAIM    : result := 'Exclaim';
+      vk_QUOTEDBL   : result := 'Double Quote';
+      vk_HASH       : result := 'Hash';
+      vk_DOLLAR     : result := 'Dollar';
+      vk_AMPERSAND  : result := 'Ampersand';
+      vk_QUOTE      : result := 'Quote';
+      vk_LEFTPAREN  : result := 'Left Parenthesis';
+      vk_RIGHTPAREN : result := 'Right Parenthesis';
+      vk_ASTERISK   : result := 'Asterisk';
+      vk_PLUS       : result := 'Plus';
+      vk_COMMA      : result := 'Comma';
+      vk_MINUS      : result := 'Minus';
+      vk_PERIOD     : result := 'Period';
+      vk_SLASH      : result := 'Slash';
       vk_0: result := '0';
       vk_1: result := '1';
       vk_2: result := '2';
@@ -558,22 +707,22 @@ implementation
       vk_7: result := '7';
       vk_8: result := '8';
       vk_9: result := '9';
-      vk_COLON: result := 'Colon';
-      vk_SEMICOLON: result := 'Semicolon';
-      vk_LESS: result := 'Less';
-      vk_EQUALS: result := 'Equals';
-      vk_GREATER: result := 'Greater';
-      vk_QUESTION: result := 'Question';
-      vk_AT: result := 'At';
+      vk_COLON     : result := 'Colon';
+      vk_SEMICOLON : result := 'Semicolon';
+      vk_LESS      : result := 'Less';
+      vk_EQUALS    : result := 'Equals';
+      vk_GREATER   : result := 'Greater';
+      vk_QUESTION  : result := 'Question';
+      vk_AT        : result := 'At';
 
       // Skip uppercase letters 
 
-      vk_LEFTBRACKET: result := 'Left Bracket';
-      vk_BACKSLASH: result := 'Backslash';
-      vk_RIGHTBRACKET: result := 'Right Bracket';
-      vk_CARET: result := 'Caret';
-      vk_UNDERSCORE: result := 'Underscore';
-      vk_BACKQUOTE: result := 'Back Quote';
+      vk_LEFTBRACKET  : result := 'Left Bracket';
+      vk_BACKSLASH    : result := 'Backslash';
+      vk_RIGHTBRACKET : result := 'Right Bracket';
+      vk_CARET        : result := 'Caret';
+      vk_UNDERSCORE   : result := 'Underscore';
+      vk_BACKQUOTE    : result := 'Back Quote';
       vk_a: result := 'a';
       vk_b: result := 'b';
       vk_c: result := 'c';
@@ -712,24 +861,24 @@ implementation
       vk_KP7: result := 'Keypad 7';
       vk_KP8: result := 'Keypad 8';
       vk_KP9: result := 'Keypad 9';
-      vk_KP_PERIOD: result := 'Keypad Period';
-      vk_KP_DIVIDE: result := 'Keypad Divide';
-      vk_KP_MULTIPLY: result := 'Keypad Multiply';
-      vk_KP_MINUS: result := 'Keypad Minus';
-      vk_KP_PLUS: result := 'Keypad Plus';
-      vk_KP_ENTER: result := 'Keypad Enter';
-      vk_KP_EQUALS: result := 'Keypad Equals';
+      vk_KP_PERIOD   : result := 'Keypad Period';
+      vk_KP_DIVIDE   : result := 'Keypad Divide';
+      vk_KP_MULTIPLY : result := 'Keypad Multiply';
+      vk_KP_MINUS    : result := 'Keypad Minus';
+      vk_KP_PLUS     : result := 'Keypad Plus';
+      vk_KP_ENTER    : result := 'Keypad Enter';
+      vk_KP_EQUALS   : result := 'Keypad Equals';
 
       // Arrows + Home/End pad
-      vk_UP: result := 'Up';
-      vk_DOWN: result := 'Down';
-      vk_RIGHT: result := 'Right';
-      vk_LEFT: result := 'Left';
-      vk_INSERT: result := 'Insert';
-      vk_HOME: result := 'Home';
-      vk_END: result := 'End';
-      vk_PAGEUP: result := 'Page Up';
-      vk_PAGEDOWN: result := 'Page Down';
+      vk_UP       : result := 'Up';
+      vk_DOWN     : result := 'Down';
+      vk_RIGHT    : result := 'Right';
+      vk_LEFT     : result := 'Left';
+      vk_INSERT   : result := 'Insert';
+      vk_HOME     : result := 'Home';
+      vk_END      : result := 'End';
+      vk_PAGEUP   : result := 'Page Up';
+      vk_PAGEDOWN : result := 'Page Down';
 
       // Function keys
       vk_F1: result := 'F1';
@@ -749,29 +898,29 @@ implementation
       vk_F15: result := 'F15';
 
       // Key state modifier keys
-      vk_NUMLOCK: result := 'Numlock';
-      vk_CAPSLOCK: result := 'Caps lock';
-      vk_SCROLLOCK: result := 'Scroll Lock';
-      vk_RSHIFT: result := 'Right Shift';
-      vk_LSHIFT: result := 'Left Shift';
-      vk_RCTRL: result := 'Right Ctrl';
-      vk_LCTRL: result := 'Left Ctrl';
-      vk_RALT: result := 'Right Alt';
-      vk_LALT: result := 'Left Alt';
-      vk_RMETA: result := 'Right Meta';
-      vk_LMETA: result := 'Left Meta';
-      vk_LSUPER: result := 'Left Super';
-      vk_RSUPER: result := 'Right Super';
-      vk_MODE: result := 'Mode';
-      vk_COMPOSE: result := 'Compose';
+      vk_NUMLOCK   : result := 'Numlock';
+      vk_CAPSLOCK  : result := 'Caps lock';
+      vk_SCROLLOCK : result := 'Scroll Lock';
+      vk_RSHIFT    : result := 'Right Shift';
+      vk_LSHIFT    : result := 'Left Shift';
+      vk_RCTRL     : result := 'Right Ctrl';
+      vk_LCTRL     : result := 'Left Ctrl';
+      vk_RALT      : result := 'Right Alt';
+      vk_LALT      : result := 'Left Alt';
+      vk_RMETA     : result := 'Right Meta';
+      vk_LMETA     : result := 'Left Meta';
+      vk_LSUPER    : result := 'Left Super';
+      vk_RSUPER    : result := 'Right Super';
+      vk_MODE      : result := 'Mode';
+      vk_COMPOSE   : result := 'Compose';
       // Miscellaneous function keys
-      vk_HELP: result := 'Help';
-      vk_PRINT: result := 'Print';
-      vk_SYSREQ: result := 'Sys Req';
-      vk_BREAK: result := 'Break';
-      vk_MENU: result := 'Menu';
-      vk_POWER: result := 'Power';
-      vk_EURO: result := 'Euro';
+      vk_HELP      : result := 'Help';
+      vk_PRINT     : result := 'Print';
+      vk_SYSREQ    : result := 'Sys Req';
+      vk_BREAK     : result := 'Break';
+      vk_MENU      : result := 'Menu';
+      vk_POWER     : result := 'Power';
+      vk_EURO      : result := 'Euro';
     end;
 
   end;

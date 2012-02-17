@@ -10,7 +10,7 @@ unit sgDriveriOSSDL13;
 //=============================================================================
 
 interface 
-	uses SDL13, sgTypes, sgShared, sgGraphics;
+	uses SDL13, sgTypes, sgShared, sgGraphics, sgDriverGraphicsOpenGL;
 	procedure LoadSDL13iOSDriver();
 	
 	//iphone max g force.
@@ -108,12 +108,48 @@ implementation
 			result[count] := SDLFingerToFinger((sdlFingerArray + count)^, touch);
 		end;
 	end;
+
+	procedure ShowKeyboardProcedure();
+	begin
+		{$IFDEF IOS}
+		SDL_iPhoneKeyboardShow(POpenGLWindow(_screen)^.window);
+		{$ENDIF}
+	end;
+
+	procedure HideKeyboardProcedure();
+	begin
+		{$IFDEF IOS}
+		SDL_iPhoneKeyboardHide(POpenGLWindow(_screen)^.window)
+		{$ENDIF}
+	end;
+	
+	procedure ToggleKeyboardProcedure();
+	begin
+		{$IFDEF IOS}
+		SDL_iPhoneKeyboardToggle(POpenGLWindow(_screen)^.window)
+		{$ENDIF}
+	end;
+	
+	function IsShownKeyboardProcedure():Boolean;
+	begin
+		result := false;
+		{$IFDEF IOS}
+		if( SDL_iPhoneKeyboardIsShown(POpenGLWindow(_screen)^.window) = SDL_TRUE) then
+		begin
+			result := true;
+		end;
+		{$ENDIF}
+	end;
 	
 	procedure LoadSDL13iOSDriver();
 	begin
-		iOSDriver.Init 									:= @InitProcedure;
-		iOSDriver.ProcessAxisMotionEvent := @HandlAxisMotionEventProcedure;
-		iOSDriver.ProcessTouchEvent			:= @ProcessTouchEventProcedure;
-		iOSDriver.AxisToG								:= @AxisToGProcedure;
+			iOSDriver.ShowKeyboard						:= @ShowKeyboardProcedure;
+			iOSDriver.HideKeyboard						:= @HideKeyboardProcedure;
+			iOSDriver.ToggleKeyboard					:= @ToggleKeyboardProcedure;
+			iOSDriver.IsShownKeyboard					:= @IsShownKeyboardProcedure;
+			iOSDriver.Init										:= @InitProcedure;
+			iOSDriver.ProcessAxisMotionEvent	:= @HandlAxisMotionEventProcedure;
+			iOSDriver.ProcessTouchEvent				:= @ProcessTouchEventProcedure;
+			iOSDriver.AxisToG									:= @AxisToGProcedure;
 	end;
 end.
