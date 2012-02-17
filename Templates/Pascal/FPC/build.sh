@@ -111,6 +111,8 @@ elif [ "$OS" = "$WIN" ]; then
     #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
     # else
     LIB_DIR="${APP_PATH}/lib/win"
+    OPENGL=false
+    SDL_13=false
     # fi
 fi
 

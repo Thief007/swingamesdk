@@ -17,6 +17,7 @@ library %(name)s;
     LineSegmentPtr  = ^LineSegment;
     BitmapPtr       = ^Bitmap;
     TrianglePtr     = ^Triangle;
+    FingerPtr       = ^Finger;
   
   
   // The exception trap is used to ensure that exceptions do not propagate beyond the
@@ -199,6 +200,18 @@ library %(name)s;
   end;
   
   procedure Point2DCopyToPtr(const arr: Point2DArray; len: Longint; data: Point2DPtr);
+  var
+    i: Longint;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      (data + i)^ := arr[i];
+    end;
+  end;
+  
+  procedure FingerCopyToPtr(const arr: FingerArray; len: Longint; data: FingerPtr);
   var
     i: Longint;
   begin

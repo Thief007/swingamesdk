@@ -37,8 +37,12 @@ LOG_FILE="${APP_PATH}/out.log"
 C_FLAGS="-x c++"
 SG_INC="-I${APP_PATH}/lib/"
 
+if [ "$OS" = "$WIN" ]; then
+    C_FLAGS="$C_FLAGS -march=i386"
+fi
+
 #Locate the compiler...
-GCC_BIN=`which clang`
+GCC_BIN=`which clang 2>> /dev/null`
 if [ -z "$GCC_BIN" ]; then
     #try locating gcc
     GCC_BIN=`which g++`
@@ -136,6 +140,8 @@ elif [ "$OS" = "$WIN" ]; then
     # elif [ ${OPENGL} = true ]; then
     #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
     # else
+    SDL_13=false
+    OPENGL=false
     LIB_DIR="${APP_PATH}/lib/win"
     # fi
 fi
@@ -341,7 +347,7 @@ doWindowsCompile()
     
     #Assemble all of the .s files
     echo "  ... Creating game"
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -march=i386 -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 

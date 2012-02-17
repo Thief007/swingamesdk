@@ -280,18 +280,19 @@ interface
   ///
   /// @lib
   function KeyUp(key: KeyCode): Boolean;
-
-  /// Returns an Array of Fingers that are on the screen.
-  ///
-  /// @lib
-  function FingersOnScreen() : FingerArray;
-
+  
   /// Returns the number of fingers that are currently
   /// on the screen.
   ///
   /// @lib
   function NumberOfFingersOnScreen() : LongInt;
-
+  
+  /// Returns an Array of Fingers that are on the screen.
+  ///
+  /// @lib
+  /// @length NumberOfFingersOnScreen
+  function FingersOnScreen() : FingerArray;
+  
   /// Returns false when the key requested is being held down. This is updated
   /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
   /// to specify the key to be checked.

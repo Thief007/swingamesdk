@@ -37,8 +37,12 @@ LOG_FILE="${APP_PATH}/out.log"
 C_FLAGS="-std=c99"
 SG_INC="-I${APP_PATH}/lib/"
 
+if [ "$OS" = "$WIN" ]; then
+    C_FLAGS="$C_FLAGS -march=i386"
+fi
+
 #Locate the compiler...
-GCC_BIN=`which clang`
+GCC_BIN=`which clang 2>> /dev/null`
 if [ -z "$GCC_BIN" ]; then
     #try locating gcc
     GCC_BIN=`which gcc`
@@ -137,6 +141,9 @@ elif [ "$OS" = "$WIN" ]; then
     #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
     # else
     LIB_DIR="${APP_PATH}/lib/win"
+    OPENGL=false
+    SDL_13=false
+    
     # fi
 fi
 
