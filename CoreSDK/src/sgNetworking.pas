@@ -265,9 +265,22 @@ uses
   /// @param aConnection  The Connection to close
   ///
   /// @lib
-  /// @sn closeConnection:%s aConnection:%s
+  ///
+  /// @class Connection
+  /// @method Close
   function CloseConnection            (var aConnection : Connection) : Boolean;
 
+  /// An internal function used to close the specified Socket. 
+  /// Call ``CloseConnection`` instead.
+  ///
+  /// @param aConnection  The Connection to close
+  ///
+  /// @lib
+  /// 
+  /// @class Connection
+  /// @dispose
+  function FreeConnection            (var aConnection : Connection) : Boolean;
+  
   /// Closes the specified Socket, removed it from the Socket Array, and removes
   /// the identifier from the NamedIndexCollection.
   /// Refers to UDP Listener Sockets
@@ -275,7 +288,6 @@ uses
   /// @param aPort The identifier of the Host Socket.
   ///
   /// @lib
-  /// @sn closeUDPListenSocket:%s aPort:%s
   function CloseUDPListenSocket      ( aPort : LongInt) : Boolean;
 
   /// Closes All TCP Host Sockets
@@ -583,6 +595,11 @@ var
   function CloseConnection(var aConnection : Connection) : Boolean;
   begin
     result := NetworkingDriver.CloseConnection(aConnection);    
+  end;
+  
+  function FreeConnection(var aConnection : Connection) : Boolean;
+  begin
+    result := CloseConnection(aConnection);
   end;
 
   function CloseUDPListenSocket( aPort : LongInt) : Boolean;
