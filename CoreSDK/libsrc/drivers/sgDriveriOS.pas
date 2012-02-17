@@ -76,11 +76,12 @@ implementation
 
 	initialization
 	begin
-		iOSDriver.ShowKeyboard 					:= @DefaultShowKeyboardProcedure;
-    iOSDriver.Init         					:= @DefaultInitProcedure;
-    iOSDriver.ProcessAxisMotionEvent := @DefaultProcessAxisMotionEventProcedure;
-    iOSDriver.AxisToG 							:= @DefaultAxisToGProcedure;
-    iOSDriver.ProcessTouchEvent 			:= @DefaultProcessTouchEventProcedure;
+		iOSDriver.ShowKeyboard						:= @DefaultShowKeyboardProcedure;
+		iOSDriver.Init										:= @DefaultInitProcedure;
+		iOSDriver.ProcessAxisMotionEvent	:= @DefaultProcessAxisMotionEventProcedure;
+		iOSDriver.AxisToG									:= @DefaultAxisToGProcedure;
+		iOSDriver.ProcessTouchEvent				:= @DefaultProcessTouchEventProcedure;
+    iOSDriver.Init();
 	end;
 end.
 
