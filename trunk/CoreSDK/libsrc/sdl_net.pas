@@ -571,16 +571,18 @@ cdecl; external{$IFDEF __GPC__}name 'SDLNet_Write32'{$ELSE}SDLNetLibName{$ENDIF 
 
 {* Read a 16/32 bit value from network packet buffer *}
 function SDLNet_Read16( area : Pointer ) : Uint16;
-{$IFNDEF Arm}
+{$IFNDEF cpuarm}
   cdecl; external{$IFDEF __GPC__}name 'SDLNet_Read16'{$ELSE}SDLNetLibName{$ENDIF __GPC__};
-  {$EXTERNALSYM SDLNet_Read16}
 {$ENDIF}
+  {$EXTERNALSYM SDLNet_Read16}
+
 
 function SDLNet_Read32( area : Pointer ) : Uint32;
-{$IFNDEF Arm}
+{$IFNDEF cpuarm}
   cdecl; external{$IFDEF __GPC__}name 'SDLNet_Read32'{$ELSE}SDLNetLibName{$ENDIF __GPC__};
-  {$EXTERNALSYM SDLNet_Read32}
 {$ENDIF}
+  {$EXTERNALSYM SDLNet_Read32}
+
 
 
 {***********************************************************************}
@@ -656,7 +658,7 @@ begin
   result := SDL_GetError;
 end;
 
-{$IFDEF Arm}     
+{$IFDEF cpuarm}    
 function SDLNet_Read16( area : Pointer ) : Uint16;
 begin
   result := ((PUint8(area)^ shl  8) or (PUint8(area+1)^ shl 0));
