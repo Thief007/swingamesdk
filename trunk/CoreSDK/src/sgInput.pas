@@ -413,6 +413,7 @@ end;
 
 function KeyboardShown():Boolean;
 begin
+  result := false;
   {$IFDEF IOS}
   result := iOSDriver.IsShownKeyboard();
   {$ENDIF}

@@ -462,44 +462,50 @@ implementation
 
   function GetDeltaXAxis():LongInt;
   begin
+    result := 0;
     {$IFDEF IOS}
-    result := _deltaAccelerometer.xAxis;
-        {$ENDIF}
+      result := _deltaAccelerometer.xAxis;
+    {$ENDIF}
   end;
 
   function GetDeltaYAxis():LongInt;
   begin
-      {$IFDEF IOS}
-    result := _deltaAccelerometer.yAxis;
-        {$ENDIF}
+    result := 0;
+    {$IFDEF IOS}
+      result := _deltaAccelerometer.yAxis;
+    {$ENDIF}
   end;
   
   function GetDeltaZAxis():LongInt;
   begin
-      {$IFDEF IOS}
-    result := _deltaAccelerometer.zAxis;
-        {$ENDIF}
+    result := 0;
+    {$IFDEF IOS}
+      result := _deltaAccelerometer.zAxis;
+    {$ENDIF}
   end;
   
   function GetNormalisedDeltaXAxis():Single;
   begin
-      {$IFDEF IOS}
-    result := iOSDriver.AxisToG(_deltaAccelerometer.xAxis);
-        {$ENDIF}
+    result := 0;
+    {$IFDEF IOS}
+      result := iOSDriver.AxisToG(_deltaAccelerometer.xAxis);
+    {$ENDIF}
   end;
 
   function GetNormalisedDeltaYAxis():Single;
   begin
-      {$IFDEF IOS}
+    result := 0;
+  {$IFDEF IOS}
     result := iOSDriver.AxisToG(_deltaAccelerometer.yAxis);
-        {$ENDIF}
+  {$ENDIF}
   end;
   
   function GetNormalisedDeltaZAxis():Single;
   begin
-      {$IFDEF IOS}
+    result := 0;
+  {$IFDEF IOS}
     result := iOSDriver.AxisToG(_deltaAccelerometer.zAxis);
-    {$ENDIF}
+  {$ENDIF}
   end;
 
   function iDeviceTouched():Boolean;
