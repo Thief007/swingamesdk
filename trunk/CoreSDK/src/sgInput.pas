@@ -345,7 +345,7 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput, sgDriver, sgDriveriOS;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry, sgSharedUtils, sgInputBackend, sgDriverInput, sgDriver{$IFDEF IOS}, sgDriveriOS {$ENDIF};
 
   var
   // seems to work well with this value
@@ -392,22 +392,30 @@ implementation
 //Keyboard
 procedure ShowKeyboard();
 begin
+  {$IFDEF IOS}
   iOSDriver.ShowKeyboard();
+  {$ENDIF}
 end;
 
 procedure HideKeyboard();
 begin
+  {$IFDEF IOS}
   iOSDriver.ShowKeyboard();
+  {$ENDIF}
 end;
 
 procedure ToggleKeyboard();
 begin
+  {$IFDEF IOS}
   iOSDriver.ToggleKeyboard();
+  {$ENDIF}
 end;
 
 function KeyboardShown():Boolean;
 begin
+  {$IFDEF IOS}
   result := iOSDriver.IsShownKeyboard();
+  {$ENDIF}
 end;
 
 

@@ -73,7 +73,7 @@ interface
     _deltaAccelerometer: AccelerometerMotion;
 
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics ,sgDriveriOS;
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics {$IFDEF IOS},sgDriveriOS{$ENDIF};
   
   procedure _InitGlobalVars(); 
   begin
@@ -462,36 +462,49 @@ implementation
 
   function GetDeltaXAxis():LongInt;
   begin
+    {$IFDEF IOS}
     result := _deltaAccelerometer.xAxis;
+        {$ENDIF}
   end;
 
   function GetDeltaYAxis():LongInt;
   begin
+      {$IFDEF IOS}
     result := _deltaAccelerometer.yAxis;
+        {$ENDIF}
   end;
   
   function GetDeltaZAxis():LongInt;
   begin
+      {$IFDEF IOS}
     result := _deltaAccelerometer.zAxis;
+        {$ENDIF}
   end;
   
   function GetNormalisedDeltaXAxis():Single;
   begin
+      {$IFDEF IOS}
     result := iOSDriver.AxisToG(_deltaAccelerometer.xAxis);
+        {$ENDIF}
   end;
 
   function GetNormalisedDeltaYAxis():Single;
   begin
+      {$IFDEF IOS}
     result := iOSDriver.AxisToG(_deltaAccelerometer.yAxis);
+        {$ENDIF}
   end;
   
   function GetNormalisedDeltaZAxis():Single;
   begin
+      {$IFDEF IOS}
     result := iOSDriver.AxisToG(_deltaAccelerometer.zAxis);
+    {$ENDIF}
   end;
 
   function iDeviceTouched():Boolean;
   begin
+
     result := _justTouched;
   end;
 
