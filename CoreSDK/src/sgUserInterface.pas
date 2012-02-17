@@ -2960,7 +2960,7 @@ procedure GUISetActiveTextbox(t: GUITextbox); overload;
 begin
   if not assigned(t) then exit;
   
-  GUIC.activeTextBox := t^.region;
+  GUIC.activeTextBox := t^.forRegion;
   
   if ReadingText() then FinishReadingText();
   StartReadingTextWithText( t^.contentString, 
@@ -2968,7 +2968,7 @@ begin
                             GUIC.backgroundClr, 
                             t^.lengthLimit, 
                             t^.Font, 
-                            InsetRectangle(TextboxTextArea(t^.region), 1)); // Need to inset 1 further to match printing text lines
+                            InsetRectangle(TextboxTextArea(t^.forRegion), 1)); // Need to inset 1 further to match printing text lines
 end;
 
 function TextboxAlignment(r: Region): FontAlignment; overload;
@@ -3869,7 +3869,7 @@ function StringToKind(s: String): GUIElementKind;
     newTextbox.lengthLimit    := StrToInt(Trim(ExtractDelimited(8, data, [','])));
     newTextBox.alignment      := TextAlignmentFrom(Trim(ExtractDelimited(9, data, [','])));
     newTextBox.contentString  := Trim(ExtractDelimited(10, data, [',']));
-    newTextBox.region         := r;
+    newTextBox.forRegion      := r;
     
     SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);
     result^.textBoxes[High(result^.textBoxes)] := newTextbox;
@@ -3967,7 +3967,7 @@ function StringToKind(s: String): GUIElementKind;
       
       // if a textbox or a radio group, remap pointers
       case p^.regions[i].kind of
-        gkTextbox: p^.textBoxes[elemIdx].region := @newRegions[i];
+        gkTextbox: p^.textBoxes[elemIdx].forRegion := @newRegions[i];
         gkRadioGroup:
         begin
           for j := 0 to High(p^.radioGroups[elemIdx].buttons) do

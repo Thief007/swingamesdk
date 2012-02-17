@@ -48,9 +48,8 @@ def assemble_dist(language, dist_dict, use_sgsdk):
     specificdist_folder =           langdist_folder + dist_dict['target'] + '/'
     specific_dist_lib_folder =      specificdist_folder + "lib/"
     
-    copy_lib_dir =  dist_dict["lib"][get_os_name()]
+    copy_lib_dir =  dist_dict["lib"]
     lib_folder =    coresdk_folder + copy_lib_dir
-    
     
     #clean dist folder
     # print("\n  Copying common files...")

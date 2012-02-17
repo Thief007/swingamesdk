@@ -1018,7 +1018,7 @@ interface
       contentString:  String;
       font:           Font;
       lengthLimit:    Longint;
-      region:         Region;
+      forRegion:      Region;
       alignment:      FontAlignment;
     end;
     
