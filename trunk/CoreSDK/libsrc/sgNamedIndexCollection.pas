@@ -50,6 +50,8 @@ interface
   function RemoveName(var col: NamedIndexCollection; name: String): Longint; overload;
   procedure FreeNamedIndexCollection(var col: NamedIndexCollection);
   
+  procedure RemoveAllNamesInCollection(var col: NamedIndexCollection);
+
 implementation
 uses sgShared, stringhash, sgSharedUtils, StrUtils;
 
@@ -163,6 +165,7 @@ uses sgShared, stringhash, sgSharedUtils, StrUtils;
     for i := idx to High(col.names) - 1 do
     begin
       col.names[idx] := col.names[idx + 1];
+      TIntegerContainer(hash.values[col.names[idx]]).Value := i;
     end;
     SetLength(col.names, Length(col.names) - 1);
   end;
@@ -205,5 +208,14 @@ uses sgShared, stringhash, sgSharedUtils, StrUtils;
       hash.Free();
     end;
     col.ids := nil;
+  end;
+
+
+  procedure RemoveAllNamesInCollection(var col: NamedIndexCollection);
+  var
+    i : LongInt;
+  begin
+    for i := 0 to NameCount(col) - 1 do
+      RemoveName(col, i);
   end;
 end.
