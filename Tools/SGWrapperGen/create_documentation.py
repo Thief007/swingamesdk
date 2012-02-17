@@ -36,12 +36,13 @@ def get_svn_version():
 
 OUT_PATH        = "../../Generated/Documentation"
 HTML_OUT_PATH   = OUT_PATH + '/html'
-SQL_OUT_PATH    = OUT_PATH + '/html'
+SQL_OUT_PATH    = OUT_PATH + '/sql'
 SVN_VERSION     = get_svn_version()
 
 #global menu types array
 _MENU_TYPES = []
 _Menu_Items = []
+_Types_Items = []
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
 # List the pascal types that we do not want to document and link to
@@ -364,12 +365,13 @@ class IdentifierCollector(object):
         # else:
         method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname
     
+    # Types visitor links the type to the types
     def _type_visitor(self, member, other):
         self.ids['types'][member.name] = member
         # modify member to keep track of who uses it
         member.tags['used_by'] = {} 
         # modify member to keep track of the doc_url for us
-        member.tags['doc_url'] = 'Types.html#' + member.name
+        member.tags['doc_url'] = 'types.html#' + member.name
         
         # determine the group and keep it for later ...
         if member.is_enum: group = 'enums'
@@ -471,11 +473,11 @@ class UnitPresenter(object):
         if self.last_method != method.name:
             if self.last_method:
                 # TODO: need to add close after last function!
-                out_doc.append('</ul></div></div>')
+                out_doc.append('</ul></div><hr class="dotted" /></div>')
             sql_menu_items = []
             temp_title = method.name
             _Menu_Items.append(method.name)
-            print " -- index number of %s[%i]" % (temp_title, _Menu_Items.index(temp_title))
+            #print " -- index number of %s[%i]" % (temp_title, _Menu_Items.index(temp_title))
             sql_menu_items.append(('(\''+self.doc.title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Menu_Items.index(temp_title)))
             f_items = open(SQL_OUT_PATH + "/site_menu_sql_items_create.sql","a")
             for line in sorted(set(sql_menu_items)):
@@ -622,7 +624,8 @@ class UnitPresenter(object):
                 m.visit_methods(self.write_methods_for_unit, None)
         #close off the last method...
         if self.last_method: #check there was a last method
-            self.doc.append('</ul></div></div>')        
+            self.doc.append('</ul></div></div>') 
+           
         self.doc.savetofile(the_file.name + '.html')
 
 
@@ -780,6 +783,16 @@ def create_types_doc(idcollection):
         tmp = '<div class="type" id="%(name)s">\n<h3>%(name)s</h3>\n%(desc)s\n'
         desc = '' if obj.doc.strip() == '' else '<p>%s</p>' % format_text(obj.doc)
         doc.append(tmp % { 'name': key, 'desc': desc })
+
+        sql_menu_types = []
+        temp_title = key
+        _Types_Items.append(temp_title)
+        print " -- index number of %s[%i]" % (temp_title, _Types_Items.index(temp_title))
+        sql_menu_types.append(('(\''+temp_title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Types_Items.index(temp_title)))
+        f_items = open(SQL_OUT_PATH + "/site_types_sql_items_create.sql","a")
+        for line in sorted(set(sql_menu_types)):
+            f_items.write(line+'\n')
+        f_items.close
         # Normal type details...
 
         if obj.is_enum:
@@ -795,15 +808,19 @@ def create_types_doc(idcollection):
                 doc.extend( [ tmp % (f.name, link_type(f.data_type.name)) for f in obj.field_list] )
                 doc.append('</dl>')
                 type_info = "struct"
+        
 
         # Used-by details
         if len(obj['used_by']):
             users = obj['used_by'].keys()
             users.sort()
             ##print users
-            doc.append('<dl class="usedby">\n<dt>Used by:</dt>\n<dd>')
+            doc.append('<br/>')
+            doc.append('<div class="module mod-black deepest">')
+            doc.append('<dl class="separator">\n<dt>Used by:</dt>\n<dd>')
             doc.extend(['<span>%s</span> ' % link_type(name) for name in users ])
             doc.append('</dd>\n</dl>')
+            doc.append('</div>')
 
         # Extra info section for developers
         if obj.is_class or obj.is_type or (obj.is_struct and obj.wraps_array):
@@ -827,6 +844,7 @@ def create_types_doc(idcollection):
             pass
             #type_info = 'struct/enum'
         
+
         info = []
         info.append('<li><a href="%s" target="new">source code</a></li>' % source_url(obj.data_type.meta_comment_line_details))
         # tags / document group details?
@@ -843,7 +861,8 @@ def create_types_doc(idcollection):
             info.append('<li>type: <span class="code">%s</span></li>' % type_info )
         # create info div 
         doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
-        
+        doc.append('<hr class="dotted" />')
+        doc.append('</div>')
         # doc.append('''
         # <div class='info'>
         #     <ul>
@@ -866,8 +885,8 @@ def create_types_doc(idcollection):
         #     'doc_group': obj.doc_group,
         # })            
         # Close section
-        doc.append('</div>')
     
+
     doc.savetofile('Types.html')
     print ' done.'
 
@@ -885,6 +904,13 @@ def create_sql_menu_items():
     sql_insert_menu_items = []
     f = open(SQL_OUT_PATH + "/site_menu_sql_items_create.sql",'w')
     for line in sql_insert_menu_items:
+      f.write(line+'\n')         
+    f.close 
+
+def create_sql_types_items():
+    sql_insert_types_items = []
+    f = open(SQL_OUT_PATH + "/site_types_sql_items_create.sql",'w')
+    for line in sql_insert_types_items:
       f.write(line+'\n')         
     f.close 
 
@@ -931,6 +957,7 @@ def main():
     # coppy
     create_sql_menu_insert()
     create_sql_menu_items()
+    create_sql_types_items()
 
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     # Parse all files ready for use...
