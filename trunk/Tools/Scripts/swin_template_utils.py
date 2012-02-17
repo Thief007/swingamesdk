@@ -111,14 +111,14 @@ def build_csharp_lib():
     output_line('Compiling .NET class library')
 
     dirs = {
-        'cs_generated_lib_dir':     swingame_path + 'Generated/CSharp/lib',
-        'cs_generated_code_dir':    swingame_path + 'Generated/CSharp/Code',
-        'cs_lib_dir':               swingame_path + 'Templates/CSharp/Library'
+        'cs_generated_lib_dir':     os.path.join(swingame_path, 'Generated','CSharp','lib'),
+        'cs_generated_code_dir':    os.path.join(swingame_path, 'Generated','CSharp','Code'),
+        'cs_lib_dir':               os.path.join(swingame_path, 'Templates','CSharp','Library')
     }
 
 
     if get_os_name() == "Windows":
-        csc = ['csc', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s/SwinGame.dll' % dirs, '%(cs_lib_dir)s/*.cs' % dirs, '%(cs_generated_code_dir)s/*.cs' % dirs]
+        csc = ['csc', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s\\SwinGame.dll' % dirs, '%(cs_lib_dir)s\\*.cs' % dirs, '%(cs_generated_code_dir)s\\*.cs' % dirs]
     else:
         csc = ['gmcs', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s/SwinGame.dll' % dirs, '%(cs_lib_dir)s/*.cs' % dirs, '%(cs_generated_code_dir)s/*.cs' % dirs]
 
