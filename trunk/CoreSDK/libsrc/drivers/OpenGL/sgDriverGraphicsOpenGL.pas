@@ -419,7 +419,6 @@ implementation
     setLength(resolutions,0);
     //built in screen = 0
     modes := SDL_GetNumDisplayModes(0);
-    writeln('here ',modes);
     for i:= 0 to modes do
     begin
       SDL_GetDisplayMode(0, i, @mode);
@@ -462,6 +461,7 @@ implementation
     
     // Create the window where we will draw.
     {$IFDEF IOS}
+      SDL_SetHint( 'SDL_IOS_ORIENTATIONS', 'LandscapeLeft' ); 
       POpenGLWindow(_screen)^.window  := SDL_CreateWindow(PChar(caption), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                                        screenWidth, screenHeight, Uint32(SDL_WINDOW_OPENGL) or Uint32(SDL_WINDOW_SHOWN) or Uint32(SDL_WINDOW_BORDERLESS));
     {$ELSE}

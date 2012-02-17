@@ -70,16 +70,21 @@ implementation
 	end;
 
 	function SDLFingerToFinger(sdlFinger : PSDL_Finger; touchState : PSDL_Touch ): Finger;
+	var 
+		touchResScreenRatio : Single;
 	begin
+
 		if not assigned(sdlFinger) then exit;
 		
+		touchResScreenRatio := touchState^.xres / ScreenWidth();
+			
 		result.id               := sdlFinger^.id;
-	  result.position.x       := sdlFinger^.x / touchState^.xres *ScreenWidth();
-	  result.position.y       := sdlFinger^.y / touchState^.yres *ScreenHeight();
-	  result.positionDelta.x  := sdlFinger^.xdelta;
-	  result.positionDelta.y  := sdlFinger^.ydelta;
-	  result.lastPosition.x		:= sdlFinger^.last_x;
-	  result.lastPosition.y 	:= sdlFinger^.last_y;
+	  result.position.x       := sdlFinger^.x * touchResScreenRatio;
+	  result.position.y       := sdlFinger^.y * touchResScreenRatio;
+	  result.positionDelta.x  := sdlFinger^.xdelta * touchResScreenRatio;
+	  result.positionDelta.y  := sdlFinger^.ydelta * touchResScreenRatio;
+	  result.lastPosition.x		:= sdlFinger^.last_x * touchResScreenRatio;
+	  result.lastPosition.y 	:= sdlFinger^.last_y * touchResScreenRatio;
 	  result.pressure 				:= sdlFinger^.pressure;
 	  result.lastPressure 		:= sdlFinger^.last_pressure;
 	  result.down 						:= (sdlFinger^.down = SDL_TRUE);
