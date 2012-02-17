@@ -449,8 +449,7 @@ var
           SDLNet_TCP_DelSocket(_Socketset, aConnection^.socket);
           SDLNet_TCP_Close(aConnection^.socket);
           ClearMessageQueue(aConnection);
-          Dispose(aConnection);
-          aConnection := nil;
+          FreeConnection(aConnection);
           result := True;
         end else if not aConnection^.isTCP then
           RemoveName(_UDPConnectionIDs, IntToStr(aConnection^.ip) + ':' + IntToStr(aConnection^.port));
@@ -512,7 +511,7 @@ var
         SDLNet_TCP_Close(_Connections[i]^.socket);
       end else
         RemoveAllNamesInCollection(_UDPConnectionIDs);
-      Dispose(_Connections[i]);
+      FreeConnection(_Connections[i]);
     end;
     SetLength(_Connections, 0);
   end;
