@@ -31,84 +31,108 @@ uses
   /// on the port given. Returns true if success or false
   /// if the binding failed. Uses TCP.
   ///
-  /// @param port The port to bind the socket to.
+  /// @param aPort The port to bind the socket to.
   ///
   /// @lib
   /// @uname CreateTCPHost
-  /// @sn createTCPHost:%s port:%s
-  function CreateTCPHost              (port : LongInt) : Boolean;
+  /// @sn createTCPHost:%s aPort:%s
+  function CreateTCPHost              (aPort : LongInt) : Boolean;
 
   /// Opens a connection to a peer using the IP and port
-  /// Creates a Socket for the purpose of sending messages
-  /// to the connected peer. Returns True if the connection
-  /// was a success or false if the connection fails.
+  /// Creates a Socket for the purpose of two way messages. 
+  /// Returns a new connection if successful or nil if failed.
   ///
-  /// @param ip The IP Address of the host
-  /// @param port The port the host is listening to connections on
+  /// @param aIP The IP Address of the host
+  /// @param aPort The port the host is listening to connections on
   ///
   /// @lib
   /// @uname OpenTCPConnectionToHost
-  /// @sn openTCPConnectionToHost:%s ip:%s port:%s
-  function OpenTCPConnectionToHost    (ip : String; port : LongInt) : Boolean;
+  /// @sn openTCPConnectionToHost:%s aIP:%s aPort:%s
+  function OpenTCPConnectionToHost    (aIP : String;  aPort : LongInt) : Connection;
 
   /// Accepts an incomming connection from another client.
-  /// Returns true if another client has connected or false
-  /// if nothing has connected.
+  /// Returns the amount of new connections that have been
+  /// accepted.
   ///
   /// @lib
-  /// @uname ServerAcceptTCPConnection
-  function ServerAcceptTCPConnection  () : String; 
+  function ServerAcceptTCPConnection  () : LongInt; 
    
   /// Checks if a message has been received. If a message has been received,
   /// It will automatically add it to the message queue, with the message,
-  /// source's IP and the port it received the message on.
+  /// source's IP and the port it received the message on. Returns true if
+  /// a new message has been received.
   ///
   /// @lib
-  /// @uname TCPMessageReceived
   function TCPMessageReceived         () : Boolean;    
 
-  // /// TODO
-  // ///
-  // /// @param msg The message to be sent
-  // ///
-  // /// @lib
-  // /// @uname BroadcastTCPMessage
-  // function BroadcastTCPMessage        (msg : String) : StringArray;
-
-  /// Sends the message to the specified client, dictated the by ip and port
-  /// passed in as an arguement. This will either return an empty string if 
-  /// the message succeeded in being sent, or a string with the destination ip
-  /// and destination port if the message failed to be sent. this string can 
-  /// then be used to close the socket that failed to send the message if desired.
+  /// Broadcasts a message through all open connections.
   ///
-  /// @param msg The message to be sent
-  /// @param ip The ip to send the message to
-  /// @param port The port to send the message to for the peer.
+  /// @param aMsg The message to be sent
   ///
   /// @lib
-  /// @uname SendTCPMessageTo
-  /// @sn sendTCPMessageTo:%s msg:%s ip:%s port:%s
-  function SendTCPMessageTo           (msg, ip : String; port : LongInt) : String;
+  /// @sn broadcastTCPMessage:%s aMsg:%s
+  function BroadcastTCPMessage        ( aMsg : String) : Boolean;
+
+  /// Sends the message to the specified client, attached to the socket
+  /// Retuns the connection if the message fails to
+  /// send so that it may be closed. Returns nil if the message has been sent
+  /// successfully.
+  ///
+  /// @param aMsg The message to be sent
+  /// @param aConnection Send the message through this connection's socket.
+  ///
+  /// @lib
+  /// @sn sendTCPMessageTo:%s aMsg:%s aConnection:%s
+  function SendTCPMessageTo           ( aMsg : String; aConnection : Connection) : Connection;
+
+  /// Adds a connection to the list of new connections. This is called by the 
+  /// Accept connection in TCP and Receive message in UDP (if the message has
+  /// been sent by a new connection). This is used in conjunction with Fetch
+  /// connection, that will pop the new connection out of the list.
+  ///
+  /// @param aConnection The new connection to add to the list
+  ///
+  /// @lib
+  /// @sn enqueueNewConnection:%s aConnection:%s
+  procedure EnqueueNewConnection(aConnection : Connection);
+
+  /// Removes the top connection from the New connection queue and
+  /// returns it.
+  ///
+  /// @lib
+  function FetchConnection() : Connection;
+
+  /// Returns the size of the New Connection List
+  ///
+  /// @lib
+  function ConnectionQueueSize() : LongInt;
 
 //----------------------------------------------------------------------------
 // UDP
 //----------------------------------------------------------------------------
 
   /// Creates a socket that listens for connections based
-  /// on the port given. Returns true if success or false
-  /// if the binding failed. Uses UDP
+  /// on the port given. Returns the index of the Socket in the
+  /// socket array.
   ///
-  /// @param port The port to bind the socket to.
+  /// @param aPort The port to bind the socket to.
   ///
   /// @lib
-  /// @sn openUDPListenerSocket:%s port:%s
-  function OpenUDPListenerSocket      (port : LongInt) : Boolean;
+  /// @sn createUDPSocket:%s aPort:%s
+  function CreateUDPSocket            ( aPort : LongInt) : LongInt;
 
-  /// Creates a socket to send UDP Packets to another client. This 
-  /// uses a random port for the socket.
+  /// Creates the connection and sets the ip and port values. Creates a
+  /// socket if there is no socket attached to the specified port. this
+  /// socket can be used to send and receive messages. Returns the connection
+  /// if this has been successful, or will return nil on failure.
+  ///
+  /// @param aDestIP The destination IP
+  /// @param aDestPort The Destination Port
+  /// @param aInPort The port to receive messages
   ///
   /// @lib
-  function OpenUDPSendSocket          () : Boolean;
+  /// @sn createUDPConnection:%s aDestIP:%s aDestPort:%s aInPort:%s
+  function CreateUDPConnection        (aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
 
   /// Checks all UDP listening sockets to see if a packet has been received.
   /// If a packet has been received, it will Enqueue the message into the message
@@ -117,65 +141,69 @@ uses
   /// no message.
   ///
   /// @lib
-  /// @uname UDPMessageReceived 
   function UDPMessageReceived         () : Boolean;
 
-  /// Sends a UDP packet to the specified IP and Port. the packet is populated
+  /// Sends a UDP packet to the port and ip specified in the connection
   /// with the message.
   ///
-  /// @param msg The message to be sent
-  /// @param ip The destination IP
-  /// @param port The destination port
+  /// @param aMsg The message to be sent
+  /// @param aConnection Send the Message through this connection's Socket.
   ///
   /// @lib
   /// @uname SendUDPMessage 
-  /// @sn sendUDPMessage:%s msg:%s ip:%s port:%s
-  function SendUDPMessage             (msg, ip : String; port : LongInt) : Boolean;
+  /// @sn sendUDPMessage:%s aMsg:%s aConnection:%s
+  function SendUDPMessage             ( aMsg : String; aConnection : Connection) : Boolean;
 
 //----------------------------------------------------------------------------
-// Messages
+// Messages and Connection Data Access
 //----------------------------------------------------------------------------
 
-  /// Gets the String Message from the first MessageData
+  /// Gets the Decimal IP of the destination for the connection
+  ///
+  /// @param aConnection The connection to extract data from
   ///
   /// @lib
-  function  GetMessage                 () : String;
+  /// @sn connectionIP:%s aConnection:%s
+  function  ConnectionIP(aConnection : Connection) : LongInt;
 
-  /// Gets the String IP from the first MessageData
+  /// Gets the Port of the destination for the connectiom
+  ///
+  /// @param aConnection The connection to extract data from
   ///
   /// @lib
-  function  GetIPFromMessage           () : String;
+  /// @sn connectionPort:%s aConnection:%s
+  function  ConnectionPort(aConnection : Connection) : LongInt;
 
-  /// Gets the Int Port from the first MessageData
+  /// Dequeues the Top Message
+  ///
+  /// @param aConnection The connection to extract data from
   ///
   /// @lib
-  function  GetPortFromMessage         () : LongInt;
-
-  /// Dequeues the Top Messagew
-  ///
-  /// @lib
-  procedure DequeueTopMessage          () ;
+  /// @sn readMessage:%s aConnection:%s
+  function ReadMessage            (aConnection : Connection) : String ;
 
   /// Clears the Message Queue
   ///
   /// @lib
-  procedure ClearMessageQueue          () ;
+  /// @sn clearMessageQueue:%s aConnection:%s
+  procedure ClearMessageQueue          (aConnection : Connection) ;
 
   /// Gets the Size of the Message Queue
   ///
   /// @lib
-  function  GetMessageCount            () : LongInt;
+  /// @sn messageCount:%s aConnection:%s
+  function  MessageCount            (aConnection : Connection) : LongInt;
 
   /// Queues a message to the end of the Message Queue
   ///
-  /// @param msg The message Sent
-  /// @param ip 
-  /// @param port 
+  /// @param aMsg The message Sent
+  /// @param aConnection The connection to enqueue the message into
   ///
   /// @lib
   /// @uname EnqueueMessage 
-  /// @sn enqueueMessage:%s msg:%s ip:%s port:%s
-  procedure EnqueueMessage            (msg : String; ip : String; port : LongInt);
+  /// @sn enqueueMessage:%s aMsg:%s aConnection:%s
+  procedure EnqueueMessage            ( aMsg : String; aConnection : Connection);
+
 
 //----------------------------------------------------------------------------
 // Hexadecimal and Decimal Conversion
@@ -183,30 +211,38 @@ uses
 
   /// Converts an Integer to a Hex value and returns it as a string.
   ///
-  /// @param dec The Integer
+  /// @param aDec The Integer
   ///
   /// @lib
   /// @uname DecToHex 
-  /// @sn decToHex:%s dec:%s
-  function DecToHex                   (dec : LongInt) : String;
+  /// @sn decToHex:%s aDec:%s
+  function DecToHex                   (aDec : LongInt) : String;
 
   /// Converts a Hex String to a Decimal Value as a String.
   ///
-  /// @param hex The Hex String
+  /// @param aHex The Hex String
   ///
   /// @lib
   /// @uname HexToDecString 
-  /// @sn hexToDecString:%s hex:%s
-  function HexToDecString             (hex : String) : String;
+  /// @sn hexToDecString:%s aHex:%s
+  function HexToDecString             (aHex : String) : String;
 
   /// Converts a Hex String to an IPV4 Address (0.0.0.0)
   ///
-  /// @param hex The Hex String
+  /// @param aHex The Hex String
   ///
   /// @lib
   /// @uname HexStrToIPv4 
-  /// @sn hexStrToIPv4:%s hex:%s
-  function HexStrToIPv4               (hex : String) : String;
+  /// @sn hexStrToIPv4:%s aHex:%s
+  function HexStrToIPv4               (aHex : String) : String;
+
+  /// Converts an IP to a decimal value
+  ///
+  /// @param aIP The IP
+  ///
+  /// @lib
+  /// @sn iPv4ToDec:%s aIP:%s
+  function IPv4ToDec(aIP : String) : LongInt; 
 
 //----------------------------------------------------------------------------
 // Close
@@ -220,31 +256,17 @@ uses
   /// @lib
   /// @uname CloseTCPHostSocket
   /// @sn closeTCPHostSocket:%s aPort:%s
-  function CloseTCPHostSocket        (aPort: LongInt) : Boolean;
+  function CloseTCPHostSocket        ( aPort: LongInt) : Boolean;
 
   /// Closes the specified Socket, removed it from the Socket Array, and removes
   /// the identifier from the NamedIndexCollection.
   /// Refers to TCP Receiver Sockets
   ///
-  /// @param aIP  The IP that makes up the identifier for the Receiver Socket
-  /// @param aPort The Port that makes up the identifier for the Receiver Socket
+  /// @param aConnection  The Connection to close
   ///
   /// @lib
-  /// @uname CloseTCPReceiverSocket
-  /// @sn closeTCPReceiverSocket:%s aIP:%s aPort:%s
-  function CloseTCPReceiverSocket    (aIP : String; aPort : LongInt) : Boolean;
-
-  /// Closes the specified Socket, removed it from the Socket Array, and removes
-  /// the identifier from the NamedIndexCollection.
-  /// Refers to TCP Sender Sockets
-  ///
-  /// @param aIP  The IP that makes up the identifier for the Sender Socket
-  /// @param aPort The Port that makes up the identifier for the Sender Socket
-  ///
-  /// @lib
-  /// @uname CloseTCPSenderSocket
-  /// @sn closeTCPSenderSocket:%s aIP:%s aPort:%s
-  function CloseTCPSenderSocket      (aIP : String; aPort : LongInt) : Boolean;
+  /// @sn closeConnection:%s aConnection:%s
+  function CloseConnection            (var aConnection : Connection) : Boolean;
 
   /// Closes the specified Socket, removed it from the Socket Array, and removes
   /// the identifier from the NamedIndexCollection.
@@ -253,15 +275,33 @@ uses
   /// @param aPort The identifier of the Host Socket.
   ///
   /// @lib
-  /// @uname CloseUDPListenSocket
-  /// @sn CloseUDPListenSocket:%s aPort:%s
-  function CloseUDPListenSocket      (aPort : LongInt) : Boolean;
+  /// @sn closeUDPListenSocket:%s aPort:%s
+  function CloseUDPListenSocket      ( aPort : LongInt) : Boolean;
 
-  /// Closes the UDP Sender Socket.
+  /// Closes All TCP Host Sockets
   ///
   /// @lib
-  /// @uname CloseUDPSendSocket
-  function CloseUDPSendSocket      () : Boolean;
+  procedure CloseAllTCPHostSocket     ();
+
+  /// Closes All TCP Receiver Sockets
+  ///
+  /// @lib
+  procedure CloseAllConnections ();
+
+  /// Closes All UDP Listener Sockets
+  ///
+  /// @lib
+  procedure CloseAllUDPListenSocket   ();
+
+  /// Closes all sockets that have been created.
+  ///
+  /// @lib
+  procedure CloseAllSockets ();
+
+  /// Releases All resources used by the Networking code.
+  ///
+  /// @lib
+  procedure ReleaseAllConnections();
 
 //----------------------------------------------------------------------------
 // Other
@@ -273,7 +313,7 @@ uses
           
 //=============================================================================
 implementation
-  uses SysUtils, sgUtils, sgDriverNetworking, sgNamedIndexCollection, sgShared;
+  uses SysUtils, sgUtils, sgDriverNetworking, sgNamedIndexCollection, sgShared, StrUtils;
 //=============================================================================
 
 type
@@ -284,74 +324,81 @@ type
   end;
   MessageDataArray = Array of MessageData;
 
-  MessagePtr = ^MessageLink;
-  MessageLink = packed record
-    data  : MessageData;
-    next  : MessagePtr;
-  end;  
+  NewConnectionPtr = ^NewConnection;
+  NewConnection = record
+    con : Connection;
+    nextCon : NewConnectionPtr;
+  end;
 
 var  
-  _ConSocketIndexes       : NamedIndexCollection;
-  _ReceiveSocketIndexes   : NamedIndexCollection;
-  _SendSocketIndexes      : NamedIndexCollection;
-  _UDPListenSocketIndexes : NamedIndexCollection;
-  _LastMessage            : MessagePtr = nil;
-  _FirstMessage           : MessagePtr = nil;
-  _MessageCount           : LongInt = 0;
+  _NewConnectionQueue     : NewConnectionPtr = nil;
+  _NewConnectionCount     : LongInt = 0;
   
 //----------------------------------------------------------------------------
 // Hexadecimal and Decimal Conversion
 //----------------------------------------------------------------------------
     
-  function DecToHex(dec : LongInt) : String;
+  function DecToHex(aDec : LongInt) : String;
   var
     LRemainder : LongInt;
     lHexAlpha : String = '0123456789ABCDEF';
   begin
-    lRemainder := (dec mod 16);
-    if dec - lRemainder = 0 then
+    lRemainder := (aDec mod 16);
+    if aDec - lRemainder = 0 then
       result := lHexAlpha[lRemainder + 1]
     else 
-      result := DecToHex( (dec - lRemainder) div 16 ) + lHexAlpha[lRemainder + 1]
+      result := DecToHex( (aDec - lRemainder) div 16 ) + lHexAlpha[lRemainder + 1]
   end;
       
-  function HexToDecString(hex : String) : String;
+  function HexToDecString(aHex : String) : String;
   var
     i    : LongInt;
-    val  : LongInt = 0;
-    expo : Double;
+    lVal  : LongInt = 0;
+    lExpo : Double;
   begin
-    for i := 1 to Length(hex) do
+    for i := 1 to Length(aHex) do
     begin      
-      expo := Exp((Length(hex) - i)*Ln(16));
-      case hex[i] of
-        '0' : val += Round(0  * expo);
-        '1' : val += Round(1  * expo);
-        '2' : val += Round(2  * expo);
-        '3' : val += Round(3  * expo);
-        '4' : val += Round(4  * expo);
-        '5' : val += Round(5  * expo);
-        '6' : val += Round(6  * expo);
-        '7' : val += Round(7  * expo);
-        '8' : val += Round(8  * expo); 
-        '9' : val += Round(9  * expo);
-        'A' : val += Round(10 * expo);
-        'B' : val += Round(11 * expo);
-        'C' : val += Round(12 * expo);
-        'D' : val += Round(13 * expo);
-        'E' : val += Round(14 * expo);
-        'F' : val += Round(15 * expo);
+      lExpo := Exp((Length(aHex) - i)*Ln(16));
+      case aHex[i] of
+        '0' : lVal += Round(0  * lExpo);
+        '1' : lVal += Round(1  * lExpo);
+        '2' : lVal += Round(2  * lExpo);
+        '3' : lVal += Round(3  * lExpo);
+        '4' : lVal += Round(4  * lExpo);
+        '5' : lVal += Round(5  * lExpo);
+        '6' : lVal += Round(6  * lExpo);
+        '7' : lVal += Round(7  * lExpo);
+        '8' : lVal += Round(8  * lExpo); 
+        '9' : lVal += Round(9  * lExpo);
+        'A' : lVal += Round(10 * lExpo);
+        'B' : lVal += Round(11 * lExpo);
+        'C' : lVal += Round(12 * lExpo);
+        'D' : lVal += Round(13 * lExpo);
+        'E' : lVal += Round(14 * lExpo);
+        'F' : lVal += Round(15 * lExpo);
       end;
     end;   
-    result := IntToStr(val); 
+    result := IntToStr(lVal); 
   end;
   
-  function HexStrToIPv4(hex : String) : String;
+  function HexStrToIPv4(aHex : String) : String;
   begin
-    result := HexToDecString(hex[1] + hex[2]);
-    result += '.' + HexToDecString(hex[3] + hex[4]);
-    result += '.' + HexToDecString(hex[5] + hex[6]);
-    result += '.' + HexToDecString(hex[7] + hex[8]);
+    result :=       HexToDecString(aHex[1] + aHex[2]);
+    result += '.' + HexToDecString(aHex[3] + aHex[4]);
+    result += '.' + HexToDecString(aHex[5] + aHex[6]);
+    result += '.' + HexToDecString(aHex[7] + aHex[8]);
+  end;
+
+  function IPv4ToDec(aIP : String) : LongInt;
+  var
+    w, x, y, z : LongInt;
+  begin
+    w := StrToInt(ExtractDelimited(1, aIP, ['.']));
+    x := StrToInt(ExtractDelimited(2, aIP, ['.']));
+    y := StrToInt(ExtractDelimited(3, aIP, ['.']));
+    z := StrToInt(ExtractDelimited(4, aIP, ['.']));
+    result := 16777216 * w + 65536 * x + 256 * y + z;
+    WriteLn('Result: ', result);
   end;
   
 // -- End Hex Code  
@@ -362,137 +409,156 @@ var
 //----------------------------------------------------------------------------
     
 
-  function CreateTCPHost(port : LongInt) : Boolean;
+  function CreateTCPHost( aPort : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.CreateTCPHost(port, _ConSocketIndexes);
+    result := NetworkingDriver.CreateTCPHost(aPort);
   end;
   
-
-  function OpenTCPConnectionToHost(ip : String; port : LongInt) : Boolean;
+  function OpenTCPConnectionToHost( aIP : String;  aPort : LongInt) : Connection;
   begin
-    result := NetworkingDriver.OpenTCPConnectionToHost(ip, port, _SendSocketIndexes);
+    result := NetworkingDriver.OpenTCPConnectionToHost(aIP, aPort);
   end;   
   
-  function ServerAcceptTCPConnection() : String;
+  function ServerAcceptTCPConnection() : LongInt;
   begin
-    result := NetworkingDriver.ServerAcceptTCPConnection(_ReceiveSocketIndexes, _ConSocketIndexes);
+    result := NetworkingDriver.ServerAcceptTCPConnection();
+  end;
+
+  procedure EnqueueNewConnection(aConnection : Connection);
+  var
+    lNewConLink : NewConnectionPtr;
+    lLastLink : NewConnectionPtr = nil;
+  begin
+    New(lNewConLink);  
+    lNewConLink^.con        := aConnection;
+    lNewConLink^.nextCon    := nil;
+
+    if _NewConnectionQueue = nil then
+      _NewConnectionQueue   := lNewConLink
+    else begin
+      lLastLink := _NewConnectionQueue;
+
+      while lLastLink^.nextCon <> nil do
+        lLastLink := lLastLink^.nextCon;
+
+      lLastLink^.nextCon := lNewConLink;
+    end;  
+    _NewConnectionCount += 1; 
+  end;
+
+  function FetchConnection() : Connection;
+  var
+    lTmp : NewConnectionPtr;
+  begin  
+    result := nil;
+    if _NewConnectionQueue = nil then exit;
+
+    result := _NewConnectionQueue^.con;
+
+    lTmp := _NewConnectionQueue^.nextCon;
+    Dispose(_NewConnectionQueue);
+    _NewConnectionQueue := lTmp;
+    _NewConnectionCount -= 1; 
+  end;
+
+  function ConnectionQueueSize() : LongInt;
+  begin
+    result := _NewConnectionCount;
   end;
 
 //----------------------------------------------------------------------------
 // Messages
 //----------------------------------------------------------------------------
   
-  procedure EnqueueMessage(msg : String; ip : String; port : LongInt);
+  procedure EnqueueMessage( aMsg : String; aConnection : Connection);
   var
     MsgData   : MessagePtr;
   begin
     New(MsgData);  
-    
-    MsgData^.data.msg := msg;
-    MsgData^.data.IP := ip;
-    MsgData^.data.port := port;
+    MsgData^.data := aMsg;
     MsgData^.next  := nil;
-    if _FirstMessage = nil then
+    if aConnection^.firstMsg = nil then
     begin
-      _FirstMessage := MsgData;
-      _LastMessage  := MsgData;
+      aConnection^.firstMsg := MsgData;
+      aConnection^.lastMsg  := MsgData;
     end else begin
-      _LastMessage^.next := MsgData;
-      _LastMessage       := MsgData;
+      aConnection^.lastMsg^.next := MsgData;
+      aConnection^.lastMsg       := MsgData;
     end;  
-    _MessageCount += 1;    
+    aConnection^.MsgCount += 1;    
   end;
    
-  function DequeueMessage() : MessageData;
+  function ReadMessage(aConnection : Connection) : String;
   var
     lTmp : MessagePtr;
-  begin  
-    if _FirstMessage = nil then begin _LastMessage := nil; exit; end; 
-    
-    result.msg := _FirstMessage^.data.msg;
-    result.ip  := _FirstMessage^.data.ip;
-    result.port  := _FirstMessage^.data.port;
-    lTmp := @_FirstMessage^.next^;
-    Dispose(_FirstMessage);
-    _FirstMessage := lTmp;
-    _MessageCount -= 1;
+  begin      
+    if not Assigned(aConnection) or (aConnection^.msgCount = 0) then exit;
+    if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
+    result := aConnection^.firstMsg^.data;
+    lTmp := aConnection^.firstMsg^.next;
+    Dispose(aConnection^.firstMsg);
+    aConnection^.firstMsg := lTmp;
+    aConnection^.msgCount -= 1;
   end;
   
-  function PopAllMessages() : MessageDataArray;
+  procedure ClearMessageQueue(aConnection : Connection);
   var
     i : LongInt;
   begin
-    SetLength(result, _MessageCount);
-    for i := Low(result) to High(result) do
+    for i := 0 to aConnection^.msgCount do
     begin
-      result[i] := DequeueMessage();
+      ReadMessage(aConnection);
     end;
   end;  
 
-  function GetMessage() : String;
-  begin
-    result := '';
-    if _FirstMessage = nil then exit;
-    result := _FirstMessage^.data.msg;
-  end;
-
-  function GetIPFromMessage() : String;
-  begin
-    result := '';
-    if _FirstMessage = nil then exit;
-    result := _FirstMessage^.data.IP;
-    
-  end;
-
-  function GetPortFromMessage() : LongInt;
+  function ConnectionIP(aConnection : Connection) : LongInt;
   begin
     result := 0;
-    if _FirstMessage = nil then exit;
-    result := _FirstMessage^.data.port;    
+    if not Assigned(aConnection) then exit;
+    result := aConnection^.ip;
   end;
 
-  function GetMessageCount() : LongInt;
+  function ConnectionPort(aConnection : Connection) : LongInt;
   begin
-    result := _MessageCount;
+    result := 0;
+    if not Assigned(aConnection) then exit;
+    result := aConnection^.port;
   end;
 
-  procedure DequeueTopMessage();
+  function MessageCount(aConnection : Connection) : LongInt;
   begin
-    DequeueMessage();
-  end;
-
-  procedure ClearMessageQueue();
-  begin
-    PopAllMessages();
+    result := 0;
+    if not Assigned(aConnection) then exit;
+    result := aConnection^.msgCount;
   end;
 
   function TCPMessageReceived() : Boolean;
   begin
-    result := NetworkingDriver.TCPMessageReceived(_ReceiveSocketIndexes);
+    result := NetworkingDriver.TCPMessageReceived();
   end;
   
-  function BroadcastTCPMessage(msg : String) : StringArray;
+  function BroadcastTCPMessage( aMsg : String) : Boolean;
   begin
-    result := NetworkingDriver.BroadcastTCPMessage(msg, _SendSocketIndexes);
+    result := NetworkingDriver.BroadcastTCPMessage(aMsg);
   end;
   
-  function SendTCPMessageTo(msg, ip : String; port : LongInt) : String;
+  function SendTCPMessageTo( aMsg : String; aConnection : Connection) : Connection;
   begin
-    result := NetworkingDriver.SendTCPMessageTo(msg, ip, port, _SendSocketIndexes);
+    result := NetworkingDriver.SendTCPMessageTo(aMsg, aConnection);
   end;
 
 //----------------------------------------------------------------------------
 // UDP
 //----------------------------------------------------------------------------
 
-  function OpenUDPListenerSocket(port : LongInt) : Boolean;
+  function CreateUDPSocket( aPort : LongInt) : LongInt;
   begin
-    result := NetworkingDriver.OpenUDPListenerSocket(port, _UDPListenSocketIndexes);
+    result := NetworkingDriver.CreateUDPSocket(aPort);
   end;
   
-  function OpenUDPSendSocket() : Boolean;
+  function CreateUDPConnection(aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
   begin
-    result := NetworkingDriver.OpenUDPSendSocket();
+    result := NetworkingDriver.CreateUDPConnection(aDestIP, aDestPort, aInPort);
   end;
 
   function UDPMessageReceived() : Boolean;
@@ -500,38 +566,61 @@ var
     result := NetworkingDriver.UDPMessageReceived();
   end;
   
-  function SendUDPMessage(msg, ip : String; port : LongInt) : Boolean;
+  function SendUDPMessage( aMsg : String; aConnection : Connection) : Boolean;
   begin
-    result := NetworkingDriver.SendUDPMessage(msg, ip, port);
+    result := NetworkingDriver.SendUDPMessage(aMsg, aConnection);
   end;
 
 //----------------------------------------------------------------------------
 // Close
 //----------------------------------------------------------------------------
 
-  function CloseTCPHostSocket(aPort : LongInt) : Boolean;
+  function CloseTCPHostSocket( aPort : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.CloseTCPHostSocket(_ConSocketIndexes, aPort);    
+    result := NetworkingDriver.CloseTCPHostSocket(aPort);    
   end;
 
-  function CloseTCPReceiverSocket(aIP : String; aPort : LongInt) : Boolean;
+  function CloseConnection(var aConnection : Connection) : Boolean;
   begin
-    result := NetworkingDriver.CloseTCPReceiverSocket(_ReceiveSocketIndexes, aIP, aPort);    
+    result := NetworkingDriver.CloseConnection(aConnection);    
   end;
 
-  function CloseTCPSenderSocket(aIP : String; aPort : LongInt) : Boolean;
+  function CloseUDPListenSocket( aPort : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.CloseTCPSenderSocket(_SendSocketIndexes, aIP, aPort);    
+    result := NetworkingDriver.CloseUDPListenSocket(aPort);    
   end;
 
-  function CloseUDPListenSocket(aPort : LongInt) : Boolean;
-  begin
-    result := NetworkingDriver.CloseUDPListenSocket(_UDPListenSocketIndexes, aPort);    
+  procedure CloseAllTCPHostSocket();
+  begin     
+    NetworkingDriver.CloseAllTCPHostSocket();    
   end;
 
-  function CloseUDPSendSocket() : Boolean;
+  procedure CloseAllConnections();
+  begin        
+    NetworkingDriver.CloseAllConnections();    
+  end;
+
+  procedure CloseAllUDPListenSocket();
+  begin        
+    NetworkingDriver.CloseAllUDPListenSocket();    
+  end;
+
+  procedure CloseAllSockets();
   begin
-    result := NetworkingDriver.CloseUDPSendSocket();    
+    CloseAllTCPHostSocket();
+    CloseAllConnections();
+    CloseAllUDPListenSocket();
+  end;
+
+  procedure ReleaseAllConnections();
+  var
+    i : LongInt;
+  begin
+    NetworkingDriver.FreeAllNetworkingResources();
+
+    for i := 0 to _NewConnectionCount - 1 do
+      FetchConnection();
+    _NewConnectionCount := 0;
   end;
 
 //----------------------------------------------------------------------------
@@ -540,24 +629,9 @@ var
 
   function MyIP() : String;
   begin
-    result := NetworkingDriver.GetMyIP();
+    result := NetworkingDriver.MyIP();
   end;
 
 //=============================================================================
 
-  initialization 
-  begin    
-    InitNamedIndexCollection(_ReceiveSocketIndexes);
-    InitNamedIndexCollection(_SendSocketIndexes);
-    InitNamedIndexCollection(_ConSocketIndexes);    
-    InitNamedIndexCollection(_UDPListenSocketIndexes);
-  end;
-
-  finalization
-  begin
-    FreeNamedIndexCollection(_ReceiveSocketIndexes);
-    FreeNamedIndexCollection(_SendSocketIndexes);
-    FreeNamedIndexCollection(_ConSocketIndexes);
-    FreeNamedIndexCollection(_UDPListenSocketIndexes);
-  end;
 end.

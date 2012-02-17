@@ -210,7 +210,7 @@ implementation
 				{$endif}
 			 {$endif}
              sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers, sgUtils,
-             sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps; // Swingame
+             sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps, sgNetworking; // Swingame
 
 //----------------------------------------------------------------------------
 // Global variables for resource management.
@@ -394,7 +394,9 @@ implementation
         ReleaseAllSoundEffects();
         ReleaseAllPanels();
         ReleaseAllMaps();
+        ReleaseAllSprites();
         ReleaseAllCharacters();
+        ReleaseAllConnections();
         _Bundles.deleteAll();
     end;
     

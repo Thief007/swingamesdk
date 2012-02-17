@@ -111,6 +111,8 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
+            ('messageptr',      'messageptr'),
+            ('connection',      'connection'),
         ],
         '_type_switcher': {
             None:       '#2# ',

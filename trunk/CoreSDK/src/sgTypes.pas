@@ -1054,6 +1054,44 @@ interface
       // Event callback mechanisms
       DrawAsVectors:        Boolean;
     end;
+
+    /// The Pointer to a MessageLink Creating a String LinkedList
+    ///
+    /// @class MessagePtr
+    /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
+    /// @field pointer : ^MessageLink
+    MessagePtr = ^MessageLink;
+
+    ///@struct MessageLink
+    ///@via_pointer
+    MessageLink = packed record
+      data  : String;
+      next  : MessagePtr;
+    end;  
+
+    ///@struct ConnectionData
+    ///@via_pointer
+    ConnectionData = packed record
+      socket          : Pointer;
+      ip              : LongInt;
+      port            : LongInt;
+      firstMsg        : MessagePtr;
+      lastMsg         : MessagePtr;
+      msgCount        : LongInt;
+      isTCP           : Boolean;
+    end;
+
+    /// The Pointer to ConnectionData
+    ///
+    /// @class Connection
+    /// @pointer_wrapper
+    /// @no_free_pointer_wrapper
+    /// @field pointer : ^ConnectionData
+    Connection  = ^ConnectionData;
+
+
+
     
 //=============================================================================
 implementation

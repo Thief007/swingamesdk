@@ -197,12 +197,6 @@ implementation
 	  begin
 	    
 		  SDL_UpperBlit(GetSurface(sText), @SDLrc, GetSurface(dest), @rect );
-    	  WriteLn('Original W', width);
-      	WriteLn('SDLrc W', sdlrc.w);
-        WriteLn('Rect W', rect.w);
-        WriteLn('sText W', GetSurface(sText)^.w);
-        WriteLn('sText BMP W', sText^.width);
-        WriteLn('rc W',rc.width);
 		  _ScreenDirty := True;
 		  FreeBitmap(sText);
 		  exit;
