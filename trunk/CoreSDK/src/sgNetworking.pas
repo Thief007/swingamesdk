@@ -82,6 +82,9 @@ uses
   /// @param aConnection Send the message through this connection's socket.
   ///
   /// @lib
+  /// @class Connection
+  /// @method SendTCPMessage
+  /// @self 2
   /// @sn sendTCPMessageTo:%s aMsg:%s aConnection:%s
   function SendTCPMessageTo           ( aMsg : String; aConnection : Connection) : Connection;
 
@@ -93,6 +96,8 @@ uses
   /// @param aConnection The new connection to add to the list
   ///
   /// @lib
+  /// @class Connection
+  /// @method EnqueueNewConnection
   /// @sn enqueueNewConnection:%s aConnection:%s
   procedure EnqueueNewConnection(aConnection : Connection);
 
@@ -150,7 +155,9 @@ uses
   /// @param aConnection Send the Message through this connection's Socket.
   ///
   /// @lib
-  /// @uname SendUDPMessage 
+  /// @class Connection
+  /// @method SendUDPMessage
+  /// @self 2
   /// @sn sendUDPMessage:%s aMsg:%s aConnection:%s
   function SendUDPMessage             ( aMsg : String; aConnection : Connection) : Boolean;
 
@@ -163,6 +170,8 @@ uses
   /// @param aConnection The connection to extract data from
   ///
   /// @lib
+  /// @class Connection
+  /// @method ConnectionIP
   /// @sn connectionIP:%s aConnection:%s
   function  ConnectionIP(aConnection : Connection) : LongInt;
 
@@ -171,6 +180,8 @@ uses
   /// @param aConnection The connection to extract data from
   ///
   /// @lib
+  /// @class Connection
+  /// @method ConnectionPort
   /// @sn connectionPort:%s aConnection:%s
   function  ConnectionPort(aConnection : Connection) : LongInt;
 
@@ -179,18 +190,24 @@ uses
   /// @param aConnection The connection to extract data from
   ///
   /// @lib
+  /// @class Connection
+  /// @method ReadMessage
   /// @sn readMessage:%s aConnection:%s
   function ReadMessage            (aConnection : Connection) : String ;
 
   /// Clears the Message Queue
   ///
   /// @lib
+  /// @class Connection
+  /// @method ClearMessageQueue
   /// @sn clearMessageQueue:%s aConnection:%s
   procedure ClearMessageQueue          (aConnection : Connection) ;
 
   /// Gets the Size of the Message Queue
   ///
   /// @lib
+  /// @class Connection
+  /// @method MessageCount
   /// @sn messageCount:%s aConnection:%s
   function  MessageCount            (aConnection : Connection) : LongInt;
 
@@ -200,7 +217,9 @@ uses
   /// @param aConnection The connection to enqueue the message into
   ///
   /// @lib
-  /// @uname EnqueueMessage 
+  /// @class Connection
+  /// @method EnqueueMessage
+  /// @self 2
   /// @sn enqueueMessage:%s aMsg:%s aConnection:%s
   procedure EnqueueMessage            ( aMsg : String; aConnection : Connection);
 
@@ -314,6 +333,11 @@ uses
   ///
   /// @lib
   procedure ReleaseAllConnections();
+
+  /// Frees a Message Pointer.
+  ///
+  /// @lib
+  procedure FreeMessagePtr(var aMessagePtr : MessagePtr);
 
 //----------------------------------------------------------------------------
 // Other
@@ -508,7 +532,7 @@ var
     if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
     result := aConnection^.firstMsg^.data;
     lTmp := aConnection^.firstMsg^.next;
-    Dispose(aConnection^.firstMsg);
+    FreeMessagePtr(aConnection^.firstMsg);
     aConnection^.firstMsg := lTmp;
     aConnection^.msgCount -= 1;
   end;
@@ -596,11 +620,6 @@ var
   begin
     result := NetworkingDriver.CloseConnection(aConnection);    
   end;
-  
-  procedure FreeConnection(var aConnection : Connection);
-  begin
-    result := CloseConnection(aConnection);
-  end;
 
   function CloseUDPListenSocket( aPort : LongInt) : Boolean;
   begin
@@ -627,6 +646,20 @@ var
     CloseAllTCPHostSocket();
     CloseAllConnections();
     CloseAllUDPListenSocket();
+  end;
+
+  procedure FreeConnection(var aConnection : Connection);
+  begin
+    CallFreeNotifier(aConnection);
+    Dispose(aConnection);
+    aConnection := nil;
+  end;
+
+  procedure FreeMessagePtr(var aMessagePtr : MessagePtr);
+  begin
+    CallFreeNotifier(aMessagePtr);
+    Dispose(aMessagePtr);
+    aMessagePtr := nil;
   end;
 
   procedure ReleaseAllConnections();
