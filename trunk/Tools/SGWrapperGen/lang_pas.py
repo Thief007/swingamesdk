@@ -34,6 +34,7 @@ _array_copy_data = {
     'point2darray': 'Point2D',
     'stringarray':  'String',
     'trianglearray':  'Triangle',
+    'fingerarray':  'Finger',
 }
 
 # # dictionary for start of method names for copying fixed
@@ -147,7 +148,7 @@ def _do_create_pas_library_code(method):
         if not result_param.maps_result: #in case of returning var length array
             result_param = method_alias.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray','stringarray','bitmaparray','trianglearray']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray','stringarray','bitmaparray','trianglearray','fingerarray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', method_alias.name)
             assert False
         
