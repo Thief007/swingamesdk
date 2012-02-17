@@ -122,7 +122,7 @@ _type_switcher = {
         'guielementkind':       'GUIElementKind %s',
         'eventkind':          'EventKind %s',
         'filedialogselecttype':          'FileDialogSelectType %s',
-        
+        'messageptr':          'void *%s',
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
@@ -168,7 +168,7 @@ _type_switcher = {
         'guicheckbox':              'GUICheckbox %s',
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
-        'connection':           'Connection %s',  
+        'connection':           'Connection %s', 
         
         'string':       'ref string %s',
         'longint':      'ref int %s',

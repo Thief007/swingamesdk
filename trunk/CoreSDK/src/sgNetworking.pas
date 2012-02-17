@@ -334,11 +334,6 @@ uses
   /// @lib
   procedure ReleaseAllConnections();
 
-  /// Frees a Message Pointer.
-  ///
-  /// @lib
-  procedure FreeMessagePtr(var aMessagePtr : MessagePtr);
-
 //----------------------------------------------------------------------------
 // Other
 //----------------------------------------------------------------------------
@@ -532,7 +527,7 @@ var
     if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
     result := aConnection^.firstMsg^.data;
     lTmp := aConnection^.firstMsg^.next;
-    FreeMessagePtr(aConnection^.firstMsg);
+    Dispose(aConnection^.firstMsg);
     aConnection^.firstMsg := lTmp;
     aConnection^.msgCount -= 1;
   end;
@@ -653,13 +648,6 @@ var
     CallFreeNotifier(aConnection);
     Dispose(aConnection);
     aConnection := nil;
-  end;
-
-  procedure FreeMessagePtr(var aMessagePtr : MessagePtr);
-  begin
-    CallFreeNotifier(aMessagePtr);
-    Dispose(aMessagePtr);
-    aMessagePtr := nil;
   end;
 
   procedure ReleaseAllConnections();
