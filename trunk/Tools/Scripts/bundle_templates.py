@@ -1,3 +1,4 @@
+import sys
 import os
 import platform
 import subprocess
@@ -125,30 +126,41 @@ def assemble_dist(language, dist_dict, use_sgsdk):
     if use_sgsdk:
         # print "copying library"
         dist_source_folder = swingame_path + "Dist/Source/"
-        if (get_os_name() == "Windows"):
-            copy_without_svn(dist_source_folder+"bin/win", specificdist_folder+"lib/win", overwrite = False)
-        elif (get_os_name() == "Mac OS X"):
+        
+        if "Windows" in dist_dict['os']:
+            if not os.path.exists(dist_source_folder+"bin/win"):
+                print >> sys.stderr, 'Missing Windows dll from', dist_source_folder+"bin/win"
+            else:    
+                copy_without_svn(dist_source_folder+"bin/win", specificdist_folder+"lib/win", overwrite = False)
+            
+        if "Mac OS X" in dist_dict['os']:
             if dist_dict['staticsgsdk']:
                 # Copy staticlibs
-                swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-sdl13.a", specificdist_folder+"lib/sdl13/mac/libSGSDK.a")
-                swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-godly.a", specificdist_folder+"lib/godly/mac/libSGSDK.a")
+                if not os.path.exists(dist_source_folder+"bin/mac/sgsdk-sdl13.a"):
+                    print >> sys.stderr, 'Missing static libraries for mac'
+                else:
+                    swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-sdl13.a", specificdist_folder+"lib/sdl13/mac/libSGSDK.a")
+                    swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-godly.a", specificdist_folder+"lib/godly/mac/libSGSDK.a")
             else:
-                # Copy frameworks
-                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/mac/SGSDK.framework")
-                
-                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/sdl13/mac/SGSDK.framework")
-                cur = os.getcwd()
-                os.chdir(specificdist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
-                # print os.getcwd()
-                os.remove('Current')
-                os.symlink('./3.0badass', 'Current')
-                
-                copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/godly/mac/SGSDK.framework")
-                os.chdir(specificdist_folder+"lib/godly/mac/SGSDK.framework/Versions")
-                # print os.getcwd()
-                os.remove('Current')
-                os.symlink('./3.0godly', 'Current')
-                os.chdir(cur)
+                if not os.path.exists(dist_source_folder+"bin/mac/SGSDK.framework"):
+                    print >> sys.stderr, 'Missing SwinGame framework for mac'
+                else:
+                    # Copy frameworks
+                    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/mac/SGSDK.framework")
+                    
+                    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/sdl13/mac/SGSDK.framework")
+                    cur = os.getcwd()
+                    os.chdir(specificdist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
+                    # print os.getcwd()
+                    os.remove('Current')
+                    os.symlink('./3.0badass', 'Current')
+                    
+                    copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/godly/mac/SGSDK.framework")
+                    os.chdir(specificdist_folder+"lib/godly/mac/SGSDK.framework/Versions")
+                    # print os.getcwd()
+                    os.remove('Current')
+                    os.symlink('./3.0godly', 'Current')
+                    os.chdir(cur)
 
 def main():
     output_header(['Packaging SwinGame Templates'])

@@ -33,14 +33,14 @@ def main():
                 print >> sys.stderr, ' !! Missing Template: ', specificdist_folder, ' !!'
                 continue
             
-            base_dir = tmp_dir + copy_dist['template_path_name']
+            base_dir = tmp_dir + copy_dist['template_path_name'] + '/'
             to_dir = base_dir + 'ProjectTemplate'
             to_zip = dist_folder + copy_dist['template_path_name'] + '.zip'
             
             swin_shutil.copytree(specificdist_folder, to_dir, symlinks=True)
             
             os.chdir(base_dir)
-            run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-i', '*' ])
+            run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
             
     print("\nFinished!")
     

@@ -201,13 +201,13 @@ template_details = {
             'copy_dist':    [
                 { 
                   'target':     'mono',
-                  'os':         ['Mac OS X', 'Linux'],
+                  'os':         [ 'Mac OS X', 'Linux' ],
                   'lib':        {'Mac OS X': 'lib', 'Linux': 'lib'},
                   'staticsgsdk':    False,
                 },
                 { 
                   'target':         'vs08',
-                  'os':             ['Windows'],
+                  'os':             [ 'Windows' ],
                   'lib':            {'Windows': 'lib/win'},
                   'staticsgsdk':    False,
                 },
