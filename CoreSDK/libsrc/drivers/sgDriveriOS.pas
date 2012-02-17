@@ -97,7 +97,9 @@ implementation
 	procedure DefaultInitProcedure();
 	begin
     LoadDefaultiOSDriver();
+    {$IFDEF IOS}
     iOSDriver.Init();
+    {$ENDIF}
 	end;
 
 
@@ -112,9 +114,7 @@ implementation
 		iOSDriver.ProcessAxisMotionEvent	:= @DefaultProcessAxisMotionEventProcedure;
 		iOSDriver.AxisToG									:= @DefaultAxisToGProcedure;
 		iOSDriver.ProcessTouchEvent				:= @DefaultProcessTouchEventProcedure;
-		{IFDEF IOS}
-    iOSDriver.Init();
-    {ENDIF}
+   	iOSDriver.Init();
 	end;
 end.
 
