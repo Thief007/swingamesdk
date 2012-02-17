@@ -52,6 +52,12 @@ ICON=SwinGame
 
 CLEAN="N"
 
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=false
+
 Usage()
 {
     echo "Usage: [-c] [-h] [-d] [name]"
@@ -69,11 +75,19 @@ Usage()
 
 RELEASE=""
 
-while getopts chri: o
+while getopts chri:g:b: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
     h)  Usage ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     d)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
@@ -84,6 +98,34 @@ shift $((${OPTIND}-1))
 
 if [ "a$1a" != "aa" ]; then
     GAME_NAME=$1
+fi
+
+if [ "$OS" = "$MAC" ]; then
+    if [ ${SDL_13} = true ]; then
+      TMP_DIR="${TMP_DIR}/badass"
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL} = true ]; then
+        TMP_DIR="${TMP_DIR}/godly"
+      LIB_DIR="${APP_PATH}/lib/godly/mac"
+    else
+      TMP_DIR="${TMP_DIR}/sdl12"
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    #
+    # This needs 1.3 versions of SDL for Windows...
+    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    #
+    
+    # if [ ${SDL_13} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # elif [ ${OPENGL} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # else
+    SDL_13=false
+    OPENGL=false
+    LIB_DIR="${APP_PATH}/lib/win"
+    # fi
 fi
 
 #
@@ -121,7 +163,7 @@ doMacPackage()
     
     echo "  ... Adding Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
-    cp -R -p "${LIB_DIR}/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
+    cp -R -p "./lib/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
     
     pushd . >> /dev/null
     cd "${GAMEAPP_PATH}/Contents/Resources"
@@ -183,7 +225,7 @@ doCompile()
 doLinuxPackage()
 {
     echo "  ... Copying SwinGame Library"
-    cp -R -p "${LIB_DIR}/SwinGame.dll" "${OUT_DIR}/"
+    cp -R -p "./lib/SwinGame.dll" "${OUT_DIR}/"
     RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 

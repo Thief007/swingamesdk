@@ -258,7 +258,7 @@ doMacCompile()
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
