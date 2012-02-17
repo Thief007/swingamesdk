@@ -55,7 +55,7 @@ interface
     public
       constructor Create(data: Longint);
 
-      property Value: Longint read val;
+      property Value: Longint read val write val;
     end;
 
     // Used by release all
