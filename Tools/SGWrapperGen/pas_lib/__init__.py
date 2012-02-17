@@ -82,8 +82,11 @@ _type_switcher = {
     'eventkind':            'EventKind',
     'filedialogselecttype': 'FileDialogSelectType',
     'guieventcallback':     'GUIEventCallback',
-}
 
+    'messageptr'        :   'MessagePtr',
+    'connection'        :   'Connection',
+}
+ 
 
 def main():
     '''Load all of the files in this directory into attributes of this module.'''

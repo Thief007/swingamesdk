@@ -71,6 +71,8 @@ _type_switcher = {
         'guicheckbox':              'GUICheckbox %s',
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
+        'messageptr':            'MessagePtr %s',
+        'connection':           'Connection %s',    
         
         
         'resourcekind':     'ResourceKind %s',
@@ -167,6 +169,8 @@ _type_switcher = {
         'guicheckbox':              'GUICheckbox %s',
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
+        'messageptr':            'MessagePtr %s',
+        'connection':           'Connection %s',  
         
         'string':       'ref string %s',
         'longint':      'ref int %s',
@@ -233,6 +237,8 @@ _type_switcher = {
         'guicheckbox':   'GUICheckbox %s',
         'guitextbox':    'GUITextbox %s',
         'guilabel':      'GUILabel %s',
+        'messageptr':   'MessagePtr %s',
+        'connection':   'Connection %s',  
         
         
         #Enum
@@ -297,6 +303,8 @@ _data_switcher = {
         'guicheckbox':              'GUICheckbox.Create( %s)',
         'guitextbox':              'GUITextbox.Create( %s)',
         'guilabel':              'GUILabel.Create( %s)',
+        'messageptr':            'MessagePtr.Create(%s)',
+        'connection':           'Connection.Create(%s)',  
         
         
         
@@ -372,8 +380,9 @@ _adapter_type_switcher = {
         'guilist':              'IntPtr %s',
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
-        'guilabel':             'IntPtr %s',
-        
+        'guilabel':             'IntPtr %s',        
+        'messageptr':           'IntPtr %s',
+        'connection':           'IntPtr %s',  
         
         #Structs
         'triangle':     'Triangle %s',
@@ -441,7 +450,9 @@ _adapter_type_switcher = {
         'guilist':              'IntPtr %s',
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
-        'guilabel':             'IntPtr %s',
+        'guilabel':             'IntPtr %s',    
+        'messageptr':           'IntPtr %s',
+        'connection':           'IntPtr %s',  
         
               
         'resourcekind': 'int %s',
@@ -545,7 +556,9 @@ _adapter_type_switcher = {
         'guilist':              'ref IntPtr %s',
         'guicheckbox':          'ref IntPtr %s',
         'guitextbox':           'ref IntPtr %s',
-        'guilabel':             'ref IntPtr %s',
+        'guilabel':             'ref IntPtr %s',    
+        'messageptr':           'ref IntPtr %s',
+        'connection':           'ref IntPtr %s',  
         
         
         
@@ -583,7 +596,9 @@ _adapter_type_switcher = {
         'guilist':              'ref IntPtr %s',
         'guicheckbox':          'ref IntPtr %s',
         'guitextbox':           'ref IntPtr %s',
-        'guilabel':             'ref IntPtr %s',
+        'guilabel':             'ref IntPtr %s',    
+        'messageptr':           'ref IntPtr %s',
+        'connection':           'ref IntPtr %s',  
               
         
         'single':               'ref float %s',
@@ -665,7 +680,9 @@ _adapter_type_switcher = {
         'guilist':              'IntPtr %s',
         'guicheckbox':          'IntPtr %s',
         'guitextbox':           'IntPtr %s',
-        'guilabel':             'IntPtr %s',
+        'guilabel':             'IntPtr %s',    
+        'messageptr':           'IntPtr %s',
+        'connection':           'IntPtr %s',  
         
         
         'maptile':              'MapTile %s',
