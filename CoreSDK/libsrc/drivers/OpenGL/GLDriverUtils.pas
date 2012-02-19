@@ -1,19 +1,16 @@
 unit GLDriverUtils;
 
 interface
-  uses sgTypes;
+  uses sgTypes, sgShared;
   
-  type
-    GLRectangle = record
-      x, y, width, height: Single;
-    end;
+
 
   procedure FloatColors(c: Color; var r, g, b, a: Single);
 
   // Return a power of 2 that is greater than or equal to v.
   function Pow2GEQ(v: Longint) : Longint;
 
-  procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : GLRectangle); 
+  procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : RectPtr); 
 
 implementation
   uses gl;
@@ -38,7 +35,7 @@ implementation
   end;
 
   // Render the srcRect part of the tex texture, to the dest rectangle
-  procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : GLRectangle); 
+  procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : RectPtr); 
   var
     //lTexture : GLuint;
     textureCoord : Array[0..3] of Point2D;
@@ -51,10 +48,10 @@ implementation
     textureCoord[3].x := ratioW;      textureCoord[3].y := ratioH;
 
     //set up vertices co-ords
-    vertices[0].x := destRect.x;                        vertices[0].y := destRect.y;
-    vertices[1].x := destRect.x;                        vertices[1].y := destRect.y + destRect.height;
-    vertices[2].x := destRect.x + destRect.width;       vertices[2].y := destRect.y;
-    vertices[3].x := destRect.x + destRect.width;       vertices[3].y := destRect.y + destRect.height;
+    vertices[0].x := destRect^.x;                        vertices[0].y := destRect^.y;
+    vertices[1].x := destRect^.x;                        vertices[1].y := destRect^.y + destRect^.height;
+    vertices[2].x := destRect^.x + destRect^.width;       vertices[2].y := destRect^.y;
+    vertices[3].x := destRect^.x + destRect^.width;       vertices[3].y := destRect^.y + destRect^.height;
     
     //enable vertex and texture array
     glEnableClientState(GL_VERTEX_ARRAY);

@@ -24,7 +24,7 @@ interface
     
 implementation
   uses sgTypes,
-       sgDriverGraphics, sdl13, sgShared, sgDriverImages, sdl13_image, SysUtils, sgSharedUtils; // sdl;
+       sgDriverGraphics, sdl13, sgShared, sgDriverImages, sdl13_image, SysUtils, sgSharedUtils, GLDriverUtils; // sdl;
   const
     // PixelFormat
     GL_COLOR_INDEX     = $1900;
@@ -346,7 +346,8 @@ implementation
     vertices : Array[0..3] of Point2D;
     lRatioX, lRatioY, lRatioW, lRatioH, lTexWidth, lTexHeight : Single;
   begin
-    if ((srcRect = nil)) then //check for /0 s
+    
+    if ((srcRect = nil) and (srcBmp^.textureWidthRatio <> 0) and ( srcBmp^.textureHeightRatio <> 0)) then //check for /0 s
     begin
       lRatioX := 0;
       lRatioY := 0;
@@ -362,37 +363,12 @@ implementation
       lRatioW := lRatioX + GetCoords(lTexWidth, srcRect^.width);
       lRatioH := lRatioY + GetCoords(lTexHeight, srcRect^.height);
     end;
-    //set up texture co-ords
-    textureCoord[0].x := lRatioX;      textureCoord[0].y := lRatioY;
-    textureCoord[1].x := lRatioX;      textureCoord[1].y := lRatioH;
-    textureCoord[2].x := lRatioW;      textureCoord[2].y := lRatioY;
-    textureCoord[3].x := lRatioW;      textureCoord[3].y := lRatioH;
 
-    //set up vertices co-ords
-    vertices[0].x := destRect^.x;                        vertices[0].y := destRect^.y;
-    vertices[1].x := destRect^.x;                        vertices[1].y := destRect^.y + destRect^.height;
-    vertices[2].x := destRect^.x + destRect^.width;      vertices[2].y := destRect^.y;
-    vertices[3].x := destRect^.x + destRect^.width;      vertices[3].y := destRect^.y + destRect^.height;
-    
     //reset color
     glColor4f(1,1,1,1);
-    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-
-    //enable vertex and texture array
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-
-    glBindTexture( GL_TEXTURE_2D, Cardinal(srcBmp^.surface^) );
     
-    glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
-    glTexCoordPointer(2, GL_FLOAT, 0, @textureCoord[0]);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, Length(vertices));
-    glBindTexture( GL_TEXTURE_2D,0);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
- //   if (destBmp <> nil) then exit;
+    RenderTexture(Cardinal(srcBmp^.Surface^), lRatioX, lRatioY, lRatioW, lRatioH, destRect);
    
   end;
   

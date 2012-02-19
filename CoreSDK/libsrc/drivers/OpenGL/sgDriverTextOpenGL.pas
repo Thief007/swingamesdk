@@ -277,7 +277,7 @@ var
   delta:      FT_Vector;
   face:       FT_Face;
   adv:        Integer;        // Distance to advance between characters
-  destRect:   GLRectangle;
+  destRect:   Rectangle;
   left:       Single;
 begin
     if not assigned(font) then exit;
@@ -330,12 +330,12 @@ begin
 
       glTranslatef( left, font^.glyphs[glyphIdx].top - bmpH - font^.baseOffset, 0);
 
-      destRect.width  := bmpW;
-      destRect.height := bmpH;
+      destRect.width  := Round(bmpW);
+      destRect.height := Round(bmpH);
 
       // WriteLn('pf ch: ', ch, ' ', glyphIdx, ' tex: ', font^.textures[glyphIdx], ' tx: ', texpropx:4:2, ' ty: ', texpropy:4:2, ' bmpW: ', bmpW:4:2, ' bmpH: ', bmpH:4:2, ' adv: ', adv);
 
-      RenderTexture(font^.textures[glyphIdx], 0, texpropy, texpropx, 0, destRect); 
+      RenderTexture(font^.textures[glyphIdx], 0, texpropy, texpropx, 0, @destRect); 
       glPopMatrix();
 
       glTranslatef(adv, 0, 0);
