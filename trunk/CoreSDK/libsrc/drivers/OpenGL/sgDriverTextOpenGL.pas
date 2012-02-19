@@ -158,7 +158,7 @@ begin
       begin
         // if FT_Get_Char_Index(face, LongInt('U')) = i then
         //   Write('EE ');
-        buffer[2 * (idx + ypos * w)] := $00;
+        buffer[2 * (idx + ypos * w)] := $FF;
         buffer[2 * (idx + ypos * w) + 1] := $00;
       end;
 
@@ -168,10 +168,13 @@ begin
 
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
     //   WriteLn((xpos + ypos * w), ' to ', Length(buffer) - 1);
-
-    for idx := 2 * (xpos + ypos * w) + 2 to Length(buffer) - 1 do
+    
+    idx := 2 * (xpos + ypos * w) + 2;
+    while idx <= Length(buffer) - 2 do
     begin
-      buffer[idx] := $00;
+      buffer[idx] := $FF;
+      buffer[idx + 1] := $00;
+      idx += 2;
     end;
 
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
@@ -272,8 +275,8 @@ var
   ch:       Char;
   texpropx, texpropy: Single; // Texture proportions
   bmpW, bmpH: Single;         // Bitmap size
-  useKerning: Boolean;
-  previous:   Integer;        // Glyph index of previous character
+  // useKerning: Boolean;
+  // previous:   Integer;        // Glyph index of previous character
   delta:      FT_Vector;
   face:       FT_Face;
   adv:        Integer;        // Distance to advance between characters
@@ -287,8 +290,8 @@ begin
     glPushMatrix();
     glTranslatef(x, y, 0);
 
-    useKerning := FT_HAS_KERNING( face );
-    previous := 0;
+    // useKerning := FT_HAS_KERNING( face );
+    // previous := 0;
 
     destRect.x := 0;
     destRect.y := 0;
