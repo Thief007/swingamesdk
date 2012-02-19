@@ -670,7 +670,7 @@ implementation
     
     procedure ShowLogos();
     var
-        aniX, aniY : LongInt;
+        aniX, aniY, txtX, txtY : LongInt;
         i: Longint;
         f: Font;
         txt: String;
@@ -714,12 +714,16 @@ implementation
                 ClearScreen(ColorWhite);
                 RefreshScreen();
                 DrawBitmap(aniBmp, aniX, aniY);
-                
-                f := FontNamed('ArialLarge');
+
+                f := FontNamed('SwinGameText');
                 txt := 'SwinGame API by Swinburne University of Technology';
-                DrawText(txt, ColorBlack, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
+                txtX := (ScreenWidth() - TextWidth(f, txt)) div 2;
+                txtY := aniY + (ScreenHeight() - aniY + BitmapCellHeight(aniBmp)) div 2;
+
+                if txtY > aniY+ BitmapCellHeight(aniBmp) then DrawText(txt, ColorBlack, f, txtX, txtY );
+
                 f := FontNamed('LoadingFont');
-                DrawText(DLL_VERSION, ColorBlack, f, 5, 580);
+                DrawText(DLL_VERSION, ColorLightGrey, f, 5, ScreenHeight() - TextHeight(f, DLL_VERSION) - 2);
                 
                 i := 1;
                 while isPaused or (i < 120) do
@@ -751,6 +755,8 @@ implementation
                     if isSkip then break;
                     Delay(15);                  
                 end;
+                ClearScreen(ColorWhite);
+                RefreshScreen();
                 
                 while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) or isPaused do
                 begin
@@ -758,16 +764,15 @@ implementation
                     if isSkip then break;
                 end;
                 
-                i := 1;
-                ClearScreen(ColorWhite);
-                while isPaused or (i < 30) do
-                begin
-                    i += 1;
+                // i := 1;
+                // while isPaused or (i < 30) do
+                // begin
+                //     i += 1;
                     
-                    InnerProcessEvents();
-                    RefreshScreen(60);
-                    if isSkip then break;
-                end;
+                //     InnerProcessEvents();
+                //     RefreshScreen(60);
+                //     if isSkip then break;
+                // end;
             except on e:Exception do
                 {$IFDEF TRACE}
                 begin
