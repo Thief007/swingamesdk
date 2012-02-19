@@ -857,10 +857,10 @@ implementation
     if dest = nil then begin RaiseWarning('Cannot draw text, as no destination was supplied'); exit; end;
     if Length(theText) <= 0 then exit;
       
-    rect.x := x + 1;
-   	rect.y := y + 1;
-   	rect.width := TextWidth(theFont, theText) + 2;
-   	rect.height := TextHeight(theFont, theText) + 2;
+    rect.x := x; // + 1;
+   	rect.y := y; // + 1;
+   	rect.width := TextWidth(theFont, theText); // + 2;
+   	rect.height := TextHeight(theFont, theText); // + 2;
     PrintStrings(dest, theFont, theText, rect, textColor, ColorTransparent, AlignLeft);
   end;
 
@@ -873,9 +873,9 @@ implementation
     if Length(theText) <= 0 then exit;
       
     rect.x := x;
- 	rect.y := y;
-	rect.width := TextWidth(theFont, theText);
-	rect.height := TextHeight(theFont, theText);    
+ 	  rect.y := y;
+	  rect.width := TextWidth(theFont, theText);
+	  rect.height := TextHeight(theFont, theText);    
     PrintWideStrings(dest, theFont, theText, rect, textColor, ColorTransparent, AlignLeft);
   end;
   
@@ -918,10 +918,10 @@ implementation
     if Length(theText) <= 0 then exit;
     if (w <= 0) or (h <= 0) then exit;
 
-    rect.x := x + 1;
- 	rect.y := y + 1;
- 	rect.width := w - 2;
- 	rect.height := h - 2;
+    rect.x := x; // + 1;
+ 	  rect.y := y; // + 1;
+ 	  rect.width := w; // - 2;
+ 	  rect.height := h; // - 2;
     PrintStrings(dest, theFont, theText, rect, textColor, backColor, align);
   end;
   

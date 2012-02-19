@@ -36,13 +36,13 @@ f:20,20,24,21
 f:[21-31],[21-31],1,32
 
 //frame 32 is widest [SWIN    ] with a short delay
-f:32,32,6,33
+f:32,32,35,33
 
 //frames 33-43 spinning GAME
 f:[33-43],[33-43],1,44
 
 //frame 44 is [SWINGAME] (delay)
-f:44,44,20,45
+f:44,44,30,45
 
 //frame 45- is shrinking back to [I]
 f:[45-55],[45-55],1,56
@@ -58,7 +58,7 @@ f:[57-62],[5-0],1,
 //sounds
 //
 //s:ID,SND,filename
-s:0,SwinGameStart,SwinGameStart.ogg
+s:0,SwinGameStart,SwinGameStart.wav
 
 //Animation identifiers.
 //

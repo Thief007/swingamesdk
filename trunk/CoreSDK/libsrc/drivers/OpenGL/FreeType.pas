@@ -102,6 +102,12 @@ type
     	FT_RENDER_MODE_MAX
     	);
 
+    FT_Kerning_Mode = (
+        FT_KERNING_DEFAULT  = 0,
+        FT_KERNING_UNFITTED,
+        FT_KERNING_UNSCALED
+        );
+
 	FT_Library = 	Pointer;
     FT_Face = 		^FT_FaceRec;
     FT_Glyph = 		^FT_GlyphRec;
@@ -343,7 +349,37 @@ function FT_Glyph_To_Bitmap( 	the_glyph: 		PFT_Glyph;
                       			origin: 		PFT_Vector;
                                	destroy:		FT_Bool ): FT_Error; cdecl; external;
 
+function FT_Get_Kerning(    face:           FT_Face;
+                            left_glyph:     FT_UInt;
+                            right_glyph:    FT_UInt;
+                            kern_mode:      FT_Kerning_Mode;
+                            akerning:       PFT_Vector) : FT_Error; cdecl; external;
+
+    const 
+        FT_FACE_FLAG_SCALABLE         = 1 shl  0;
+        FT_FACE_FLAG_FIXED_SIZES      = 1 shl  1;
+        FT_FACE_FLAG_FIXED_WIDTH      = 1 shl  2;
+        FT_FACE_FLAG_SFNT             = 1 shl  3;
+        FT_FACE_FLAG_HORIZONTAL       = 1 shl  4;
+        FT_FACE_FLAG_VERTICAL         = 1 shl  5;
+        FT_FACE_FLAG_KERNING          = 1 shl  6;
+        FT_FACE_FLAG_FAST_GLYPHS      = 1 shl  7;
+        FT_FACE_FLAG_MULTIPLE_MASTERS = 1 shl  8;
+        FT_FACE_FLAG_GLYPH_NAMES      = 1 shl  9;
+        FT_FACE_FLAG_EXTERNAL_STREAM  = 1 shl 10;
+        FT_FACE_FLAG_HINTER           = 1 shl 11;
+        FT_FACE_FLAG_CID_KEYED        = 1 shl 12;
+        FT_FACE_FLAG_TRICKY           = 1 shl 13;
+    
+    function FT_HAS_KERNING( face : FT_Face ) : Boolean;
 
 implementation
 
+function FT_HAS_KERNING( face : FT_Face ) : Boolean;
+begin
+    if assigned(face) then result := (face^.face_flags and FT_FACE_FLAG_KERNING) = FT_FACE_FLAG_KERNING
+    else result := false;
+end;
+          
 end.
+
