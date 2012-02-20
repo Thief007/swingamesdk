@@ -1,18 +1,18 @@
 #include "Colors.h"
 #include "Graphics.h"
 
-color ColorBlue;
-color ColorGreen;
-color ColorRed;
-color ColorWhite;
-color ColorBlack;
-color ColorYellow;
-color ColorPink;
-color ColorTurquoise;
-color ColorGrey;
-color ColorMagenta;
-color ColorTransparent;
-color ColorLightGrey;
+color ColorBlue     = 0xff0000ff;
+color ColorGreen    = 0xff00ff00;
+color ColorRed      = 0xffff0000;
+color ColorWhite    = 0xffffffff;
+color ColorBlack    = 0xff000000;
+color ColorYellow   = 0xffffff00;
+color ColorPink     = 0xffff1493;
+color ColorTurquoise= 0xffced1ff;
+color ColorGrey     = 0xff808080;
+color ColorMagenta  = 0xffff00ff;
+color ColorTransparent = 0x0;
+color ColorLightGrey   = 0xffc8c8c8;
 
 void load_default_colors()
 {

@@ -18,8 +18,8 @@ def main():
         swin_shutil.rmtree(tmp_dir)
     
     os.mkdir(tmp_dir)
-        
     os.chdir(dist_folder)
+    
     for key, lang_template_dict in template_details.items():
         output_header(['Packaging %s Templates' % key])
         
@@ -42,6 +42,10 @@ def main():
             os.chdir(base_dir)
             run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
             
+            if copy_dist.has_key('pkg_script'):
+                copy_dist['pkg_script'](tmp_dir, to_dir)
+    
+    #swin_shutil.rmtree(tmp_dir)
     print("\nFinished!")
     
     

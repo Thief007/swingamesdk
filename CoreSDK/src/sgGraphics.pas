@@ -1311,7 +1311,7 @@ interface
   /// Pop the clipping rectangle of a bitmap.
   /// 
   /// @lib PopClipBmp
-  /// @sn PopClipBitmap:%s
+  /// @sn popClipBitmap:%s
   ///
   /// @class Bitmap
   /// @method PopClip

@@ -53,6 +53,12 @@ ICON=SwinGame
 
 CLEAN="N"
 
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=false
+
 Usage()
 {
     echo "Usage: [-c] [-h] [-r] [name]"
@@ -70,11 +76,19 @@ Usage()
 
 RELEASE=""
 
-while getopts chri: o
+while getopts chri:g:b: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_13=true
+        fi 
+        ;;
     h)  Usage ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            OPENGL=true
+        fi 
+        ;;
     r)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
@@ -103,11 +117,50 @@ else
     TMP_DIR="${TMP_DIR}/Debug"
 fi
 
+if [ "$OS" = "$MAC" ]; then
+    if [ ${SDL_13} = true ]; then
+      TMP_DIR="${TMP_DIR}/badass"
+      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+    elif [ ${OPENGL} = true ]; then
+        TMP_DIR="${TMP_DIR}/godly"
+      LIB_DIR="${APP_PATH}/lib/godly/mac"
+    else
+      TMP_DIR="${TMP_DIR}/sdl12"
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    #
+    # This needs 1.3 versions of SDL for Windows...
+    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    #
+    
+    # if [ ${SDL_13} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # elif [ ${OPENGL} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # else
+    LIB_DIR="${APP_PATH}/lib/win"
+    OPENGL=false
+    SDL_13=false
+    # fi
+fi
+
+
 if [ -f "${LOG_FILE}" ]
 then
     rm -f "${LOG_FILE}"
 fi
 
+DoDriverMessage()
+{
+  if [ ${SDL_13} = true ]; then
+    echo "  ... Using SDL 1.3 Driver"
+  elif [ ${OPENGL} = true ]; then
+    echo "  ... Using OpenGL Driver"
+  else
+    echo "  ... Using SDL 1.2 Driver"
+  fi
+}
 
 CleanTmp()
 {
@@ -154,7 +207,7 @@ doBasicMacCompile()
     echo "  ... Creating game"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch i386 -framework Foundation -framework Cocoa -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -Wl,-rpath,@loader_path/../Frameworks -arch i386 -framework Foundation -framework Cocoa -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -171,7 +224,7 @@ doMacCompile()
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${1}/${name}.o"
-        doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
+        doCompile "${file}" "${name}" "${out_file}" "-arch ${1} -Wl,-rpath,@loader_path/../Frameworks"
     done
     
     #Assemble all of the .s files
@@ -338,11 +391,11 @@ then
         HAS_LEOPARD_SDK=false
         OS_VER=`sw_vers -productVersion`
         
-        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+        if [ -f /usr/libexec/as/ppc/as ]; then
             HAS_PPC=true
         fi
         
-        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+        if [ -f /usr/libexec/as/i386/as ]; then
             HAS_i386=true
         fi
         

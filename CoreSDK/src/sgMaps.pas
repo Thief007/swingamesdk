@@ -90,7 +90,7 @@ interface
   /// The width and height of the area drawn is the same as the screen size. 
   ///
   /// @lib DrawMap
-  /// @sn DrawMap:%s 
+  /// @sn drawMap:%s 
   ///
   /// @class Map
   /// @method Draw
@@ -100,7 +100,7 @@ interface
   /// The width and height of the area drawn the screen size subtracted by the offset. 
   ///
   /// @lib DrawMapWithOffset
-  /// @sn DrawMap:%s WithOffset:%s
+  /// @sn drawMap:%s WithOffset:%s
   ///
   /// @class Map
   /// @overload Draw DrawWithOffset
@@ -128,7 +128,7 @@ interface
   /// given the map information.
   ///
   /// @lib DrawMapGrid
-  /// @sn DrawMapGrid:%s WithOffset:%s
+  /// @sn drawMapGrid:%s WithOffset:%s
   ///
   /// @class Map
   /// @method DrawGridWithOffset
@@ -167,7 +167,7 @@ interface
   /// Returns true if tile is in the selectedTile array in the map.
   ///
   /// @lib TileSelected
-  /// @sn Tile ****************************
+  /// @sn tile ****************************
   ///
   /// @class Tile
   /// @method Selected
@@ -205,7 +205,7 @@ interface
   /// tiles with the given offset.
   ///
   /// @lib HighlightTileWithOffset
-  /// @sn Highlight:%s WithOffset:%s
+  /// @sn highlight:%s WithOffset:%s
   ///
   /// @class Tile
   /// @method HighlightWith Offset
@@ -450,7 +450,7 @@ interface
   /// Returns the value of a given tile at a given index
   ///
   /// @lib TileValue
-  /// @sn Tile:%s ValueId:%s
+  /// @sn tile:%s ValueId:%s
   ///
   /// @class Tile
   /// @method Value

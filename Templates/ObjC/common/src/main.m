@@ -16,7 +16,7 @@ int main()
         [SGInput processEvents];
         
         //Draw game...
-        [SGGraphics clearScreen];
+        [SGGraphics clearScreen:ColorWhite];
         [SGText drawFramerateAtX:0 y:0];
         [SGGraphics refreshScreen];
     }

@@ -9,7 +9,7 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 
 import logging
 import sys
-
+import os
 import objc_lib #import templates
 import lang_c
 
@@ -265,6 +265,11 @@ def _add_properties_for_fields(module, details):
     '''Add property code to access the fields of the passed in module (struct)'''
     
     for k, f in module.fields.items():
+        if f.data_type.is_array:
+            print "No supporting array fields at the moment, skipping ", f
+            print "Need to add code to copy this from internal structure from pointer"
+            continue
+        
         prop = wrapper_helper.create_property_for_field(module, f)
         
         _post_process_method(prop.getter)
@@ -412,6 +417,28 @@ def _file_visitor(the_file, other):
     # else:
     #     logger.info('Creating C# SwinGame Module %s', the_file.name)
     #     write_cs_lib_module(the_file)
+    
+def create_swingame_h():
+  objc_generated_lib = '../../Generated/ObjC/lib/'
+  objc_common_template = '../../Templates/ObjC/common/lib/'
+  swingame_h_path = objc_generated_lib + 'SwinGame.h'
+  
+  if os.path.isfile(swingame_h_path):
+    os.remove(swingame_h_path)
+  f = open(swingame_h_path,"w")
+  f.write( "#ifndef SWINGAME\n" )
+  f.write("#define SWINGAME\n" )
+
+  for filename in os.listdir(objc_generated_lib):
+    if(filename.find('SGSDK') == -1) and (filename.find('.h') >=0):
+      f.write("""#include "%s" \n""" % filename)
+
+  for filename in os.listdir(objc_common_template):
+    if(filename.find('SGSDK') == -1) and (filename.find('.h') >=0):
+      f.write("""#include "%s" \n""" % filename)
+
+  f.write("#endif")
+  f.close()
 
 def main():
     global classes_file_writer
@@ -425,7 +452,8 @@ def main():
     parser_runner.visit_all_units(lambda the_file, other: lang_c.write_c_code_files(the_file, other, _out_path))
     
     parser_runner.visit_all_units(_file_visitor)
-    classes_file_writer.close
+    classes_file_writer.close()
+    create_swingame_h()
 
 if __name__ == '__main__':
     main()

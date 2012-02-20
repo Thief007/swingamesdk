@@ -25,6 +25,8 @@ _type_switcher = {
         'byte':     'unsigned char',
         'longword': 'uint',
         'uint16':   'unsigned short',
+        'word':     'unsigned short int',
+        'int64':    'long long',
         
         #SwinGame resources
         'soundeffect':      'SGSoundEffect *',
@@ -36,12 +38,16 @@ _type_switcher = {
         'map':              'SGMap *',
         'shapeprototype':   'SGShapePrototype *',
         'shape':            'SGShape *',
-        'triangle':         'SGTriangle *',
+        # '# triangle':         'SGTriangle *',
         # 'rectangle':    'SGRectangle',
         # 'circle':       'SGCircle',
         
         #elements of arrays
         'point2d':          'SGPoint2D *',
+        
+        #triangle
+        'point2d[0..2]':        'triangle',
+        'single[0..2][0..2]':   'matrix2d',
         
         #arrays from within structs
         'point2darray':     'NSArray *',
@@ -54,6 +60,7 @@ _type_switcher = {
         #function pointers
         'freenotifier':     'free_notifier',
         'shapedrawingfn':   'shape_drawing_fn',
+        'guieventcallback':  'guievent_callback',
         
         #Enums
         'resourcekind':         'resource_kind',
@@ -72,8 +79,8 @@ _type_switcher = {
         'linesegment':  'SGLineSegment *',
         # 'rectangle':    'SGRectangle *',
         'vector':       'SGVector *',
-        'matrix2d':     'SGMatrix2D *',
-        'triangle':     'SGTriangle *',
+        # 'matrix2d':     'SGMatrix2D *',
+        # 'triangle':     'SGTriangle *',
         'circle':       'SGCircle *',
         
         #Arrays
@@ -97,8 +104,8 @@ _type_switcher = {
         'single':           'float *',
         'longint':          'int *',
         
-        'triangle':     'SGTriangle *',
-        'matrix2d':     'SGMatrix2D *',
+        # 'triangle':     'SGTriangle *',
+        # 'matrix2d':     'SGMatrix2D *',
         
         'point2darray':     'NSArray *',
     },
@@ -113,9 +120,9 @@ _type_switcher = {
         'single':           'float *',
         'linesegment':      'SGLineSegment **',
         'linesarray':       'NSArray *',
-        'matrix2d':         'SGMatrix2D *',
+        # 'matrix2d':         'SGMatrix2D *',
         'point2darray':     'NSArray *',
-        'triangle':         'SGTriangle *',
+        # 'triangle':         'SGTriangle *',
     },
     'return' : {
         #SwinGame resources
@@ -143,7 +150,11 @@ _type_switcher = {
         'longint':      'int',
         'byte':         'unsigned char',
         'longword':     'uint',
+        'word':         'unsigned short int',
+        'int64':        'long long',
+        
         'string':       'NSString *',
+        
         
         #enums
         'collisionside':        'collision_side',
@@ -155,13 +166,16 @@ _type_switcher = {
         'shapekind':            'shape_kind',
         
         #arrays + structs
-        'matrix2d':     'SGMatrix2D *',
-        'triangle':     'SGTriangle *',
+        #'matrix2d':     'SGMatrix2D *',
+        # 'triangle':     'SGTriangle *',
         'point2d':      'SGPoint2D *',
         'vector':       'SGVector *',
         'circle':       'SGCircle *',
         # 'rectangle':    'SGRectangle *',
         'linesegment':  'SGLineSegment *',
+        
+        'point2d[0..2]':        'triangle',
+        'single[0..2][0..2]':   'matrix2d',
         
         #function pointers
         'shapedrawingfn':   'shape_drawing_fn',
@@ -242,8 +256,8 @@ _data_switcher = {
         # 'rectangle':            '%s->data',
         # 'bitmapcell':           '%s->data',
         
-        'matrix2d':             '%s->data',
-        'triangle':             '%s->data',
+        # 'matrix2d':             '%s->data',
+        # 'triangle':             '%s->data',
     },
     # Argument with a literal value
     'arg_lit_val' : 
@@ -276,8 +290,8 @@ local_variable_switcher = {
         'bitmap':           'SGBitmap *%(var)s;\n    ',
         
         'string':           'char %(var)s[%(size)s];\n    ',
-        'matrix2d':         'matrix2d %(var)s;\n    ',
-        'triangle':         'triangle %(var)s;\n    ',
+        # 'matrix2d':         'matrix2d %(var)s;\n    ',
+        # 'triangle':         'triangle %(var)s;\n    ',
         
         #arrays for structs
         'linesarray':       'line_segment %(var)s[%(size)s];\n    ',
@@ -314,8 +328,8 @@ local_variable_switcher = {
     'initialise-param':
     {
         #Direct mappings for C based language
-        'matrix2d':         '%(var)s = &%(param)s[0][0];\n    ',
-        'triangle':         '%(var)s = &%(param)s[0];\n    ',
+        # 'matrix2d':         '%(var)s = &%(param)s[0][0];\n    ',
+        # 'triangle':         '%(var)s = &%(param)s[0];\n    ',
         #String type
         'string':           '[%(param)s getCString:%(var)s maxLength:[%(param)s length] + 1 encoding:NSASCIIStringEncoding];\n    ',
         #NSArray types
@@ -374,8 +388,8 @@ local_variable_switcher = {
         
         
         #Passed through arrays
-        'matrix2d':         '\n    return [SGMatrix2D matrix2DForData:%(var)s];',
-        'triangle':         '\n    return [SGTriangle triangleForData:%(var)s];',
+        # 'matrix2d':         '\n    return [SGMatrix2D matrix2DForData:%(var)s];',
+        # 'triangle':         '\n    return [SGTriangle triangleForData:%(var)s];',
         
         #NSArray types
         'longintarray':     '\n    return [SGObjcUtils arrayOfIntegers:%(var)s size:%(size)s];',
@@ -408,9 +422,17 @@ _type_dictionary_creation_data = [
     {
         # List of Types, 
         'identifiers':  [   
-                ('animationscript', 'SGAnimationScript'),
-                ('animation', 'SGAnimation'),
-                ('character', 'SGCharacter')
+                ('animationscript', 'SGAnimationScript' ),
+                ('animation',       'SGAnimation'       ),
+                ('character',       'SGCharacter'       ),
+                ('panel',           'SGPanel'           ),
+                ('region',          'SGRegion'          ),
+                ('guiradiogroup',   'SGGUIRadioGroup'   ),
+                ('guilist',         'SGGUIList'         ),
+                ('guilabel',        'SGGUILabel'        ),
+                ('guitextbox',      'SGGUITextbox'      ),
+                ('guicheckbox',     'SGGUICheckbox'     ),
+                ('connection',      'SGConnection'      ),
             ],
         '_type_switcher': {
                 None:       '#2# *',
@@ -439,6 +461,8 @@ _type_dictionary_creation_data = [
                 # type key, objc name, prefix for switching, c-type, post-fix for switching
                 ('bitmapcell', 'SGBitmapCell', 'bitmapCell', 'bitmap_cell', 'BitmapCell'),
                 ('rectangle', 'SGRectangle', 'rectangle', 'rectangle', 'Rectangle'),
+                ('triangle', 'SGTriangle', 'triangle', 'triangle', 'Triangle'),
+                ('matrix2d', 'SGMatrix2D', 'matrix2D', 'matrix2d', 'Matrix2D'),
                 ('directionangles', 'SGDirectionAngles', 'directionAngles', 'direction_angles', 'DirectionAngles'),
             ],
             '_type_switcher': {
@@ -466,8 +490,10 @@ _type_dictionary_creation_data = [
     {
         'identifiers': [
             # type key, c-type
-            ('collisiontestkind', 'collision_test_kind'),
-            ('fontalignment', 'font_alignment'),
+            ('collisiontestkind',       'collision_test_kind'),
+            ('fontalignment',           'font_alignment'),
+            ('guielementkind',          'guielement_kind'),
+            ('filedialogselecttype',    'file_dialog_select_type'),
             
         ],
         '_type_switcher': {
@@ -495,9 +521,10 @@ _type_dictionary_creation_data = [
     {
         'identifiers': [
             # type key, c-type, objc type, post-fix for switching, initialisation code
-            ('bitmaparray', 'bitmap', 'SGBitmap', 'Bitmaps', ''),
-            ('stringarray', 'char *', 'NSString', 'Strings', '\n    [SGStringBufferManager stringBufferManagerFor:%(var)s size:%(size)s];\n    '),
-            ('trianglearray', 'triangle', 'SGTriangle', 'Triangles', ''),
+            ('bitmaparray',     'bitmap',   'SGBitmap',     'Bitmaps',      ''),
+            ('stringarray',     'char *',   'NSString',     'Strings',      '\n    [SGStringBufferManager stringBufferManagerFor:%(var)s size:%(size)s];\n    '),
+            ('trianglearray',   'triangle', 'SGTriangle',   'Triangles',    ''),
+            ('fingerarray',     'finger',   'SGFinger',     'Fingers',      ''),
             
         ],
         '_type_switcher': {
