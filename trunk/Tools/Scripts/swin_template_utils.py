@@ -177,73 +177,73 @@ def pkg_csharp_installer(tmp_dir, to_dir):
 
 
 template_details = {
-    # 'Pascal':   {
-    #         'script':       'create_pascal_library.py',
-    #         'use_sgsdk':    False,
-    #         'copy_dist':    [
-    #             { 
-    #               'target':         'fpc',
-    #               'os':             ['Mac OS X', 'Windows', 'Linux'],
-    #               'lib':            'lib',
-    #             },
-    #             {
-    #               'target':     'iOS',
-    #               'os':         ['Mac OS X'],
-    #               'lib':        'staticlib',
-    #             },
-    #         ],
-    #         'pre_copy_script': None,
-    #     },
-    # 'C':    {
-    #         'script':       'create_c_library.py',
-    #         'use_sgsdk':    True,
-    #         'copy_dist':    [
-    #             { 
-    #               'target':     'gpp',
-    #               'os':         ['Mac OS X', 'Windows', 'Linux'],
-    #               'lib':        'lib',
-    #               'staticsgsdk':    False,
-    #             },
-    #             { 
-    #               'target':     'gcc',
-    #               'os':         ['Mac OS X', 'Windows', 'Linux'],
-    #               'lib':        'lib',
-    #               'staticsgsdk':    False,
-    #             },
-    #             { 
-    #               'target':     'xcode 3',
-    #               'os':         ['Mac OS X'],
-    #               'lib':        'lib',
-    #               'staticsgsdk':    False,
-    #             },
-    #             { 
-    #               'target':     'iOS',
-    #               'os':         ['Mac OS X'],
-    #               'lib':        'staticlib',
-    #               'staticsgsdk':    True,
-    #             },
-    #         ],
-    #         'pre_copy_script': None,
-    #     },
-    # 'ObjC': {
-    #         'script':       'create_objc_library.py',
-    #         'use_sgsdk':    True,
-    #         'copy_dist':    [
-    #             {
-    #                 'target':       'gcc',
-    #                 'os':           [ 'Mac OS X' ],
-    #                 'lib':          'lib',
-    #                 'staticsgsdk':  False,
-    #             },
-    #             {
-    #                 'target':       'xcode 3',
-    #                 'os':           [ 'Mac OS X' ],
-    #                 'lib':          'lib',
-    #                 'staticsgsdk':  False,
-    #             },
-    #         ],
-    #         'pre_copy_script': None,
-    #      },
+    'Pascal':   {
+            'script':       'create_pascal_library.py',
+            'use_sgsdk':    False,
+            'copy_dist':    [
+                { 
+                  'target':         'fpc',
+                  'os':             ['Mac OS X', 'Windows', 'Linux'],
+                  'lib':            'lib',
+                },
+                {
+                  'target':     'iOS',
+                  'os':         ['Mac OS X'],
+                  'lib':        'staticlib',
+                },
+            ],
+            'pre_copy_script': None,
+        },
+    'C':    {
+            'script':       'create_c_library.py',
+            'use_sgsdk':    True,
+            'copy_dist':    [
+                { 
+                  'target':     'gpp',
+                  'os':         ['Mac OS X', 'Windows', 'Linux'],
+                  'lib':        'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
+                  'target':     'gcc',
+                  'os':         ['Mac OS X', 'Windows', 'Linux'],
+                  'lib':        'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
+                  'target':     'xcode 3',
+                  'os':         ['Mac OS X'],
+                  'lib':        'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
+                  'target':     'iOS',
+                  'os':         ['Mac OS X'],
+                  'lib':        'staticlib',
+                  'staticsgsdk':    True,
+                },
+            ],
+            'pre_copy_script': None,
+        },
+    'ObjC': {
+            'script':       'create_objc_library.py',
+            'use_sgsdk':    True,
+            'copy_dist':    [
+                {
+                    'target':       'gcc',
+                    'os':           [ 'Mac OS X' ],
+                    'lib':          'lib',
+                    'staticsgsdk':  False,
+                },
+                {
+                    'target':       'xcode 3',
+                    'os':           [ 'Mac OS X' ],
+                    'lib':          'lib',
+                    'staticsgsdk':  False,
+                },
+            ],
+            'pre_copy_script': None,
+         },
     'CSharp':   {
             'script':       'create_csharp_library.py',
             'use_sgsdk':    True,
