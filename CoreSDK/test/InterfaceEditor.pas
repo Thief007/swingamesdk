@@ -188,7 +188,7 @@ begin
     
     
     UpdateInterface();
-    DrawPanels();
+    DrawInterface();
     
     DrawFramerate(0,0);
     RefreshScreen();

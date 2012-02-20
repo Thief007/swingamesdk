@@ -28,7 +28,7 @@ begin
     ProcessEvents();    
     
     if RegionClickedId() = 'Button1' then ChangeColor(RandomColor());    
-    DrawPanels();      
+    DrawInterface();      
     UpdateInterface();
     
     RefreshScreen();        

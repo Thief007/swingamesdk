@@ -16,7 +16,7 @@ begin
     ProcessEvents();    
     
     ClearScreen(ColorWhite);        
-    DrawPanels();    
+    DrawInterface();    
     
     PanelSetDraggable(p, true);    
     GUISetBackgroundColor(ColorGreen);

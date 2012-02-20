@@ -111,7 +111,7 @@ begin
     ProcessEvents();
     ClearScreen(ColorGreen);
     
-    DrawPanels();
+    DrawInterface();
     UpdateGUI(pnla, pnlb, lst);
     UpdateInterface();
     

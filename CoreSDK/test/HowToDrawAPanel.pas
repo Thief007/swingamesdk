@@ -14,7 +14,7 @@ begin
   
   ClearScreen(ColorWhite);
   GUISetBackgroundColor(ColorBlack);
-  DrawPanels();
+  DrawInterface();
   
   RefreshScreen();
   

@@ -17,7 +17,7 @@ begin
     ProcessEvents();    
     
     ClearScreen(ColorWhite);        
-    DrawPanels();  
+    DrawInterface();  
     
     UpdateInterface();
     

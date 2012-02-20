@@ -30,7 +30,7 @@ begin
     FillRectangle(ColorGreen, 50,0, 50, 50);
     FillRectangle(ColorBlue, 100, 0, 50, 50);
     
-    DrawPanels();
+    DrawInterface();
     UpdateInterface();
     
     DrawFramerate(0,0);
