@@ -40,10 +40,10 @@ _pkg  = {
 def get_Resources(word_list,f):
     print "  --> "+_pkg[word_list[0]]+'/'+word_list[-1]
     f.write(_pkg[word_list[0]]+'/'+word_list[-1]+'\n')
-    
     if _pkg[word_list[0]] == 'bundles':
         print "Bundled word "+_pkg[word_list[0]]
         load_Bundled_Resources(word_list, f)
+    
 
 def get_Resources_Next(word_list, f):
     print _pkg[word_list[1]]+'/'+word_list[-1]
@@ -62,6 +62,8 @@ def load_Bundled_Resources(word_list, f):
             f.write(_pkg[word_list[0]].lower()+ "/" + word_list[-1]+'\n')
             print _pkg[word_list[0]].lower()+ "/" + word_list[-1]
 
+def load_animation_script_resources(word_list,f):
+    print "***Anim script*** " + word_list[0]
              
 def create_list():
     f = open(get_test_directory() + "HowToResources.txt",'w')
@@ -78,6 +80,7 @@ def create_list():
             word_list = re.findall(r"[A-Za-z_0-9.-]+",line)
             if len(word_list) > 0:        
                 if word_list[0] in _load or (len(word_list) >= 2 and word_list[1] in _load):
+                    if (word_list[0] == _load[0]): load_animation_script_resources(word_list,f)
                     if word_list[0] in _pkg:
                         get_Resources(word_list,f)
                     elif (len(word_list) >= 2 and word_list[1] in _pkg):
