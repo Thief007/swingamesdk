@@ -24,13 +24,9 @@ d: true
 v: false
 
 //Radiobutton r: x, y, w, h, 2, GroupID
-
 r: 14, 30, 48, 44,RadioGroup, radButton1,RadioGroup1
-
 r: 143, 30, 48, 44,RadioGroup, radButton2,RadioGroup1
-
 r: 256, 30, 48, 44,RadioGroup, radButton3,RadioGroup1
-
 
 // Region data
 // Format: r: x, y, w, h, kind

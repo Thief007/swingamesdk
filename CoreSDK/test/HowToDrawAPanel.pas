@@ -12,7 +12,8 @@ begin
   p := LoadPanel('panelwithlabel.txt');  
   ShowPanel(p);
   
-  ClearScreen(ColorWhite);        
+  ClearScreen(ColorWhite);
+  GUISetBackgroundColor(ColorBlack);
   DrawPanels();
   
   RefreshScreen();
