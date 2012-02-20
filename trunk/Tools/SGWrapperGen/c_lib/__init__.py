@@ -111,7 +111,6 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
-            ('messageptr',      'messageptr'),
             ('connection',      'connection'),
         ],
         '_type_switcher': {
@@ -126,6 +125,25 @@ _type_dictionary_creation_data = [
             'var':          '#2# *',
             'var-cpp':      '#2# &',
             'return':       '#2#',
+        }
+    },
+    # message 
+    {
+        'identifiers': [
+            ('messageptr',      'struct _message_link *'),
+        ],
+        '_type_switcher': {
+            None:       '#2# ',
+            # 'var':      '#2# *',
+            # 'var-cpp':      '#2# &',
+            # 'return':   '#2#',
+        },
+        '_adapter_type_switcher': {
+            None:           '#2#',
+            # 'ptr-decl':     'struct _#2#_data *',
+            # 'var':          '#2# *',
+            # 'var-cpp':      '#2# &',
+            # 'return':       '#2#',
         }
     },
     #recursive structs

@@ -35,7 +35,7 @@ uses
   ///
   /// @lib
   /// @uname CreateTCPHost
-  /// @sn createTCPHost:%s aPort:%s
+  /// @sn createTCPHost:%s
   function CreateTCPHost              (aPort : LongInt) : Boolean;
 
   /// Opens a connection to a peer using the IP and port
@@ -47,7 +47,7 @@ uses
   ///
   /// @lib
   /// @uname OpenTCPConnectionToHost
-  /// @sn openTCPConnectionToHost:%s aIP:%s aPort:%s
+  /// @sn openTCPConnectionToHostIP:%s port:%s
   function OpenTCPConnectionToHost    (aIP : String;  aPort : LongInt) : Connection;
 
   /// Accepts an incomming connection from another client.
@@ -70,7 +70,7 @@ uses
   /// @param aMsg The message to be sent
   ///
   /// @lib
-  /// @sn broadcastTCPMessage:%s aMsg:%s
+  /// @sn broadcastTCPMessage:%s
   function BroadcastTCPMessage        ( aMsg : String) : Boolean;
 
   /// Sends the message to the specified client, attached to the socket
@@ -85,7 +85,7 @@ uses
   /// @class Connection
   /// @method SendTCPMessage
   /// @self 2
-  /// @sn sendTCPMessageTo:%s aMsg:%s aConnection:%s
+  /// @sn sendTCPMessage:%s toConnection:%s
   function SendTCPMessageTo           ( aMsg : String; aConnection : Connection) : Connection;
 
   /// Adds a connection to the list of new connections. This is called by the 
@@ -98,7 +98,7 @@ uses
   /// @lib
   /// @class Connection
   /// @method EnqueueNewConnection
-  /// @sn enqueueNewConnection:%s aConnection:%s
+  /// @sn enqueueNewConnection:%s
   procedure EnqueueNewConnection(aConnection : Connection);
 
   /// Removes the top connection from the New connection queue and
@@ -123,7 +123,7 @@ uses
   /// @param aPort The port to bind the socket to.
   ///
   /// @lib
-  /// @sn createUDPSocket:%s aPort:%s
+  /// @sn createUDPSocket:%s
   function CreateUDPSocket            ( aPort : LongInt) : LongInt;
 
   /// Creates the connection and sets the ip and port values. Creates a
@@ -136,7 +136,7 @@ uses
   /// @param aInPort The port to receive messages
   ///
   /// @lib
-  /// @sn createUDPConnection:%s aDestIP:%s aDestPort:%s aInPort:%s
+  /// @sn createUDPConnectionIP:%s port:%s inPort:%s
   function CreateUDPConnection        (aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
 
   /// Checks all UDP listening sockets to see if a packet has been received.
@@ -158,7 +158,7 @@ uses
   /// @class Connection
   /// @method SendUDPMessage
   /// @self 2
-  /// @sn sendUDPMessage:%s aMsg:%s aConnection:%s
+  /// @sn sendUDPMessage:%s toConnection:%s
   function SendUDPMessage             ( aMsg : String; aConnection : Connection) : Boolean;
 
 //----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ uses
   /// @lib
   /// @class Connection
   /// @method ConnectionIP
-  /// @sn connectionIP:%s aConnection:%s
+  /// @sn connectionIP:%s
   function  ConnectionIP(aConnection : Connection) : LongInt;
 
   /// Gets the Port of the destination for the connectiom
@@ -182,7 +182,7 @@ uses
   /// @lib
   /// @class Connection
   /// @method ConnectionPort
-  /// @sn connectionPort:%s aConnection:%s
+  /// @sn connectionPort:%s
   function  ConnectionPort(aConnection : Connection) : LongInt;
 
   /// Dequeues the Top Message
@@ -192,23 +192,25 @@ uses
   /// @lib
   /// @class Connection
   /// @method ReadMessage
-  /// @sn readMessage:%s aConnection:%s
+  /// @sn readMessage:%s
   function ReadMessage            (aConnection : Connection) : String ;
 
   /// Clears the Message Queue
   ///
   /// @lib
+  /// @sn clearMessageQueue:%s
+  ///
   /// @class Connection
   /// @method ClearMessageQueue
-  /// @sn clearMessageQueue:%s aConnection:%s
   procedure ClearMessageQueue          (aConnection : Connection) ;
 
   /// Gets the Size of the Message Queue
   ///
   /// @lib
+  /// @sn messageCountOnConnection:%s
+  ///
   /// @class Connection
   /// @method MessageCount
-  /// @sn messageCount:%s aConnection:%s
   function  MessageCount            (aConnection : Connection) : LongInt;
 
   /// Queues a message to the end of the Message Queue
@@ -217,10 +219,11 @@ uses
   /// @param aConnection The connection to enqueue the message into
   ///
   /// @lib
+  /// @sn enqueueMessage:%s toConnection:%s
+  ///
   /// @class Connection
   /// @method EnqueueMessage
   /// @self 2
-  /// @sn enqueueMessage:%s aMsg:%s aConnection:%s
   procedure EnqueueMessage            ( aMsg : String; aConnection : Connection);
 
 
@@ -234,7 +237,7 @@ uses
   ///
   /// @lib
   /// @uname DecToHex 
-  /// @sn decToHex:%s aDec:%s
+  /// @sn decToHex:%s
   function DecToHex                   (aDec : LongInt) : String;
 
   /// Converts a Hex String to a Decimal Value as a String.
@@ -243,7 +246,7 @@ uses
   ///
   /// @lib
   /// @uname HexToDecString 
-  /// @sn hexToDecString:%s aHex:%s
+  /// @sn hexToDecString:%s
   function HexToDecString             (aHex : String) : String;
 
   /// Converts a Hex String to an IPV4 Address (0.0.0.0)
@@ -252,7 +255,7 @@ uses
   ///
   /// @lib
   /// @uname HexStrToIPv4 
-  /// @sn hexStrToIPv4:%s aHex:%s
+  /// @sn hexStrToIPv4:%s
   function HexStrToIPv4               (aHex : String) : String;
 
   /// Converts an IP to a decimal value
@@ -260,7 +263,7 @@ uses
   /// @param aIP The IP
   ///
   /// @lib
-  /// @sn iPv4ToDec:%s aIP:%s
+  /// @sn iPv4ToDec:%s
   function IPv4ToDec(aIP : String) : LongInt; 
 
 //----------------------------------------------------------------------------
@@ -274,7 +277,7 @@ uses
   ///
   /// @lib
   /// @uname CloseTCPHostSocket
-  /// @sn closeTCPHostSocket:%s aPort:%s
+  /// @sn closeTCPHostSocketPort:%s
   function CloseTCPHostSocket        ( aPort: LongInt) : Boolean;
 
   /// Closes the specified Socket, removed it from the Socket Array, and removes

@@ -85,13 +85,13 @@ interface
   /// Creates a Circle at the point pt with the given radius.
   ///
   /// @lib
-  /// @sn CreateCircle:%s radius:%s
+  /// @sn createCircle:%s radius:%s
   function CreateCircle(const pt: Point2D; radius: Longint): Circle; overload;
 
   /// Creates a circle at the given x,y location with the indicated radius.
   ///
   /// @lib CreateCircleFromXY
-  /// @sn CreateCircleX:%s y:%s radius:%s
+  /// @sn createCircleX:%s y:%s radius:%s
   ///
   /// @doc_idx 0
   function CreateCircle(x, y: Single; radius: Longint): Circle; overload;
@@ -413,7 +413,7 @@ interface
   /// Returns a line segment from x1,y1 to x2,y2.
   /// 
   /// @lib
-  /// @sn CreateLineX1:%s y1:%s toX2:%s y2:%s
+  /// @sn createLineX1:%s y1:%s toX2:%s y2:%s
   ///
   /// @doc_idx 0
   function CreateLine(x1, y1, x2, y2: Single): LineSegment; overload;
@@ -421,21 +421,21 @@ interface
   /// Returns a line from pt1 to pt2.
   ///
   /// @lib CreateLinePointToPoint
-  /// @sn CreateLine:%s to:%s
+  /// @sn createLine:%s to:%s
   function CreateLine(const pt1, pt2: Point2D): LineSegment; overload;
 
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
   ///
   /// @lib CreateLineVectorWithStartPoint
-  /// @sn CreateLineFrom:%s toOffset:%s
+  /// @sn createLineFrom:%s toOffset:%s
   function CreateLineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
 
   /// Returns a line from the x,y starting point to the point at the end of the
   /// mv vector.
   ///
   /// @lib CreateLineVectorWithStartXY
-  /// @sn CreateLineFromX:%s y:%s toOffset:%s
+  /// @sn createLineFromX:%s y:%s toOffset:%s
   function CreateLineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
 
   /// Returns a line from the origin to the end of the mv vector.
@@ -496,7 +496,7 @@ interface
   /// and height.
   ///
   /// @lib
-  /// @sn CreateRectangleX:%s y:%s width:%s height:%s
+  /// @sn createRectangleX:%s y:%s width:%s height:%s
   ///
   /// @doc_idx 0
   function CreateRectangle(x, y: Single; w, h: Longint): Rectangle; overload;
@@ -504,13 +504,13 @@ interface
   /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
   ///
   /// @lib CreateRectangleForPoints
-  /// @sn CreateRectangle:%s to:%s
+  /// @sn createRectangle:%s to:%s
   function CreateRectangle(const pt1, pt2: Point2D): Rectangle; overload;
 
   /// Returns a rectangle at a given point with a specified width and height.
   ///
   /// @lib CreateRectangleAtPoint
-  /// @sn CreateRectangle:%s width:%s height:%s
+  /// @sn createRectangle:%s width:%s height:%s
   function CreateRectangle(const pt: Point2D; width, height: Longint): Rectangle; overload;
 
   /// Returns a rectangle that encloses the two points on the line segment.
@@ -572,7 +572,7 @@ interface
   /// Returns a triangle from the points passed in.
   /// 
   /// @lib
-  /// @sn CreateTriangleAx:%s ay:%s bx:%s by:%s cx:%s cy:%s
+  /// @sn createTriangleAx:%s ay:%s bx:%s by:%s cx:%s cy:%s
   ///
   /// @doc_idx 0
   
@@ -581,7 +581,7 @@ interface
   /// Returns a triangle made up of the three points passed in.
   ///
   /// @lib CreateTrianglePoints
-  /// @sn CreateTrianglePtA:%s ptB:%s ptC:%s
+  /// @sn createTrianglePtA:%s ptB:%s ptC:%s
   function CreateTriangle(const a, b, c: Point2D): Triangle; overload;
   
 //----------------------------------------------------------------------------
@@ -1128,7 +1128,7 @@ interface
   /// The angle and magnitude are scalar values and the angle is in degrees.
   ///
   /// @lib
-  /// @sn CreatevectorFromAngle:%s magnitude:%s
+  /// @sn createvectorFromAngle:%s magnitude:%s
   function CreateVectorFromAngle(angle, magnitude: Single): Vector;
 
   /// Returns a new `Vector` using the x and y value of a Point2D parameter.
@@ -1140,7 +1140,7 @@ interface
   /// the second ``p2`` points (`Point2D`).
   ///
   /// @lib
-  /// @sn vectorFrom:%s to:%s
+  /// @sn createVectorFrom:%s to:%s
   ///
   /// @class Point2D
   /// @method CreateVectorToPoint
@@ -1160,19 +1160,19 @@ interface
   /// Returns a vector from the specified point to the specified rectangle.
   /// 
   /// @lib CreateVectorFromPointToRect
-  /// @sn CreatevectorFromX:%s y:%s toRectX:%s y:%s width:%s height:%s
+  /// @sn createvectorFromX:%s y:%s toRectX:%s y:%s width:%s height:%s
   function CreateVectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: Longint): Vector; overload;
 
   /// Returns a vector from the specified point to the specified rectangle.
   /// 
   /// @lib CreateVectorFromPointToRectangle
-  /// @sn CreatevectorFromX:%s y:%s toRect:%s
+  /// @sn createvectorFromX:%s y:%s toRect:%s
   function CreateVectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
 
   /// Returns a vector from a point to the specified rectangle.
   /// 
   /// @lib CreateVectorFromPointPtToRectangle
-  /// @sn CreatevectorFromPt:%s to:%s
+  /// @sn createvectorFromPt:%s to:%s
   function CreateVectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   
 //---------------------------------------------------------------------------

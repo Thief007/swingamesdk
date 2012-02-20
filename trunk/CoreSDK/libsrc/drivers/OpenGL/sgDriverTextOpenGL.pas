@@ -70,13 +70,10 @@ var
     bitglyph:   PFT_BitmapGlyph = nil;
     bitmap:     PFT_Bitmap = nil;
     error:      FT_Error;
-
+    
     i, idx, w, h, xpos, ypos:   LongInt;
-
+    
     buffer:       array of GLUByte;
-
-    pixel_size, pixel_coord: Single;
-    texpropx, texpropy: Single;
 begin
   result := false;
   if not assigned(font) then exit;
@@ -220,18 +217,8 @@ end;
 function LoadFont(filepath: String; height: Integer) : GLFont;
 var
   temp:     GLFont;
-  //face:     FT_Face = nil;
-  glyph:    FT_Glyph = nil;
-  bmpGlyph: FT_BitmapGlyph = nil;
-  bitmap:   PFT_Bitmap = nil;
-  bitglyph:   PFT_BitmapGlyph = nil;
   error:    FT_Error;
-
-  w, h, xpos, ypos:   LongInt;
-  i:          LongInt;
-  buffer:       array of GLUByte;
-  texpropx, texpropy: Single;
-  pixelSize, pixel_coord: Single;
+  pixelSize: Single;
 begin
   result := nil;
   New(temp);
@@ -269,7 +256,6 @@ end;
 // assumes single line
 procedure PrintFont(font: GLFont; text: String; x, y: Single);
 var
-  px, py:   Integer;  // current positions
   i:        Integer;  // index of char in text
   glyphIdx: Integer;  // index of the glyph
   ch:       Char;
@@ -277,7 +263,7 @@ var
   bmpW, bmpH: Single;         // Bitmap size
   // useKerning: Boolean;
   // previous:   Integer;        // Glyph index of previous character
-  delta:      FT_Vector;
+  // delta:      FT_Vector;
   face:       FT_Face;
   adv:        Integer;        // Distance to advance between characters
   destRect:   Rectangle;

@@ -74,7 +74,6 @@ interface
   ///
   /// @class Panel
   /// @constructor
-  
   function NewPanel(pnlName: String): Panel;
   
   /// shows dialog panel
@@ -198,33 +197,37 @@ interface
   /// Move panel along vector
   ///
   /// @lib
+  /// @sn panel:%s moveBy:%s
   ///
   /// @class Panel
   /// @method Move
-  procedure MovePanel(p: Panel; mvmt: Vector);
+  procedure MovePanel(p: Panel; const mvmt: Vector);
   
   /// Returns the panel at the point passed in. Returns nil if there is no panel.
   ///
   /// @lib
-  function PanelAtPoint(pt: Point2D): Panel;
+  function PanelAtPoint(const pt: Point2D): Panel;
   
-  /// Returns true if point is in any region within the panel
+  /// Returns true if point is in a region with the indicate `kind` of the panel `p`.
   ///
   /// @lib PointInRegionWithKind
+  /// @sn pointInRegion:%s ofPanel:%s kind:%s
   ///
   /// @class Panel
   /// @self 2
   /// @overload PointInRegion PointInRegionWithKind
-  function PointInRegion(pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
+  /// @csn point:%s inRegionKind:%s
+  function PointInRegion(const pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
   
   /// Returns true if point is in any region within the panel
   ///
   /// @lib
+  /// @sn pointInRegion:%s ofPanel:%s
   ///
   /// @class Panel
   /// @self 2
   /// @method PointInRegion
-  function PointInRegion(pt: Point2D; p: Panel): Boolean;
+  function PointInRegion(const pt: Point2D; p: Panel): Boolean;
   
   /// Disposes of all panels
   ///
@@ -328,7 +331,7 @@ interface
   
   /// Returns height of the panel
   ///
-  /// @lib PanelHeightNamed
+  /// @lib PanelNamedHeight
   function PanelHeight(name: String): Longint;
 
   /// Returns the panel's width
@@ -341,8 +344,10 @@ interface
   
   /// Returns the panel's width
   ///
-  /// @lib PanelWidthNamed
+  /// @lib PanelNamedWidth
   function PanelWidth(name: String): Longint;
+
+
 
 // ===========
 // = Buttons =
@@ -355,8 +360,10 @@ interface
   
   /// Returns true when the region has been clicked.
   ///
-  /// @lib ButtonClickedNamed
+  /// @lib ButtonNamedClicked
   function ButtonClicked(name: String) : Boolean;
+  
+  
   
 //---------------------------------------------------------------------------
 // Regions
@@ -383,11 +390,12 @@ interface
   /// Returns the Region with the ID passed from the panel passed
   ///
   /// @lib
+  /// @sn regionOfPanel:%s withId:%s
   ///
   /// @class Panel
   /// @method RegionWithID
   function RegionWithID(pnl: Panel; ID: String): Region; overload;
-
+  
   /// Returns the Region with the ID passed
   ///
   /// @lib GlobalRegionWithID
@@ -406,11 +414,21 @@ interface
   /// @lib
   ///
   /// @class Region
+  /// @method ToggleActive
   procedure ToggleRegionActive(forRegion: Region);
-
+  
+  /// Returns true when the region is active.
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter RegionActive
+  function RegionActive(forRegion: Region): Boolean;
+  
   /// Sets the region active to Boolean
   ///
   /// @lib
+  /// @sn region:%s setActive:%s
   ///
   /// @class Region
   /// @setter RegionActive
@@ -451,6 +469,7 @@ interface
   /// Returns the region from the panel at the point
   ///
   /// @lib
+  /// @sn regionOnPanel:%s atPoint:%s
   function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 
   /// Registers the callback with the panel, when an event related to this
@@ -464,6 +483,7 @@ interface
   procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
 
 
+
 //---------------------------------------------------------------------------
 //Checkbox
 //---------------------------------------------------------------------------
@@ -475,8 +495,7 @@ function CheckboxState(s: String): Boolean; overload;
 
 /// Returns checkbox state of the checkbox with ID in a given Panel
 ///
-/// @lib CheckboxStateFromPanel
-/// @sn panel:%s checkboxStateForId:%s
+/// @lib CheckboxStateOnPanel/// @sn panel:%s checkboxStateForId:%s
 ///
 /// @class Panel
 /// @method CheckboxState
@@ -511,7 +530,8 @@ procedure CheckboxSetState(r: region; val: Boolean); overload;
 /// Sets the checkbox state to val.
 /// 
 /// @lib
-/// @sn CheckBox:%s setCheckBoxState:%s
+/// @sn checkBox:%s setCheckBoxState:%s
+///
 /// @class Checkbox
 /// @setter State
 procedure CheckboxSetState(chk: GUICheckbox; val: Boolean); overload;
@@ -520,14 +540,13 @@ procedure CheckboxSetState(chk: GUICheckbox; val: Boolean); overload;
 /// Sets the checkbox state to val given the ID.
 /// 
 /// @lib CheckBoxSetStateWithId
-/// @sn checkbox:%s SetState:%s
+/// @sn checkbox:%s setState:%s
 procedure CheckboxSetState(id: String ; val: Boolean); overload;
 
 
 /// Sets the checkbox state to val.
 /// 
-/// @lib CheckboxSetStateFromPanel
-/// @sn checkboxFromPanel:%s WithID:%s setState:%s
+/// @lib CheckboxSetStateOnPanel/// @sn checkboxOnPanel:%s withID:%s setState:%s
 procedure CheckboxSetState( pnl: Panel;id: String; val: Boolean); overload;
 
 
@@ -541,12 +560,11 @@ procedure ToggleCheckboxState(c: GUICheckbox);
   
 /// Toggles the state of a checkbox (ticked/unticked)
 ///
-/// @lib ToggleCheckboxStateFromPanel
-/// @sn toggleCheckBoxFromPanel:%s WithID:%s
+/// @lib ToggleCheckboxStateOnPanel/// @sn toggleCheckBoxOnPanel:%s withID:%s
 ///
 /// @class Panel
 /// @method ToggleCheckboxStateWithID
-/// @csn ToggleCheckBoxWithID:%s
+/// @csn toggleCheckBoxWithID:%s
 procedure ToggleCheckboxState(pnl : Panel; id: String);
 
   
@@ -555,12 +573,12 @@ procedure ToggleCheckboxState(pnl : Panel; id: String);
 /// @lib ToggleCheckboxStateFromID
 procedure ToggleCheckboxState(id: String);
 
-
-
 /// Takes a region and returns the checkbox of that region
 ///
 /// @lib
 function CheckboxFromRegion(r: Region): GUICheckbox;
+
+
 
 // ===============
 // = Radio Group =
@@ -568,10 +586,12 @@ function CheckboxFromRegion(r: Region): GUICheckbox;
 
 /// Takes panel and ID and returns the RadioGroup.
 ///
-/// @lib RadioGroupFromPanelWidthId
-/// @class panel
+/// @lib RadioGroupOnPanelWidthId
+/// @sn radioGroupOnPanel:%s withId:%s
+///
+/// @class GUIRadioGroup
 /// @constructor
-/// @csn initFromPanel:%s WithId :%s
+/// @csn initOnPanel:%s withId :%s
 function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;overload;
 
 /// Takes an ID and returns the RadioGroup.
@@ -587,6 +607,7 @@ function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 /// Takes a radiogroup and returns the active button's index.
 ///
 /// @lib
+///
 /// @class RadioGroup
 /// @getter ActiveButtonIndex
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): LongInt;
@@ -601,7 +622,7 @@ function ActiveRadioButtonIndex(id: String): LongInt;
 
 /// Takes a radiogroup and returns the active button's index.
 ///
-/// @lib ActiveRadioButtonIndexFromPanel
+/// @lib ActiveRadioButtonIndexOnPanel/// @sn activeRadioButtonIndexOnPanel:%s withId:%s
 ///
 /// @class Panel
 /// @method ActiveRadioButtonIndexWithID
@@ -623,23 +644,22 @@ function ActiveRadioButton(id: String): Region; overload;
 
 /// Takes a panel and an ID and returns the active button
 ///
-/// @lib ActiveRadioButtonFromPanelWithId
+/// @lib ActiveRadioButtonOnPanelWithId
+/// @sn activeRadioButtonOnPanel:%s withId:%s
 ///
 /// @class RadioGroup
 /// @getter ActiveButton
 function ActiveRadioButton(pnl: Panel; id: String): Region; overload;
 
-{function ActiveRadioButton(r: Region): Region; overload;}
-
 /// Takes a region and an ID and selects the button
 ///
 /// @lib SelectRadioButton
-
 procedure SelectRadioButton(r: Region); overload;
 
 /// Takes a RadioGroup and Region and selects the button
 ///
 /// @lib SelectRadioButtonFromRadioGroupAndRegion
+/// @sn radioGroup:%s selectButton:%s
 ///
 /// @class RadioGroup
 /// @method SelectRadioButton
@@ -648,6 +668,7 @@ procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 /// Takes a RadioGroup and index and selects the button
 ///
 /// @lib SelectRadioButtonFromRadioGroupAndIndex
+/// @sn radioGroup:%s selectButtonIdx:%s
 ///
 /// @class RadioGroup
 /// @method SelectRadioButton
@@ -660,7 +681,8 @@ procedure SelectRadioButton(id: String); overload;
 
 /// Takes a panel and an ID and selects the button
 ///
-/// @lib SelectRadioButtonFromPanelWithId
+/// @lib SelectRadioButtonOnPanelWithId
+/// @sn radioButtonOnPanel:%s withId:%s
 ///
 /// @class Panel
 /// @method SelectRadioButton
@@ -683,16 +705,17 @@ function TextBoxFont(tb: GUITextBox): Font; overload;
 /// @lib TextBoxFontFromRegion
 ///
 /// @class Region
-/// @getter TextBoxFont
+/// @getter TextboxFont
 function TextBoxFont(r: Region): Font; overload;
 
 /// Sets the textbox font
 /// 
 /// @lib 
+/// @sn textbox:%s setFont:%s
 ///
 /// @class Textbox
 /// @setter Font
-procedure TextboxSetFont(Tb: GUITextbox; f: font);
+procedure TextboxSetFont(Tb: GUITextbox; f: Font);
 
 /// Gets the textbox text from region
 /// 
@@ -702,7 +725,8 @@ function TextBoxText(id: String): String; overload;
 
 /// Gets the textbox text from region
 /// 
-/// @lib TextboxTextFromPanelWithId
+/// @lib TextboxTextOnPanelWithId
+/// @sn textboxTextOnPanel:%s withId:%s
 function TextBoxText(pnl : Panel; id: String): String; overload;
 
 /// Gets the textbox text from region
@@ -724,6 +748,7 @@ function TextBoxText(tb: GUITextBox): String; overload;
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextFromRegion
+/// @sn textboxForRegion:%s setText:%s
 ///
 /// @class Region
 /// @setter TextboxText
@@ -732,18 +757,19 @@ procedure TextboxSetText(r: Region; s: string); overload;
 /// Sets the textbox text from Id
 /// 
 /// @lib TextboxSetTextFromId
-///
+/// @sn textboxWithId:%s setText:%s
 procedure TextboxSetText(id: String; s: string); overload;
 
 /// Sets the textbox text from Panel and Id
 /// 
-/// @lib TextboxSetTextFromPanelAndId
-
+/// @lib TextboxSetTextOnPanelAndId
+/// @sn textboxOnPanel:%s withId:%s setText:%s
 procedure TextboxSetText(pnl: Panel; id, s: string); overload;
 
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetText
+/// @sn textbox:%s setText:%s
 ///
 /// @class Textbox
 /// @setter Text
@@ -752,46 +778,51 @@ procedure TextboxSetText(tb: GUITextBox; s: string); overload;
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToIntFromRegion
-
+/// @sn textboxForRegion:%s setInt:%s
 procedure TextboxSetText(r: Region; i: Longint); overload;
 
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToInt
+/// @sn textbox:%s setInt:%s
 procedure TextboxSetText(tb: GUITextBox; i: Longint); overload;
   
   
 /// Sets the textbox text from Id
 /// 
 /// @lib TextboxSetTextToIntWithId
+/// @sn textboxForId:%s setInt:%s
 procedure TextboxSetText(id : String; i : LongInt); overload;
 
 
 /// Sets the textbox text from panel and Id
 /// 
-/// @lib TextboxSetTextToIntFromPanelWithId
+/// @lib TextboxSetTextToIntOnPanelWithId
+/// @sn textboxOnPanel:%s withId:%s setInt:%s
 procedure TextboxSetText(pnl : Panel; id : String; i : LongInt); overload;
     
 /// Sets the textbox text from Textbox
 /// 
 /// @lib TextboxSetTextToSingle
+/// @sn textbox:%s setFloat:%s
 procedure TextboxSetText(tb: GUITextBox; single: Single); overload;
   
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToSingleFromRegion
+/// @sn textboxForRegion:%s setFloat:%s
 procedure TextboxSetText(r: Region; single: Single); overload;
   
 /// Sets the textbox text from region
 /// 
 /// @lib TextboxSetTextToSingleFromId
-///
-
+/// @sn textboxWithId:%s setFloat:%s
 procedure TextboxSetText(id : String; single: Single); overload;
                         
 /// Sets the textbox text from Panel and Id
 /// 
-/// @lib TextboxSetTextToSingleFromPanel
+/// @lib TextboxSetTextToSingleOnPanel
+/// @sn textboxOnPanel:%s withId:%s setFloat:%s
 procedure TextboxSetText(pnl : Panel; id : String; single: Single); overload;
 
 
@@ -884,6 +915,7 @@ function TextboxAlignment(tb: GUITextbox): FontAlignment;
 /// Set the textbox alignment of the textbox
 ///
 /// @lib
+/// @sn textbox:%s setAlignment:%s
 ///
 /// @class Textbox
 /// @setter Alignmnet
@@ -892,12 +924,15 @@ procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
 /// Set the textbox alignment of the textbox passed in
 ///
 /// @lib TextBoxSetAlignmentFromRegion
+/// @sn textboxForRegion:%s setAlignment:%s
 procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
 /// The the TextBox from an ID
 ///
 /// @lib
 function TextBoxFromID(id : String) : GUITextbox;
+
+
 
 //---------------------------------------------------------------------------
 //Lists
@@ -914,37 +949,34 @@ procedure ListRemoveActiveItem(r : region); overload;
 /// Removes the active item from a list
 /// 
 /// @lib ListRemoveActiveItemFromId
-
 procedure ListRemoveActiveItem(id : string); overload;
 
 /// Removes the active item from a list
 /// 
-/// @lib ListRemoveActiveItemFromPanelWithId
-/// @sn ListRemoveActiveItemFromPanel:%s WithId:%s
-
+/// @lib ListRemoveActiveItemOnPanelWithId
+/// @sn listRemoveActiveItemOnPanel:%s withId:%s
 procedure ListRemoveActiveItem(pnl : Panel; id: string); overload;
 
 
 /// Set the active item in the list to the item at index idx
 ///
 /// @lib
+/// @sn list:%s setActiveItemIndex:%s
 ///
 /// @class GUIList
-/// @setter activeItem
+/// @setter ActiveItemIndex
 procedure ListSetActiveItemIndex(lst: GUIList; idx: Longint);
 
 /// Set the active item in the list to the item at index idx
 ///
 /// @lib ListSetActiveItemIndexWithId
-/// @sn ListSetActiveItemWithId:%s AtIndex:%s
- 
+/// @sn listSetActiveItemWithId:%s atIndex:%s
 procedure ListSetActiveItemIndex(id : String; idx: Longint);
 
 /// Set the active item in the list to the item at index idx
 ///
 /// @lib ListSet
-/// @sn ListSetActiveItemFromPane:%s WithId:%s At:%s
-
+/// @sn listSetActiveItemFromPane:%s withId:%s at:%s
 procedure ListSetActiveItemIndex(pnl : Panel; id : String; idx: Longint);
 
 
@@ -976,14 +1008,16 @@ function ListFont(lst: GUIList): Font; overload;
 /// Sets the font of the list to font f
 ///
 /// @lib
+/// @sn list:%s setFont:%s
 ///
 /// @class GUIList
 /// @setter Font
-procedure ListSetFont(lst: GUITextbox; f: font);
+procedure ListSetFont(lst: GUIList; f: font);
 
 /// Returns the text of the item at index idx from the List of the Region
 ///
 /// @lib ListItemTextFromRegion
+/// @sn listForRegion:%s textAtIndex:%s
 ///
 /// @class Region
 /// @method ListItemTextAtIndex
@@ -992,6 +1026,7 @@ function ListItemText(r: Region; idx: Longint): String; overload;
 /// Returns the text of the item at index idx
 ///
 /// @lib
+/// @sn list:%s textAtIndex:%s
 ///
 /// @class GUIList
 /// @method ItemTextAtIndex
@@ -1000,13 +1035,13 @@ function ListItemText(lst: GUIList; idx: Longint): String; overload;
 /// Returns the text of the item at index idx
 ///
 /// @lib ListItemTextFromId
-///
+/// @sn listWithId:%s textAtIndex:%s
 function ListItemText(id : String; idx: Longint): String; overload;
 
 /// Returns the text of the item at index idx
 ///
-/// @lib ListItemTextFromPanelWithId
-/// @sn ListItemTeextFromPanel:%s WithId :%s
+/// @lib ListItemTextOnPanelWithId
+/// @sn listOnPanel:%s withId :%s textAtIndex:%s
 function ListItemText(pnl : Panel; id : String; idx: Longint): String; overload;
 
 /// Returns the text of the active item in the list of the region
@@ -1028,8 +1063,8 @@ function ListActiveItemText(r: Region): String; overload;
 
 /// Returns the active item text of the List in panel, pnl- with ID, ID
 ///
-/// @lib ListActiveItemTextFromPanelWithId
-/// @sn ListActiveItemFromPanel:%s WithId:%s
+/// @lib ListActiveItemTextOnPanelWithId
+/// @sn listActiveItemTextOnPanel:%s withId:%s
 function ListActiveItemText(pnl: Panel; ID: String): String;
 
 /// Returns the active item text of the List in with ID
@@ -1060,8 +1095,8 @@ function ListItemCount(id : String): Longint; overload;
 
 /// Returns the number of items in the list
 ///
-/// @lib ListItemCountFromPanelWithId
-/// @sn ListItemCountFrom:%s WithId:%s
+/// @lib ListItemCountOnPanelWithId
+/// @sn listItemCountFrom:%s withId:%s
 function ListItemCount(pnl : Panel; id : String): Longint; overload;
 
 /// Returns active item's index from the list of the region
@@ -1088,14 +1123,15 @@ function ListActiveItemIndex(id : String): Longint;
 
 /// Returns active item's index from the list
 ///
-/// @lib ListActiveItemIndexFromPanelWithId
-/// @sn ListActiveItemFromPanel:%s WithId:%s
+/// @lib ListActiveItemIndexOnPanelWithId
+/// @sn listActiveItemIndexOnPanel:%s withId:%s
 function ListActiveItemIndex(pnl : Panel; id : String): Longint;
 
 
 /// Removes item at index idx from the list
 ///
 /// @lib
+/// @sn list:%s removeItemAtIndex:%s
 ///
 /// @class GUIList
 /// @method RemoveItem
@@ -1103,12 +1139,14 @@ procedure ListRemoveItem(lst: GUIList; idx: Longint);
 
 /// Removes item at index idx from the list
 ///
-/// @lib ListRemoveItemFromPanelWithId
+/// @lib ListRemoveItemOnPanelWithId
+/// @sn listOnPanel:%s withId:%s removeItemAtIndex:%s
 procedure ListRemoveItem(pnl : Panel; id : String; idx: Longint);
 
 /// Removes item at index idx from the list
 ///
 /// @lib ListRemoveItemFromWithId
+/// @sn listWithId:%s removeItemAtIndex:%s
 procedure ListRemoveItem(id : String; idx: Longint);
 
 /// Removes all items from the list.
@@ -1128,7 +1166,7 @@ procedure ListClearItems(id : String); overload;
 /// Removes all items from the list.
 ///
 /// @lib ListClearItemsGivenPanelWithId
-///
+/// @sn clearItemsListOnPanel:%s withId:%s
 procedure ListClearItems(pnl : Panel; id : String); overload;
 
 /// Removes all items from the list of the region
@@ -1142,6 +1180,7 @@ procedure ListClearItems(r : Region); overload;
 /// Adds an item to the list by text
 ///
 /// @lib AddItemByText
+/// @sn list:%s addText:%s
 ///
 /// @class GUIList
 /// @method AddTextItem
@@ -1151,14 +1190,14 @@ procedure ListAddItem(lst: GUIList; text: String); overload;
 /// Adds an item to the list by text
 ///
 /// @lib AddItemWithIdByText
-
+/// @sn listWithId:%s addText:%s
 procedure ListAddItem(id : String; text: String); overload;
 
 
 /// Adds an item to the list by text
 ///
-/// @lib AddItemFromPanelWithIdByText
-/// @sn listFromPanel:%s WithId:%s AddText:%s
+/// @lib AddItemOnPanelWithIdByText
+/// @sn listOnPanel:%s withId:%s addText:%s
 procedure ListAddItem(pnl : Panel; id : String; text: String); overload;
 
 
@@ -1166,6 +1205,7 @@ procedure ListAddItem(pnl : Panel; id : String; text: String); overload;
 /// Adds an item to the list by bitmap
 ///
 /// @lib AddItemByBitmap
+/// @sn list:%s addBitmap:%s
 ///
 /// @class GUIList
 /// @method AddBitmapItem
@@ -1174,34 +1214,35 @@ procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
 /// Adds an item to the list by bitmap
 ///
 /// @lib AddItemWithIdByBitmap
-/// @sn listWith:%s AddBitmap:%s
+/// @sn listWithId:%s addBitmap:%s
 procedure ListAddItem(id : String; img:Bitmap); overload;
   
 /// Adds an item to the list by bitmap
 ///
-/// @lib AddItemFromPanelWithIdByBitmap
-/// @sn listFromPanel:%s WithId:%s AddBitmap:%s
+/// @lib ListAddItemBitmap
+/// @sn listOnPanel:%s withId:%s addBitmap:%s
 procedure ListAddItem(pnl : Panel; id : String; img:Bitmap); overload;
 
 /// Adds an item to the list by text and Bitmap
 ///
-/// @lib ListAddBitmapWithTextItem
-/// @sn List:%s AddItemByBitmap:%s WithText:%s
+/// @lib ListAddBitmapAndTextItem
+/// @sn list:%s addItemBitmap:%s withText:%s
+///
 /// @class GUIList
 /// @method AddBitmapWithTextItem
-/// @csn AddImg:%s AndText:%s
+/// @csn addImg:%s andText:%s
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 
 /// Adds an item to the list by text and Bitmap
 ///
 /// @lib ListWithIDAddBitmapWithTextItem
-/// @sn ListById:%s AddBitmap:%s WithTest:%s
+/// @sn listById:%s addBitmap:%s andText:%s
 procedure ListAddItem(id : String;img:Bitmap; text: String); overload;
 
 /// Adds an item to the list by text and Bitmap
 ///
-/// @lib ListFromPanelWithIdAddBitmapWithTextItem
-/// @sn ListFromPanel:%s WithId:%s AddBitmap:%s WithTest:%s
+/// @lib ListOnPanelWithIdAddBitmapWithTextItem
+/// @sn listOnPanel:%s withId:%s addBitmap:%s andText:%s
 procedure ListAddItem(pnl : Panel; id : String;img:Bitmap; text: String); overload;
 
 /// Adds an item to the list where the items shows a cell of a
@@ -1226,8 +1267,8 @@ procedure ListAddItem(id : String; const img: BitmapCell); overload;
 /// Adds an item to the list where the items shows a cell of a
 /// bitmap.
 ///
-/// @lib ListFromPanelWithIdAddItemWithCell
-/// @sn listFromPanel:%s WithId:%s AddBitmapCell:%s
+/// @lib ListOnPanelWithIdAddItemWithCell
+/// @sn listOnPanel:%s withId:%s addBitmapCell:%s
 ///
 procedure ListAddItem(pnl : Panel;id : String; const img: BitmapCell); overload;
 
@@ -1235,26 +1276,26 @@ procedure ListAddItem(pnl : Panel;id : String; const img: BitmapCell); overload;
 /// bitmap and some text.
 ///
 /// @lib ListAddItemWithCellAndText
-/// @sn list:%s addBitmapCell:%s withText:%s
+/// @sn list:%s addBitmapCell:%s andText:%s
 ///
 /// @class GUIList
 /// @overload AddItem AddItemWithCellAndText
-/// @csn addBitmapCell:%s withText:%s
+/// @csn addBitmapCell:%s andText:%s
 procedure ListAddItem(lst: GUIList; const img: BitmapCell; text: String); overload;
   
 /// Adds an item to the list where the items shows a cell of a
 /// bitmap and some text.
 ///
 /// @lib ListWithIdAddItemWithCellAndText
-/// @sn listWithId:%s addBitmapCell:%s withText:%s
+/// @sn listWithId:%s addBitmapCell:%s andText:%s
 ///
 procedure ListAddItem(id : String; const img: BitmapCell; text: String); overload;
 
 /// Adds an item to the list where the items shows a cell of a
 /// bitmap and some text.
 ///
-/// @lib ListFromPanelWithIdAddItemWithCellAndText
-/// @sn listFromPanel:%s WithId:%s addBitmapCell:%s withText:%s
+/// @lib ListOnPanelWithIdAddItemWithCellAndText
+/// @sn listOnPanel:%s withId:%s addBitmapCell:%s andText:%s
 ///
 procedure ListAddItem(pnl : Panel; id : String; const img: BitmapCell; text: String); overload;
 
@@ -1262,11 +1303,11 @@ procedure ListAddItem(pnl : Panel; id : String; const img: BitmapCell; text: Str
 /// bitmap and some text.
 ///
 /// @lib ListAddItemWithCellAndTextFromRegion
-/// @sn region:%s addBitmapCell:%s withText:%s
+/// @sn region:%s addBitmapCell:%s andText:%s
 ///
 /// @class Region
 /// @overload AddItem AddItemWithCellAndTextFromRegion
-/// @csn addBitmapCell:%s withText:%s
+/// @csn addBitmapCell:%s andText:%s
 procedure ListAddItem(r: Region; const img:BitmapCell; text: String); overload;
 
 
@@ -1285,30 +1326,36 @@ procedure ListAddItem(r : Region; const img: BitmapCell); overload;
 /// Adds an item to the list by text
 ///
 /// @lib ListAddItemByTextFromRegion
+/// @sn listOfRegion:%s addText:%s
 ///
 /// @class Region
-/// @method ListAddTextItemFromRegion
+/// @method ListAddTextItem
 procedure ListAddItem(r : Region; text: String); overload;
 
 
 /// Adds an item to the list by bitmap
 ///
 /// @lib ListAddItemByBitmapFromRegion
+/// @sn listForRegion:%s addBitmap:%s
 ///
 /// @class Region
-/// @method ListAddBitmapItemFromRegion
+/// @method ListAddBitmapItem
 procedure ListAddItem(r : Region; img:Bitmap); overload;
 
 /// Adds an item to the list
 ///
-/// @lib ListAddBitmapWithTextItemFromRegion
+/// @lib ListAddBitmapAndTextItemFromRegion
+/// @sn  listForRegion:%s addBitmap:%s andText:%s
 ///
 /// @class Region
-/// @method ListAddBitmapWithTextItem
+/// @method ListAddBitmapAndTextItem
+/// @csn listAddBitmap:%s andText:%s
 procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
+
 /// Returns the index of the item with the bitmap, img
 ///
 /// @lib 
+/// @sn list:%s indexOfBitmap:%s
 ///
 /// @class GUIList
 /// @method BitmapItemIndex
@@ -1317,6 +1364,7 @@ function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 /// Returns the index of the item with the bitmap and cell.
 ///
 /// @lib ListBitmapCellIndex
+/// @sn list:%s indexOfCell:%s
 ///
 /// @class GUIList
 /// @method CellItemIndex
@@ -1325,6 +1373,7 @@ function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
 /// returns the id of a value in the list.
 ///
 /// @lib
+/// @sn list:%s indexOfText:%s
 ///
 /// @class GUIList
 /// @method IndexOfTextItem
@@ -1335,7 +1384,7 @@ function ListTextIndex(lst: GUIList; value: String): Longint;
 /// @lib
 ///
 /// @class GUIList
-/// @getter StartingAt
+/// @getter StartAt
 function ListStartAt(lst: GUIList): Longint;
 
 /// Returns the starting point for the list from region
@@ -1343,23 +1392,25 @@ function ListStartAt(lst: GUIList): Longint;
 /// @lib ListStartingAtFromRegion
 ///
 /// @class Region
-/// @getter ListStartingAt
+/// @getter ListStartAt
 function ListStartAt(r: Region): Longint;
 
 /// Sets the starting point for the list
 ///
 /// @lib ListSetStartingAt
+/// @sn list:%s setStartAt:%s
 ///
 /// @class GUIList
-/// @setter StartingAt
+/// @setter StartAt
 procedure ListSetStartAt(lst: GUIList; idx: Longint);
 
 /// Sets the starting point for the list from region
 ///
 /// @lib ListSetStartingAtFromRegion
+/// @sn listForRegion:%s setStartat:%s
 ///
 /// @class Region
-/// @setter ListStartingAt
+/// @setter ListStartAt
 procedure ListSetStartAt(r: Region; idx: Longint);
 
 /// Returns the font alignment of a list from region
@@ -1381,6 +1432,7 @@ function ListFontAlignment(lst: GUIList): FontAlignment;
 /// Returns the font alignment of a list from region
 ///
 /// @lib ListSetFontAlignmentFromRegion
+/// @sn listForRegion:%s setFontAlignment:%s
 ///
 /// @class Region
 /// @setter ListFontAlignment
@@ -1389,6 +1441,7 @@ procedure ListSetFontAlignment(r: Region; align: FontAlignment);
 /// Returns the font alignment of a list
 ///
 /// @lib ListSetFontAlignment
+/// @sn list:%s setFontAlignment:%s
 ///
 /// @class GUIList
 /// @setter FontAlignment
@@ -1427,15 +1480,15 @@ function  LabelFont(l: GUILabel): Font; overload;
 /// Get Font From Label
 ///
 /// @lib LabelFromRegionGetFont
-///
 function  LabelFont(r: Region): Font; overload;
 
 /// Set Font For Label
 ///
 /// @lib
+/// @sn label:%s setFont:%s
+///
 /// @class Label
 /// @method setFont
-///
 procedure LabelSetFont(l: GUILabel; s: String);
 
 /// Get text From Label
@@ -1457,20 +1510,20 @@ function  LabelText(id : String): string; overload;
 
 /// Get text From Label
 ///
-/// @lib LabelTextFromPanelWithId
-/// @sn TextOfLabelFromPanel:%s WithId:%s
+/// @lib LabelTextOnPanelWithId
+/// @sn textOfLabelOnPanel:%s withId:%s
 function  LabelText(pnl : Panel;id : String): string; overload;
 
 /// Set text for Label
 ///
 /// @lib LabelWithIdSetText
-/// @sn SetLabelWithId:%s WithText:%s
+/// @sn labelWithId:%s setText:%s
 procedure LabelSetText(id: String; newString: String); overload;
 
 /// Set text for Label
 ///
 /// @lib 
-/// @sn SetLabelWithId:%s WithText:%s
+/// @sn label:%s setText:%s
 ///
 /// @class Label
 /// @setter Text
@@ -1479,19 +1532,18 @@ procedure LabelSetText(lb: GUILabel; newString: String); overload;
 /// Set text for Label
 ///
 /// @lib LabelFromRegionSetText
-/// @sn SetLabelFromRegion:%s WithText:%s
+/// @sn labelForRegion:%s setText:%s
 procedure LabelSetText(r: Region; newString: String); overload;
 
 /// Set text for Label
 ///
-/// @lib LabelFromPanelWithIdSetText
-/// @sn SetLabelFromPanel:%s WithText:%s
+/// @lib LabelOnPanelWithIdSetText
+/// @sn labelOnPanel:%s withId:%s setText:%s
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
 
 /// returns a GUILabel From given region
 ///
 /// @lib
-
 function  LabelFromRegion(r: Region): GUILabel;
 
 /// Returns FontAlignment from label given region
@@ -1510,16 +1562,20 @@ function LabelAlignment(lbl: GUILabel): FontAlignment;
 
 /// Sets FontAlignment for label given region
 ///
-/// @lib SetLabelAlignementFromRegion
-/// @sn LabelFromRegion:%s SetAlingment:%S
+/// @lib SetLabelAlignmentFromRegion
+/// @sn labelFromRegion:%s setAlignment:%s
 procedure LabelSetAlignment(r: Region; align: FontAlignment);
 
 /// Sets FontAlignment for label given region
 ///
-/// @lib SetLabelAlignement
+/// @lib SetLabelAlignment
+/// @sn label:%s setAlignment:%s
+///
 /// @class Label
 /// @setter FontAlignment
 procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
+
+
 
 // ===============
 // = Dialog Code =
@@ -2255,6 +2311,12 @@ begin
   forRegion^.active := b;
 end;
 
+function RegionActive(forRegion: Region): Boolean;
+begin
+  if not assigned(forRegion) then result := false
+  else result := forRegion^.active;
+end;
+
 procedure ToggleRegionActive(forRegion: Region);
 begin
   if not assigned(forRegion) then exit;
@@ -2299,7 +2361,7 @@ end;
 
 // Check which of the regions was clicked in this panel
 procedure HandlePanelInput(pnl: Panel);
-  procedure _ScrollWithScrollArea(lst: GUIList; mouse: Point2D);
+  procedure _ScrollWithScrollArea(lst: GUIList; const mouse: Point2D);
   var
     largestStartIdx: Longint;
     pct: Single;
@@ -2337,7 +2399,7 @@ procedure HandlePanelInput(pnl: Panel);
       lst^.startingAt := lst^.startingAt + inc;
   end;
   
-  procedure _PerformListClicked(lstRegion: Region; lst: GUIList; pointClicked: Point2D);
+  procedure _PerformListClicked(lstRegion: Region; lst: GUIList; const pointClicked: Point2D);
   var
     i: Longint;
   begin
@@ -2383,7 +2445,7 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
-  procedure _PerformMouseDownOnList(lst: GUIList; mouse: Point2D);
+  procedure _PerformMouseDownOnList(lst: GUIList; const mouse: Point2D);
   begin
     if PointInRect(mouse, lst^.scrollArea) then
     begin
@@ -2391,7 +2453,7 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
-  procedure _UpdateMouseDown(mouse: Point2D);
+  procedure _UpdateMouseDown(const mouse: Point2D);
   var
     pointDownInRegion: Point2D;
     r: Region;
@@ -2411,7 +2473,7 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
-  procedure _UpdateScrollUp(mouse: Point2D);
+  procedure _UpdateScrollUp(const mouse: Point2D);
   var
     r: Region;
   begin
@@ -2424,7 +2486,7 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
-  procedure _UpdateScrollDown(mouse: Point2D);
+  procedure _UpdateScrollDown(const mouse: Point2D);
   var
     r: Region;
   begin
@@ -2437,7 +2499,7 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
-  procedure _UpdateMouseClicked(pointClicked: Point2D);
+  procedure _UpdateMouseClicked(const pointClicked: Point2D);
   var
     pointClickedInRegion: Point2D;
     r: Region;
@@ -3044,10 +3106,10 @@ begin
 end;
 
 
-procedure ListSetFont(lst: GUITextbox; f: font);
+procedure ListSetFont(lst: GUIList; f: font);
 begin
   if not(assigned(lst)) OR not(assigned(f)) then exit;
-
+     
   lst^.font := f;
 end;
 
@@ -4229,7 +4291,7 @@ begin
   result := (Longint(toCheck) and Longint(checkFor)) = Longint(checkFor);
 end;
 
-function PointInRegion(pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
+function PointInRegion(const pt: Point2D; p: Panel; kind: GUIElementKind): Boolean; overload;
 var
   i: Longint;
   curr: Region;
@@ -4248,12 +4310,12 @@ begin
   end;
 end;
 
-function PointInRegion(pt: Point2D; p: Panel): Boolean; overload;
+function PointInRegion(const pt: Point2D; p: Panel): Boolean; overload;
 begin
   result := PointInRegion(pt, p, gkAnyKind);
 end;
 
-function PanelAtPoint(pt: Point2D): Panel;
+function PanelAtPoint(const pt: Point2D): Panel;
 var
   i: Longint;
   curPanel: Panel;
@@ -4320,7 +4382,7 @@ begin
   GUIC.downRegistered := false;
 end;
 
-procedure MovePanel(p: Panel; mvmt: Vector);
+procedure MovePanel(p: Panel; const mvmt: Vector);
 begin
   if not assigned(p) then exit;
   

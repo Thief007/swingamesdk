@@ -342,8 +342,8 @@ implementation
   procedure BlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr); 
   var
     //lTexture : GLuint;
-    textureCoord : Array[0..3] of Point2D;
-    vertices : Array[0..3] of Point2D;
+    // textureCoord : Array[0..3] of Point2D;
+    // vertices : Array[0..3] of Point2D;
     lRatioX, lRatioY, lRatioW, lRatioH, lTexWidth, lTexHeight : Single;
   begin
     
@@ -354,7 +354,7 @@ implementation
       lRatioW := srcBmp^.textureWidthRatio;
       lRatioH := srcBmp^.textureHeightRatio;
     end else begin
-      lTexWidth   := srcBmp^.width / srcBmp^.textureWidthRatio;
+      lTexWidth  := srcBmp^.width / srcBmp^.textureWidthRatio;
       lTexHeight := srcBmp^.height / srcBmp^.textureHeightRatio;
       
       lRatioX := GetCoords(lTexWidth, srcRect^.x);
@@ -363,13 +363,11 @@ implementation
       lRatioW := lRatioX + GetCoords(lTexWidth, srcRect^.width);
       lRatioH := lRatioY + GetCoords(lTexHeight, srcRect^.height);
     end;
-
+    
     //reset color
     glColor4f(1,1,1,1);
     
-
-    RenderTexture(Cardinal(srcBmp^.Surface^), lRatioX, lRatioY, lRatioW, lRatioH, destRect);
-   
+    RenderTexture(Cardinal(srcBmp^.Surface^), lRatioX, lRatioY, lRatioW, lRatioH, destRect);   
   end;
   
   procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 

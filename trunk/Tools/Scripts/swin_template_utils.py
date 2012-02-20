@@ -139,6 +139,37 @@ def build_csharp_lib():
         # path = dirs["cs_generated_code_dir"] + '/*.cs'
         [os.remove(os.path.join(dirs["cs_generated_code_dir"],f)) for f in os.listdir(dirs["cs_generated_code_dir"]) if f.endswith(".cs")]
 
+def pkg_csharp_installer(tmp_dir, to_dir):
+    """Package up the SwinGame C# installer"""
+    
+    output_line('Creating Visual Studio Template Structure')
+    
+    # Replace 'MyGame' with '$safeprojectname$.src' in GameMain.cs
+    o = open("NewGameMain.cs","a") #open for append
+    game_main = os.path.join(to_dir, 'src', 'GameMain.cs')
+    for line in open(game_main):
+       line = line.replace("MyGame","$safeprojectname$.src")
+       o.write(line) 
+    o.close()
+    run_bash('mv', ['NewGameMain.cs', game_main] )
+    
+    tmp_vs_dir = os.path.join(tmp_dir, 'Visual Studio') + '/'
+    
+    # Make the Visual Studio directory
+    os.mkdir(tmp_vs_dir)
+    # Copy in template files
+    copy_without_svn(os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08'), tmp_vs_dir)
+    
+    # Create the project zip
+    os.chdir(to_dir)
+    to_zip = tmp_vs_dir + 'SwinGame C# Project.zip'
+    run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
+    
+    # Zip it all together
+    os.chdir(tmp_vs_dir)
+    to_zip = dist_folder + 'SwinGame %s C# Template Installer.vsi' % sg_version
+    output_line('Creating Template Installer for C#')
+    run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
 
 # ===============================
 # = Template details dictionary =
@@ -146,63 +177,81 @@ def build_csharp_lib():
 
 
 template_details = {
-    'Pascal':   {
-            'script':       'create_pascal_library.py',
-            'use_sgsdk':    False,
-            'copy_dist':    [
-                { 
-                  'target':         'fpc',
-                  'os':             ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':            'lib',
-                },
-                {
-                  'target':     'iOS',
-                  'os':         ['Mac OS X'],
-                  'lib':        'staticlib',
-                },
-            ],
-            'pre_copy_script': None,
-        },
-    'C':    {
-            'script':       'create_c_library.py',
-            'use_sgsdk':    True,
-            'copy_dist':    [
-                { 
-                  'target':     'gpp',
-                  'os':         ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'gcc',
-                  'os':         ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'xcode 3',
-                  'os':         ['Mac OS X'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'iOS',
-                  'os':         ['Mac OS X'],
-                  'lib':        'staticlib',
-                  'staticsgsdk':    True,
-                },
-            ],
-            'pre_copy_script': None,
-        },
-    #'ObjC':     'create_c_library.py',
+    # 'Pascal':   {
+    #         'script':       'create_pascal_library.py',
+    #         'use_sgsdk':    False,
+    #         'copy_dist':    [
+    #             { 
+    #               'target':         'fpc',
+    #               'os':             ['Mac OS X', 'Windows', 'Linux'],
+    #               'lib':            'lib',
+    #             },
+    #             {
+    #               'target':     'iOS',
+    #               'os':         ['Mac OS X'],
+    #               'lib':        'staticlib',
+    #             },
+    #         ],
+    #         'pre_copy_script': None,
+    #     },
+    # 'C':    {
+    #         'script':       'create_c_library.py',
+    #         'use_sgsdk':    True,
+    #         'copy_dist':    [
+    #             { 
+    #               'target':     'gpp',
+    #               'os':         ['Mac OS X', 'Windows', 'Linux'],
+    #               'lib':        'lib',
+    #               'staticsgsdk':    False,
+    #             },
+    #             { 
+    #               'target':     'gcc',
+    #               'os':         ['Mac OS X', 'Windows', 'Linux'],
+    #               'lib':        'lib',
+    #               'staticsgsdk':    False,
+    #             },
+    #             { 
+    #               'target':     'xcode 3',
+    #               'os':         ['Mac OS X'],
+    #               'lib':        'lib',
+    #               'staticsgsdk':    False,
+    #             },
+    #             { 
+    #               'target':     'iOS',
+    #               'os':         ['Mac OS X'],
+    #               'lib':        'staticlib',
+    #               'staticsgsdk':    True,
+    #             },
+    #         ],
+    #         'pre_copy_script': None,
+    #     },
+    # 'ObjC': {
+    #         'script':       'create_objc_library.py',
+    #         'use_sgsdk':    True,
+    #         'copy_dist':    [
+    #             {
+    #                 'target':       'gcc',
+    #                 'os':           [ 'Mac OS X' ],
+    #                 'lib':          'lib',
+    #                 'staticsgsdk':  False,
+    #             },
+    #             {
+    #                 'target':       'xcode 3',
+    #                 'os':           [ 'Mac OS X' ],
+    #                 'lib':          'lib',
+    #                 'staticsgsdk':  False,
+    #             },
+    #         ],
+    #         'pre_copy_script': None,
+    #      },
     'CSharp':   {
             'script':       'create_csharp_library.py',
             'use_sgsdk':    True,
             'copy_dist':    [
                 { 
-                  'target':     'mono',
-                  'os':         [ 'Mac OS X', 'Linux' ],
-                  'lib':        'lib',
+                  'target':         'mono',
+                  'os':             [ 'Mac OS X', 'Linux' ],
+                  'lib':            'lib',
                   'staticsgsdk':    False,
                 },
                 { 
@@ -210,6 +259,7 @@ template_details = {
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
+                  'pkg_script':     pkg_csharp_installer,
                 },
             ],
             'pre_copy_script': build_csharp_lib,
@@ -229,7 +279,7 @@ def deploy_list():
 def _setup_template_details():
     for key, lang_dict in template_details.items():
         for dist_dict in lang_dict['copy_dist']:
-            dist_dict['template_name'] = 'SwinGame %s %s' % (sg_version, str.upper(dist_dict['target']) )
+            dist_dict['template_name'] = '%s SwinGame %s %s' % (key, sg_version, str.upper(dist_dict['target']) )
             dist_dict['template_path_name'] = dist_dict['template_name'].replace(' ', '_').replace('.', '_')
     
     
