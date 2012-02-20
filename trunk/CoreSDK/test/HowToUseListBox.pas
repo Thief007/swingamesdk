@@ -75,7 +75,7 @@ begin
     if RegionClickedId() = 'Button3' then ResumeMusic();    
     if RegionClickedId() = 'Button4' then if MusicPlaying() then StopMusic();    
     
-    DrawPanels();      
+    DrawInterface();      
     UpdateInterface();
     
     RefreshScreen();        

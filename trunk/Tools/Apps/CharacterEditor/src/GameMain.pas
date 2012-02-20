@@ -217,7 +217,7 @@ begin
 			ChangePanelMode(BitmapMode.panels, AniMode.panels, CharMode.panels,sharedVals.panels[BrowserPanel], prevMode, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))));
 		end;
     
-    DrawPanels();
+    DrawInterface();
     if sharedVals.dragCell <> nil then DrawOnMouse(sharedVals);
     if KeyTyped(vk_ESCAPE) then sharedVals.dragCell := nil;
     if KeyTyped(vk_TAB) then

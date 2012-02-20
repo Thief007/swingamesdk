@@ -122,7 +122,7 @@ interface
   /// Draw the currently visible panels (For use in the main loop)
   ///
   /// @lib
-  procedure DrawPanels();
+  procedure DrawInterface();
   
   /// Activate the passed in panel. If shown, the panel will be clickable. This is the default state of a panel.
   ///
@@ -2193,7 +2193,7 @@ begin
   end;
 end;
   
-procedure DrawPanels();
+procedure DrawInterface();
 var
   i: longint;
 begin

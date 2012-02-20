@@ -569,7 +569,7 @@ begin
     UpdateInterface();
     UpdateGUI(pnls, myMap, openingFile, savingFile, openingBmp, offset);
     DrawUpdate(myMap,offset);
-    DrawPanels();
+    DrawInterface();
     DrawFramerate(0,0);
     RefreshScreen();
   until WindowCloseRequested();
