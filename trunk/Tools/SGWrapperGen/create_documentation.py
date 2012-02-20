@@ -788,7 +788,7 @@ def create_types_doc(idcollection):
         temp_title = key
         _Types_Items.append(temp_title)
         print " -- index number of %s[%i]" % (temp_title, _Types_Items.index(temp_title))
-        sql_menu_types.append(('(\''+temp_title.lower()+'\', \''+temp_title+'\', \''+temp_title+'\', \'#parent_'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Types_Items.index(temp_title)))
+        sql_menu_types.append(('(\'types\', \''+temp_title+'\', \''+temp_title+'\', \'#'+temp_title+'\' , \'url\', 1, 0, 0, 0, %i, 0, \'0000-00-00 00:00:00\', 0, 0, 0, 0, \'menu_image=-1\', 0, 0, 0),') % (_Types_Items.index(temp_title)))
         f_items = open(SQL_OUT_PATH + "/site_types_sql_items_create.sql","a")
         for line in sorted(set(sql_menu_types)):
             f_items.write(line+'\n')
@@ -948,7 +948,16 @@ def end_create_sql_menu_items():
     fappendEnd.seek(nonwhite + words-2)
     fappendEnd.write(';')     
     fappendEnd.close  
-  
+
+def end_create_sql_menu_types():
+    _file = SQL_OUT_PATH + "/site_types_sql_items_create.sql"
+    fappendEnd = open(_file,"r+")
+    lines, blanks, sentences, words, nonwhite = countFile(_file)
+    print nonwhite + words - 1
+    fappendEnd.seek(nonwhite + words-2)
+    fappendEnd.write(';')     
+    fappendEnd.close  
+      
 #==============================================================================
 # MAIN
 #==============================================================================
@@ -978,6 +987,7 @@ def main():
     create_types_doc(idc)
     end_create_sql_menu_script()
     end_create_sql_menu_items()
+    end_create_sql_menu_types()
     #create_sql_menu_insert()
 if __name__ == '__main__':
     main()
