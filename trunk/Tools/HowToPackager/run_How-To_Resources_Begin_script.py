@@ -74,17 +74,18 @@ def load_animation_script_resources(word_list,f):
                 resource.append(word_list[2])
             elif resource[-1] != word_list[2]:
                 resource.append(word_list[2])
-              
-    print "resource count :%s" % (len(resource))
-    print "*************   ---->  Resource Array :" + resource[1]
     for sound in resource:
-        print "Sound File :"+sound+'\n'
         f.write("sounds/"+sound+'\n') 
-            # f.write("sounds/"+word_list[2]+'\n')
-            # print "count :%s" % (len(word_list))
-            # print word_list[2] 
     
-            
+def load_panels_resources(word_list,f):
+    bundle_file =  get_test_resource_directory() + "panels/" + word_list[2]
+    bun = open(bundle_file,'r')
+    lines_in_bundles_file = bun.readlines()
+    for line in lines_in_bundles_file:
+        word_list = re.findall(r"[A-Za-z_.-]+",line)
+        if line[0] == 'a' or line[0] == 'b' or line[0] == 'i':
+            f.write("images/"+word_list[1]+'\n')
+               
 def create_list():
     f = open(get_test_directory() + "HowToResources.txt",'w')
     dirList = glob.glob(os.path.join(get_test_directory(), "HowTo*.pas"))
@@ -101,6 +102,7 @@ def create_list():
             if len(word_list) > 0:        
                 if word_list[0] in _load or (len(word_list) >= 2 and word_list[1] in _load):
                     if (word_list[0] == _load[0]): load_animation_script_resources(word_list,f)
+                    if 'LoadPanel' in word_list: load_panels_resources(word_list,f)
                     if word_list[0] in _pkg:
                         get_Resources(word_list,f)
                     elif (len(word_list) >= 2 and word_list[1] in _pkg):
