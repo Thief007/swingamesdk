@@ -11,7 +11,8 @@ begin
   OpenGraphicsWindow('How To Use ListBox ', 320, 240);
   LoadDefaultColors();
   
-  GUISetBackgroundColor(ColorWhite);  
+  GUISetBackgroundColor(ColorWhite); 
+  GUISetForegroundColor(ColorGreen);  
   
   LoadResourceBundle('MainMenu.txt');
   
