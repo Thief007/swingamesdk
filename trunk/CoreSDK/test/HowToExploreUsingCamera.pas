@@ -15,11 +15,11 @@ begin
     if KeyDown(vk_LEFT) then MoveCameraBy(-1, 0);
     if KeyDown(vk_RIGHT) then MoveCameraBy(+1, 0);
     
-    //Draw the scene
-    ClearScreen(ColorWhite);
+    // Move Camera to a certain point
+    if KeyTyped(vk_0) then MoveCameraTo(0, 0);     
     
-    //FillCircle(ColorRed, 0, 0, 4);
-    //DrawText('Starting position of Game World at 0,0', ColorRed, 7, -2);    
+    //Draw the scene
+    ClearScreen(ColorWhite);    
     
     FillRectangle(RGBColor(205,201,201), -150, 250, 1150, 20);    
     FillRectangle(RGBColor(205,201,201), -150, 330, 1150, 20);
