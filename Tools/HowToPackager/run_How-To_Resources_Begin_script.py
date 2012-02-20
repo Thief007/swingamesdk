@@ -63,8 +63,28 @@ def load_Bundled_Resources(word_list, f):
             print _pkg[word_list[0]].lower()+ "/" + word_list[-1]
 
 def load_animation_script_resources(word_list,f):
-    print "***Anim script*** " + word_list[0]
-             
+    resource = []
+    bundle_file =  get_test_resource_directory() + "" + _pkg[word_list[0]] + "/" + word_list[2]
+    bun = open(bundle_file,'r')
+    lines_in_bundles_file = bun.readlines()
+    for line in lines_in_bundles_file:
+        word_list = re.findall(r"[A-Za-z_.-]+",line)
+        if (len(word_list) > 2) and (word_list[0] == "s"):            
+            if len(resource) < 1:
+                resource.append(word_list[2])
+            elif resource[-1] != word_list[2]:
+                resource.append(word_list[2])
+              
+    print "resource count :%s" % (len(resource))
+    print "*************   ---->  Resource Array :" + resource[1]
+    for sound in resource:
+        print "Sound File :"+sound+'\n'
+        f.write("sounds/"+sound+'\n') 
+            # f.write("sounds/"+word_list[2]+'\n')
+            # print "count :%s" % (len(word_list))
+            # print word_list[2] 
+    
+            
 def create_list():
     f = open(get_test_directory() + "HowToResources.txt",'w')
     dirList = glob.glob(os.path.join(get_test_directory(), "HowTo*.pas"))
