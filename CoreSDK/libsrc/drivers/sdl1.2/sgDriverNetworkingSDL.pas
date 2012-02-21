@@ -334,12 +334,13 @@ var
    
   function CreateUDPConnectionProcedure(const aDestIP : String; const aDestPort, aInPort : LongInt) : Connection; 
   var
-    lIdx, lDecDistIP : LongInt;
+    lIdx : LongInt;
+    lDecDestIP : LongWord;
     lDecIPStr : String;
   begin    
     result := nil;
-    lDecDistIP := IPv4ToDec(aDestIP);
-    lDecIPStr  := IntToStr(lDecDistIP);
+    lDecDestIP := IPv4ToDec(aDestIP);
+    lDecIPStr  := IntToStr(lDecDestIP);
 
     if HasName(_UDPConnectionIDs, lDecIPStr + ':' + IntToStr(aDestPort)) then exit;
     lIdx := CreateUDPHostProcedure(aInPort);
@@ -348,7 +349,7 @@ var
 
     AddName(_UDPConnectionIDs, lDecIPStr + ':' + IntToStr(aDestPort));
     result := CreateConnection();
-    result^.ip := lDecDistIP;
+    result^.ip := lDecDestIP;
     result^.port := aDestPort;
     result^.isTCP := False;
 
@@ -371,7 +372,8 @@ var
     lConnection   : Connection;
     lSrcIPString  : String;
     lNewConnection: Boolean = False;
-    lSrcIP, lSrcPort : LongInt;
+    lSrcPort : LongInt;
+    lSrcIP  : LongWord;
   begin
     result := False;
     for i := Low(_UDPListenSockets) to High(_UDPListenSockets) do
