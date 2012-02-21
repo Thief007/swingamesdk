@@ -498,7 +498,7 @@ var
 	lPlayer	: Player;
 	lMyIDX, lGameWidth, lGameHeight, lPlayerCount : Integer;
 begin
-	OpenGraphicsWindow('Pong Centipede', 400, 200);
+	OpenGraphicsWindow('Pong Centipede', 960, 640);
 	LoadDefaultColors();
 	lPlayerCount := 1;
 	lIsHost := SetupConnection(lHostConnection);
