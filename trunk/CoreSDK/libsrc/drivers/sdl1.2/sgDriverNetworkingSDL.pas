@@ -4,31 +4,37 @@ interface
 uses sgShared, sdl_net, sgNamedIndexCollection, sgTypes;
 
     //TCP Connection
-    function CreateTCPHostProcedure              (const aPort : LongInt) : Boolean;
-    function OpenTCPConnectionToHostProcedure    (const aDestIP : String; const aDestPort : LongInt) : Connection;
-    function ServerAcceptTCPConnectionProcedure  () : LongInt;
+    function CreateTCPHostProcedure            	(const aPort : LongInt) : Boolean;
+    function CreateTCPConnectionProcedure    	 	(const aDestIP : String; const aDestPort : LongInt) : Connection;
+    function AcceptTCPConnectionProcedure  		 	() : LongInt;
   
     //TCP Message
-    function BroadcastTCPMessageProcedure        (const aMsg : String) : Boolean;
-    function SendTCPMessageToProcedure           (const aMsg : String; const aConnection : Connection) : Connection;
-    function TCPMessageReceivedProcedure         () : Boolean;
+    procedure BroadcastTCPMessageProcedure     	(const aMsg : String);
+    function  SendTCPMessageProcedure           	(const aMsg : String; const aConnection : Connection) : Connection;
+    function  TCPMessageReceivedProcedure        () : Boolean;
 
     //UDP
-    function CreateUDPSocketProcedure(const aPort : LongInt) : LongInt;
-    function CreateUDPConnectionProcedure(aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
-    function UDPMessageReceivedProcedure() : Boolean;
-    function SendUDPMessageProcedure(const aMsg : String; const aConnection : Connection) : Boolean;
+    function CreateUDPHostProcedure							(const aPort : LongInt) : LongInt;
+    function CreateUDPConnectionProcedure				(const aDestIP : String; const aDestPort, aInPort : LongInt) : Connection; 
+	
+		//UDP Message
+		procedure BroadcastUDPMessageProcedure			(const aMsg : String);
+    function  SendUDPMessageProcedure						(const aMsg : String; const aConnection : Connection) : Boolean;
+    function  UDPMessageReceivedProcedure				() : Boolean;
 
     //Close Sockets
     function CloseTCPHostSocketProcedure        (const aPort: LongInt) : Boolean;  
-    function CloseConnectionProcedure           (var aConnection : Connection) : Boolean;
-    function CloseUDPListenSocketProcedure      (const aPort : LongInt) : Boolean;
+    function CloseConnectionProcedure           (var aConnection : Connection; const aCloseUDPSocket : Boolean) : Boolean;
+    function CloseUDPSocketProcedure      			(const aPort : LongInt) : Boolean;
       
     procedure CloseAllTCPHostSocketProcedure    ();
-    procedure CloseAllConnectionsProcedure      ();
-    procedure CloseAllUDPListenSocketProcedure  ();
+    procedure CloseAllConnectionsProcedure      (const aCloseUDPSockets : Boolean);
+    procedure CloseAllUDPSocketProcedure  			();
 
     function MyIPProcedure                      () : String;
+		function ConnectionCountProcedure						() : LongInt;
+		function RetreiveConnectionProcedure				(const aConnectionAt : LongInt) : Connection;
+		
     procedure FreeAllNetworkingResourcesProcedure ();
     //Initialisation
     procedure LoadSDLNetworkingDriver           (); 
@@ -92,24 +98,25 @@ var
     end;
   end;
 
-  function ExtractData(aReceivedCount : LongInt) : String;
+  function ExtractData(aReceivedCount : LongInt; const aConnection : Connection) : String;
   var
     i      : LongInt;
     lSize  : Byte = 0;
     lSizeIdx : LongInt = 0;
     lComplete : Boolean = False;
   begin
-    result := '';
     while not lComplete do
     begin      
+			result := '';
       lSize := Byte(_Buffer[lSizeIdx]);
     
-      for i := lSizeIdx + 1 to lSize do
+      for i := lSizeIdx + 1 to lSizeIdx + lSize do
       begin
         result += _Buffer[i];
       end;
+      EnqueueMessage(result, aConnection);
       lSizeIdx := lSizeIdx + lSize + 1;
-      if lSizeIdx = aReceivedCount then lComplete := True;
+      if lSizeIdx >= aReceivedCount then lComplete := True;
     end;
   end;
     
@@ -128,11 +135,27 @@ var
     lRemoteIP := SDLNet_TCP_GetPeerAddress(aNewSocket);
     result := SDLNet_Read16(@lRemoteIP^.port);
   end;
+	
+//----------------------------------------------------------------------------
+// Misc Function
+//----------------------------------------------------------------------------
 
   function MyIPProcedure() : String;
   begin
     result := '127.0.0.1';
   end;
+	
+	function ConnectionCountProcedure() : LongInt;
+	begin
+		result := Length(_Connections);
+	end;
+	
+	function RetreiveConnectionProcedure(const aConnectionAt : LongInt) : Connection;
+	begin
+		result := nil;
+		if (aConnectionAt < 0) or (aConnectionAt > High(_Connections)) then exit;
+		result := _Connections[aConnectionAt];
+	end;
 
 //----------------------------------------------------------------------------
 // TCP Connection Handling
@@ -163,7 +186,7 @@ var
     result := Assigned(lTempSocket);    
   end;
 
-  function OpenTCPConnectionToHostProcedure(const aDestIP : String; const aDestPort : LongInt) : Connection;
+  function CreateTCPConnectionProcedure(const aDestIP : String; const aDestPort : LongInt) : Connection;
   var
     lTempSocket : PTCPSocket = nil; 
   begin    
@@ -182,7 +205,7 @@ var
     end;
   end;  
 
-  function ServerAcceptTCPConnectionProcedure() : LongInt;
+  function AcceptTCPConnectionProcedure() : LongInt;
   var
     lTempSocket : PTCPSocket = nil;
     lNewConnection : Connection;
@@ -224,19 +247,19 @@ var
          lReceived := SDLNet_TCP_Recv(_Connections[i]^.socket, _BufferPtr, 512);
          if (lReceived > 0) then
          begin
-           EnqueueMessage(ExtractData(lReceived), _Connections[i]);
+					 ExtractData(lReceived, _Connections[i]);
            result := True;
          end;
        end;
      end;
    end;
 
-  function SendTCPMessageToProcedure(const aMsg : String; const aConnection : Connection) : Connection;
+  function SendTCPMessageProcedure(const aMsg : String; const aConnection : Connection) : Connection;
   var
     lLen, i : LongInt;
   begin
     result := nil;
-    if (aConnection = nil) or (aConnection^.socket = nil) then begin RaiseWarning('SDL 1.2 SendTCPMessageToProcedure Illegal Connection Arguement'); exit; end;
+    if (aConnection = nil) or (aConnection^.socket = nil) then begin RaiseWarning('SDL 1.2 SendTCPMessageProcedure Illegal Connection Arguement'); exit; end;
     
     for i := 0 to Length(aMsg) + 1 do
     begin
@@ -255,11 +278,10 @@ var
     end;
   end;
 
-  function BroadcastTCPMessageProcedure(const aMsg : String) : Boolean;
+  procedure BroadcastTCPMessageProcedure(const aMsg : String);
   var
     lLen, i : LongInt;
   begin
-    result := True;   
     for i := 0 to Length(aMsg) + 1 do
     begin
       if i = 0 then
@@ -290,7 +312,7 @@ var
       _UDPReceivePacket := SDLNet_AllocPacket(512);
   end;
 
-  function CreateUDPSocketProcedure(const aPort : LongInt) : LongInt;
+  function CreateUDPHostProcedure(const aPort : LongInt) : LongInt;
   var
     lTempSocket  : PUDPSocket = nil;  
     lPortID      : String;  
@@ -310,7 +332,7 @@ var
     if result = -1 then RaiseWarning('OpenUDPListenerPort: ' + SDLNET_GetError());
   end;
    
-  function CreateUDPConnectionProcedure(aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
+  function CreateUDPConnectionProcedure(const aDestIP : String; const aDestPort, aInPort : LongInt) : Connection; 
   var
     lIdx, lDecDistIP : LongInt;
     lDecIPStr : String;
@@ -320,7 +342,7 @@ var
     lDecIPStr  := IntToStr(lDecDistIP);
 
     if HasName(_UDPConnectionIDs, lDecIPStr + ':' + IntToStr(aDestPort)) then exit;
-    lIdx := CreateUDPSocketProcedure(aInPort);
+    lIdx := CreateUDPHostProcedure(aInPort);
 
     if (lIdx = -1) then begin RaiseWarning('SDL 1.2 - CreateUDPConnectionProcedure: Could not Bind Socket.'); exit; end;
 
@@ -330,7 +352,7 @@ var
     result^.port := aDestPort;
     result^.isTCP := False;
 
-    lIdx := CreateUDPSocketProcedure(aInPort);
+    lIdx := CreateUDPHostProcedure(aInPort);
     result^.socket := _UDPListenSockets[lIdx];
     SetLength(_Connections, Length(_Connections) + 1);
     _Connections[High(_Connections)] := result;
@@ -380,7 +402,7 @@ var
       end; 
     end;
   end;
-  
+	  
   function SendUDPMessageProcedure(const aMsg : String; const aConnection : Connection) : Boolean;
   var
     lIPAddress : TIPaddress;
@@ -396,11 +418,55 @@ var
     SDLNet_UDP_Send(aConnection^.socket, -1, _UDPSendPacket);
     result := True; 
   end;
+	
+	procedure BroadcastUDPMessageProcedure(const aMsg : String);
+  var
+    lIPAddress : TIPaddress;
+		i : LongInt;
+  begin
+		for i := Low(_Connections) to High(_Connections) do
+		begin
+			SDLNet_ResolveHost(lIPAddress, PChar(HexStrToIPv4(DecToHex(_Connections[i]^.ip))), _Connections[i]^.port);
+
+			_UDPSendPacket^.address.host   := lIPAddress.host;
+			_UDPSendPacket^.address.port   := lIPAddress.port;
+			_UDPSendPacket^.len            := Length(aMsg);
+			_UDPSendPacket^.data           := @(aMsg[1]);
+			SDLNet_UDP_Send(_Connections[i]^.socket, -1, _UDPSendPacket);
+    end;
+  end;
 
 //----------------------------------------------------------------------------
 // Close Single
 //----------------------------------------------------------------------------
 
+  function CloseUDPSocket(var aSocket : PUDPSocket) : Boolean;
+  var
+    lTmpSockets   : Array of PUDPSocket;
+    i, j, lOffset : LongInt;
+  begin
+    result := False;
+    if (Length(_UDPListenSockets) = 0) or not Assigned(aSocket) then begin RaiseWarning('SDL 1.2 - CloseUDPListenSocketProcedure: Could Not Close UDP Socket.'); exit; end;
+    
+    lOffset := 0;
+    SetLength(lTmpSockets, Length(_UDPListenSockets) - 1);
+    for i := Low(_UDPListenSockets) to High(_UDPListenSockets) do
+    begin
+      if aSocket = _UDPListenSockets[i] then 
+      begin
+        lOffset := 1;
+				for j := Low(_Connections) to High(_Connections) do
+					if _Connections[j]^.socket = _UDPListenSockets[i] then
+						_Connections[j]^.socket := nil;
+        SDLNet_UDP_Close(_UDPListenSockets[i]);
+				RemoveName(_UDPSocketIDs, i);
+      end else
+        lTmpSockets[i - lOffset] := _UDPListenSockets[i];
+    end;
+    _UDPListenSockets := lTmpSockets; 
+    result := True;
+  end;
+	
   function CloseTCPHostSocketProcedure(const aPort : LongInt) : Boolean;
   var
     lTmpListenArray : Array of TCPListenSocket;
@@ -430,7 +496,7 @@ var
     end;
   end;
 
-  function CloseConnectionProcedure(var aConnection : Connection) : Boolean;
+  function CloseConnectionProcedure(var aConnection : Connection; const aCloseUDPSocket : Boolean) : Boolean;
   var
     lTmpConnectionArray : ConnectionArray;
     offSet: LongInt = 0;
@@ -448,22 +514,25 @@ var
         begin
           SDLNet_TCP_DelSocket(_Socketset, aConnection^.socket);
           SDLNet_TCP_Close(aConnection^.socket);
-          ClearMessageQueue(aConnection);
-          FreeConnection(aConnection);
-          result := True;
         end else if not aConnection^.isTCP then
           RemoveName(_UDPConnectionIDs, IntToStr(aConnection^.ip) + ':' + IntToStr(aConnection^.port));
-      end else
+				result := True;
+      end else begin
         lTmpConnectionArray[i - offset] := _Connections[i];
-    end;
+			end;
+    end;		
+		if aCloseUDPSocket and Assigned(aConnection^.socket) then 
+			CloseUDPSocket(aConnection^.socket);
+    ClearMessageQueue(aConnection);
+    FreeConnection(aConnection);
     if (result) then
       _Connections := lTmpConnectionArray;
   end;
  
-  function CloseUDPListenSocketProcedure(const aPort : LongInt) : Boolean;
+  function CloseUDPSocketProcedure(const aPort : LongInt) : Boolean;
   var
     lTmpSockets : Array of PUDPSocket;
-    i, lOffset, lIdx  : LongInt;
+    i, j, lOffset, lIdx  : LongInt;
   begin
     result := False;
     if Length(_UDPListenSockets) = 0 then begin RaiseWarning('SDL 1.2 - CloseUDPListenSocketProcedure: Could Not Close UDP Socket.'); exit; end;
@@ -477,6 +546,9 @@ var
       if i = lIdx then 
       begin
         lOffset := 1;
+				for j := Low(_Connections) to High(_Connections) do
+					if _Connections[j]^.socket = _UDPListenSockets[i] then
+						_Connections[j]^.socket := nil;
         SDLNet_UDP_Close(_UDPListenSockets[i])
       end else
         lTmpSockets[i - lOffset] := _UDPListenSockets[i];
@@ -484,7 +556,7 @@ var
     _UDPListenSockets := lTmpSockets; 
     result := True;
   end;
-
+	
 //----------------------------------------------------------------------------
 // Close All
 //----------------------------------------------------------------------------
@@ -498,25 +570,28 @@ var
     SetLength(_ListenSockets, 0);
   end;
 
-  procedure CloseAllConnectionsProcedure();
-  var
-    i : LongInt;
+  procedure CloseAllConnectionsProcedure(const aCloseUDPSockets : Boolean);
   begin
-    for i := Low(_Connections) to High(_Connections) do
+		while (Length(_Connections) <> 0) do
+			CloseConnectionProcedure(_Connections[High(_Connections)], aCloseUDPSockets);
+   { for i := Low(_Connections) to High(_Connections) do
     begin
-      ClearMessageQueue(_Connections[i]);
-      if (_Connections[i]^.isTCP) then 
+      if (_Connections[i]^.isTCP) and Assigned(_Connections[i]^.socket) then 
       begin
         SDLNet_DelSocket(_SocketSet, _Connections[i]^.socket);
         SDLNet_TCP_Close(_Connections[i]^.socket);
-      end else
+      end else begin
         RemoveAllNamesInCollection(_UDPConnectionIDs);
+				if Assigned(_Connections[i]^.socket) and aCloseUDPSocket then
+					SDLNet_UDP_Close(_Connections[i]^.socket);
+			end;
+      ClearMessageQueue(_Connections[i]);
       FreeConnection(_Connections[i]);
     end;
-    SetLength(_Connections, 0);
+    SetLength(_Connections, 0);}
   end;
 
-  procedure CloseAllUDPListenSocketProcedure();
+  procedure CloseAllUDPSocketProcedure();
   var
     i : LongInt;
   begin
@@ -527,9 +602,9 @@ var
 
   procedure FreeAllNetworkingResourcesProcedure();
   begin
-    CloseAllConnectionsProcedure();
+    CloseAllConnectionsProcedure(False);
     CloseAllTCPHostSocketProcedure();
-    CloseAllUDPListenSocketProcedure();
+    CloseAllUDPSocketProcedure();
       
     if Assigned(_UDPReceivePacket) then
     begin
@@ -555,26 +630,29 @@ var
   procedure LoadSDLNetworkingDriver(); 
    begin
      NetworkingDriver.CreateTCPHost               := @CreateTCPHostProcedure;
-     NetworkingDriver.OpenTCPConnectionToHost     := @OpenTCPConnectionToHostProcedure;
-     NetworkingDriver.ServerAcceptTCPConnection   := @ServerAcceptTCPConnectionProcedure;
+     NetworkingDriver.CreateTCPConnection     		:= @CreateTCPConnectionProcedure;
+     NetworkingDriver.AcceptTCPConnection   			:= @AcceptTCPConnectionProcedure;
      NetworkingDriver.TCPMessageReceived          := @TCPMessageReceivedProcedure;
      NetworkingDriver.BroadcastTCPMessage         := @BroadcastTCPMessageProcedure;
-     NetworkingDriver.SendTCPMessageTo            := @SendTCPMessageToProcedure;
+     NetworkingDriver.SendTCPMessage            	:= @SendTCPMessageProcedure;
  
-     NetworkingDriver.CreateUDPSocket             := @CreateUDPSocketProcedure;
+     NetworkingDriver.CreateUDPHost             	:= @CreateUDPHostProcedure;
      NetworkingDriver.CreateUDPConnection         := @CreateUDPConnectionProcedure;
      NetworkingDriver.UDPMessageReceived          := @UDPMessageReceivedProcedure;
      NetworkingDriver.SendUDPMessage              := @SendUDPMessageProcedure;
+		 NetworkingDriver.BroadcastUDPMessage					:= @BroadcastUDPMessageProcedure;
  
      NetworkingDriver.CloseTCPHostSocket          := @CloseTCPHostSocketProcedure;
      NetworkingDriver.CloseConnection             := @CloseConnectionProcedure;
-     NetworkingDriver.CloseUDPListenSocket        := @CloseUDPListenSocketProcedure;
+     NetworkingDriver.CloseUDPSocket        			:= @CloseUDPSocketProcedure;
  
      NetworkingDriver.MyIP                        := @MyIPProcedure;
+		 NetworkingDriver.ConnectionCount							:= @ConnectionCountProcedure;
+		 NetworkingDriver.RetreiveConnection					:= @RetreiveConnectionProcedure;
  
      NetworkingDriver.CloseAllTCPHostSocket       := @CloseAllTCPHostSocketProcedure;     
      NetworkingDriver.CloseAllConnections         := @CloseAllConnectionsProcedure;   
-     NetworkingDriver.CloseAllUDPListenSocket     := @CloseAllUDPListenSocketProcedure; 
+     NetworkingDriver.CloseAllUDPSocket     			:= @CloseAllUDPSocketProcedure; 
 
      NetworkingDriver.FreeAllNetworkingResources  := @FreeAllNetworkingResourcesProcedure;
    end;

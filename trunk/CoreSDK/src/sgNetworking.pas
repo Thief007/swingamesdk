@@ -3,10 +3,6 @@
 //=============================================================================
 //
 //
-//Messages : IP - Source IP, Incoming (Local) Port
-//Host Socket ID : Listening Port
-//Receiving SocketID : IP - Source IP, Incoming (Local) Port
-//Send Socket ID : IP - Destination, Port - Destination
 //
 // Version 1.0:
 //
@@ -46,16 +42,16 @@ uses
   /// @param aPort The port the host is listening to connections on
   ///
   /// @lib
-  /// @uname OpenTCPConnectionToHost
-  /// @sn openTCPConnectionToHostIP:%s port:%s
-  function OpenTCPConnectionToHost    (aIP : String;  aPort : LongInt) : Connection;
+  /// @uname CreateTCPConnectionToHost
+  /// @sn createTCPConnection:%s port:%s
+  function CreateTCPConnection    (aIP : String;  aPort : LongInt) : Connection;
 
   /// Accepts an incomming connection from another client.
   /// Returns the amount of new connections that have been
   /// accepted.
   ///
   /// @lib
-  function ServerAcceptTCPConnection  () : LongInt; 
+  function AcceptTCPConnection  () : LongInt; 
    
   /// Checks if a message has been received. If a message has been received,
   /// It will automatically add it to the message queue, with the message,
@@ -71,7 +67,7 @@ uses
   ///
   /// @lib
   /// @sn broadcastTCPMessage:%s
-  function BroadcastTCPMessage        ( aMsg : String) : Boolean;
+  procedure BroadcastTCPMessage        ( aMsg : String) : Boolean;
 
   /// Sends the message to the specified client, attached to the socket
   /// Retuns the connection if the message fails to
@@ -86,7 +82,7 @@ uses
   /// @method SendTCPMessage
   /// @self 2
   /// @sn sendTCPMessage:%s toConnection:%s
-  function SendTCPMessageTo           ( aMsg : String; aConnection : Connection) : Connection;
+  function SendTCPMessage           ( aMsg : String; aConnection : Connection) : Connection;
 
   /// Adds a connection to the list of new connections. This is called by the 
   /// Accept connection in TCP and Receive message in UDP (if the message has
@@ -111,6 +107,18 @@ uses
   ///
   /// @lib
   function ConnectionQueueSize() : LongInt;
+	
+	/// Returns the count of Active Connections
+	///
+	/// @lib
+	function ConnectionCount() : LoNgInt;
+	
+	/// Retrieves the connection at the specified index
+	///
+	/// @param aConnectionAt The index of the connection
+	///
+	/// @lib
+	function RetreiveConnection(aConnectionAt : LongInt) : Connection;
 
 //----------------------------------------------------------------------------
 // UDP
@@ -123,8 +131,8 @@ uses
   /// @param aPort The port to bind the socket to.
   ///
   /// @lib
-  /// @sn createUDPSocket:%s
-  function CreateUDPSocket            ( aPort : LongInt) : LongInt;
+  /// @sn createUDPHost:%s
+  function CreateUDPHost            ( aPort : LongInt) : LongInt;
 
   /// Creates the connection and sets the ip and port values. Creates a
   /// socket if there is no socket attached to the specified port. this
@@ -160,6 +168,14 @@ uses
   /// @self 2
   /// @sn sendUDPMessage:%s toConnection:%s
   function SendUDPMessage             ( aMsg : String; aConnection : Connection) : Boolean;
+	
+	/// Sends a UDP packet to All connections with the message.
+  ///
+  /// @param aMsg The message to be sent
+  ///
+  /// @lib
+  /// @sn broadcastUDPMessage:%s aMsg:%s
+	procedure BroadcastUDPMessage( aMsg : String );
 
 //----------------------------------------------------------------------------
 // Messages and Connection Data Access
@@ -185,7 +201,7 @@ uses
   /// @sn connectionPort:%s
   function  ConnectionPort(aConnection : Connection) : LongInt;
 
-  /// Dequeues the Top Message
+  /// Dequeues the Top (Oldest) Message
   ///
   /// @param aConnection The connection to extract data from
   ///
@@ -194,6 +210,16 @@ uses
   /// @method ReadMessage
   /// @sn readMessage:%s
   function ReadMessage            (aConnection : Connection) : String ;
+	
+  /// Dequeues the Last (Newest) Message
+  ///
+  /// @param aConnection The connection to extract data from
+  ///
+  /// @lib
+  /// @class Connection
+  /// @method ReadLastMessage
+  /// @sn readLastMessage:%s
+	function ReadLastMessage(aConnection : Connection) : String;
 
   /// Clears the Message Queue
   ///
@@ -310,12 +336,12 @@ uses
   /// @param aPort The identifier of the Host Socket.
   ///
   /// @lib
-  function CloseUDPListenSocket      ( aPort : LongInt) : Boolean;
+  function CloseUDPSocket      ( aPort : LongInt) : Boolean;
 
   /// Closes All TCP Host Sockets
   ///
   /// @lib
-  procedure CloseAllTCPHostSocket     ();
+  procedure CloseAllTCPHostSockets     ();
 
   /// Closes All TCP Receiver Sockets
   ///
@@ -325,7 +351,7 @@ uses
   /// Closes All UDP Listener Sockets
   ///
   /// @lib
-  procedure CloseAllUDPListenSocket   ();
+  procedure CloseAllUDPSockets   ();
 
   /// Closes all sockets that have been created.
   ///
@@ -435,28 +461,28 @@ var
     WriteLn('Result: ', result);
   end;
   
-// -- End Hex Code  
-
-
 //----------------------------------------------------------------------------
 // TCP
 //----------------------------------------------------------------------------
     
-
   function CreateTCPHost( aPort : LongInt) : Boolean;
   begin
     result := NetworkingDriver.CreateTCPHost(aPort);
   end;
   
-  function OpenTCPConnectionToHost( aIP : String;  aPort : LongInt) : Connection;
+  function CreateTCPConnection( aIP : String;  aPort : LongInt) : Connection;
   begin
-    result := NetworkingDriver.OpenTCPConnectionToHost(aIP, aPort);
+    result := NetworkingDriver.CreateTCPConnection(aIP, aPort);
   end;   
   
-  function ServerAcceptTCPConnection() : LongInt;
+  function AcceptTCPConnection() : LongInt;
   begin
-    result := NetworkingDriver.ServerAcceptTCPConnection();
+    result := NetworkingDriver.AcceptTCPConnection();
   end;
+	
+//----------------------------------------------------------------------------
+// Connection
+//----------------------------------------------------------------------------
 
   procedure EnqueueNewConnection(aConnection : Connection);
   var
@@ -499,7 +525,17 @@ var
   begin
     result := _NewConnectionCount;
   end;
+	
+	function ConnectionCount() : LongInt;
+	begin
+		result := NetworkingDriver.ConnectionCount();
+	end;
 
+	function RetreiveConnection(aConnectionAt : LongInt) : Connection;
+	begin
+		result := RetreiveConnection(aConnectionAt);
+	end;
+	
 //----------------------------------------------------------------------------
 // Messages
 //----------------------------------------------------------------------------
@@ -533,6 +569,35 @@ var
     Dispose(aConnection^.firstMsg);
     aConnection^.firstMsg := lTmp;
     aConnection^.msgCount -= 1;
+		if (aConnection^.msgCount = 0) then
+		begin
+			aConnection^.lastMsg := nil;
+			aConnection^.firstMsg := nil;
+		end;
+  end;
+	
+	function ReadLastMessage(aConnection : Connection) : String;
+  var
+    lTmp : MessagePtr;
+		i		 : LongInt;
+  begin      
+    if not Assigned(aConnection) or (aConnection^.msgCount = 0) then exit;
+    if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
+    result := aConnection^.lastMsg^.data;
+    Dispose(aConnection^.lastMsg);
+    aConnection^.msgCount -= 1;
+		if (aConnection^.msgCount = 0) then
+		begin
+			aConnection^.lastMsg := nil;
+			aConnection^.firstMsg := nil;
+			exit;
+		end;
+		lTmp := aConnection^.firstMsg^.next;
+		for i := 1 to aConnection^.msgCount - 1 do
+    begin
+			lTmp := lTmp^.next;
+    end;
+    aConnection^.lastMsg := lTmp;
   end;
   
   procedure ClearMessageQueue(aConnection : Connection);
@@ -571,23 +636,23 @@ var
     result := NetworkingDriver.TCPMessageReceived();
   end;
   
-  function BroadcastTCPMessage( aMsg : String) : Boolean;
+  procedure BroadcastTCPMessage(aMsg : String);
   begin
-    result := NetworkingDriver.BroadcastTCPMessage(aMsg);
+    NetworkingDriver.BroadcastTCPMessage(aMsg);
   end;
   
-  function SendTCPMessageTo( aMsg : String; aConnection : Connection) : Connection;
+  function SendTCPMessage( aMsg : String; aConnection : Connection) : Connection;
   begin
-    result := NetworkingDriver.SendTCPMessageTo(aMsg, aConnection);
+    result := NetworkingDriver.SendTCPMessage(aMsg, aConnection);
   end;
 
 //----------------------------------------------------------------------------
 // UDP
 //----------------------------------------------------------------------------
 
-  function CreateUDPSocket( aPort : LongInt) : LongInt;
+  function CreateUDPHost( aPort : LongInt) : LongInt;
   begin
-    result := NetworkingDriver.CreateUDPSocket(aPort);
+    result := NetworkingDriver.CreateUDPHost(aPort);
   end;
   
   function CreateUDPConnection(aDestIP : String; aDestPort, aInPort : LongInt) : Connection; 
@@ -604,6 +669,11 @@ var
   begin
     result := NetworkingDriver.SendUDPMessage(aMsg, aConnection);
   end;
+	
+	procedure BroadcastUDPMessage( aMsg : String );
+  begin
+    NetworkingDriver.BroadcastUDPMessage(aMsg);
+  end;
 
 //----------------------------------------------------------------------------
 // Close
@@ -616,34 +686,34 @@ var
 
   function CloseConnection(var aConnection : Connection) : Boolean;
   begin
-    result := NetworkingDriver.CloseConnection(aConnection);    
+    result := NetworkingDriver.CloseConnection(aConnection, False);    
   end;
 
-  function CloseUDPListenSocket( aPort : LongInt) : Boolean;
+  function CloseUDPSocket( aPort : LongInt) : Boolean;
   begin
-    result := NetworkingDriver.CloseUDPListenSocket(aPort);    
+    result := NetworkingDriver.CloseUDPSocket(aPort);    
   end;
 
-  procedure CloseAllTCPHostSocket();
+  procedure CloseAllTCPHostSockets();
   begin     
     NetworkingDriver.CloseAllTCPHostSocket();    
   end;
 
   procedure CloseAllConnections();
   begin        
-    NetworkingDriver.CloseAllConnections();    
+    NetworkingDriver.CloseAllConnections(False);    
   end;
 
-  procedure CloseAllUDPListenSocket();
+  procedure CloseAllUDPSockets();
   begin        
-    NetworkingDriver.CloseAllUDPListenSocket();    
+    NetworkingDriver.CloseAllUDPSocket();    
   end;
 
   procedure CloseAllSockets();
   begin
-    CloseAllTCPHostSocket();
+    CloseAllTCPHostSockets();
     CloseAllConnections();
-    CloseAllUDPListenSocket();
+    CloseAllUDPSockets();
   end;
 
   procedure FreeConnection(var aConnection : Connection);
