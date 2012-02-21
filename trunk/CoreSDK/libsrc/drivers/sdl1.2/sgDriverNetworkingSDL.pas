@@ -84,7 +84,7 @@ var
     result^.isTCP     := True;
   end;
 
-  function GetConnectionWithID(const aIP, aPort : LongInt; aIsTCP : Boolean) : Connection;
+  function GetConnectionWithID(const aIP : LongWord; const aPort : LongInt; aIsTCP : Boolean) : Connection;
   var
     i : LongInt;
   begin
@@ -120,7 +120,7 @@ var
     end;
   end;
     
-  function TCPIP(aNewSocket : PTCPSocket) : LongInt;
+  function TCPIP(aNewSocket : PTCPSocket) : LongWord;
   var
     lRemoteIP : PIPAddress;
   begin

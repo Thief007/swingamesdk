@@ -1072,8 +1072,8 @@ interface
     ///@via_pointer
     ConnectionData = packed record
       socket          : Pointer;
-      ip              : LongInt;
-      port            : LongInt;
+      ip              : LongWord;
+      port            : Word;
       firstMsg        : MessagePtr;
       lastMsg         : MessagePtr;
       msgCount        : LongInt;
