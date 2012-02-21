@@ -1,11 +1,11 @@
 program HowToCreateTCPProgram;
 uses
-	SwinGame;
+	SwinGame, SysUtils;
 
 const
-  HOST_SOCKET = 2000;
+  HOST_PORT = 2000;
 
-function SelectPeerType() : Boolean
+function SelectPeerType() : Boolean;
 var 
   lInput : String = '';
 begin
@@ -15,20 +15,24 @@ begin
     ReadLn(lInput);
     if (lInput = 'y') then 
     begin
-      CreateTCPHost(HOST_SOCKET); 
+      CreateTCPHost(HOST_PORT); 
       result := True;    
+			WriteLn('I am now the host');
     end else if (lInput = 'n') then
-      result := False;   
+		begin
+      result := False;  
+			WriteLn('I am now the client');
+		end;
   end;
 end;
 
 function WaitForConnections() : Connection;
 begin  
   WriteLn('Waiting for Connections....');
-  result := nil
-  while (result = nil)
+  result := nil;
+  while (result = nil) do
   begin
-    ServerAcceptTCPConnection();
+    AcceptTCPConnection();
     result := FetchConnection();
   end;
   WriteLn('Connection Established.');
@@ -37,55 +41,49 @@ end;
 function WaitToConnectToHost() : Connection;
 begin
   WriteLn('Connecting to Host....');
-  result := nil
-  while (result = nil)
-    result := OpenTCPConnectionToHost('127.0.0.1', HOST_SOCKET);
+  result := nil;
+  while (result = nil) do
+    result := CreateTCPConnection('127.0.0.1', HOST_PORT);
   WriteLn('Connected to Host');
 end;
 
-procedure HandleMessages(aHost, aClient : Connection);
+procedure HandleMessages(const aPeer : Connection; const aIsHost : Boolean);
 var
-  lQuit : Boolean = False;
-  lInput : String = '';
-  lCounter : Integer = 0;
+  lMessage : String = '';
+  i : Integer;
 const 
   AUTO_MESSAGE_COUNT = 10;
-  SEND_DELAY         = 1000;
+  SEND_DELAY         = 1500;
 begin
-  while lCounter <> AUTO_MESSAGE_COUNT do
+	for i := 0 to AUTO_MESSAGE_COUNT do
   begin
-    if Assigned(aHost) then
-    begin
-      WriteLn('Client Received Message: ', ReadMessage(aHost));
-    end else if Assigned(aClient) then
-    begin
-      WriteLn('Client Received Message: ', ReadMessage(lalient));
-    end;
+		if (aIsHost) then
+			SendTCPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Host. The client should receive it.', aPeer)
+		else
+			SendTCPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Client. The host should receive it.', aPeer);
+			
     Delay(SEND_DELAY);
-    lCounter += 1;
+		
+    if TCPMessageReceived() then
+      WriteLn('Received Message: ', ReadMessage(aPeer));
   end;
 end;
 
 procedure Main();
 var
-  lConA, lConB, lTmp, lTmpA : Connection;
-  lMsgReceived : Boolean = False;
-  lInput : String = '';
   lIsHost : Boolean = False;
-  lQuit : Boolean = False;
-  lHost : Connection = nil;
-  lClient : Connection = nil;
+  lPeer : Connection = nil;
 begin
   lIsHost := SelectPeerType();
 
   if (lIsHost) then
-    lHost := WaitForConnections();
+    lPeer := WaitForConnections()
   else
-    lClient := WaitToConnectToHost();
+    lPeer := WaitToConnectToHost();
   
-  HandleMessages(lHost, lClient);
+  HandleMessages(lPeer, lIsHost);
 
-  CloseAllConnections();
+  ReleaseAllResources();
 end;
 
 begin

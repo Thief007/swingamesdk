@@ -26,8 +26,9 @@ begin
   WriteLn('Connection Retreived Successfully? : ', Assigned(lConB));
 
   ReadLn();
-  SendTCPMessageTo('==THIS IS A MESSAGE TO B==', lConA);
-  SendTCPMessageTo('==THIS IS A MESSAGE TO A==', lConB);
+  SendTCPMessageTo('1234567', lConA);
+  SendTCPMessageTo('0987654', lConA);
+  SendTCPMessageTo('ABCDEFG', lConA);
 
   WriteLn('Con A Address: ', HexStr(@lConA^) );
   WriteLn('Con B Address: ', HexStr(@lConB^) );
@@ -37,7 +38,10 @@ begin
   lMsgReceived := TCPMessageReceived();
   WriteLn('Message Received? ', lMsgReceived);
   WriteLn('Message From [A], Received By [B]: ', ReadMessage(lConB));
-  WriteLn('Message From [B], Received By [A]: ', ReadMessage(lConA));
+  WriteLn('Message From [B], Received By [A]: ', ReadMessage(lConb));
+  lMsgReceived := TCPMessageReceived();
+  WriteLn('Message Received? ', lMsgReceived);
+  WriteLn('Message From [A], Received By [B]: ', ReadMessage(lConB));
 
   CloseConnection(lConB);
   CloseConnection(lConA);

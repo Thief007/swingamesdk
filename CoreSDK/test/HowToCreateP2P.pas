@@ -48,13 +48,14 @@ begin
   end;
 end;
 
-procedure ConnectToHost(aMenuPanel : Panel; var aStatus : Boolean);
+procedure ConnectToHost(aMenuPanel : Panel; var aStatus : Boolean; var lPeer : Connection);
 var
   lPort : Integer;
 begin
   if TryStrToInt(TextBoxText('ServerPortVal'), lPort) then
   begin
-    if OpenTCPConnectionToHost(TextBoxText('ServerVal'), lPort) then
+		lPeer := CreateTCPConnection(TextBoxText('ServerVal'), lPort);
+    if Assigned(lPeer) then
     begin
       LabelSetText('ClientStatusVal', 'Connected');
       ListAddItem(aMenuPanel, 'MsgList', 'Connected to: ' + TextBoxText('ServerVal') + ':' + IntToStr(lPort));
@@ -64,14 +65,12 @@ begin
   end;
 end;
 
-procedure AcceptConnection(var aMenuPanel : Panel);
-var
-  lClient : String;
+procedure AcceptConnection(var aMenuPanel : Panel; var lPeer : Connection);
 begin
-  lClient := ServerAcceptTCPConnection();
-  if lClient <> '' then
+  if AcceptTCPConnection(); then
   begin
-    ListAddItem(aMenuPanel, 'MsgList', lClient + 'Connected.');
+		lPeer := FetchConnection();
+    ListAddItem(aMenuPanel, 'MsgList',  + 'Connected.');
   end;
 end;
 
@@ -162,6 +161,7 @@ var
   lHostStatus : Boolean = False;
   //True for Connected, False for Disconnected
   lClientStatus : Boolean = False; 
+	lPeer : Connection = nil;
 begin
   OpenGraphicsWindow('How To Create Host', 800, 600); 
   LoadDefaultColors();
@@ -182,7 +182,10 @@ begin
     DrawPanels();
     UpdateInterface();
     HandleGUIInput(lChatPanel, lHostStatus, lClientStatus);
-    AcceptConnection(lChatPanel);
+		if not lHostStatus then
+			AcceptConnection(lChatPanel, lPeer);
+		else
+			ConnectToHost(aMenuPanel : Panel; var aStatus : Boolean; var lPeer : Connection);
     ReceiveMessage(lChatPanel);
 
     RefreshScreen();
