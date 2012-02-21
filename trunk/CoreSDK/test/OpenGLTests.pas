@@ -53,7 +53,7 @@ begin
     begin
       
       ProcessEvents();
-      GraphicsDriver.DrawLine(Screen,rnd(1024),rnd(768),rnd(120),rnd(120), rnd(LONG_INT_LIMIT));
+      GraphicsDriver.DrawLine(Screen,rnd(1024),rnd(768),rnd(1024),rnd(768), rnd(LONG_INT_LIMIT));
       RefreshScreen();
       x += 1;
     end;
@@ -64,7 +64,7 @@ begin
     begin
       
       ProcessEvents();
-      GraphicsDriver.FillTriangle(Screen,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(120),rnd(120),rnd(120),rnd(120));
+      GraphicsDriver.FillTriangle(Screen,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(1024),rnd(768),rnd(1024),rnd(768));
       RefreshScreen();
       x += 1;
     end;
@@ -106,7 +106,6 @@ begin
   ClearScreen(LONG_INT_LIMIT);
   repeat
     begin
-      
       ProcessEvents();
       GraphicsDriver.FillEllipse(Screen,rnd(LONG_INT_LIMIT),rnd(1024),rnd(768),rnd(120),rnd(120));
       RefreshScreen();

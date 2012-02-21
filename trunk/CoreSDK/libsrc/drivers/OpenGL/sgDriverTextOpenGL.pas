@@ -233,7 +233,7 @@ var
 begin
   result := nil;
   New(temp);
-  WriteLn('Loading ', filepath);
+  // WriteLn('Loading ', filepath);
 
   error := FT_New_Face(_freeTypeLib, PChar(filepath), 0, @temp^.face);
   if error <> 0 then
