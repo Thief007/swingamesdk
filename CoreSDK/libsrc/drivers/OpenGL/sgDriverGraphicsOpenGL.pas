@@ -448,9 +448,9 @@ implementation
     New(POpenGLWindow(_screen));
     
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 1); // was 4
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -470,10 +470,14 @@ implementation
 
     //VSYNC
     SDL_GL_SetSwapInterval(1);
+    
     // {$ifndef IOS}
     // Load_GL_version_2_0();
     // {$endif}
-
+    
+    glDisable( GL_MULTISAMPLE );
+    // glEnable( GL_MULTISAMPLE );
+    
     if screen = nil then 
       New(screen);
     if (screen^.surface = nil) then 
@@ -508,20 +512,22 @@ implementation
     _SetupScreen(screenWidth, screenHeight);
 
     glDisable(GL_DEPTH_TEST);
+    glDepthFunc( GL_ALWAYS );
+    
+    glLineWidth(1.5);
+    
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable( GL_ALPHA_TEST);
     glEnable( GL_TEXTURE_2D );
     glEnable( GL_BLEND );  
     glEnable( GL_LINE_SMOOTH );
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnable( GL_BLEND );  
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable( GL_LINE_SMOOTH );
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glLineWidth(1.5);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glEnable( GL_POINT_SMOOTH );
+    glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+    {$ifndef IOS}
+    glEnable( GL_POLYGON_SMOOTH );
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+    {$endif}
   end;
   
   // This resizes the graphics window used by SwinGame

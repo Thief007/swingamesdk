@@ -699,6 +699,8 @@ implementation
             TraceEnter('sgResources', 'ShowLogos');
         {$ENDIF}
         try
+            ClearScreen(ColorWhite);
+            RefreshScreen();
             try
                 //oldW := ScreenWidth();
                 //oldH := ScreenHeight();
@@ -707,27 +709,26 @@ implementation
                 
                 LoadResourceBundle('splash.txt', False);
                 
-                aniBmp := BitmapNamed('Swinburne');
-                aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
-                aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
-                
-                ClearScreen(ColorWhite);
-                RefreshScreen();
-                DrawBitmap(aniBmp, aniX, aniY);
-
-                f := FontNamed('SwinGameText');
-                txt := 'SwinGame API by Swinburne University of Technology';
-                txtX := (ScreenWidth() - TextWidth(f, txt)) div 2;
-                txtY := aniY + (ScreenHeight() - aniY + BitmapCellHeight(aniBmp)) div 2;
-
-                if txtY > aniY+ BitmapCellHeight(aniBmp) then DrawText(txt, ColorBlack, f, txtX, txtY );
-
-                f := FontNamed('LoadingFont');
-                DrawText(DLL_VERSION, ColorLightGrey, f, 5, ScreenHeight() - TextHeight(f, DLL_VERSION) - 2);
-                
                 i := 1;
                 while isPaused or (i < 120) do
                 begin
+                    aniBmp := BitmapNamed('Swinburne');
+                    aniX := (ScreenWidth() - BitmapCellWidth(aniBmp)) div 2;
+                    aniY := (ScreenHeight() - BitmapCellHeight(aniBmp)) div 2;
+                    
+                    ClearScreen(ColorWhite);
+                    DrawBitmap(aniBmp, aniX, aniY);
+
+                    f := FontNamed('SwinGameText');
+                    txt := 'SwinGame API by Swinburne University of Technology';
+                    txtX := (ScreenWidth() - TextWidth(f, txt)) div 2;
+                    txtY := aniY + (ScreenHeight() - aniY + BitmapCellHeight(aniBmp)) div 2;
+
+                    if txtY > aniY+ BitmapCellHeight(aniBmp) then DrawText(txt, ColorBlack, f, txtX, txtY );
+
+                    f := FontNamed('LoadingFont');
+                    DrawText(DLL_VERSION, ColorLightGrey, f, 5, ScreenHeight() - TextHeight(f, DLL_VERSION) - 2);
+                    
                     i += 1;
                     InnerProcessEvents();
                     RefreshScreen(60);
