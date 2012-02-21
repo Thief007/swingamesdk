@@ -67,7 +67,7 @@ uses
   ///
   /// @lib
   /// @sn broadcastTCPMessage:%s
-  procedure BroadcastTCPMessage        ( aMsg : String) : Boolean;
+  procedure BroadcastTCPMessage        ( aMsg : String);
 
   /// Sends the message to the specified client, attached to the socket
   /// Retuns the connection if the message fails to
