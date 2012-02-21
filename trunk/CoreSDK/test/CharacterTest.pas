@@ -48,11 +48,16 @@ begin
     UpdateSpriteAnimation(isometric^.CharSprite);
     MoveSprite(isometric^.CharSprite);
     
-    if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
-    else if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
-    else if KeyDown(vk_Left) then c^.CharSprite^.velocity:= p2d[2]
-    else if KeyDown(vk_Right) then c^.CharSprite^.velocity:= p2d[3]
-    else c^.CharSprite^.velocity:= p2d[4];
+    {if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
+        if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
+        if KeyDown(vk_Left) then c^.CharSprite^.velocity:= p2d[2]
+        if KeyDown(vk_Right) then c^.CharSprite^.velocity:= p2d[3]
+        else c^.CharSprite^.velocity:= p2d[4];}
+
+    if KeyDown(vk_Down) then
+      c^.CharSprite^.position.y +=  10;     
+    if KeyDown(vk_Right) then
+      c^.CharSprite^.position.x +=  10;        
   
     if KeyDown(vk_Q) then isometric^.CharSprite^.velocity:= VectorTo(-speed,-speed)
     else if KeyDown(vk_W) then isometric^.CharSprite^.velocity:= VectorTo(speed, -speed)

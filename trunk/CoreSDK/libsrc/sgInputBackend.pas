@@ -263,7 +263,7 @@ implementation
           0..31: ;
           127..High(Byte): ;
           else //Append the character
-            _tempString := _tempString + Char(kyCode);
+            _tempString := _tempString + Char(kyChar);
         end;
       end;
       
