@@ -70,23 +70,43 @@ implementation
     end;
 
     procedure ProcessEventsProcedure(); 
+    type
+      KeyRecord = record
+        lKeyCode: LongInt;
+        lTmpUniCode : LongInt;
+        lSendKeyCode : Boolean;
+      end;
+      KeyRecordArray = Array of KeyRecord;
     var
       event: SDL_EVENT;
+      lKeys : KeyRecordArray;
+      lKeyCode: LongInt = -1;
+      lTmpUniCode : LongInt;
+      lSendKeyCode : Boolean = False;
+      i : Integer;
     begin
-
+      SetLength(lKeys, 0);
       while SDL_WaitEventTimeout(@event,0) > 0 do
       begin
         case SDL_EventType(event._type) of
-          SDL_QUIT_EVENT                   : DoQuit();
-          SDL_KEYDOWN                      : HandleKeydownEvent(event.key.keysym.sym,event.key.keysym.unicode);
-          SDL_KEYUP                        : HandleKeyupEvent(event.key.keysym.sym);
-          SDL_MOUSEBUTTONUP                : ProcessMouseEvent(event.button.button); 
+          SDL_TextInput                    :lKeys[High(lKeys)].lTmpUniCode := LongInt(event.text.text[0]);
+          SDL_QUIT_EVENT                   :DoQuit();
+          SDL_KEYDOWN                      :begin
+                                              SetLength(lKeys, Length(lKeys) + 1);
+                                              lKeys[High(lKeys)].lKeyCode := LongInt(event.key.keysym.sym);
+                                              lKeys[High(lKeys)].lTmpUniCode := LongInt(event.key.keysym.unicode);
+                                              lKeys[High(lKeys)].lSendKeyCode := True;
+                                            end;
+          SDL_KEYUP                        :HandleKeyupEvent(event.key.keysym.sym);
+          SDL_MOUSEBUTTONUP                :ProcessMouseEvent(event.button.button); 
           {$IFDEF IOS}
-          SDL_FINGERDOWN, SDL_FINGERMOTION : HandleTouchEvent(iOSDriver.ProcessTouchEvent(event.tfinger.touchId));
-          SDL_JOYAXISMOTION                : HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
+          SDL_FINGERDOWN, SDL_FINGERMOTION :HandleTouchEvent(iOSDriver.ProcessTouchEvent(event.tfinger.touchId));
+          SDL_JOYAXISMOTION                :HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
           {$ENDIF}
+        end;
       end;
-      end;
+      for i := Low(lKeys) to High(lKeys) do
+        HandleKeydownEvent(lKeys[i].lKeyCode, lKeys[i].lTmpUniCode);
     end;
 
   
