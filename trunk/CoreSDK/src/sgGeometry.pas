@@ -2818,7 +2818,7 @@ implementation
     // see Paul Bourke's original article(s)
     // square of line's magnitude (see note in function LineMagnitude)
     sqLineMag := LineMagnitudeSq(line);
-    if SqLineMag < EPSEPS then begin RaiseException('Cannot determine intersection point on line, line is too short'); exit; end;
+    if SqLineMag < EPSEPS then begin RaiseWarning('Cannot determine intersection point on line, line is too short'); exit; end;
 
     u := ( (fromPt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (fromPt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
 
