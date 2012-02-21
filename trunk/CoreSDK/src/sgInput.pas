@@ -584,8 +584,13 @@ end;
     x, y: Longint;
   begin
     x := 0; y := 0;
+    {$IFNDEF IOS}
     InputDriver.GetMouseState(x, y);
     result := VectorTo(x, y);
+    {$ELSE}
+     result := VectorTo( LastFingerPosition().x, LastFingerPosition().y);
+    {$ENDIF}
+    
   end;
 
   procedure ShowMouse(); overload;
@@ -630,8 +635,12 @@ end;
     x, y: Longint;
   begin
     x := 0; y := 0;
+    {$IFNDEF IOS}
     InputDriver.GetMouseState(x, y);
-    result := PointAt(x, y);    
+    result := PointAt(x, y);
+    {$ELSE}
+     result := PointAt( LastFingerPosition().x, LastFingerPosition().y);
+    {$ENDIF} 
   end;
   
   function MouseX(): Single;
@@ -667,7 +676,11 @@ end;
     x, y: Longint;
   begin
     x := 0; y := 0;
-    result := (InputDriver.GetMouseState(x, y) and InputDriver.Button(Longint(button))) > 0;
+    {$IFNDEF IOS}
+      result := (InputDriver.GetMouseState(x, y) and InputDriver.Button(Longint(button))) > 0;
+    {$ELSE}
+      result := MouseClicked(button);
+    {$ENDIF}
   end;
   
   function MouseUp(button: MouseButton): Boolean;
