@@ -125,7 +125,7 @@ begin
 		ProcessEvents();
 		ClearScreen();
 		aHostConnection := HandleGUIInput(lConnectionIsSet, result);
-		DrawPanels();
+		DrawInterface();
 		UpdateInterface();
 		RefreshScreen(60);
 	until WindowCloseRequested() or lConnectionIsSet;
