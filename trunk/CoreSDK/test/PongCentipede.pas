@@ -80,7 +80,7 @@ begin
 	result := nil;
   if TryStrToInt(TextBoxText('ServerPortVal'), lPort) then
   begin
-		result := CreateUDPConnection(TextBoxText('ServerVal'), lPort, 0); 
+		result := CreateUDPConnection(TextBoxText('ServerVal'), lPort, 2001); 
 		SendUDPMessage('AcceptMe:', result);
     if Assigned(result) then
     begin
@@ -374,15 +374,6 @@ begin
 			aPlayer.paddle.y += MOVE_SPEED;
 		if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con);
 	end;
-	{if KeyDown(vk_UP) and (aPlayer.paddle.y > 0) then
-		begin
-			aPlayer.paddle.y -= MOVE_SPEED;
-			if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con)
-		end else if KeyDown(VK_DOWN) and ((aPlayer.paddle.y + aPlayer.paddle.height) < ScreenHeight) then
-		begin
-			aPlayer.paddle.y += MOVE_SPEED;
-			if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con);
-		end;	}
 end;
 
 procedure SetPlayerPosition(var aPlayer : Player; const aMyIdx, aPlayerCount, aGameWidth : Integer);
