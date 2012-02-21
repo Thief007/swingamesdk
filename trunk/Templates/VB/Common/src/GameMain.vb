@@ -12,7 +12,7 @@ Public Module GameMain
             Input.ProcessEvents()
             
             'Clear the screen and draw the framerate'
-            Graphics.ClearScreen()
+            Graphics.ClearScreen(Color.White)
             Text.DrawFramerate(0,0)
             
             'Draw onto the screen
