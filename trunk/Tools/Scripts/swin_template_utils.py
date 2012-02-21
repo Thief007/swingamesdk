@@ -81,12 +81,12 @@ def run_bash(script_name, opts):
 
 def copy_without_svn(src,dest,overwrite = True):
     """tree copy without svn and copy symbolic links. Overwrite delete destination tree from root..."""
-
+    
     if(os.path.isdir(dest) and overwrite):
         # print("    Cleaning %s" % dest)
         swin_shutil.rmtree(dest,ignore_errors = True)
-
-    print ("    Copying %s to %s" % (src,dest))
+        
+    # print ("    Copying %s to %s" % (src,dest))
     swin_shutil.copytree(src,dest,symlinks = True,ignore = swin_shutil.ignore_patterns(".svn"))
 
 def flat_copy_without_svn(src, dest):
@@ -151,15 +151,20 @@ def pkg_vs_installer(tmp_dir, to_dir, replace_file, replace_file_dir, search_str
     else:
         game_main = os.path.join(to_dir, replace_file)
     
-    print game_main
+    # print game_main
     
     for line in open(game_main):
        line = line.replace(search_str,replace_str)
        o.write(line) 
     o.close()
+    # print 'HERE!'
     run_bash('mv', ['New%s' % replace_file, game_main] )
     
     tmp_vs_dir = os.path.join(tmp_dir, 'Visual Studio', dest_tmp) + '/'
+    if os.path.exists(to_dir + '/lib/win/SGSDK.dll'):
+        run_bash('mv', [to_dir + '/lib/win/SGSDK.dll', to_dir + '/lib/SGSDK.dll'] )
+    else:
+        print >> sys.stderr, 'Missing Windows dll for Visual Studio Template'
     
     # Make the Visual Studio directory
     os.makedirs(tmp_vs_dir)
@@ -272,6 +277,13 @@ template_details = {
                 },
                 { 
                   'target':         'vs08',
+                  'os':             [ 'Windows' ],
+                  'lib':            'lib/win',
+                  'staticsgsdk':    False,
+                  'pkg_script':     pkg_csharp_installer,
+                },
+                { 
+                  'target':         'vs10',
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,

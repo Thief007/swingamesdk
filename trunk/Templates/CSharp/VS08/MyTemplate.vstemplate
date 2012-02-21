@@ -27,6 +27,7 @@
         <ProjectItem ReplaceParameters="false" TargetFileName="mikmod.dll">mikmod.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="ogg.dll">ogg.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL.dll">SDL.dll</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="SDL_net.dll">SDL_net.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_gfx.dll">SDL_gfx.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_image.dll">SDL_image.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_mixer.dll">SDL_mixer.dll</ProjectItem>
