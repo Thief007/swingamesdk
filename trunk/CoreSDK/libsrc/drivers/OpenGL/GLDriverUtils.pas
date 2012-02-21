@@ -11,9 +11,18 @@ interface
   function Pow2GEQ(v: Longint) : Longint;
 
   procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : RectPtr); 
+  procedure SetColor(clr : Color);
 
 implementation
-  uses gl;
+  uses {$IFDEF IOS}gles11 {$ELSE}gl{$ENDIF}, sgDriverGraphics;
+
+  procedure SetColor(clr : Color);
+  var
+    r,g,b,a : Byte;
+  begin
+    GraphicsDriver.ColorComponents(clr,r,g,b,a);
+    glColor4f(r/255, g/255, b/255, a/255);
+  end;
 
   procedure FloatColors(c: Color; var r, g, b, a: Single);
   begin
@@ -48,8 +57,8 @@ implementation
     textureCoord[3].x := ratioW;      textureCoord[3].y := ratioH;
 
     //set up vertices co-ords
-    vertices[0].x := destRect^.x;                        vertices[0].y := destRect^.y;
-    vertices[1].x := destRect^.x;                        vertices[1].y := destRect^.y + destRect^.height;
+    vertices[0].x := destRect^.x;                         vertices[0].y := destRect^.y;
+    vertices[1].x := destRect^.x;                         vertices[1].y := destRect^.y + destRect^.height;
     vertices[2].x := destRect^.x + destRect^.width;       vertices[2].y := destRect^.y;
     vertices[3].x := destRect^.x + destRect^.width;       vertices[3].y := destRect^.y + destRect^.height;
     

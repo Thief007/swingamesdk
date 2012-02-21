@@ -16,9 +16,9 @@ unit sgDriverTextOpenGL;
 //=============================================================================
 interface
   uses 
-    gl, glext, glu, FreeType;
+    {$IFDEF IOS} gles11, {$ELSE} gl, glext, glu, {$ENDIF} FreeType;
 
-{$ifndef IOS}
+
 
   type 
     // SwinGame type to store glyph (char) data for a font with OpenGL
@@ -34,8 +34,7 @@ interface
     GLFontData = record
       face:         FT_Face;                  // Stored to retrieve font related data upon draw
       glyphs:       array of GLGlyphData ;    // Cached character data for the font
-      textures:     array of GLUint;
-      displaylist:  GLuint ;                    
+      textures:     array of GLUint;              
       baseOffset:   Single;                   // Offset to correct base during draw operations
       glyphHeight:  Single;                   // Max height of a glyph
       lineSize:     Single;                   // Height of the shape (includes line gap)
@@ -43,6 +42,8 @@ interface
     end;
     GLFont = ^GLFontData;
 
+    var
+      _bitmapFont : Array[#0..#255] of GLUint; 
   procedure LoadOpenGLTextDriver();
   function LoadFont(filepath: String; height: Integer) : GLFont;
   procedure PrintFont(font: GLFont; text: String; x, y: Single);
@@ -50,13 +51,16 @@ interface
 //=============================================================================   
 implementation
   uses 
-    SysUtils, math, 
+    SysUtils, math,
     sdl13,  
-    sgTypes, sgShared, sgDriverText, GLDriverUtils, sgDriverGraphics;
+    sgTypes, sgShared, sgDriverText, GLDriverUtils, sgDriverGraphics, sgFontData;
 
-  var _lastError: String = '';
+  var
+    _lastError: String = '';
 
-  var _freeTypeLib: FT_Library = nil;
+    _freeTypeLib: FT_Library = nil;
+
+    _BitmapFontLoaded : Boolean = false;
 
   const EOL = LineEnding; // from sgShared
 
@@ -89,7 +93,6 @@ begin
 
   // Generate textures for each glyph
   glGenTextures(numGlyphs, @font^.textures[0]);
-  font^.displaylist := glGenLists(numGlyphs);
 
   // For all the font glyphs
   for i := 0 to High(font^.textures) do
@@ -135,7 +138,7 @@ begin
     // WriteLn('w:', w, ' h:', h, ' ', 2*w*h);
 
     // make bitmap
-    SetLength(buffer, 2 * w * h);
+    SetLength(buffer, 4 * w * h);
     
     for ypos := 0 to bitmap^.rows -1 do
     begin
@@ -144,8 +147,10 @@ begin
         // if FT_Get_Char_Index(face, LongInt('U')) = i then
         //   Write(HexStr(bitmap^.buffer[ xpos + ypos * bitmap^.width], 2), ' ');
 
-        buffer[2 * (xpos + ypos * w)] :=        $FF; //bitmap^.buffer[ xpos + ypos * bitmap^.pitch];
-        buffer[2 * (xpos + ypos * w) + 1] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
+        buffer[4 * (xpos + ypos * w) + 0] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
+        buffer[4 * (xpos + ypos * w) + 1] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
+        buffer[4 * (xpos + ypos * w) + 2] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
+        buffer[4 * (xpos + ypos * w) + 3] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
         // buffer[xpos + ypos * w] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
 
         //WriteLn(xpos + ypos * w);
@@ -155,8 +160,10 @@ begin
       begin
         // if FT_Get_Char_Index(face, LongInt('U')) = i then
         //   Write('EE ');
-        buffer[2 * (idx + ypos * w)] := $FF;
-        buffer[2 * (idx + ypos * w) + 1] := $00;
+        buffer[4 * (idx + ypos * w) + 0] := $FF;
+        buffer[4 * (idx + ypos * w) + 1] := $FF;
+        buffer[4 * (idx + ypos * w) + 2] := $FF;
+        buffer[4 * (idx + ypos * w) + 3] := $00;
       end;
 
       // if FT_Get_Char_Index(face, LongInt('U')) = i then
@@ -166,12 +173,14 @@ begin
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
     //   WriteLn((xpos + ypos * w), ' to ', Length(buffer) - 1);
     
-    idx := 2 * (xpos + ypos * w) + 2;
-    while idx <= Length(buffer) - 2 do
+    idx := 4 * (xpos + ypos * w) + 4;
+    while idx <= Length(buffer) - 4 do
     begin
-      buffer[idx] := $FF;
-      buffer[idx + 1] := $00;
-      idx += 2;
+      buffer[idx + 0] := $FF;
+      buffer[idx + 1] := $FF;
+      buffer[idx + 2] := $FF;
+      buffer[idx + 3] := $00;
+      idx += 4;
     end;
 
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
@@ -201,12 +210,14 @@ begin
     // Bind to the texture for this glyph
     glBindTexture( GL_TEXTURE_2D, font^.textures[i] );
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     // Get 2D bitmap data for texture
     // WriteLn('If not working check... GL_LUMINANCE_ALPHA');
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, @buffer[0] );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, @buffer[0] );
     glBindTexture( GL_TEXTURE_2D, 0 );
   end;
 
@@ -222,7 +233,7 @@ var
 begin
   result := nil;
   New(temp);
-  // WriteLn('Loading ', filepath);
+  WriteLn('Loading ', filepath);
 
   error := FT_New_Face(_freeTypeLib, PChar(filepath), 0, @temp^.face);
   if error <> 0 then
@@ -344,7 +355,6 @@ begin
   temp := nil;
 end;
 
-{$endif}
 
 
 // ====================
@@ -377,7 +387,6 @@ end;
   
   function LoadFontProcedure(fontName, filename: String; size: Longint): Font;
   begin
-    {$ifndef IOS}
     New(result);
     if result = nil then 
     begin
@@ -396,9 +405,7 @@ end;
     end;
 
     result^.name := fontName;
-    {$else}
-    result := nil;
-    {$endif}
+
   end;
   
   procedure CloseFontProcedure(fontToClose : font);
@@ -507,10 +514,101 @@ end;
     result := _lastError;
   end;
   
-    
-  procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
+
+  procedure LoadBitmapFont();
+  const
+    MAX_CHARACTER_INDEX = 255;
+    MAX_ROW_INDEX       = 7;
+    MAX_COL_INDEX       = 7;
+    ROWS_PER_CHARACTER  = 8;
+    DIM_OF_CHARACTER    = 8;
+  var
+    chIndex  : LongInt;
+    fontRowIndex  : LongInt;
+    pixelColIndex : LongInt;
+    fontRow : Byte;
+    pixel : Byte;
+    charData : Array[0..4*8*8] of GLUByte;
   begin
-    exit;
+    glGenTextures(256, @_bitmapFont[char(0)]);     
+    for chIndex := 0 to MAX_CHARACTER_INDEX do
+    begin
+      for fontRowIndex := 0 to MAX_ROW_INDEX do
+      begin
+        fontRow := _fontData[chIndex * ROWS_PER_CHARACTER + fontRowIndex];
+        for pixelColIndex := 0 to MAX_COL_INDEX do
+        begin
+          // shift to current bit and set other bits to 0. 
+          pixel := ((fontRow SHR (MAX_COL_INDEX - pixelColIndex)) and $01 );
+          // check if current bit is 0 or 1
+          pixel := pixel * $FF;
+          //lum
+          charData[(4*(fontRowIndex * ROWS_PER_CHARACTER + pixelColIndex)) + 0] := pixel;
+          charData[(4*(fontRowIndex * ROWS_PER_CHARACTER + pixelColIndex)) + 1] := pixel;
+          charData[(4*(fontRowIndex * ROWS_PER_CHARACTER + pixelColIndex)) + 2] := pixel;
+          //alpha
+          charData[(4*(fontRowIndex * ROWS_PER_CHARACTER + pixelColIndex)) + 3] := pixel;
+        end;
+      end;
+
+      glBindTexture(GL_TEXTURE_2D,_bitmapFont[char(chIndex)]);
+      glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, DIM_OF_CHARACTER, DIM_OF_CHARACTER, 0, GL_RGBA, GL_UNSIGNED_BYTE, @charData[0] );
+    end;
+    _BitmapFontLoaded := true;
+  end;
+  
+
+  procedure StringColorProcedure(dest : Bitmap; x,y : single; theText : String; theColor:Color); 
+  const
+    FONT_DIM = 8;
+    ADVANCE = 9;
+  var
+    ch : Char;
+    destRect : Rectangle;
+    i : LongInt;
+  begin
+    if (dest <> Screen)then
+    begin
+      RaiseWarning('Rendering text to bitmap is not supported by the OpenGL Driver');
+    end;
+    if (not _BitmapFontLoaded) then
+    begin
+      LoadBitmapFont();
+    end;
+
+
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+
+    destRect.x := 0;
+    destRect.y := 0;
+    destRect.width  := FONT_DIM;
+    destRect.height := FONT_DIM;
+
+
+    SetColor(theColor);
+    
+    for i := 1 to Length(theText) do
+    begin
+      glPushMatrix();
+
+      ch := theText[i];
+
+      glBindTexture(GL_TEXTURE_2D, _bitmapFont[ch]);
+
+      RenderTexture(_bitmapFont[ch], 0, 0, 1, 1, @destRect); 
+
+      glPopMatrix();
+
+      glTranslatef(ADVANCE, 0, 0);
+    end;
+
+    glPopMatrix();
   end;
   
   procedure LoadOpenGLTextDriver();
