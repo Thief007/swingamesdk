@@ -80,7 +80,7 @@ implementation
     var
       event: SDL_EVENT;
       lKeys : KeyRecordArray;
-      lKeyCode: LongInt = -1;
+      // lKeyCode: LongInt = -1;
       lTmpUniCode : LongInt;
       lSendKeyCode : Boolean = False;
       i : Integer;
