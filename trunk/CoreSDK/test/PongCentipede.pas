@@ -5,7 +5,7 @@ uses
 const
 	PADDLE_HEIGHT_RATIO = 5;
 	PADDLE_WIDTH_RATIO	= 35;
-	BALL_SPEED					= 8;
+	BALL_SPEED					= 10;
 	MOVE_SPEED					= 5;
 	BALL_PREFIX					= 'BallData:';
 	DEL						= ',';
@@ -384,7 +384,7 @@ begin
 		aPlayer.paddle.x :=(aGameWidth * aMyIdx) - Round(aPlayer.paddle.width div 2) - (aGameWidth div 2);
 end;
 
-procedure ObtainGameData(var aPlayer : Player; var aBalls : Balls; out aMyIdx : Integer; out aGameWidth, aGameHeight, aPlayerCount : Integer; var aConnected : Boolean);
+procedure ObtainGameData(var aPlayer : Player; var aBalls : Balls; var aMyIdx : Integer; var aGameWidth, aGameHeight, aPlayerCount : Integer; var aConnected : Boolean);
 var
 	lGameSet 		: Boolean = False;
 	lBallSet	 	: Boolean = False;
