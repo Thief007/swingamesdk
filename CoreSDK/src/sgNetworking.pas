@@ -189,7 +189,7 @@ uses
   /// @class Connection
   /// @method ConnectionIP
   /// @sn connectionIP:%s
-  function  ConnectionIP(aConnection : Connection) : LongInt;
+  function  ConnectionIP(aConnection : Connection) : LongWord;
 
   /// Gets the Port of the destination for the connectiom
   ///
@@ -264,7 +264,7 @@ uses
   /// @lib
   /// @uname DecToHex 
   /// @sn decToHex:%s
-  function DecToHex                   (aDec : LongInt) : String;
+  function DecToHex                   (aDec : LongWord) : String;
 
   /// Converts a Hex String to a Decimal Value as a String.
   ///
@@ -290,7 +290,7 @@ uses
   ///
   /// @lib
   /// @sn iPv4ToDec:%s
-  function IPv4ToDec(aIP : String) : LongInt; 
+  function IPv4ToDec(aIP : String) : LongWord; 
 
 //----------------------------------------------------------------------------
 // Close
@@ -398,9 +398,9 @@ var
 // Hexadecimal and Decimal Conversion
 //----------------------------------------------------------------------------
     
-  function DecToHex(aDec : LongInt) : String;
+  function DecToHex(aDec : LongWord) : String;
   var
-    LRemainder : LongInt;
+    LRemainder : LongWord;
     lHexAlpha : String = '0123456789ABCDEF';
   begin
     lRemainder := (aDec mod 16);
@@ -449,7 +449,7 @@ var
     result += '.' + HexToDecString(aHex[7] + aHex[8]);
   end;
 
-  function IPv4ToDec(aIP : String) : LongInt;
+  function IPv4ToDec(aIP : String) : LongWord;
   var
     w, x, y, z : LongInt;
   begin
@@ -610,7 +610,7 @@ var
     end;
   end;  
 
-  function ConnectionIP(aConnection : Connection) : LongInt;
+  function ConnectionIP(aConnection : Connection) : LongWord;
   begin
     result := 0;
     if not Assigned(aConnection) then exit;
