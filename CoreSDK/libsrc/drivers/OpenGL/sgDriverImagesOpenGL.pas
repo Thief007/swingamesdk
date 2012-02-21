@@ -15,7 +15,7 @@ unit sgDriverImagesOpenGL;
 //
 //=============================================================================
 interface
-  uses {$IFDEF IOS}gles11;{$ELSE}gl;{$ENDIF}
+  uses {$IFDEF IOS}gles11;{$ELSE}gl, glext;{$ENDIF}
 
   type
     PTexture = ^Cardinal;
@@ -72,23 +72,33 @@ implementation
     exit;
   end;
 
-  function BGRAToRGBA(srcImg : PSDL_Surface) : PSDL_Surface;
+  procedure ToRGBA(var srcImg : PSDL_Surface);
   var
-    
+    temp: PSDL_Surface;
     pixelFormat : SDL_PIXELFORMAT;
   begin
     pixelFormat := srcImg^.format^;
     
     pixelFormat.format := SDL_PIXELFORMAT_RGBA8888;
-    pixelFormat.Rmask  := $FF;
-    pixelFormat.Bmask  := $FF0000;
-    pixelFormat.Amask  := $ff000000;
-    pixelFormat.Rloss  := srcImg^.format^.Bloss;
-    pixelFormat.Bloss  := srcImg^.format^.Rloss;
-    pixelFormat.Rshift := srcImg^.format^.Bshift;
-    pixelFormat.Bshift := srcImg^.format^.Rshift;
+    pixelFormat.Rmask  := $000000FF;
+    pixelFormat.Gmask  := $0000FF00;
+    pixelFormat.Bmask  := $00FF0000;
+    pixelFormat.Amask  := $FF000000;
+    pixelFormat.Rloss  := 0;
+    pixelFormat.Gloss  := 0;
+    pixelFormat.Bloss  := 0;
+    pixelFormat.Aloss  := 0; 
+    pixelFormat.Rshift := 0;
+    pixelFormat.Gshift := 8;
+    pixelFormat.Bshift := 16;
+    pixelFormat.Ashift := 24;
 
-    result := SDL_ConvertSurface(srcImg,@pixelFormat, 0);
+    temp := SDL_ConvertSurface(srcImg, @pixelFormat, 0);
+    if Assigned(temp) then
+    begin
+      SDL_FreeSurface(srcImg);
+      srcImg := temp;
+    end;
   end;
 
   function PowerOfTwo(dimension : LongInt) : LongInt;
@@ -103,14 +113,15 @@ implementation
 
 
   function CreateGLTextureFromSurface(lLoadedImg : PSDL_Surface) : PTexture;
-  var
-    lFormat : GLenum;
-    lNoOfColors : GLint;
+  // var
+  //   lFormat : GLenum;
+  //   lNoOfColors : GLint;
   begin
     result := nil;
     if (Assigned(lLoadedImg) ) then
-    begin     
-      // Check that the image's width is a power of 2
+    begin
+      
+      // check not 0 w/h    
       if ( lLoadedImg^.w  = 0 ) or ( lLoadedImg^.h = 0 ) then
       begin
         WriteLn('BadStuff');
@@ -119,28 +130,30 @@ implementation
       New(result);
 
 
-      // get the number of channels in the SDL surface
-      lNoOfColors := lLoadedImg^.format^.BytesPerPixel;
-      if (lNoOfColors = 4) then    // contains an alpha channel
-      begin
-        if (lLoadedImg^.format^.Rmask = $000000FF) then
-          lFormat := GL_RGBA
-        else
-          lFormat := GL_BGRA
-      end else if (lNoOfColors = 3) then     // no alpha channel
-      begin
-        if (lLoadedImg^.format^.Rmask = $000000FF) then
-          lFormat := GL_RGB
-        else
-          lFormat := GL_BGR;
-      end;  
+      // // get the number of channels in the SDL surface
+      // lNoOfColors := lLoadedImg^.format^.BytesPerPixel;
+
+      // if (lNoOfColors = 4) then    // contains an alpha channel
+      // begin
+      //   if (lLoadedImg^.format^.Rmask = $000000FF) then
+      //     lFormat := GL_RGBA
+      //   else
+      //     lFormat := GL_BGRA
+      // end else if (lNoOfColors = 3) then     // no alpha channel
+      // begin
+      //   if (lLoadedImg^.format^.Rmask = $0000FF) then
+      //     lFormat := GL_RGB
+      //   else
+      //     lFormat := GL_BGR;
+      // end;  
       
-      {$IFDEF IOS}
-        if(lFormat = GL_BGRA) then
-        begin    
-          lLoadedImg := BGRAToRGBA(lLoadedImg);
-        end;
-      {$ENDIF}  
+      // { $IFDEF IOS}
+      //   if(lFormat = GL_BGRA) then
+      //   begin    
+      //     lLoadedImg := BGRAToRGBA(lLoadedImg);
+      //     lFormat := GL_RGBA;
+      //   end;
+      // { $ENDIF}  
     
       // Have OpenGL generate a texture object handle for us
       glGenTextures( 1, result );
@@ -151,16 +164,20 @@ implementation
       glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
      
       // Set the texture's stretching properties
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
      
+     // WriteLn('lFormat ', lFormat, ' BGRA: ', GL_BGRA, ' RGBA: ', GL_RGBA);
+
       // Edit the texture object's image data using the information SDL_Surface gives us
       {$IFDEF IOS}
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0,
                           GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
       {$ELSE}
-        glTexImage2D( GL_TEXTURE_2D, 0, lNoOfColors, lLoadedImg^.w, lLoadedImg^.h, 0,
-                          lFormat, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0,
+                          GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
       glBindTexture( GL_TEXTURE_2D, 0 );
       {$ENDIF}
     end;
@@ -176,7 +193,7 @@ implementation
       bpp := surf^.format^.BytesPerPixel;
       // Here p is the address to the pixel we want to set
       p := surf^.pixels + y * surf^.pitch + x * bpp;
-
+      
       if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
       p^ := clr;
   end; 
@@ -238,6 +255,19 @@ implementation
     end;
   end;
 
+  procedure CopyOnto(src, dest: PSDL_Surface);
+  var
+    x, y : LongInt;
+  begin
+    for x := 0 to src^.w - 1  do 
+    begin
+      for y := 0 to src^.h - 1 do 
+      begin
+          PutSurfacePixel(dest, GetSurfacePixel(src, x, y), x, y);
+      end;
+    end;
+  end;
+
   function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
   var
     loadedImage: PSDL_Surface;
@@ -254,16 +284,21 @@ implementation
 
     optimizeSizedImage := SDL_CreateRGBSurface(0,PowerOfTwo(loadedImage^.w),
                                           PowerOfTwo(loadedImage^.h),
-                                          loadedImage^.format^.BitsPerPixel,
-                                          loadedImage^.format^.Rmask,
-                                          loadedImage^.format^.Gmask,
-                                          loadedImage^.format^.Bmask,
-                                          loadedImage^.format^.Amask
+                                          32,
+                                          $000000FF, //loadedImage^.format^.Rmask,
+                                          $0000FF00, //loadedImage^.format^.Gmask,
+                                          $00FF0000, //loadedImage^.format^.Bmask,
+                                          $FF000000 //loadedImage^.format^.Amask
                                            );
     //optimizeSizedImage := IMG_Load(PChar(filename));
     dRect.x := 0;               dRect.y := 0;
     dRect.w := loadedImage^.w;  dRect.h := loadedImage^.h;
-    SDL_UpperBlit(loadedImage, nil, optimizeSizedImage, @dRect);
+    ToRGBA(loadedImage);
+
+    CopyOnto(loadedImage, optimizeSizedImage);
+
+    //SDL_UpperBlit(loadedImage, nil, optimizeSizedImage, @dRect);
+    //SDL_BlitSurface(loadedImage, nil, optimizeSizedImage, @dRect);
     SDL_FreeSurface(loadedImage);
 
     CheckAssigned('OpenGL ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage);
@@ -366,7 +401,7 @@ implementation
     
     //reset color
     glColor4f(1,1,1,1);
-    
+    //glLoadIdentity();
     RenderTexture(Cardinal(srcBmp^.Surface^), lRatioX, lRatioY, lRatioW, lRatioH, destRect);   
   end;
   

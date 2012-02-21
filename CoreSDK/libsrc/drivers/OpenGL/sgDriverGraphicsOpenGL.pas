@@ -15,7 +15,7 @@ unit sgDriverGraphicsOpenGL;
 //
 //=============================================================================
 interface
-uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl;{$ENDIF}
+uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl, glext;{$ENDIF}
 
   type
     OpenGLWindow = record
@@ -37,7 +37,7 @@ uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl;{$ENDIF}
   procedure DrawDirtyScreen();
   
 implementation
-  uses sgDriverGraphics, sgShared, Math, sgDriverImages, sgGraphics;  
+  uses sgDriverGraphics, sgShared, Math, sgDriverImages, sgGraphics, GLDriverUtils;  
 
   var
     _screenWidth, _screenHeight : LongInt;
@@ -132,13 +132,7 @@ implementation
     exit;
   end;
 
-  procedure SetColor(clr : Color);
-  var
-    r,g,b,a : Byte;
-  begin
-    GraphicsDriver.ColorComponents(clr,r,g,b,a);
-    glColor4f(r/255, g/255, b/255, a/255);
-  end;
+
 
 
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
@@ -182,7 +176,7 @@ implementation
     vertices[2].x := x3;  vertices[2].y := y3;
     
     SetColor(clr);
-
+    glShadeModel(GL_SMOOTH);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
     glDrawArrays(GL_TRIANGLES, 0, Length(vertices));
@@ -203,7 +197,6 @@ implementation
     end;
 
     SetColor(clr);
-
     for angle := 0 to High(vertices) do
     begin
       rad               := DegToRad(angle);
@@ -213,6 +206,7 @@ implementation
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
     glDrawArrays(GL_LINE_LOOP,0,Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
 
   procedure FillCircleProcedure(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
@@ -238,6 +232,7 @@ implementation
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
     glDrawArrays(GL_TRIANGLE_FAN,0,Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   // // This procedure draws an Ellipse to a bitmap
@@ -268,6 +263,7 @@ implementation
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
     glDrawArrays(GL_TRIANGLE_FAN,0,Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
 
   
@@ -299,6 +295,7 @@ implementation
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(2, GL_FLOAT, 0, @vertices[0]);
     glDrawArrays(GL_LINE_LOOP,0,Length(vertices));
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   // // This procedure draws a filled rectangle to a bitmap
@@ -473,7 +470,9 @@ implementation
 
     //VSYNC
     SDL_GL_SetSwapInterval(1);
-
+    // {$ifndef IOS}
+    // Load_GL_version_2_0();
+    // {$endif}
 
     if screen = nil then 
       New(screen);
@@ -483,8 +482,6 @@ implementation
     ImagesDriver.ClearSurface(screen,0);
     RefreshScreenProcedure(nil);
 
-    glEnable( GL_TEXTURE_2D );
-    glEnable (GL_BLEND);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
     // left and top has to be -1 otherwise 0,0 is offscreen.
@@ -495,8 +492,7 @@ implementation
       glOrtho (0, screenWidth, screenHeight-1, -1, 0, 1);
     {$ENDIF}
     
-    glDisable(GL_DEPTH_TEST);
-
+    glMatrixMode (GL_MODELVIEW);
 
     {$IFDEF IOS}
       deviceResolution := AvailableResolutionsProcedure();
@@ -510,7 +506,22 @@ implementation
       glViewport(0,0,screenWidth,screenHeight);
     {$ENDIF}
     _SetupScreen(screenWidth, screenHeight);
-    //Load_GL_version_2_0();
+
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable( GL_ALPHA_TEST);
+    glEnable( GL_TEXTURE_2D );
+    glEnable( GL_BLEND );  
+    glEnable( GL_LINE_SMOOTH );
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnable( GL_BLEND );  
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable( GL_LINE_SMOOTH );
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glLineWidth(1.5);
+    glDisableClientState(GL_VERTEX_ARRAY);
   end;
   
   // This resizes the graphics window used by SwinGame

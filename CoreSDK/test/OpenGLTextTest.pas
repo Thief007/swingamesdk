@@ -14,55 +14,7 @@ uses
 {$ENDIF}
 
 
-procedure InitGL;
-// We call this right after our OpenGL window is created.
-begin
-  if not Load_GL_version_2_0() then
-  begin
-    WriteLn( 'Opengl 2.0 API not Supported');
-    Halt();
-  end;
-  // Enable smooth shading 
-  glShadeModel( GL_SMOOTH );
 
-  // Set the background black 
-  glClearColor( 0.0, 0.0, 0.0, 0.0 );
-
-  // Depth buffer setup 
-  glClearDepth( 1.0 );
-
-  // Enables Depth Testing 
-  glEnable( GL_DEPTH_TEST );
-
-  // The Type Of Depth Test To Do 
-  glDepthFunc( GL_LEQUAL );
-
-  // Really Nice Perspective Calculations 
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-
-  // Load the basic shaders
-  //LoadBasicShaderProgram;
-end;
-
-function ShaderGetInfoLog(s: GLuint): String;
-var
-  blen, slen: Integer;
-  infolog: array of Char;
-begin
-
-  glGetShaderiv(s, GL_INFO_LOG_LENGTH, @blen);
-
-  if blen > 1 then
-  begin
-    SetLength(infolog, blen);
-    glGetShaderInfoLog(s, blen, @slen, @infolog[0]);
-    Result := String(infolog);
-    Exit;
-  end;
-
-  Result := '';
-
-end;
 
 procedure Main();
 var
@@ -94,7 +46,7 @@ begin
     LoadDefaultColors();
     //InitGL();
 	Writeln('clearing screen to red');
-    // glEnable (GL_BLEND);
+    // 
     // glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
     ClearScreen(2147483647);
@@ -143,12 +95,15 @@ begin
 
     // glUseProgram(myProg);
     glColor4f ( 1.0, 0, 0, 1.0 );
-	PrintFont(f, 'abcdefghijklmnopqrstuvwxyz', 50, 50);
+	 
+   repeat
+   ProcessEvents();
+   ClearScreen(ColorWhite);
+   PrintFont(f, 'abcdefghijklmnopqrstuvwxyz', 50, 50);
     // glUseProgram(0);
 
     PrintFont(f, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 55, 55);
 
-	RefreshScreen();
     
     f1 := LoadFont('arial.ttf', 18);
     DrawText('TL', ColorBlack, f1, 0, 0);
@@ -159,8 +114,10 @@ begin
     DrawText('1234567890!@#$%^&*()', ColorBlack, f1, 50, 400);
     DrawText('SwinGame API by Swinburne University of Technology', ColorBlue, f1, 50, 450);
 
+    DrawFrameRate(0,0);
     RefreshScreen();
-	Delay(5000);
+
+    until WindowCloseRequested();
 
 	//FreeFont(f);
 
