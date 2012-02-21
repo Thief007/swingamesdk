@@ -1073,7 +1073,7 @@ interface
     ConnectionData = packed record
       socket          : Pointer;
       ip              : LongWord;
-      port            : Word;
+      port            : LongInt;
       firstMsg        : MessagePtr;
       lastMsg         : MessagePtr;
       msgCount        : LongInt;

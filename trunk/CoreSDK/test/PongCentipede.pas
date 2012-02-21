@@ -352,16 +352,37 @@ end;
 procedure MovePlayer(var aPlayer : Player; const aIsHost : Boolean);
 const
 	PLAYER_PREFIX = 'PlayerData:';
+var
+	lMousePosY : Integer;
+	lRectCenter : Integer;
 begin
-	if KeyDown(vk_UP) and (aPlayer.paddle.y > 0) then
+	if not MouseDown(LeftButton) then exit;
+	lMousePosY := Round(MouseY());
+	lRectCenter := Round(aPlayer.paddle.y + (aPlayer.paddle.height div 2));
+	if (lMousePosY < lRectCenter) and (aPlayer.paddle.y > 0) then
 	begin
-		aPlayer.paddle.y -= MOVE_SPEED;
+		if (lRectCenter - lMousePosY) < MOVE_SPEED then
+			aPlayer.paddle.y := lMousePosY - (aPlayer.paddle.height div 2)
+		else
+			aPlayer.paddle.y -= MOVE_SPEED;
 		if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con)
-	end else if KeyDown(VK_DOWN) and ((aPlayer.paddle.y + aPlayer.paddle.height) < ScreenHeight) then
+	end else if (lMousePosY > lRectCenter) and ((aPlayer.paddle.y + aPlayer.paddle.height) < ScreenHeight) then
 	begin
-		aPlayer.paddle.y += MOVE_SPEED;
+		if (lMousePosY - lRectCenter) < MOVE_SPEED then
+			aPlayer.paddle.y := lMousePosY - (aPlayer.paddle.height div 2)
+		else
+			aPlayer.paddle.y += MOVE_SPEED;
 		if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con);
-	end;	
+	end;
+	{if KeyDown(vk_UP) and (aPlayer.paddle.y > 0) then
+		begin
+			aPlayer.paddle.y -= MOVE_SPEED;
+			if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con)
+		end else if KeyDown(VK_DOWN) and ((aPlayer.paddle.y + aPlayer.paddle.height) < ScreenHeight) then
+		begin
+			aPlayer.paddle.y += MOVE_SPEED;
+			if not aIsHost then SendUDPMessage(PLAYER_PREFIX + IntToStr(Round(aPlayer.paddle.y)), aPlayer.con);
+		end;	}
 end;
 
 procedure SetPlayerPosition(var aPlayer : Player; const aMyIdx, aPlayerCount, aGameWidth : Integer);
