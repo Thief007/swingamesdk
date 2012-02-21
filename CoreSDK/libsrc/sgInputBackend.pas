@@ -39,6 +39,7 @@ interface
     function GetNormalisedDeltaZAxis():Single;
     function iDeviceTouched():Boolean;
     function iDeviceMoved():Boolean;
+    function LastFingerPosition():Point2D;
   type
     KeyDownData = record
       downAt:   Longint;
@@ -66,14 +67,15 @@ interface
     _backgroundColor:       Color;
     _area:                  Rectangle;
     _readingString:         Boolean;
-    _ButtonsClicked: Array [MouseButton] of Boolean;
+    _ButtonsClicked:        Array [MouseButton] of Boolean;
+    _LastFingerPosition:    Point2D;
 
     //IOS Variables
     _fingers:            FingerArray;
     _deltaAccelerometer: AccelerometerMotion;
 
 implementation
-  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics {$IFDEF IOS},sgDriveriOS{$ENDIF};
+  uses sgDriverInput, sgDriverTimer, sgSharedUtils, sgDriverImages, sgImages, sgText, sgShared, sgGraphics {$IFDEF IOS},sgDriveriOS{$ENDIF}, sgDriverGraphics;
   
   procedure _InitGlobalVars(); 
   begin
@@ -86,7 +88,8 @@ implementation
     _lastKeyRepeat := 0;
     _justMoved:= false;
     _justTouched:=false;
-    
+    _LastFingerPosition.x :=0;
+    _LastFingerPosition.y :=0;
     SetLength(_KeyDown, 0);
   end;
   
@@ -441,6 +444,23 @@ implementation
   begin
     _justTouched := true;
     _fingers := finger;
+    if(length(_fingers)> 0) then
+    begin
+      _LastFingerPosition.x := _fingers[0].position.x;
+      _LastFingerPosition.y := _fingers[0].position.y;
+      _ButtonsClicked[LeftButton] := true;
+    end;
+
+    if(length(_fingers) > 1) then
+    begin
+
+      _ButtonsClicked[RightButton] := true;
+    end;
+  end;
+
+  function LastFingerPosition():Point2D;
+  begin
+    result := _LastFingerPosition;
   end;
 
   function GetFingers(): FingerArray;

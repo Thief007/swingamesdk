@@ -70,24 +70,23 @@ implementation
 	end;
 
 	function SDLFingerToFinger(sdlFinger : PSDL_Finger; touchState : PSDL_Touch ): Finger;
-	var 
-		touchResScreenRatio : Single;
+
 	begin
 
 		if not assigned(sdlFinger) then exit;
 		
-		touchResScreenRatio := touchState^.xres / ScreenWidth();
+
 			
 		result.id               := sdlFinger^.id;
-	  result.position.x       := sdlFinger^.x * touchResScreenRatio;
-	  result.position.y       := sdlFinger^.y * touchResScreenRatio;
-	  result.positionDelta.x  := sdlFinger^.xdelta * touchResScreenRatio;
-	  result.positionDelta.y  := sdlFinger^.ydelta * touchResScreenRatio;
-	  result.lastPosition.x		:= sdlFinger^.last_x * touchResScreenRatio;
-	  result.lastPosition.y 	:= sdlFinger^.last_y * touchResScreenRatio;
+	  result.position.x       := (sdlFinger^.x / touchState^.xres) * ScreenWidth();
+	  result.position.y       := (sdlFinger^.y / touchState^.yres) * ScreenHeight();
+	  result.positionDelta.x  := (sdlFinger^.xdelta / touchState^.xres) * ScreenWidth();
+	  result.positionDelta.y  := (sdlFinger^.ydelta / touchState^.yres) * ScreenHeight();
+	  result.lastPosition.x		:= (sdlFinger^.last_x / touchState^.xres) * ScreenWidth();
+	  result.lastPosition.y 	:= (sdlFinger^.last_y / touchState^.yres) * ScreenHeight();
 	  result.pressure 				:= sdlFinger^.pressure;
 	  result.lastPressure 		:= sdlFinger^.last_pressure;
-	  result.down 						:= (sdlFinger^.down = SDL_TRUE);
+	  result.down 						:= sdlFinger^.down = SDL_TRUE;
 	end;
 
 	function ProcessTouchEventProcedure(touchID : int64): FingerArray; 
