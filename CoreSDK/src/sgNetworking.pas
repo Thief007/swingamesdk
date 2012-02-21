@@ -174,7 +174,7 @@ uses
   /// @param aMsg The message to be sent
   ///
   /// @lib
-  /// @sn broadcastUDPMessage:%s aMsg:%s
+  /// @sn broadcastUDPMessage:%s
 	procedure BroadcastUDPMessage( aMsg : String );
 
 //----------------------------------------------------------------------------

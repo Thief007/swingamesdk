@@ -81,8 +81,8 @@ implementation
       event: SDL_EVENT;
       lKeys : KeyRecordArray;
       // lKeyCode: LongInt = -1;
-      lTmpUniCode : LongInt;
-      lSendKeyCode : Boolean = False;
+      // lTmpUniCode : LongInt;
+      // lSendKeyCode : Boolean = False;
       i : Integer;
     begin
       SetLength(lKeys, 0);

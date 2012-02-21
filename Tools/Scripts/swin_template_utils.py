@@ -3,8 +3,7 @@ import platform
 import subprocess
 import swin_shutil
 
-sg_version         ="3.0 Beta"
-
+sg_version         ="3.0"
 
 script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
 swingame_path      = os.path.realpath(script_path + '../..') + '/'
@@ -44,9 +43,9 @@ def output_line(msg):
     print '  * ', msg
 
 
-def run_python(script_name):
+def run_python(script_name, base_path=python_script_dir):
     output_line('Running python script: ' + script_name)
-    proc = subprocess.Popen(["python", python_script_dir + script_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(["python", base_path + script_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = proc.communicate()
     
     if proc.returncode != 0:
@@ -87,7 +86,7 @@ def copy_without_svn(src,dest,overwrite = True):
         # print("    Cleaning %s" % dest)
         swin_shutil.rmtree(dest,ignore_errors = True)
 
-    # print ("    Copying %s to %s" % (src,dest))
+    print ("    Copying %s to %s" % (src,dest))
     swin_shutil.copytree(src,dest,symlinks = True,ignore = swin_shutil.ignore_patterns(".svn"))
 
 def flat_copy_without_svn(src, dest):
@@ -139,38 +138,55 @@ def build_csharp_lib():
         # path = dirs["cs_generated_code_dir"] + '/*.cs'
         [os.remove(os.path.join(dirs["cs_generated_code_dir"],f)) for f in os.listdir(dirs["cs_generated_code_dir"]) if f.endswith(".cs")]
 
-def pkg_csharp_installer(tmp_dir, to_dir):
+def pkg_vs_installer(tmp_dir, to_dir, replace_file, replace_file_dir, search_str, replace_str, vs_temp_folder, dest_tmp, proj_zip_name, lang):
     """Package up the SwinGame C# installer"""
     
     output_line('Creating Visual Studio Template Structure')
     
     # Replace 'MyGame' with '$safeprojectname$.src' in GameMain.cs
-    o = open("NewGameMain.cs","a") #open for append
-    game_main = os.path.join(to_dir, 'src', 'GameMain.cs')
+    # Replate 'Mono' with '$safeprojectname$ in Mono.vbproj
+    o = open("New%s" % replace_file,"a") #open for append
+    if replace_file_dir:
+        game_main = os.path.join(to_dir, replace_file_dir, replace_file)
+    else:
+        game_main = os.path.join(to_dir, replace_file)
+    
+    print game_main
+    
     for line in open(game_main):
-       line = line.replace("MyGame","$safeprojectname$.src")
+       line = line.replace(search_str,replace_str)
        o.write(line) 
     o.close()
-    run_bash('mv', ['NewGameMain.cs', game_main] )
+    run_bash('mv', ['New%s' % replace_file, game_main] )
     
-    tmp_vs_dir = os.path.join(tmp_dir, 'Visual Studio') + '/'
+    tmp_vs_dir = os.path.join(tmp_dir, 'Visual Studio', dest_tmp) + '/'
     
     # Make the Visual Studio directory
-    os.mkdir(tmp_vs_dir)
+    os.makedirs(tmp_vs_dir)
+    
     # Copy in template files
-    copy_without_svn(os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08'), tmp_vs_dir)
+    copy_without_svn(vs_temp_folder, tmp_vs_dir)
     
     # Create the project zip
     os.chdir(to_dir)
-    to_zip = tmp_vs_dir + 'SwinGame C# Project.zip'
+    to_zip = tmp_vs_dir + proj_zip_name
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
     
     # Zip it all together
     os.chdir(tmp_vs_dir)
-    to_zip = dist_folder + 'SwinGame %s C# Template Installer.vsi' % sg_version
-    output_line('Creating Template Installer for C#')
+    to_zip = dist_folder + '%s SwinGame %s Template Installer.vsi' % (lang, sg_version)
+    output_line('Creating Template Installer for %s' % lang )
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
 
+
+def pkg_csharp_installer(tmp_dir, to_dir):
+    vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08')
+    pkg_vs_installer(tmp_dir, to_dir, 'GameMain.cs', 'src', 'MyGame', "$safeprojectname$.src", vs_temp_folder, 'cs', 'SwinGame C# Project.zip', 'C#')
+    
+def pkg_vb_installer(tmp_dir, to_dir):
+    vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express VB 08')
+    pkg_vs_installer(tmp_dir, to_dir, 'Mono.vbproj', None, 'Mono', "$safeprojectname$", vs_temp_folder, 'vb', 'SwinGame VB Project.zip', 'VB')
+    
 # ===============================
 # = Template details dictionary =
 # ===============================
@@ -261,15 +277,37 @@ template_details = {
                   'staticsgsdk':    False,
                   'pkg_script':     pkg_csharp_installer,
                 },
+                { 
+                  'lang':           'VB',
+                  'target':         'mono',
+                  'os':             [ 'Mac OS X', 'Linux' ],
+                  'lib':            'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
+                  'lang':           'VB',
+                  'target':         'vs08',
+                  'os':             [ 'Windows' ],
+                  'lib':            'lib/win',
+                  'staticsgsdk':    False,
+                  'pkg_script':     pkg_vb_installer,
+                },
             ],
             'pre_copy_script': build_csharp_lib,
         },
+
 } # end _template_details
 
 def deploy_list():
     """Returns a list of the files that need to be deployed to the server"""
     
+    #hack...
+    src_temp_path_name = 'Source of SwinGame %s' % sg_version
+    src_temp_path_name = src_temp_path_name.replace(' ', '_').replace('.', '_')
+    
     result = list()
+    result.append(dist_folder + src_temp_path_name )
+    
     for key, lang_dict in template_details.items():
         for dist_dict in lang_dict['copy_dist']:
             result.append(dist_folder + dist_dict['template_path_name'] + '.zip')
@@ -279,7 +317,12 @@ def deploy_list():
 def _setup_template_details():
     for key, lang_dict in template_details.items():
         for dist_dict in lang_dict['copy_dist']:
-            dist_dict['template_name'] = '%s SwinGame %s %s' % (key, sg_version, str.upper(dist_dict['target']) )
+            dist_dict['template_name'] = '%s SwinGame %s %s' % (
+                key if not dist_dict.has_key('lang') else dist_dict['lang'], 
+                sg_version, 
+                str.upper(dist_dict['target']) 
+                )
+            
             dist_dict['template_path_name'] = dist_dict['template_name'].replace(' ', '_').replace('.', '_')
     
     

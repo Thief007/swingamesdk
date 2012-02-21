@@ -27,20 +27,20 @@ def create_lang_libraries():
       
       for copy_dist in lang_template_dict['copy_dist']:
           output_line("Packaging " + copy_dist["target"])
-          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'])
+          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'], None if not copy_dist.has_key('lang') else copy_dist['lang'])
       
 
 #assembles the files for the dist folder
-def assemble_dist(language, dist_dict, use_sgsdk):
+def assemble_dist(language, dist_dict, use_sgsdk, part_from):
     coresdk_folder =            swingame_path + "CoreSDK/"
     lib_src_folder =            swingame_path + "CoreSDK/libsrc/"
     src_folder =                swingame_path + "CoreSDK/src/"
     generated_folder =          swingame_path + "Generated/%s/lib/" % language
     template_folder =           swingame_path + "Templates/"
-    langdist_folder =          swingame_path + "Dist/%s/" % language
+    langdist_folder =           swingame_path + "Dist/%s/" % (language if not part_from else part_from)
         
     common_template_folder =        template_folder + "Common/"
-    lang_template_folder =          template_folder + language +'/'
+    lang_template_folder =          template_folder + (language if not part_from else part_from) +'/'
     
     common_lang_template_folder =   lang_template_folder + "Common/"
     specific_template_folder =      lang_template_folder + dist_dict['target'] + '/'
