@@ -1,20 +1,21 @@
-<VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>SwinGame VB Project</Name>
-    <Description>A Visual Basic project template to get you started with SwinGame.</Description>
-    <ProjectType>VisualBasic</ProjectType>
+    <Name>SwinGame C# Project</Name>
+    <Description>Create a SwinGame using C#</Description>
+    <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>SwinGame VB Project</DefaultName>
+    <DefaultName>SwinGame C# Project</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
     <Icon>__TemplateIcon.ico</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="Mono.vbproj" File="Mono.vbproj" ReplaceParameters="true">
+    <Project TargetFileName="MyGame.csproj" File="MyGame.csproj" ReplaceParameters="true">
       <Folder Name="lib" TargetFolderName="lib">
         <ProjectItem ReplaceParameters="false" TargetFileName="jpeg.dll">jpeg.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libfreetype-6.dll">libfreetype-6.dll</ProjectItem>
@@ -27,19 +28,18 @@
         <ProjectItem ReplaceParameters="false" TargetFileName="mikmod.dll">mikmod.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="ogg.dll">ogg.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL.dll">SDL.dll</ProjectItem>
-        <ProjectItem ReplaceParameters="false" TargetFileName="SDL_net.dll">SDL_net.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_gfx.dll">SDL_gfx.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_image.dll">SDL_image.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_mixer.dll">SDL_mixer.dll</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="SDL_net.dll">SDL_net.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_ttf.dll">SDL_ttf.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SGSDK.dll">SGSDK.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="smpeg.dll">smpeg.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.dll">SwinGame.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="zlib1.dll">zlib1.dll</ProjectItem>
-	  </Folder>
-      <Folder Name="My Project" TargetFolderName="My Project">
-        <ProjectItem ReplaceParameters="true" TargetFileName="Application.myapp">Application.myapp</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Application.Designer.vb">Application.Designer.vb</ProjectItem>
+      </Folder>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
       <Folder Name="Resources" TargetFolderName="Resources">
         <Folder Name="animations" TargetFolderName="animations">
@@ -75,7 +75,7 @@
         <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.ico">SwinGame.ico</ProjectItem>
       </Folder>
       <Folder Name="src" TargetFolderName="src">
-        <ProjectItem ReplaceParameters="true" TargetFileName="GameMain.vb">GameMain.vb</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="GameMain.cs">GameMain.cs</ProjectItem>
       </Folder>
     </Project>
   </TemplateContent>
