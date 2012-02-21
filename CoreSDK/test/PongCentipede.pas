@@ -80,7 +80,7 @@ begin
 	result := nil;
   if TryStrToInt(TextBoxText('ServerPortVal'), lPort) then
   begin
-		result := CreateUDPConnection(TextBoxText('ServerVal'), lPort, 2001); 
+		result := CreateUDPConnection(TextBoxText('ServerVal'), lPort, 0); 
 		SendUDPMessage('AcceptMe:', result);
     if Assigned(result) then
     begin
@@ -384,7 +384,7 @@ begin
 		aPlayer.paddle.x :=(aGameWidth * aMyIdx) - Round(aPlayer.paddle.width div 2) - (aGameWidth div 2);
 end;
 
-procedure ObtainGameData(var aPlayer : Player; var aBalls : Balls; out aMyIdx : Integer; out aGameWidth, aGameHeight, aPlayerCount : Integer);
+procedure ObtainGameData(var aPlayer : Player; var aBalls : Balls; out aMyIdx : Integer; out aGameWidth, aGameHeight, aPlayerCount : Integer; var aConnected : Boolean);
 var
 	lGameSet 		: Boolean = False;
 	lBallSet	 	: Boolean = False;
@@ -403,6 +403,7 @@ begin
 		end;
 		if (lMessageReceived) then
 		begin
+			aConnected := True;
 			lMessageID := ReadLastMessage(aPlayer.con);
 			ClearMessageQueue(aPlayer.con);
 			if (ExtractDelimited(1, lMessageID, [':']) = 'GameData') then
@@ -494,7 +495,7 @@ var
 	lPlayers : Players;
 	lHostConnection : Connection;
 	lIsHost			: Boolean = True;
-
+	lConnected		: Boolean = False;
 	lPlayer	: Player;
 	lMyIDX, lGameWidth, lGameHeight, lPlayerCount : Integer;
 begin
@@ -523,16 +524,23 @@ begin
 
 			UpdateClientPosition(lPlayers);
 		end else begin
-			ObtainGameData(lPlayer, lBalls, lMyIdx, lGameWidth, lGameHeight, lPlayerCount);
+			ObtainGameData(lPlayer, lBalls, lMyIdx, lGameWidth, lGameHeight, lPlayerCount, lConnected);
 		end;		
-			ProcessEvents();
-			ClearScreen();
-			
-			if (lIsHost) then HandleHost(lPlayers, lBalls, lGameWidth, lGameHeight, lPlayerCount, lMyIDX)
-			else begin HandleClient(lPlayer, lBalls, lPlayerCount, lMyIDX); end;
-			
-			DrawFrameRate(0,0);
-			RefreshScreen(60);
+
+		ProcessEvents();
+		ClearScreen();
+		
+		if not lIsHost and not lConnected then
+		begin			
+			SendUDPMessage('AcceptMe:', lHostConnection);
+			continue;
+		end;
+		
+		if (lIsHost) then HandleHost(lPlayers, lBalls, lGameWidth, lGameHeight, lPlayerCount, lMyIDX)
+		else begin HandleClient(lPlayer, lBalls, lPlayerCount, lMyIDX); end;
+		
+		DrawFrameRate(0,0);
+		RefreshScreen(60);
 	until WindowCloseRequested();
 end;
 
