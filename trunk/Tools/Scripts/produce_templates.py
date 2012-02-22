@@ -9,6 +9,7 @@ from swin_template_utils import *
 from bundle_templates import *
 
 tmp_dir = dist_folder + 'tmp/'
+produced_folder = dist_folder + 'SwinGame %s/' % sg_version
 
 def zip_template(target, lang, template_path_name, part_from = None):
     """docstring for fname"""
@@ -28,7 +29,7 @@ def zip_template(target, lang, template_path_name, part_from = None):
     
     base_dir = tmp_dir + template_path_name + '/'
     to_dir = base_dir + 'ProjectTemplate'
-    to_zip = dist_folder + template_path_name + '.zip'
+    to_zip = produced_folder + template_path_name + '.zip'
     
     # print specificdist_folder, ' -> ', to_dir
     
@@ -44,7 +45,11 @@ def main():
     if os.path.exists(tmp_dir):
         swin_shutil.rmtree(tmp_dir)
     
+    if os.path.exists(produced_folder):
+        swin_shutil.rmtree(produced_folder)
+    
     os.mkdir(tmp_dir)
+    os.mkdir(produced_folder)
     os.chdir(dist_folder)
     
     #hack...
@@ -72,4 +77,5 @@ def main():
     
     
 if __name__ == '__main__':
+    print produced_folder
     main()
