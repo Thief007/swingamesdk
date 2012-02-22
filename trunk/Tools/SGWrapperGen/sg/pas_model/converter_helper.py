@@ -6,8 +6,9 @@ converters = {}
 def load_templates(lib, extension):
     import glob
     import os
-    print os.getcwd()
-    path = '../SGWrapperGen/sg/pas_model/' + lib
+    
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), lib)
+    # print 'here ', path
     file_paths = glob.glob(path + '*' + extension)
     if len(file_paths) > 0:
         for path in file_paths:
@@ -118,6 +119,7 @@ def convert_type(the_dict, the_type, modifier = None, dict_name = '_type_switche
                 
             # hack solution to fix some SwinGame types not being 
             the_dict[modifier][key] = the_type.name
+            print '**** ', the_type.name
         
         return the_dict[modifier][key]
     else:

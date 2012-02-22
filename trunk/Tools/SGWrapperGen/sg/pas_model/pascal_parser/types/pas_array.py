@@ -34,10 +34,10 @@ class PascalArray(object):
         returns the nth set of dimensions of an array
         """
         if n <= len(self._dimensions): return self._dimensions[n-1]
-
+    
     def parse(self, tokens):
         from pascal_parser.pas_parser_utils import parse_type
-        from pas_type_cache import *
+        # from pas_type_cache import 
 
         tokens.match_token(TokenKind.Identifier, 'array')
         # array [0..n,0..m] of

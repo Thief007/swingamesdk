@@ -122,6 +122,7 @@ def main():
     gather_how_to_source()
     gather_templates()
     gather_how_to_projects()
+    print 'Enter username (when prompted): '
     deploy_to_server()
 
 main()

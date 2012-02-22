@@ -193,7 +193,6 @@ def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
     output_line('Creating Template Installer: %s' % dist_dict['pkg_name'] )
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
 
-
 # def pkg_csharp_installer(dist_dict, tmp_dir, to_dir):
 #     vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08')
 #     pkg_vs_installer(tmp_dir, to_dir, 'GameMain.cs', 'src', 'MyGame', "$safeprojectname$.src", vs_temp_folder, 'cs', 'SwinGame C# Project.zip', 'C#')
@@ -201,6 +200,10 @@ def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
 # def pkg_vb_installer(dist_dict, tmp_dir, to_dir):
 #     vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express VB 08')
 #     pkg_vs_installer(tmp_dir, to_dir, 'Mono.vbproj', None, 'Mono', "$safeprojectname$", vs_temp_folder, 'vb', 'SwinGame VB Project.zip', 'VB')
+
+def pkg_rename_cpp(dist_dict, tmp_dir, to_dir):
+    """rename the cpp files from c_blah to cpp_blah"""
+    
     
 # ===============================
 # = Template details dictionary =
@@ -230,9 +233,10 @@ template_details = {
               'use_sgsdk':    True,
               'copy_dist':    [
                   { 
-                    'target':     'gpp',
-                    'os':         ['Mac OS X', 'Windows', 'Linux'],
-                    'lib':        'lib',
+                    'lang':          'CPP',
+                    'target':        'gpp',
+                    'os':            ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':           'lib',
                     'staticsgsdk':    False,
                   },
                   { 
@@ -268,6 +272,12 @@ template_details = {
                   },
                   {
                       'target':       'xcode 3',
+                      'os':           [ 'Mac OS X' ],
+                      'lib':          'lib',
+                      'staticsgsdk':  False,
+                  },
+                  {
+                      'target':       'xcode 4',
                       'os':           [ 'Mac OS X' ],
                       'lib':          'lib',
                       'staticsgsdk':  False,

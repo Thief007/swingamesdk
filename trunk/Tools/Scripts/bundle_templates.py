@@ -5,13 +5,6 @@ import subprocess
 import swin_shutil
 from swin_template_utils import *
 
-# ===================
-# = Clear functions =
-# ===================
-
-def clear_generated():
-    pass
-
 # =========================================
 # = Create the various language libraries =
 # =========================================
@@ -56,6 +49,7 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
     copy_without_svn(common_template_folder, specificdist_folder)
     
     # print("\n  Copying %s common files..." % language)
+    # print common_lang_template_folder
     copy_without_svn(common_lang_template_folder, specificdist_folder, overwrite = False)
     
     # print("\n  Copying %s specific files..." % name)

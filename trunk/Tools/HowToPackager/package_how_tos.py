@@ -78,6 +78,10 @@ def create_templates():
     
     print "  Creating How To Templates"
     
+    if not os.path.exists("../../CoreSDK/test/HowToResources.txt"):
+        from create_resources_text_script import  create_list
+        create_list()
+        
     f = open("../../CoreSDK/test/HowToResources.txt")
     how_to_file_lines = f.readlines()
     f.close()

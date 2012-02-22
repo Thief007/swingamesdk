@@ -197,7 +197,7 @@ doCompileGameMain()
 {
     name="${SRC_DIR}/${GAME_MAIN}"
     name=${name##*/} # ## = delete longest match for */... ie all but file name
-    name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+    name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
     doCompile "${SRC_DIR}/${GAME_MAIN}" "${name}" "${TMP_DIR}/${name}.o" "$1"
 }
 
@@ -206,7 +206,7 @@ doBasicMacCompile()
     mkdir -p "${TMP_DIR}"
     for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         out_file="${TMP_DIR}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch i386"
 
@@ -233,7 +233,7 @@ doMacCompile()
     echo "  ... Compiling for $1"
     for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         out_file="${TMP_DIR}/${1}/${name}.o"
         doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
@@ -316,7 +316,7 @@ doLinuxCompile()
     mkdir -p "${TMP_DIR}"
     for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
@@ -339,7 +339,7 @@ doWindowsCompile()
     mkdir -p "${TMP_DIR}"
     for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
@@ -388,7 +388,7 @@ doCopyResources()
 locateGameMain()
 {
   cd "${SRC_DIR}"
-  fileList=$(find "." -maxdepth 1 -type f -name \*.c)
+  fileList=$(find "." -maxdepth 1 -type f -name \*.cpp)
   FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
   if [ ${FILE_COUNT} = 1 ]; then
@@ -406,7 +406,7 @@ locateGameMain()
     done
   fi
   
-  cd ${FULL_APP_PATH}
+  cd "${FULL_APP_PATH}"
   
   if [ ! -f "${SRC_DIR}/${GAME_MAIN}" ]; then
     echo "Cannot find file to compile, was looking for ${GAME_MAIN}"

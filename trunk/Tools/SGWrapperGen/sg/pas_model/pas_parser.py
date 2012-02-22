@@ -46,16 +46,21 @@ def main():
 
     converter_helper.converters["c_lib"] = c_lib
     converter_helper.converters["pas_lib"] = pas_lib
-
-    source = os.path.normpath("../../Dist/HowTo/Source_Code/HowTos")
-    lib_source = os.path.normpath("../../Dist/HowTo/Source_Code/HowTos/lib")
-    destination = os.path.normpath("../../Dist/HowTo/Source_Code")
+    
+    script_path     = os.path.realpath(__file__) + '/'
+    swingame_path   = os.path.realpath(script_path + '../../../../../') + '/'
+    destination     = os.path.join(swingame_path, 'Dist', 'HowTo', 'Source_Code' )
+    source          = os.path.join(destination, 'HowTos')
+    lib_source      = os.path.join(source, 'lib')
+    
+    # destination = os.path.normpath("../../Dist/HowTo/Source_Code")
 
     print "Current Directory:                   %s" %os.getcwd()
     print "Source Directory:                    %s" %source
     print "Library Source Directory:            %s" %lib_source
     print "Destination Directory:               %s" %destination
     print '*' * 70
+    
     if not os.path.exists(source):
         raise_error("Source directory does not exist %s" %source, '', is_critical=False)
     if not os.path.exists(lib_source):
@@ -111,6 +116,8 @@ def main():
     for (name, file) in files().items():
         if file.is_parsed and file.contains_kind == 'program':
             write_file(file, destination)
+        print ".",
+    print ' Done.'
 
 if __name__ == '__main__':
     main()
