@@ -13,6 +13,11 @@ def main():
             swingame_path + "Generated/",
         ]
     
+    deploy_files = deploy_list()
+    
+    for temp in deploy_files:
+        clean_locs.append(temp)
+    
     for key, dist in template_details.items():
         clean_locs.append(dist_folder + key)
     

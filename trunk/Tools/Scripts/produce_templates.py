@@ -10,7 +10,7 @@ from bundle_templates import *
 
 tmp_dir = dist_folder + 'tmp/'
 
-def zip_template(target, lang, template_path_name, pkg_script = None, part_from = None):
+def zip_template(target, lang, template_path_name, part_from = None):
     """docstring for fname"""
     
     output_line("Packaging " + target)
@@ -36,9 +36,7 @@ def zip_template(target, lang, template_path_name, pkg_script = None, part_from 
     
     os.chdir(base_dir)
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
-    
-    if pkg_script:
-        pkg_script(tmp_dir, to_dir)
+    return to_dir   # hack...
 
 def main():
     output_header(['Creating Template Files'])
@@ -60,9 +58,13 @@ def main():
         output_header(['Packaging %s Templates' % key])
         
         for copy_dist in lang_template_dict['copy_dist']:
-            zip_template(copy_dist["target"], key, copy_dist['template_path_name'], 
-                        copy_dist['pkg_script'] if copy_dist.has_key('pkg_script') else None, 
+            # Zip folder...
+            to_dir = zip_template(copy_dist["target"], key, copy_dist['template_path_name'], 
                         None if not copy_dist.has_key('lang') else copy_dist['lang'])
+            # Run the other package script, allowing other forms of packaging
+            if copy_dist.has_key('pkg_script'):
+                copy_dist['pkg_script'](copy_dist, tmp_dir, to_dir)
+            
     
     #swin_shutil.rmtree(tmp_dir)
     print("\nFinished!")
