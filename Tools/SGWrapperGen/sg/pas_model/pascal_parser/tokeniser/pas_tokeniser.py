@@ -201,7 +201,7 @@ class SGPasTokeniser(object):
             char_number = 0
             
             # Ignore white space characters
-            if t == ' ' or t == '\t': #ignore white space
+            if t == ' ' or t == '\t' or t == '\r': #ignore white space
                 pass
             # Move to next line (if at end of line)
             elif t == '\n': 
@@ -295,7 +295,8 @@ class SGPasTokeniser(object):
                 value = string[:-1]    
             # Hmm.. unknown token. What did we forget? 
             else:
-                logger.error("Unknown token type: " + t)
+                logger.error("Unknown token type: " + (t if t else 'NONE!') + self.line_details())
+            
             if (not (kind is None)) and (value != None): 
                 logger.debug('Tokeniser      : read %s (%s)', kind, value)
                 return Token(kind, value, self._line_no+1, char_number+1, self._filename)

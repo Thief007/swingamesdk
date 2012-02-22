@@ -34,7 +34,7 @@ CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
 if [ "$OS" = "$WIN" ]; then
-    GMCS_BIN=`which csc`
+    GMCS_BIN=`which csc` 2>>/dev/null
     
     if [ -z $GMCS_BIN ]; then
         GMCS_BIN=`which gmcs`

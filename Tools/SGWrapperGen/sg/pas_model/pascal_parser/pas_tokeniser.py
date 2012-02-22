@@ -302,7 +302,7 @@ class SGPasTokeniser(object):
                 return Token(kind, value, self._line_no+1, char_number+1)
             # Hmm.. unknown token. What did we forget? 
             else:
-                logger.error("Unknown token type: " + t)
+                logger.error("Unknown token type: " + t if t else 'NONE!')
     
 
 #----------------------------------------------------------------------------=

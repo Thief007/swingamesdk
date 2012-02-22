@@ -407,7 +407,7 @@ locateGameMain()
     done
   fi
   
-  cd ${FULL_APP_PATH}
+  cd "${FULL_APP_PATH}"
   
   if [ ! -f "${SRC_DIR}/${GAME_MAIN}" ]; then
     echo "Cannot find file to compile, was looking for ${GAME_MAIN}"

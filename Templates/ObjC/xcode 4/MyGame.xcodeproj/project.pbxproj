@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -262,6 +262,27 @@
 		941D1A0714F4BE26005D6036 /* UserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInterface.h; path = lib/UserInterface.h; sourceTree = "<group>"; };
 		941D1A0814F4BE26005D6036 /* Utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utils.c; path = lib/Utils.c; sourceTree = "<group>"; };
 		941D1A0914F4BE26005D6036 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = lib/Utils.h; sourceTree = "<group>"; };
+		949A396B14F4C585009770F4 /* SwinGame.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SwinGame.icns; sourceTree = "<group>"; };
+		949A396E14F4C5EA009770F4 /* startup.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = startup.txt; sourceTree = "<group>"; };
+		949A397014F4C5EA009770F4 /* FileDialog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileDialog.txt; sourceTree = "<group>"; };
+		949A397114F4C5EA009770F4 /* splash.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = splash.txt; sourceTree = "<group>"; };
+		949A397314F4C5EA009770F4 /* arial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = arial.ttf; sourceTree = "<group>"; };
+		949A397414F4C5EA009770F4 /* cour.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cour.ttf; sourceTree = "<group>"; };
+		949A397514F4C5EA009770F4 /* maven_pro_regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = maven_pro_regular.ttf; sourceTree = "<group>"; };
+		949A397714F4C5EA009770F4 /* fdFile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fdFile.png; sourceTree = "<group>"; };
+		949A397814F4C5EA009770F4 /* fdFolder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fdFolder.png; sourceTree = "<group>"; };
+		949A397914F4C5EA009770F4 /* FileDialog_Active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileDialog_Active.png; sourceTree = "<group>"; };
+		949A397A14F4C5EA009770F4 /* FileDialog_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileDialog_Background.png; sourceTree = "<group>"; };
+		949A397B14F4C5EA009770F4 /* FileDialog_Inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileDialog_Inactive.png; sourceTree = "<group>"; };
+		949A397C14F4C5EA009770F4 /* FileDialog_Scroll.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileDialog_Scroll.png; sourceTree = "<group>"; };
+		949A397D14F4C5EA009770F4 /* FileDialog_ScrollSmall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FileDialog_ScrollSmall.png; sourceTree = "<group>"; };
+		949A397E14F4C5EA009770F4 /* Swinburne.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Swinburne.jpg; sourceTree = "<group>"; };
+		949A397F14F4C5EA009770F4 /* SwinGameAni.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SwinGameAni.png; sourceTree = "<group>"; };
+		949A398214F4C5EA009770F4 /* FileDialog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileDialog.txt; sourceTree = "<group>"; };
+		949A398414F4C5EA009770F4 /* error.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = error.wav; sourceTree = "<group>"; };
+		949A398514F4C5EA009770F4 /* SwinGameStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SwinGameStart.wav; sourceTree = "<group>"; };
+		949A398614F4C5EA009770F4 /* SwinGame.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SwinGame.icns; sourceTree = "<group>"; };
+		949A398714F4C5EA009770F4 /* SwinGame.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = SwinGame.ico; sourceTree = "<group>"; };
 		94F1F567101EC46F006F3D32 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -447,10 +468,12 @@
 		29B97314FDCFA39411CA2CEA /* MyGame */ = {
 			isa = PBXGroup;
 			children = (
+				949A396B14F4C585009770F4 /* SwinGame.icns */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Libraries and Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				949A396C14F4C5EA009770F4 /* Resources */,
 			);
 			name = MyGame;
 			sourceTree = "<group>";
@@ -490,6 +513,89 @@
 			path = lib/mac;
 			sourceTree = "<group>";
 		};
+		949A396C14F4C5EA009770F4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				949A396D14F4C5EA009770F4 /* animations */,
+				949A396F14F4C5EA009770F4 /* bundles */,
+				949A397214F4C5EA009770F4 /* fonts */,
+				949A397614F4C5EA009770F4 /* images */,
+				949A398014F4C5EA009770F4 /* maps */,
+				949A398114F4C5EA009770F4 /* panels */,
+				949A398314F4C5EA009770F4 /* sounds */,
+				949A398614F4C5EA009770F4 /* SwinGame.icns */,
+				949A398714F4C5EA009770F4 /* SwinGame.ico */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		949A396D14F4C5EA009770F4 /* animations */ = {
+			isa = PBXGroup;
+			children = (
+				949A396E14F4C5EA009770F4 /* startup.txt */,
+			);
+			path = animations;
+			sourceTree = "<group>";
+		};
+		949A396F14F4C5EA009770F4 /* bundles */ = {
+			isa = PBXGroup;
+			children = (
+				949A397014F4C5EA009770F4 /* FileDialog.txt */,
+				949A397114F4C5EA009770F4 /* splash.txt */,
+			);
+			path = bundles;
+			sourceTree = "<group>";
+		};
+		949A397214F4C5EA009770F4 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				949A397314F4C5EA009770F4 /* arial.ttf */,
+				949A397414F4C5EA009770F4 /* cour.ttf */,
+				949A397514F4C5EA009770F4 /* maven_pro_regular.ttf */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
+		949A397614F4C5EA009770F4 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				949A397714F4C5EA009770F4 /* fdFile.png */,
+				949A397814F4C5EA009770F4 /* fdFolder.png */,
+				949A397914F4C5EA009770F4 /* FileDialog_Active.png */,
+				949A397A14F4C5EA009770F4 /* FileDialog_Background.png */,
+				949A397B14F4C5EA009770F4 /* FileDialog_Inactive.png */,
+				949A397C14F4C5EA009770F4 /* FileDialog_Scroll.png */,
+				949A397D14F4C5EA009770F4 /* FileDialog_ScrollSmall.png */,
+				949A397E14F4C5EA009770F4 /* Swinburne.jpg */,
+				949A397F14F4C5EA009770F4 /* SwinGameAni.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		949A398014F4C5EA009770F4 /* maps */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = maps;
+			sourceTree = "<group>";
+		};
+		949A398114F4C5EA009770F4 /* panels */ = {
+			isa = PBXGroup;
+			children = (
+				949A398214F4C5EA009770F4 /* FileDialog.txt */,
+			);
+			path = panels;
+			sourceTree = "<group>";
+		};
+		949A398314F4C5EA009770F4 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				949A398414F4C5EA009770F4 /* error.wav */,
+				949A398514F4C5EA009770F4 /* SwinGameStart.wav */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -517,9 +623,16 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MyGame" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* MyGame */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -636,7 +749,6 @@
 					"\"$(SRCROOT)/lib/mac\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -682,7 +794,6 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				SDKROOT = "";
 			};
 			name = Debug;
@@ -694,7 +805,6 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 				SDKROOT = "";
 			};
 			name = Release;

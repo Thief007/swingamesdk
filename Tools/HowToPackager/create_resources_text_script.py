@@ -38,15 +38,15 @@ _pkg  = {
     "LoadPanel":"panels"}
 
 def get_Resources(word_list,f):
-    print "  --> "+_pkg[word_list[0]]+'/'+word_list[-1]
+    # print "  --> "+_pkg[word_list[0]]+'/'+word_list[-1]
     f.write(_pkg[word_list[0]]+'/'+word_list[-1]+'\n')
     if _pkg[word_list[0]] == 'bundles':
-        print "Bundled word "+_pkg[word_list[0]]
+        # print "Bundled word "+_pkg[word_list[0]]
         load_Bundled_Resources(word_list, f)
     
 
 def get_Resources_Next(word_list, f):
-    print _pkg[word_list[1]]+'/'+word_list[-1]
+    # print _pkg[word_list[1]]+'/'+word_list[-1]
     f.write(_pkg[word_list[1]]+'/'+word_list[-1]+'\n') 
 
 def load_Bundled_Resources(word_list, f):
@@ -56,11 +56,12 @@ def load_Bundled_Resources(word_list, f):
     for line in lines_in_bundles_file:
         word_list = re.findall(r"[A-Za-z_.-]+",line)
         if _pkg[word_list[0]] == "timer":
-            print "TEST word_list"+_pkg[word_list[0]]
-            print "TIMER FOUND -- passing"
+            # print "TEST word_list"+_pkg[word_list[0]]
+            # print "TIMER FOUND -- passing"
+            pass
         else:
             f.write(_pkg[word_list[0]].lower()+ "/" + word_list[-1]+'\n')
-            print _pkg[word_list[0]].lower()+ "/" + word_list[-1]
+            # print _pkg[word_list[0]].lower()+ "/" + word_list[-1]
 
 def load_animation_script_resources(word_list,f):
     resource = []
@@ -93,7 +94,7 @@ def create_list():
         newFileName = os.path.basename(fname).split('.')[0]
         fileName = "* "+ newFileName
         f.write(fileName+'\n')
-        print " --Reading :"+fname
+        # print " --Reading :"+fname
         how_to_file = open(fname,'r')
         lines_in_pas_file = how_to_file.readlines()
         
@@ -112,5 +113,6 @@ def create_list():
                         
 def main():
     create_list()
+
 if __name__ == '__main__':
     main()

@@ -79,6 +79,7 @@ _type_dictionary_creation_data = [
             ('longword',    'uint32_t'),
             ('single',      'float'),
             ('longint',     'int32_t'),
+            ('integer',     'int32_t'),
             ('uint16',      'unsigned short int'),
             ('color',       'color'),
         ],
@@ -113,6 +114,8 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
+            ('guilist',         'gui_list'),
+            ('panel',           'panel'),
         ],
         '_type_switcher': {
             None:       '#2# ',
