@@ -11,6 +11,7 @@ swingame_path      = os.path.realpath(script_path + '../..') + '/'
 python_script_dir  = os.path.realpath(script_path + '../SGWrapperGen') + '/'
 
 dist_folder        = swingame_path + "Dist/"
+produced_folder    = dist_folder + 'SwinGame %s/' % sg_version
 generated_folder   = swingame_path + "Generated/"
 tempate_folder     = swingame_path + "Templates/"
 
@@ -188,7 +189,7 @@ def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
     
     # Zip it all together
     os.chdir(tmp_vs_dir)
-    to_zip = dist_folder + dist_dict['pkg_name']
+    to_zip = produced_folder + dist_dict['pkg_name']
     output_line('Creating Template Installer: %s' % dist_dict['pkg_name'] )
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
 
@@ -207,73 +208,73 @@ def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
 
 
 template_details = {
-    # 'Pascal':   {
-    #           'script':       'create_pascal_library.py',
-    #           'use_sgsdk':    False,
-    #           'copy_dist':    [
-    #               { 
-    #                 'target':         'fpc',
-    #                 'os':             ['Mac OS X', 'Windows', 'Linux'],
-    #                 'lib':            'lib',
-    #               },
-    #               {
-    #                 'target':     'iOS',
-    #                 'os':         ['Mac OS X'],
-    #                 'lib':        'staticlib',
-    #               },
-    #           ],
-    #           'pre_copy_script': None,
-    #       },
-    #   'C':    {
-    #           'script':       'create_c_library.py',
-    #           'use_sgsdk':    True,
-    #           'copy_dist':    [
-    #               { 
-    #                 'target':     'gpp',
-    #                 'os':         ['Mac OS X', 'Windows', 'Linux'],
-    #                 'lib':        'lib',
-    #                 'staticsgsdk':    False,
-    #               },
-    #               { 
-    #                 'target':     'gcc',
-    #                 'os':         ['Mac OS X', 'Windows', 'Linux'],
-    #                 'lib':        'lib',
-    #                 'staticsgsdk':    False,
-    #               },
-    #               { 
-    #                 'target':     'xcode 3',
-    #                 'os':         ['Mac OS X'],
-    #                 'lib':        'lib',
-    #                 'staticsgsdk':    False,
-    #               },
-    #               { 
-    #                 'target':     'iOS',
-    #                 'os':         ['Mac OS X'],
-    #                 'lib':        'staticlib',
-    #                 'staticsgsdk':    True,
-    #               },
-    #           ],
-    #           'pre_copy_script': None,
-    #       },
-    #   'ObjC': {
-    #           'script':       'create_objc_library.py',
-    #           'use_sgsdk':    True,
-    #           'copy_dist':    [
-    #               {
-    #                   'target':       'gcc',
-    #                   'os':           [ 'Mac OS X' ],
-    #                   'lib':          'lib',
-    #                   'staticsgsdk':  False,
-    #               },
-    #               {
-    #                   'target':       'xcode 3',
-    #                   'os':           [ 'Mac OS X' ],
-    #                   'lib':          'lib',
-    #                   'staticsgsdk':  False,
-    #               },
-    #           ],
-    #           'pre_copy_script': None,
-    #        },
+    'Pascal':   {
+              'script':       'create_pascal_library.py',
+              'use_sgsdk':    False,
+              'copy_dist':    [
+                  { 
+                    'target':         'fpc',
+                    'os':             ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':            'lib',
+                  },
+                  {
+                    'target':     'iOS',
+                    'os':         ['Mac OS X'],
+                    'lib':        'staticlib',
+                  },
+              ],
+              'pre_copy_script': None,
+          },
+      'C':    {
+              'script':       'create_c_library.py',
+              'use_sgsdk':    True,
+              'copy_dist':    [
+                  { 
+                    'target':     'gpp',
+                    'os':         ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':        'lib',
+                    'staticsgsdk':    False,
+                  },
+                  { 
+                    'target':     'gcc',
+                    'os':         ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':        'lib',
+                    'staticsgsdk':    False,
+                  },
+                  { 
+                    'target':     'xcode 3',
+                    'os':         ['Mac OS X'],
+                    'lib':        'lib',
+                    'staticsgsdk':    False,
+                  },
+                  { 
+                    'target':     'iOS',
+                    'os':         ['Mac OS X'],
+                    'lib':        'staticlib',
+                    'staticsgsdk':    True,
+                  },
+              ],
+              'pre_copy_script': None,
+          },
+      'ObjC': {
+              'script':       'create_objc_library.py',
+              'use_sgsdk':    True,
+              'copy_dist':    [
+                  {
+                      'target':       'gcc',
+                      'os':           [ 'Mac OS X' ],
+                      'lib':          'lib',
+                      'staticsgsdk':  False,
+                  },
+                  {
+                      'target':       'xcode 3',
+                      'os':           [ 'Mac OS X' ],
+                      'lib':          'lib',
+                      'staticsgsdk':  False,
+                  },
+              ],
+              'pre_copy_script': None,
+           },
     'CSharp':   {
             'script':       'create_csharp_library.py',
             'use_sgsdk':    True,
@@ -345,14 +346,16 @@ def deploy_list():
     
     #hack...
     src_temp_path_name = 'Source of SwinGame %s' % sg_version
-    src_temp_path_name = src_temp_path_name.replace(' ', '_').replace('.', '_')
+    src_temp_path_name = src_temp_path_name.replace(' ', '_').replace('.', '_') + ".zip"
     
     result = list()
-    result.append(dist_folder + src_temp_path_name )
+    result.append(produced_folder + src_temp_path_name )
     
     for key, lang_dict in template_details.items():
         for dist_dict in lang_dict['copy_dist']:
-            result.append(dist_folder + dist_dict['template_path_name'] + '.zip')
+            result.append(produced_folder + dist_dict['template_path_name'] + '.zip')
+            if dist_dict.has_key('pkg_name'):
+                result.append(produced_folder + dist_dict['pkg_name'])
     
     return result
 

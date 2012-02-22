@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #
 # Requires ssh module: easy_install paramiko
 #
@@ -16,6 +18,7 @@ server = "ictnetcontrolsvm2.ict.swin.edu.au"
 
 server_base_path        = '/home/shared/g_sgdocs/www/htdocs/'
 server_downloads_path   = server_base_path + 'images/downloads/'
+server_install_path     = server_downloads_path + 'SwinGame%s/' % sg_version
 server_api_path         = server_base_path + 'apidocs/'
 server_howto_path       = server_base_path + 'howto/'
 
@@ -90,7 +93,7 @@ def gather_templates():
     temp_files = deploy_list()
     
     for temp in temp_files:
-        server_path = server_downloads_path + os.path.basename(temp)
+        server_path = server_install_path + os.path.basename(temp)
         _files_to_transfer.append( (temp, server_path) )
 
 def deploy_to_server():
@@ -100,16 +103,22 @@ def deploy_to_server():
     _files_to_transfer - (source_file, server_destination_path)
         TODO: Implement...
     """
-    # usr = raw_input('Enter username: ')
-    # pwd = getpass.getpass('Enter server password: ')
-    # s = ssh.Connection(server, username=usr, password=pwd)
+    usr = raw_input('Enter username: ')
+    pwd = getpass.getpass('Enter server password: ')
+    s = ssh.Connection(server, username=usr, password=pwd)
+    
+    s.execute('if [ ! -d "%s" ]; then mkdir -p "%s"; fi' % ( server_install_path, server_install_path ) )
     
     for (from_file, to_file) in _files_to_transfer:
-        print from_file, ' -> ', to_file
+        output_line('Copying %s' % os.path.basename(from_file))
+        s.put(from_file, to_file)
+        
     
-    # s.close()
+    s.close()
 
 def main():
+    output_header(['Copying SwinGame Files to Server'])
+    
     gather_how_to_source()
     gather_templates()
     gather_how_to_projects()
