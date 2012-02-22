@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import subprocess
 import swin_shutil
@@ -138,8 +139,16 @@ def build_csharp_lib():
         # path = dirs["cs_generated_code_dir"] + '/*.cs'
         [os.remove(os.path.join(dirs["cs_generated_code_dir"],f)) for f in os.listdir(dirs["cs_generated_code_dir"]) if f.endswith(".cs")]
 
-def pkg_vs_installer(tmp_dir, to_dir, replace_file, replace_file_dir, search_str, replace_str, vs_temp_folder, dest_tmp, proj_zip_name, lang):
+def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
     """Package up the SwinGame C# installer"""
+    
+    vs_temp_folder      = os.path.join(tempate_folder, 'Visual Studio', dist_dict['template_loc'])
+    replace_file        = dist_dict['replace_file']
+    replace_file_dir    = dist_dict['replace_dir']
+    search_str          = dist_dict['search_for']
+    replace_str         = dist_dict['replace_with']
+    dest_tmp            = dist_dict['template_loc']
+    proj_zip_name       = dist_dict['proj_zip_name']
     
     output_line('Creating Visual Studio Template Structure')
     
@@ -179,18 +188,18 @@ def pkg_vs_installer(tmp_dir, to_dir, replace_file, replace_file_dir, search_str
     
     # Zip it all together
     os.chdir(tmp_vs_dir)
-    to_zip = dist_folder + '%s SwinGame %s Template Installer.vsi' % (lang, sg_version)
-    output_line('Creating Template Installer for %s' % lang )
+    to_zip = dist_folder + dist_dict['pkg_name']
+    output_line('Creating Template Installer: %s' % dist_dict['pkg_name'] )
     run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
 
 
-def pkg_csharp_installer(tmp_dir, to_dir):
-    vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08')
-    pkg_vs_installer(tmp_dir, to_dir, 'GameMain.cs', 'src', 'MyGame', "$safeprojectname$.src", vs_temp_folder, 'cs', 'SwinGame C# Project.zip', 'C#')
-    
-def pkg_vb_installer(tmp_dir, to_dir):
-    vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express VB 08')
-    pkg_vs_installer(tmp_dir, to_dir, 'Mono.vbproj', None, 'Mono', "$safeprojectname$", vs_temp_folder, 'vb', 'SwinGame VB Project.zip', 'VB')
+# def pkg_csharp_installer(dist_dict, tmp_dir, to_dir):
+#     vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express C# 08')
+#     pkg_vs_installer(tmp_dir, to_dir, 'GameMain.cs', 'src', 'MyGame', "$safeprojectname$.src", vs_temp_folder, 'cs', 'SwinGame C# Project.zip', 'C#')
+#     
+# def pkg_vb_installer(dist_dict, tmp_dir, to_dir):
+#     vs_temp_folder = os.path.join(tempate_folder, 'Visual Studio', 'Express VB 08')
+#     pkg_vs_installer(tmp_dir, to_dir, 'Mono.vbproj', None, 'Mono', "$safeprojectname$", vs_temp_folder, 'vb', 'SwinGame VB Project.zip', 'VB')
     
 # ===============================
 # = Template details dictionary =
@@ -198,73 +207,73 @@ def pkg_vb_installer(tmp_dir, to_dir):
 
 
 template_details = {
-    'Pascal':   {
-            'script':       'create_pascal_library.py',
-            'use_sgsdk':    False,
-            'copy_dist':    [
-                { 
-                  'target':         'fpc',
-                  'os':             ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':            'lib',
-                },
-                {
-                  'target':     'iOS',
-                  'os':         ['Mac OS X'],
-                  'lib':        'staticlib',
-                },
-            ],
-            'pre_copy_script': None,
-        },
-    'C':    {
-            'script':       'create_c_library.py',
-            'use_sgsdk':    True,
-            'copy_dist':    [
-                { 
-                  'target':     'gpp',
-                  'os':         ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'gcc',
-                  'os':         ['Mac OS X', 'Windows', 'Linux'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'xcode 3',
-                  'os':         ['Mac OS X'],
-                  'lib':        'lib',
-                  'staticsgsdk':    False,
-                },
-                { 
-                  'target':     'iOS',
-                  'os':         ['Mac OS X'],
-                  'lib':        'staticlib',
-                  'staticsgsdk':    True,
-                },
-            ],
-            'pre_copy_script': None,
-        },
-    'ObjC': {
-            'script':       'create_objc_library.py',
-            'use_sgsdk':    True,
-            'copy_dist':    [
-                {
-                    'target':       'gcc',
-                    'os':           [ 'Mac OS X' ],
-                    'lib':          'lib',
-                    'staticsgsdk':  False,
-                },
-                {
-                    'target':       'xcode 3',
-                    'os':           [ 'Mac OS X' ],
-                    'lib':          'lib',
-                    'staticsgsdk':  False,
-                },
-            ],
-            'pre_copy_script': None,
-         },
+    # 'Pascal':   {
+    #           'script':       'create_pascal_library.py',
+    #           'use_sgsdk':    False,
+    #           'copy_dist':    [
+    #               { 
+    #                 'target':         'fpc',
+    #                 'os':             ['Mac OS X', 'Windows', 'Linux'],
+    #                 'lib':            'lib',
+    #               },
+    #               {
+    #                 'target':     'iOS',
+    #                 'os':         ['Mac OS X'],
+    #                 'lib':        'staticlib',
+    #               },
+    #           ],
+    #           'pre_copy_script': None,
+    #       },
+    #   'C':    {
+    #           'script':       'create_c_library.py',
+    #           'use_sgsdk':    True,
+    #           'copy_dist':    [
+    #               { 
+    #                 'target':     'gpp',
+    #                 'os':         ['Mac OS X', 'Windows', 'Linux'],
+    #                 'lib':        'lib',
+    #                 'staticsgsdk':    False,
+    #               },
+    #               { 
+    #                 'target':     'gcc',
+    #                 'os':         ['Mac OS X', 'Windows', 'Linux'],
+    #                 'lib':        'lib',
+    #                 'staticsgsdk':    False,
+    #               },
+    #               { 
+    #                 'target':     'xcode 3',
+    #                 'os':         ['Mac OS X'],
+    #                 'lib':        'lib',
+    #                 'staticsgsdk':    False,
+    #               },
+    #               { 
+    #                 'target':     'iOS',
+    #                 'os':         ['Mac OS X'],
+    #                 'lib':        'staticlib',
+    #                 'staticsgsdk':    True,
+    #               },
+    #           ],
+    #           'pre_copy_script': None,
+    #       },
+    #   'ObjC': {
+    #           'script':       'create_objc_library.py',
+    #           'use_sgsdk':    True,
+    #           'copy_dist':    [
+    #               {
+    #                   'target':       'gcc',
+    #                   'os':           [ 'Mac OS X' ],
+    #                   'lib':          'lib',
+    #                   'staticsgsdk':  False,
+    #               },
+    #               {
+    #                   'target':       'xcode 3',
+    #                   'os':           [ 'Mac OS X' ],
+    #                   'lib':          'lib',
+    #                   'staticsgsdk':  False,
+    #               },
+    #           ],
+    #           'pre_copy_script': None,
+    #        },
     'CSharp':   {
             'script':       'create_csharp_library.py',
             'use_sgsdk':    True,
@@ -280,14 +289,28 @@ template_details = {
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
-                  'pkg_script':     pkg_csharp_installer,
+                  'pkg_script':     pkg_vs_installer,
+                  'template_loc':   'Express C# 08',
+                  'pkg_name':       'C# SwinGame %s 2008 Installer.vsi' % (sg_version),
+                  'replace_file':   'GameMain.cs', 
+                  'replace_dir':    'src', 
+                  'search_for':     'MyGame', 
+                  'replace_with':   "$safeprojectname$.src", 
+                  'proj_zip_name':  'SwinGame C# Project.zip',
                 },
                 { 
                   'target':         'vs10',
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
-                  'pkg_script':     pkg_csharp_installer,
+                  'pkg_script':     pkg_vs_installer,
+                  'template_loc':   'Express C# 10',
+                  'pkg_name':       'C# SwinGame %s 2010 Installer.vsi' % (sg_version),
+                  'replace_file':   'GameMain.cs', 
+                  'replace_dir':    'src', 
+                  'search_for':     'MyGame', 
+                  'replace_with':   "$safeprojectname$.src", 
+                  'proj_zip_name':  'SwinGame C# Project.zip',
                 },
                 { 
                   'lang':           'VB',
@@ -302,7 +325,14 @@ template_details = {
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
-                  'pkg_script':     pkg_vb_installer,
+                  'pkg_script':     pkg_vs_installer,
+                  'template_loc':   'Express VB 08',
+                  'pkg_name':       'VB SwinGame %s 2008 Installer.vsi' % (sg_version),
+                  'replace_file':   'Mono.vbproj', 
+                  'replace_dir':    '', 
+                  'search_for':     'Mono', 
+                  'replace_with':   "$safeprojectname$", 
+                  'proj_zip_name':  'SwinGame VB Project.zip',
                 },
             ],
             'pre_copy_script': build_csharp_lib,
@@ -343,4 +373,3 @@ _setup_template_details()
 
 if __name__ == '__main__':
     print template_details
-    
