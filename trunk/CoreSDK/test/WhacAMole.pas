@@ -133,7 +133,7 @@ begin
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
     SpriteSetY(gData.hole[i].moleSprite, y+vGap);
     
-    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('WhacAMole_temp'));    
+    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('Kapow_temp')); 
     SpriteSetX(gData.hole[i].kapow, xM+hGap);
     SpriteSetY(gData.hole[i].kapow, y+vGap);
     
@@ -152,7 +152,7 @@ begin
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
     SpriteSetY(gData.hole[i].moleSprite, y+vGap);
     
-    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('WhacAMole_temp'));        
+    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('Kapow_temp')); 
     SpriteSetX(gData.hole[i].kapow, xM+hGap);
     SpriteSetY(gData.hole[i].kapow, y+vGap);
     
@@ -170,6 +170,7 @@ begin
     for i := 1 to numberOfHOles do
     begin
       UpdateSprite(gData.hole[i].moleSprite);
+      UpdateSprite(gData.hole[i].kapow);
       
       case gData.hole[i].holeState of
         Empty: 
@@ -285,7 +286,7 @@ begin
       begin
         if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;
         //SpriteHideLayer(gData.hole[i].moleSprite, 'WhacAMole');        
-        DrawSprite(gData.hole[i].kapow);       
+        //DrawSprite(gData.hole[i].kapow);       
       end;
     end;
   end
@@ -310,7 +311,13 @@ begin
     ClearScreen(ColorWhite);
     DrawGame(data);          
     for i := 1 to numberOfHoles do
-      DrawSprite(data.hole[i].moleSprite);    
+    begin
+      if data.hole[i].holeState = Bam then 
+      begin
+        DrawSprite(data.hole[i].kapow);
+      end
+      else DrawSprite(data.hole[i].moleSprite);    
+    end;
     
     DrawFramerate(0,0);      
     RefreshScreen();    
