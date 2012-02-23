@@ -26,7 +26,7 @@ def main():
     
     run_bash('svn', ['up', swingame_path + "Generated/"])
     
-    print("\nFinished!")
+    print(  "\nFinished!")
     
     
     
