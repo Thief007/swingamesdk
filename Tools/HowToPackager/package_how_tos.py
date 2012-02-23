@@ -11,14 +11,14 @@
 #
 
 import os
-import shutil
-from shutil import make_archive
+import swin_shutil
+# from shutil import make_archive
 from convert_utils import *
 
 def build_dir_structure():
     """Build the How To structure in Dist folder"""
     print "  Removing old HowTo folder"
-    shutil.rmtree(get_how_to_directory())
+    swin_shutil.rmtree(get_how_to_directory())
     print "  Making new folder structure"
     os.mkdir(get_how_to_directory())
     
@@ -32,13 +32,18 @@ def copy_how_to_template(how_to_name):
     
     # copy template to dir for each language
     for lang in languages:
-        path = "%s%s/%s" % (get_how_to_directory(), lang["lang"], how_to_name)
+        path = os.path.join(get_how_to_directory(), lang["lang"], how_to_name)
         print "   --", lang["lang"]
         # Copy template
-        shutil.copytree(lang["template"], path)
+        if os.path.exists(path):
+            swin_shutil.rmtree(path)
+        swin_shutil.copytree(lang["template"], path, symlinks=True)
         # Delete "main file" from "current_how_to_path"/src
         print "   -- Deleting GameMain file"
         os.remove(path + "/src/" + lang['main file'])
+        print "   -- Deleting Godly and SDL13 lib files"
+        swin_shutil.rmtree(path + "/lib/godly/")
+        swin_shutil.rmtree(path + "/lib/sdl13/")
 
 def copy_how_to_resources(current_how_to, how_to_resource, lang):
     path = "%s/%s" % ("../../CoreSDK/test/Resources",how_to_resource)
@@ -46,7 +51,7 @@ def copy_how_to_resources(current_how_to, how_to_resource, lang):
     if os.path.exists(path):
         print "     -- Copying ", path
         print "     -- To ",dest        
-        shutil.copy2(path,dest)
+        swin_shutil.copy2(path,dest)
     else:
         print "   WARNING -- "+ path +" file does not exist"
 
@@ -66,7 +71,7 @@ def copy_current_how_to_pas_file():
                     print " - Copying GameMain"
                     print "   -- Copying ", path
                     print "   -- To ",dest        
-                    shutil.copy2(path,dest)
+                    swin_shutil.copy2(path,dest)
                 else:
                     print "   WARNING -- "+ current_how_to +" file does not exist"
       

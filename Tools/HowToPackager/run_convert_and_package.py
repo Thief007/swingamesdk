@@ -51,6 +51,11 @@ def prepare_directories():
         shutil.copy2(fname, destination)
 
 def zip_how_tos():
+    for lang in languages:
+        arch_path = os.path.join(get_how_to_directory(), lang["lang"], "Archive")
+        if not os.path.exists(arch_path):
+            os.mkdir(arch_path)
+    
     f = open("../../CoreSDK/test/HowToResources.txt")
     how_to_file_lines = f.readlines()
     f.close()
@@ -62,12 +67,18 @@ def zip_how_tos():
            for lang in languages:
                 root_dir = os.path.expanduser(os.path.join(get_how_to_directory(), lang["lang"], current_how_to))
                 how_to_src = root_dir + "/src/" + lang['main file']
+                
                 print " - Checking How To src file: %s" % how_to_src
                 if os.path.exists(how_to_src):
-                    path = "%s/%s/%s/%s" % (get_how_to_directory(), lang["lang"], "Archive", current_how_to)
+                    path = os.path.join(get_how_to_directory(), lang["lang"], "Archive", current_how_to)
                     print "   -- Creating Archive "
                     print "     - ", current_how_to
-                    make_archive(path, 'zip',root_dir)
+                    # make_archive(path, 'zip',root_dir)
+                    os.chdir(root_dir)
+                    to_zip = path + '.zip'
+                    print to_zip
+                    run_bash('./clean.sh', [])
+                    run_bash('zip', ['-q', '-r', '-y', to_zip, '.', '-x', '.DS_Store' ])
                 else:
                     print " - Skipping: %s" % how_to_src
                     print "     - Unable to find source file"
@@ -156,12 +167,12 @@ def build_all_how_tos():
         quit()
 
 def main():
-    prepare_directories()
-    generate_resource_list()
-    copy_how_tos()
-    parse_how_tos()
-    generate_templates()
-    build_all_how_tos()
+    # prepare_directories()
+    # generate_resource_list()
+    # copy_how_tos()
+    # parse_how_tos()
+    # generate_templates()
+    # build_all_how_tos()
     zip_how_tos()
     print "*" * 70
     print "Finished generating how tos"

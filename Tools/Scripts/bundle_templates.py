@@ -21,7 +21,20 @@ def create_lang_libraries():
       for copy_dist in lang_template_dict['copy_dist']:
           output_line("Packaging " + copy_dist["target"])
           assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'], None if not copy_dist.has_key('lang') else copy_dist['lang'])
-      
+
+def create_docs():
+    run_python('create_documentation.py')
+    
+    docs_gen_dir = os.path.join(swingame_path, "Generated", "Documentation")
+    docs_dist_dir = os.path.join(swingame_path, "Dist", "Documentation")
+    
+    if os.path.exists(docs_dist_dir):
+        swin_shutil.rmtree(docs_dist_dir)
+    
+    os.makedirs(docs_dist_dir)
+    
+    copy_without_svn(docs_gen_dir, docs_dist_dir)
+
 
 #assembles the files for the dist folder
 def assemble_dist(language, dist_dict, use_sgsdk, part_from):
@@ -109,7 +122,8 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
 def main():
     output_header(['Packaging SwinGame Templates'])
     
-    create_lang_libraries()
+    # create_lang_libraries()
+    create_docs()
     
     print("\nFinished!")
     
