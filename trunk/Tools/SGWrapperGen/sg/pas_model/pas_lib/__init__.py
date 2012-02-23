@@ -56,6 +56,8 @@ def convert_array_declaration(array, is_parameter):
 
 extension = '.pas'
 
+post_proc = None
+
 proper_name = "Pascal"
 
 statement_seperator = ';'

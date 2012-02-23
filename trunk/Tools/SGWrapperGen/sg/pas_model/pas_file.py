@@ -177,7 +177,11 @@ class PascalFile(object):
         self._contents.to_code()
 
         for (name, module) in converter_helper.converters.items():
-            self._code[name] = self._contents.code[name]
+            if module.post_proc:
+                self._code[name] = module.post_proc(self._contents.code[name])
+            else:
+                self._code[name] = self._contents.code[name]
+            
             
 
     

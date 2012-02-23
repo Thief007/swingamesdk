@@ -251,6 +251,12 @@ template_details = {
                     'lib':        'lib',
                     'staticsgsdk':    False,
                   },
+                  {
+                      'target':       'xcode 4',
+                      'os':           [ 'Mac OS X' ],
+                      'lib':          'lib',
+                      'staticsgsdk':  False,
+                  },
                   { 
                     'target':     'iOS',
                     'os':         ['Mac OS X'],

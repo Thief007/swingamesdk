@@ -68,9 +68,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		941F476414F597E300F19AD2 /* SwinGameStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = SwinGameStart.wav; path = Resources/sounds/SwinGameStart.wav; sourceTree = SOURCE_ROOT; };
 		944473C20FF76043002B4FFA /* arial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = arial.ttf; sourceTree = "<group>"; };
 		944473C30FF76043002B4FFA /* cour.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cour.ttf; sourceTree = "<group>"; };
-		944473CC0FF76043002B4FFA /* SwinGameStart.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = SwinGameStart.ogg; sourceTree = "<group>"; };
 		944473CE0FF76043002B4FFA /* SwinGame.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SwinGame.icns; sourceTree = "<group>"; };
 		944473CF0FF76043002B4FFA /* SwinGame.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = SwinGame.ico; sourceTree = "<group>"; };
 		944473D10FF76043002B4FFA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
@@ -232,8 +232,8 @@
 		944473CB0FF76043002B4FFA /* sounds */ = {
 			isa = PBXGroup;
 			children = (
+				941F476414F597E300F19AD2 /* SwinGameStart.wav */,
 				94E963D4138A1C2B0016765E /* error.wav */,
-				944473CC0FF76043002B4FFA /* SwinGameStart.ogg */,
 			);
 			path = sounds;
 			sourceTree = "<group>";
@@ -453,7 +453,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = MyGame;
 				SDKROOT = "";
-				VALID_ARCHS = "i386 ppc";
+				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
@@ -485,7 +485,7 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = MyGame;
 				SDKROOT = macosx10.4;
-				VALID_ARCHS = "i386 ppc";
+				VALID_ARCHS = i386;
 				ZERO_LINK = NO;
 			};
 			name = Release;

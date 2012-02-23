@@ -2,7 +2,7 @@ import os
 
 languages = [   
             {"lang": "Pascal", "template": "../../Dist/Pascal/FPC", "main file": "GameMain.pas", "extension": ".pas"}, 
-            {"lang": "C", "template": "../../Dist/C/gpp", "main file": "main.c", "extension": ".c"} 
+            {"lang": "C", "template": "../../Dist/CPP/gpp", "main file": "main.cpp", "extension": ".cpp"} 
         ]
 
 script_path         = os.path.dirname(os.path.realpath(__file__)) + '/'
