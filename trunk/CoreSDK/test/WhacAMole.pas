@@ -198,8 +198,7 @@ begin
           if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;          
         End;
         Wack:
-        begin
-          
+        begin          
           if gData.MoleRemaining = 1 then
           begin
             gData.MoleRemaining -= 1;
@@ -284,10 +283,9 @@ begin
     begin
       if SpriteOnScreenAt(gData.hole[i].moleSprite, mousePos) then
       begin
-        gData.hole[i].holeState := Wack;
+        if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;
         //SpriteHideLayer(gData.hole[i].moleSprite, 'WhacAMole');        
-        DrawSprite(gData.hole[i].kapow);     
-        
+        DrawSprite(gData.hole[i].kapow);       
       end;
     end;
   end
