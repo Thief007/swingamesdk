@@ -122,7 +122,7 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
 def main():
     output_header(['Packaging SwinGame Templates'])
     
-    # create_lang_libraries()
+    create_lang_libraries()
     create_docs()
     
     print("\nFinished!")
