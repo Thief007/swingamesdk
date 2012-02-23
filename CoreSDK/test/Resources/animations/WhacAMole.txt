@@ -1,0 +1,23 @@
+SwinGame Animation #v1
+
+f:[0-3],[0-3],20,
+f:[4-7],[3-0],20,
+f:[8-11],[4-7],20,
+f:[12-15],[7-4],20,
+
+//sounds
+//s:0,boom,boom.wav
+//s:43,moob,moob.wav
+//s:83,boom,boom.wav
+
+//vectors
+//v:[0-39],1.5,10
+//v:[43-82],-1.5,20
+//v:[83-90],2.5,-5
+//v:[91-98],-2.5,+5
+
+//identifiers
+i:MoleUp,0
+i:MoleDown,4
+i:HogUp,8
+i:HogDown,12
