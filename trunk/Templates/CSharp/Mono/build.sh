@@ -33,19 +33,17 @@ GMCS_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll" #" -r:Micro
 CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
-if [ "$OS" = "$WIN" ]; then
-    GMCS_BIN=`which csc` 2>>/dev/null
-    
-    if [ -z $GMCS_BIN ]; then
-        GMCS_BIN=`which gmcs`
-    fi
-else
+#Locate the compiler...
+GMCS_BIN=`which csc 2>> /dev/null`
+if [ -z "$GMCS_BIN" ]; then
+    #try locating gmcs
     GMCS_BIN=`which gmcs`
-fi
-
-if [ -z $GMCS_BIN ]; then
-    echo "Unable to find C# compiler, please install Mono and check your system path" >&2
-    exit -1
+    
+    if [ -z "$GMCS_BIN" ]; then
+        #no compiler found :(
+        echo "Unable to find a C# compiler. Install either csc or gmcs."
+        exit -1
+    fi
 fi
 
 ICON=SwinGame
