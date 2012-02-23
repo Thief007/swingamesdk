@@ -178,7 +178,7 @@ begin
     end;
 end;
 
-procedure ChangeAlienDirection(var f: Fleet);
+procedure CheckAlienDirection(var f: Fleet);
 var 
     col, row: Integer;
     foundLeftMost, foundRightMost: Boolean;
@@ -339,7 +339,7 @@ procedure UpdateGame(var data: SpaceInvadersData);
 begin
     UpdatePlayerAndBullet(data.playerData);
     DrawAndUpdateFleet(data.fleetData);
-    ChangeAlienDirection(data.fleetData);
+    CheckAlienDirection(data.fleetData);
     UpdateAlienBullet(data);
     
     if Rnd() < SHOOT_PERCENT then
