@@ -6,10 +6,12 @@ Const
   numOfMole = 20;
   Level = 10;
   numberOfHoles = 9;
-  TimePerRound = 15;
+  TimePerRound = 60;
+  moleWidth = 245;
+  moleHeight = 163;
 
 Type
-  State = (Empty, Mole, MoleUp, MoleDown, Wack);
+  State = (Empty, Mole, MoleUp, MoleDown, Wack, Bam);
   
   ProgressBar = record
     partRect: Rectangle;
@@ -18,18 +20,18 @@ Type
   end;  
   
   HoleData = record    
-    moleSprite : Sprite;
-    holeState   : State;    
+    moleSprite, kapow : Sprite;
+    holeState   : State;
+    nextAt      : Single;
+    //part        : Rectangle;
   end;
   
   GameData = record
-    Score, MoleRemaining, Level, Life : Integer;    
+    timeComplete, Score, MoleRemaining, Level, Life : Integer;    
     lifeBitmap  : Bitmap;
     timeRemainingBar : ProgressBar;    
     gTimer : Timer;    
-    hole  : array [1..numberOfHoles] of HoleData;
-    nextAt  : Single;  
-    //lastUpdateTime, timePassed : Single;    
+    hole  : array [1..numberOfHoles] of HoleData;    
   end;
   
 procedure DisplayScore(score : Integer);
@@ -89,42 +91,37 @@ begin
 end;
 
 procedure DrawProgressBar(var gData : GameData);
+var
+  i : Integer;
 begin
   DrawBitmap(gData.timeRemainingBar.fullBar, 32, 439);  
   gData.timeRemainingBar.partRect := RectangleFrom(0, 0, 34, 279);  
-  
-  if TimerTicks(gData.gTimer) >= 1000  then UpdateProgressBar(gData, 1/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 2000  then UpdateProgressBar(gData, 2/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 3000  then UpdateProgressBar(gData, 3/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 4000  then UpdateProgressBar(gData, 4/TimePerRound);  
-  if TimerTicks(gData.gTimer) >= 5000  then UpdateProgressBar(gData, 5/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 6000  then UpdateProgressBar(gData, 6/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 7000  then UpdateProgressBar(gData, 7/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 8000  then UpdateProgressBar(gData, 8/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 9000  then UpdateProgressBar(gData, 9/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 10000 then UpdateProgressBar(gData, 10/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 11000 then UpdateProgressBar(gData, 11/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 12000 then UpdateProgressBar(gData, 12/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 13000 then UpdateProgressBar(gData, 13/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 14000 then UpdateProgressBar(gData, 14/TimePerRound);
-  if TimerTicks(gData.gTimer) >= 15000 then UpdateProgressBar(gData, 15/TimePerRound);
+  for i := 1 to TimePerRound do if TimerTicks(gData.gTimer) >= (i*1000) then UpdateProgressBar(gData, i/TimePerRound);  
 end;
 
 procedure InitMolesSprite(var gData : GameData);
 var  
-  i, xM, vGap, hGap : Integer;  
+  i, y, xM, vGap, hGap : Integer;  
 begin
   xM := 260;  
   hGap := 0;
   vGap := 170;  
-  
+  y := 252;
+    
   //Generate first row
   for i := 1 to 3 do
   begin
-    gData.hole[i].moleSprite := CreateSprite(BitmapNamed('WhacAMole'), AnimationScriptNamed('WhacAMole_temp'));       
+    gData.hole[i].moleSprite := CreateSprite(BitmapNamed('WhacAMole'), AnimationScriptNamed('WhacAMole_temp'));    
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
-    SpriteSetY(gData.hole[i].moleSprite, 252);    
-    gData.hole[i].holeState := Empty;      
+    SpriteSetY(gData.hole[i].moleSprite, y);    
+    
+    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('Kapow_temp'));    
+    SpriteSetX(gData.hole[i].kapow, xM+hGap);
+    SpriteSetY(gData.hole[i].kapow, y);    
+    
+    //gData.hole[i].part := RectangleFrom((xm+hGap), y, moleWidth,  moleHeight);
+    gData.hole[i].holeState := Empty;    
+    gData.hole[i].nextAt :=0;
     hGap +=250;    
   end;  
   
@@ -134,8 +131,15 @@ begin
   begin
     gData.hole[i].moleSprite := CreateSprite(BitmapNamed('WhacAMole'), AnimationScriptNamed('WhacAMole_temp'));    
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
-    SpriteSetY(gData.hole[i].moleSprite, 252+vGap);        
+    SpriteSetY(gData.hole[i].moleSprite, y+vGap);
+    
+    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('WhacAMole_temp'));    
+    SpriteSetX(gData.hole[i].kapow, xM+hGap);
+    SpriteSetY(gData.hole[i].kapow, y+vGap);
+    
+    //gData.hole[i].part := RectangleFrom((xm+hGap), (y+vGap), moleWidth,  moleHeight);
     gData.hole[i].holeState := Empty;    
+    gData.hole[i].nextAt :=0;
     hGap +=250;    
   end;
   
@@ -146,8 +150,15 @@ begin
   begin
     gData.hole[i].moleSprite := CreateSprite(BitmapNamed('WhacAMole'), AnimationScriptNamed('WhacAMole_temp'));        
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
-    SpriteSetY(gData.hole[i].moleSprite, 252+vGap);
-    gData.hole[i].holeState := Empty;    
+    SpriteSetY(gData.hole[i].moleSprite, y+vGap);
+    
+    gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('WhacAMole_temp'));        
+    SpriteSetX(gData.hole[i].kapow, xM+hGap);
+    SpriteSetY(gData.hole[i].kapow, y+vGap);
+    
+    //gData.hole[i].part := RectangleFrom((xm+hGap), (y+vGap), moleWidth,  moleHeight);
+    gData.hole[i].holeState := Empty;
+    gData.hole[i].nextAt :=0;    
     hGap +=250;    
   end;  
 end;
@@ -163,44 +174,66 @@ begin
       case gData.hole[i].holeState of
         Empty: 
         Begin
-          if (TimerTicks(gData.gTimer) > gData.nextAt) and (Rnd() > 1/9) then
+          if (TimerTicks(gData.gTimer) > gData.hole[i].nextAt) and (Rnd() < 1/900) then
           Begin
             gData.hole[i].holeState := MoleUp;
-            gData.nextAt := TimerTicks(gData.gTimer) + Rnd(1000);
+            gData.hole[i].nextAt := TimerTicks(gData.gTimer) + (rnd(750)+250);
             SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleUp');    
           End;
         End;
         MoleUp:
         Begin
-          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Mole;
-          {if (TimerTicks(gData.gTimer) > gData.hole[i].nextAt[i]) and (Rnd() > 1/9) then
-          begin
-            gData.hole[i].nextAt[i] := TimerTicks(gData.gTimer) + Rnd(2000);
-            SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleDown');
-          end;}
+          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Mole;          
         End;
         Mole:
         Begin
-          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := MoleDown;
-          {if (TimerTicks(gData.gTimer) > gData.hole[i].nextAt[i]) and (Rnd() > 1/9) then
+          if TimerTicks(gData.gTimer) > gData.hole[i].nextAt then
           begin
-            gData.hole[i].nextAt[i] := TimerTicks(gData.gTimer) + Rnd(2000);
+            gData.hole[i].holeState := MoleDown;
             SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleDown');
-          end;}
+          end;          
         End;
         MoleDown: 
         Begin
-          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;
-          {if (TimerTicks(gData.gTimer) > gData.hole[i].nextAt[i]) and (Rnd() > 1/9) then
-          begin
-            gData.hole[i].nextAt[i] := TimerTicks(gData.gTimer) + Rnd(2000);
-          end;}
+          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;          
         End;
-        //Wack:        
+        Wack:
+        begin
+          
+          if gData.MoleRemaining = 1 then
+          begin
+            gData.MoleRemaining -= 1;
+            gData.Score += 10;
+            gData.timeComplete := TimerTicks(gData.gTimer);
+          end;
+          if gData.MoleRemaining > 1 then
+          begin
+            gData.MoleRemaining -= 1;
+            gData.Score += 10;
+          end;  
+          gData.hole[i].holeState := Bam;
+          SpriteStartAnimation(gData.hole[i].kapow, 'Kapow', true);
+        end;
+        Bam:
+        begin
+          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then
+          begin
+            gData.hole[i].holeState := Empty;          
+            //SpriteShowLayer(gData.hole[i].moleSprite, 'WhacAMole');
+          end;
+        end;
       end;      
     end;
     
-
+    if (TimerTicks(gData.gTimer) >= (TimePerRound*1000)) or (gData.MoleRemaining = 0) then
+    begin
+      //ClearScreen(ColorWhite);
+      StopTimer(gData.gTimer);
+      gData.hole[i].holeState := Empty;      
+      //DrawText
+      //WriteLn('Game have ended, thank you for playing');      
+      //StopGame();    
+    end    
 end;
 
 procedure InitGame(var gData : GameData);  
@@ -209,7 +242,7 @@ begin
   gData.Life := 3;
   gData.MoleRemaining := numOfMole;
   gData.Level := 1;
-  gData.nextAt := 1000;  
+  gData.timeComplete := 0;
   gData.lifeBitmap := LoadBitmap('heart.png');  
   
   LoadBitmapNamed('bgImage', 'whac-a-mole-background.png');
@@ -239,6 +272,27 @@ begin
    DisplayCurrentLevel(gData.Level);   
 end;
 
+procedure HandleInput(var gData : GameData);
+var
+  mousePos : Point2D;
+  i : Integer;
+begin
+  if MouseClicked(LeftButton) then
+  begin
+    mousePos := MousePosition();
+    for i := 1 to numberOfHoles do
+    begin
+      if SpriteOnScreenAt(gData.hole[i].moleSprite, mousePos) then
+      begin
+        gData.hole[i].holeState := Wack;
+        //SpriteHideLayer(gData.hole[i].moleSprite, 'WhacAMole');        
+        DrawSprite(gData.hole[i].kapow);     
+        
+      end;
+    end;
+  end
+end;
+
 procedure Main(); 
 var
   data : GameData;
@@ -252,18 +306,16 @@ begin
   
   repeat // The game loop...
     ProcessEvents();    
-    
+    HandleInput(data);
     PlayGame(data);
     
     ClearScreen(ColorWhite);
     DrawGame(data);          
     for i := 1 to numberOfHoles do
-      DrawSprite(data.hole[i].moleSprite);      
+      DrawSprite(data.hole[i].moleSprite);    
     
     DrawFramerate(0,0);      
-    RefreshScreen();
-    
-    //UpdateGame(data);    
+    RefreshScreen();    
   until WindowCloseRequested();
   
   ReleaseAllSprites();
