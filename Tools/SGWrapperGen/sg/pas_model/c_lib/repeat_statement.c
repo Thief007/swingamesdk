@@ -1,4 +1,4 @@
 do 
 {
 %(statements)s}
-while !(%(expression)s);
+while ( ! (%(expression)s) );

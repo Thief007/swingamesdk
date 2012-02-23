@@ -32,7 +32,11 @@ class PascalEnumValue(object):
         my_data = dict()
 
         my_data['pas_lib_identifier'] = self._name 
-        my_data['c_lib_identifier'] = converter_helper.lower_name(self._name)
+        my_data['c_lib_identifier'] = converter_helper.upper_name(self._name)
         my_data['value'] = self._value  # integers are the same always...
+
         for (name, module) in converter_helper.converters.items():
             self._code[name] = module.enum_value_template % my_data
+        
+        self._code['pas_lib_reference'] = self._name 
+        self._code['c_lib_reference'] = converter_helper.upper_name(self._name)

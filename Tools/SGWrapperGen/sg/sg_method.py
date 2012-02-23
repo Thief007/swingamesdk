@@ -767,6 +767,16 @@ class SGMethod(SGMetaDataContainer):
                 return True
         # print
         return False
+        
+    def has_var_params(self):
+        for param in self.params:
+            # print param.modifier, param.is_array(), ', ', 
+            if param.modifier == 'var': 
+                # print
+                return True
+        # print
+        return False
+
     
     def has_out_params(self):
         for param in self.params:

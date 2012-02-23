@@ -17,13 +17,14 @@ class PascalVariableReference(object):
     def parse(self, tokens):
         from pascal_parser.pas_expression import PascalExpression
         name = tokens.match_token(TokenKind.Identifier).value
-        if not (self._record is None):
+        if self._record:
             if self._record.has_field(name):
                 self._variable = self._record.get_field(name)
             else:
                 raise_error(("Record %s does not contain field %s" % (self._record.name, name)), '', is_critical=False)
         else:
             self._variable = self._block.resolve_variable(name)
+        
         if self._variable is None:
             raise_error(("Unable to resolve variable: %s", varName), '', is_critical=False)
         # enumeration value -> cannot be dereferenced
@@ -58,7 +59,10 @@ class PascalVariableReference(object):
 
     @property
     def type(self):
-        return self._variable._type
+        if self.kind != 'enumeration value':
+            return self._variable._type
+        else:
+            return 'enum val'
 
     @property
     def kind(self):
@@ -67,6 +71,9 @@ class PascalVariableReference(object):
     @property
     def is_record(self):
         return (self.type.kind == 'record')
+        
+    def __str__(self):
+        return self.name
 
     def to_code(self):
         '''
@@ -75,9 +82,15 @@ class PascalVariableReference(object):
         '''
         import converter_helper
         from pascal_parser.pas_expression import PascalExpression
+        
+        self._variable.to_code()
+        
+        print self._variable, self._variable._code
+        
         my_data = dict()
-        my_data['c_lib_identifier'] = converter_helper.lower_name(self._variable.name)
-        my_data['pas_lib_identifier'] = self._variable.name
+        my_data['c_lib_identifier'] = self._variable._code['c_lib_reference'] #converter_helper.lower_name(self._variable.name)
+        my_data['pas_lib_identifier'] = self._variable._code['pas_lib_reference'] #self._variable.name
+        
         for (name, module) in converter_helper.converters.items():
             my_data['var_reference'] = my_data[name + '_identifier']
             for symbol in self._symbols:

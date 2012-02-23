@@ -32,7 +32,7 @@ def copy_how_to_template(how_to_name):
     
     # copy template to dir for each language
     for lang in languages:
-        path = "%s/%s/%s" % (get_how_to_directory(), lang["lang"], how_to_name)
+        path = "%s%s/%s" % (get_how_to_directory(), lang["lang"], how_to_name)
         print "   --", lang["lang"]
         # Copy template
         shutil.copytree(lang["template"], path)

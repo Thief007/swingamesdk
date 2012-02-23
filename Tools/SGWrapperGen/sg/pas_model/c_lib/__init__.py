@@ -9,6 +9,7 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 
 import sys
 import os
+import re
 
 """
 The indenter stores the number of indents a particular structure has from the current 'base'
@@ -114,7 +115,7 @@ _type_dictionary_creation_data = [
             ('animation',       'animation'),
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
-            ('guilist',         'gui_list'),
+            ('guilist',         'guilist'),
             ('panel',           'panel'),
         ],
         '_type_switcher': {
@@ -362,11 +363,45 @@ def convert_array_declaration(array, is_parameter):
 
 #------------------
 
+def c_post_proc(code):
+    """
+    Post process the C code files. Change void main to int main and return 0 at the end.
+    """
+    
+    found_main = False
+    found_main_body = False
+    return_done = False
+    braces = 0
+    out_code = ''
+    
+    for line in iter(code.splitlines()):
+        # print line
+        
+        if re.search('void main()', line):
+            # print 'is main'
+            found_main = True
+            out_code += line.replace('void main', 'int main') + '\n'
+            continue
+        if found_main:
+            for ch in line:
+                if ch == '{':
+                    braces += 1
+                    found_main_body = True
+                elif ch == '}':
+                    braces -= 1
+        if found_main_body and (not return_done) and braces == 0:
+            out_code     += '    return 0;\n'
+            return_done  = True
+        out_code += line + '\n'
+    
+    return out_code
+
 
 from converter_helper import load_templates, get_template
 
-extension = '.c'
+extension = '.cpp'
 proper_name = "C"
+post_proc = c_post_proc
 _build_type_dictionary(_type_dictionary_creation_data, _type_dicts)   
 
 

@@ -108,7 +108,7 @@ def main():
     print '*' * 70
     for (name, file) in files().items():
         if file.is_parsed and file.contains_kind == 'program':
-            run_convert(file)       
+            run_convert(file)
 
     print '*' * 70
     print ' Writing files: '

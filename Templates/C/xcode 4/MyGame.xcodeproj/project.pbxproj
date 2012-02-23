@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -355,9 +355,16 @@
 /* Begin PBXProject section */
 		944473930FF76022002B4FFA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 944473960FF76022002B4FFA /* Build configuration list for PBXProject "MyGame" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 944473910FF76022002B4FFA;
 			productRefGroup = 944473E20FF76057002B4FFA /* Products */;
 			projectDirPath = "";
@@ -450,9 +457,8 @@
 				INFOPLIST_FILE = "MyGame-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = MyGame;
-				SDKROOT = "";
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 			};
 			name = Debug;
@@ -471,7 +477,6 @@
 					"\"$(SRCROOT)/lib/mac\"",
 					"\"$(SRCROOT)/lib/godly/mac\"",
 				);
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "MyGame-Info.plist";
@@ -482,9 +487,8 @@
 					"-framework",
 					Cocoa,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = MyGame;
-				SDKROOT = macosx10.4;
+				SDKROOT = macosx;
 				VALID_ARCHS = i386;
 				ZERO_LINK = NO;
 			};

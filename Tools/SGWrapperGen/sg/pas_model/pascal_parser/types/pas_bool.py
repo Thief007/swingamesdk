@@ -20,7 +20,7 @@ class PascalBool(object):
         return self._value
 
     def __str__(self):
-        return str(value)
+        return str(self.value)
 
     def to_code(self):
         import converter_helper

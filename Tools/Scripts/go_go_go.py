@@ -30,6 +30,12 @@ def main():
     run_python('bundle_templates.py', script_path)
     output_line('Producing zip files, and other packages')
     run_python('produce_templates.py', script_path)
+    
+    read = raw_input('Recreate How-Tos?: ')
+    if read == 'Y' or read == 'y':
+        run_python('run_convert_and_package.py', script_path + '../HowToPackager')
+    
+    
     output_line('Deploying')
     run_python('deploy.py', script_path)
     
