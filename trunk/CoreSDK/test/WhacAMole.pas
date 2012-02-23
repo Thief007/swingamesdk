@@ -3,10 +3,10 @@ uses
 SwinGame, sgTypes, sgUserInterface, SysUtils;
 
 Const 
-  numOfMole = 20;
+  numOfMole = 30;
   Level = 10;
   numberOfHoles = 9;
-  TimePerRound = 60;
+  TimePerRound = 120;
   moleWidth = 245;
   moleHeight = 163;
 
@@ -216,23 +216,15 @@ begin
         end;
         Bam:
         begin
-          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then
-          begin
-            gData.hole[i].holeState := Empty;          
-            //SpriteShowLayer(gData.hole[i].moleSprite, 'WhacAMole');
-          end;
+          if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;          
         end;
       end;      
     end;
     
     if (TimerTicks(gData.gTimer) >= (TimePerRound*1000)) or (gData.MoleRemaining = 0) then
-    begin
-      //ClearScreen(ColorWhite);
+    begin      
       StopTimer(gData.gTimer);
-      gData.hole[i].holeState := Empty;      
-      //DrawText
-      //WriteLn('Game have ended, thank you for playing');      
-      //StopGame();    
+      gData.hole[i].holeState := Empty;            
     end    
 end;
 
@@ -284,9 +276,7 @@ begin
     begin
       if SpriteOnScreenAt(gData.hole[i].moleSprite, mousePos) then
       begin
-        if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;
-        //SpriteHideLayer(gData.hole[i].moleSprite, 'WhacAMole');        
-        //DrawSprite(gData.hole[i].kapow);       
+        if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;        
       end;
     end;
   end
