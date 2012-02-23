@@ -1,9 +1,9 @@
 SwinGame Animation #v1
 
-f:0,0,20,0
+f:0,0,20,
 
 //sounds
-s:0,boom,boom.wav
+s:0,splattt,splattt.wav
 
 //vectors
 //v:[0-39],1.5,10
