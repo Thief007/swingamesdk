@@ -21,21 +21,26 @@ server_downloads_path   = server_base_path + 'images/downloads/'
 server_install_path     = server_downloads_path + 'SwinGame%s/' % sg_version
 server_api_path         = server_base_path + 'apidocs/'
 server_howto_path       = server_base_path + 'howto/'
-
+server_howto_proj_path  = server_downloads_path + 'howtos/'
+server_docs_path        = server_base_path + 'apidocs/'
+server_docs_path        = server_base_path + 'apidocs/'
+server_sql_path         = '/home/shared/g_sgdocs/scripts/'
 
 _languages = [
     {
         'language' : "Pascal",
         'target' : "FPC",
+        'howto_ext':    '_pas.zip',
     },
     {
         'language' : "C",
         'target' : "gcc",
+        'howto_ext':    '_cpp.zip',
     },
-    {
-        'language' : "C",
-        'target' : "gpp",
-    },
+    # {
+    #     'language' : "C",
+    #     'target' : "gpp",
+    # },
         ]
 
 """
@@ -81,8 +86,14 @@ def gather_how_to_projects():
     for lang in _languages:
         lang_source = local_how_to_folder + lang['language'] + '/Archive/'
         server_path = server_downloads_path + lang['language'] + '/'
+        
         # zip archive?
         # add zipped archive to list?
+        how_to_projects = glob.glob(os.path.join(lang_source, "HowTo*.zip"))
+        for how_to in how_to_projects:
+            server_path = server_howto_proj_path + os.path.basename(how_to).replace(".zip", lang['howto_ext'])
+            _files_to_transfer.append( (how_to, server_path) )
+            
 
 def gather_templates():
     """
@@ -95,6 +106,24 @@ def gather_templates():
     for temp in temp_files:
         server_path = server_install_path + os.path.basename(temp)
         _files_to_transfer.append( (temp, server_path) )
+
+def gather_docs():
+    
+    docs_dist_dir       = os.path.join(swingame_path, "Dist", "Documentation", 'html')
+    docs_sql_dist_dir   = os.path.join(swingame_path, "Dist", "Documentation", 'sql')
+    server_docs_html    = server_base_path
+    
+    html_files = glob.glob(os.path.join(docs_dist_dir, "*.html"))
+    for html_f in html_files:
+        server_path = server_docs_path + os.path.basename(html_f)
+        _files_to_transfer.append( (html_f, server_path) )
+    
+    sql_files = glob.glob(os.path.join(docs_sql_dist_dir, "*.sql"))
+    for sql_f in sql_files:
+        server_path = server_sql_path + os.path.basename(sql_f)
+        _files_to_transfer.append( (sql_f, server_path) )
+    
+    
 
 def deploy_to_server():
     """
@@ -111,8 +140,11 @@ def deploy_to_server():
     
     for (from_file, to_file) in _files_to_transfer:
         output_line('Copying %s' % os.path.basename(from_file))
+        print from_file
+        print to_file
         s.put(from_file, to_file)
-        
+    
+    s.execute('cd ' + server_sql_path + '; php run_api_menu_script.php')
     
     s.close()
 
@@ -120,8 +152,9 @@ def main():
     output_header(['Copying SwinGame Files to Server'])
     
     gather_how_to_source()
-    gather_templates()
     gather_how_to_projects()
+    gather_docs()
+    gather_templates()
     print 'Enter username (when prompted): '
     deploy_to_server()
 
