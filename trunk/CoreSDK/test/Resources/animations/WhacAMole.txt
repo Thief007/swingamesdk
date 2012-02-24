@@ -6,7 +6,8 @@ f:[8-11],[4-7],20,
 f:[12-15],[7-4],20,
 
 //sounds
-//s:0,boom,boom.wav
+s:0,digUp,digup.wav
+s:4,digDown,digdown.wav
 //s:43,moob,moob.wav
 //s:83,boom,boom.wav
 
