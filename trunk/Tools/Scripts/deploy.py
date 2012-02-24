@@ -140,8 +140,8 @@ def deploy_to_server():
     
     for (from_file, to_file) in _files_to_transfer:
         output_line('Copying %s' % os.path.basename(from_file))
-        print from_file
-        print to_file
+        # print from_file
+        # print to_file
         s.put(from_file, to_file)
     
     s.execute('cd ' + server_sql_path + '; php run_api_menu_script.php')
