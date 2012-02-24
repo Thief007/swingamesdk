@@ -179,7 +179,7 @@ begin
           Begin
             gData.hole[i].holeState := MoleUp;
             gData.hole[i].nextAt := TimerTicks(gData.gTimer) + (rnd(750)+250);
-            SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleUp');    
+            SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleUp', true);    
           End;
         End;
         MoleUp:
@@ -191,7 +191,7 @@ begin
           if TimerTicks(gData.gTimer) > gData.hole[i].nextAt then
           begin
             gData.hole[i].holeState := MoleDown;
-            SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleDown');
+            SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleDown', true);
           end;          
         End;
         MoleDown: 
