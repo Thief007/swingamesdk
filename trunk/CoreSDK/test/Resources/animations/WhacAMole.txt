@@ -1,9 +1,10 @@
 SwinGame Animation #v1
 
-f:[0-3],[0-3],20,
-f:[4-7],[3-0],20,
-f:[8-11],[4-7],20,
-f:[12-15],[7-4],20,
+f:[0-3],[0-3],25,
+f:[4-7],[3-0],25,
+//f:8,0,20,
+//f:[8-11],[4-7],20,
+//f:[12-15],[7-4],20,
 
 //sounds
 s:0,digUp,digup.wav
@@ -20,5 +21,6 @@ s:4,digDown,digdown.wav
 //identifiers
 i:MoleUp,0
 i:MoleDown,4
-i:HogUp,8
-i:HogDown,12
+//i:MoleHide,8
+//i:HogUp,8
+//i:HogDown,12
