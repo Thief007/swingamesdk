@@ -111,9 +111,16 @@ begin
   begin
     gData.hole[i].moleSprite := CreateSprite(BitmapNamed('WhacAMole'), AnimationScriptNamed('WhacAMole_temp'));    
     gData.hole[i].kapow := CreateSprite(BitmapNamed('Kapow'), AnimationScriptNamed('Kapow_temp'));    
-    if (i = 4) or (i = 7) then hGap := 0;
-    if i = 4 then vGap := 170;
-    if i = 7 then vGap := 333;
+    if i = 4 then
+    begin
+      hGap := 0;
+      vGap := 170;      
+    end;
+    if i = 7 then 
+    begin
+      hGap := 0;
+      vGap := 333;
+    end;
     SpriteSetX(gData.hole[i].moleSprite, xM+hGap);
     SpriteSetY(gData.hole[i].moleSprite, y+vGap);    
     SpriteSetX(gData.hole[i].kapow, xM+hGap);    
