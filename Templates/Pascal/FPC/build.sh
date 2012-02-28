@@ -402,7 +402,7 @@ then
         HAS_i386=false
         HAS_LEOPARD_SDK=false
         HAS_LION=false
-        OS_VER=`sw_vers -productVersion`
+        OS_VER=`sw_vers -productVersion | awk -F . '{print $1"."$2}'`
         
         if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
             HAS_PPC=true
@@ -443,7 +443,7 @@ then
             
             doLipo "i386" "ppc"
         else
-            if [[ $HAS_LION ]]; then
+            if [ $HAS_LION = true ]; then
                 PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
             fi
             doBasicMacCompile
