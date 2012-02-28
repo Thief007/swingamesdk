@@ -440,7 +440,7 @@ then
         HAS_PPC=false
         HAS_i386=false
         HAS_LEOPARD_SDK=false
-        OS_VER=`sw_vers -productVersion`
+        OS_VER=`sw_vers -productVersion | awk -F . '{print $1"."$2}'`
         
         if [ -f /usr/libexec/as/ppc/as ]; then
             HAS_PPC=true
