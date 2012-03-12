@@ -49,7 +49,11 @@ if [ -z "$GCC_BIN" ]; then
     fi
 fi
 
-ICON=SwinGame
+if [ "$OS" = "$MAC" ]; then
+    ICON="SwinGame.icns"
+else
+    ICON="SwinGame"
+fi
 
 CLEAN="N"
 

@@ -37,6 +37,12 @@ LOG_FILE="${APP_PATH}/out.log"
 C_FLAGS="-x c++"
 SG_INC="-I${APP_PATH}/lib/"
 
+if [ "$OS" = "$MAC" ]; then
+    ICON="SwinGame.icns"
+else
+    ICON="SwinGame"
+fi
+
 if [ "$OS" = "$WIN" ]; then
     C_FLAGS="$C_FLAGS -march=i386"
 fi
@@ -278,7 +284,6 @@ doMacPackage()
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
-    ICON="SwinGame"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\
