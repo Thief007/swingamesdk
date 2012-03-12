@@ -24,7 +24,11 @@ LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
 GAME_NAME=${APP_PATH##*/}
-ICON=SwinGame
+if [ "$OS" = "$MAC" ]; then
+    ICON="SwinGame.icns"
+else
+    ICON="SwinGame"
+fi
 
 CLEAN="N"
 

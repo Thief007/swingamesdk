@@ -3,10 +3,10 @@ uses
 SwinGame, sgTypes, sgUserInterface, SysUtils;
 
 Const 
-  numOfMole = 20;
+  numOfMole = 30;
   Level = 10;
   numberOfHoles = 9;
-  TimePerRound = 60;
+  TimePerRound = 120;
   moleWidth = 245;
   moleHeight = 163;
 
@@ -22,7 +22,7 @@ Type
   HoleData = record    
     moleSprite, kapow : Sprite;
     holeState   : State;
-    nextAt      : Single;    
+    nextAt      : Single;
   end;
   
   GameData = record
@@ -36,30 +36,30 @@ Type
 procedure DisplayScore(score : Integer);
 begin
     case score of 
-    0..9 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 277, 144);
-    10..99 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 255, 144);
-    100..999 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 232, 144);
-    1000..9999 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 209, 144);
-    10000..99999 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 186, 144);
-    100000..999999 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 163, 144);
-    1000000..9999999 : DrawText(IntToStr(score), ColorBlack, 'Arial', 40, 140, 144);
+    0..9 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 277, 144);
+    10..99 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 255, 144);
+    100..999 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 232, 144);
+    1000..9999 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 209, 144);
+    10000..99999 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 186, 144);
+    100000..999999 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 163, 144);
+    1000000..9999999 : DrawText(IntToStr(score), ColorBlack, 'arial.ttf', 40, 140, 144);
     else;
-      DrawText(IntToStr(9999999), ColorBlack, 'Arial', 40, 140, 144);      
+      DrawText(IntToStr(9999999), ColorBlack, 'arial.ttf', 40, 140, 144);      
     end;    
 end;
 
 procedure DisplayMoleRemaining(moleRemain : Integer);
 begin
   case moleRemain of 
-    0..9 : DrawText(IntToStr(moleRemain), ColorBlack, 'Arial', 40, 448, 144);
+    0..9 : DrawText(IntToStr(moleRemain), ColorBlack, 'arial.ttf', 40, 448, 144);
     else
-      DrawText(IntToStr(moleRemain), ColorBlack, 'Arial', 40, 426, 144);
+      DrawText(IntToStr(moleRemain), ColorBlack, 'arial.ttf', 40, 426, 144);
   end;    
 end;
 
 procedure DisplayCurrentLevel(level : Integer);
 begin  
-  DrawText(IntToStr(level), ColorBlack, 'Arial', 40, 678, 144);
+  DrawText(IntToStr(level), ColorBlack, 'arial.ttf', 40, 678, 144);
 end;
 
 procedure DrawLife(var gData : GameData);
@@ -94,8 +94,10 @@ var
   i : Integer;
 begin
   DrawBitmap(gData.timeRemainingBar.fullBar, 32, 439);  
-  gData.timeRemainingBar.partRect := RectangleFrom(0, 0, 34, 279);  
-  for i := 1 to TimePerRound do if TimerTicks(gData.gTimer) >= (i*1000) then UpdateProgressBar(gData, i/TimePerRound);  
+  gData.timeRemainingBar.partRect := RectangleFrom(0, 0, 34, round(TimerTicks(gData.gTimer) / 10000 * 279));
+  DrawBitmapPart(gData.timeRemainingBar.emptyBar, gData.timeRemainingBar.partRect, 32, 439);
+
+  // for i := 1 to TimePerRound do if TimerTicks(gData.gTimer) >= (i*1000) then UpdateProgressBar(gData, i/TimePerRound);  
 end;
 
 procedure InitMolesSprite(var gData : GameData);
@@ -168,16 +170,38 @@ begin
             SpriteStartAnimation(gData.hole[i].moleSprite, 'MoleDown', true);
           end;         
         End;
-        MoleDown: if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;        
-        Wack: if (gData.MoleRemaining > 0) then UpdateScore(gData, i);        
-        Bam:  if SpriteAnimationHasEnded(gData.hole[i].moleSprite) then gData.hole[i].holeState := Empty;        
+        Wack:
+        begin          
+          if gData.MoleRemaining = 1 then
+          begin
+            gData.MoleRemaining -= 1;
+            gData.Score += 10;
+            gData.timeComplete := TimerTicks(gData.gTimer);
+          end;
+          if gData.MoleRemaining > 1 then
+          begin
+            gData.MoleRemaining -= 1;
+            gData.Score += 10;
+          end;  
+          gData.hole[i].holeState := Bam;
+          SpriteStartAnimation(gData.hole[i].kapow, 'Kapow', true);
+          SpriteStartAnimation(gData.hole[i].moleSprite, 'Hide');
+        end;
+        Bam:
+        begin
+          if SpriteAnimationHasEnded(gData.hole[i].kapow) then gData.hole[i].holeState := Empty;          
+        end;
       end;      
-    end;    
-    if (TimerTicks(gData.gTimer) >= (TimePerRound*1000)) or (gData.MoleRemaining = 0) then
-    begin      
-      StopTimer(gData.gTimer);
-      gData.hole[i].holeState := Empty;            
-    end    
+    
+      if (TimerTicks(gData.gTimer) >= (TimePerRound*1000)) or (gData.MoleRemaining = 0) then
+      begin      
+        StopTimer(gData.gTimer);
+        gData.hole[i].holeState := Empty;            
+      end    
+    
+    
+    end;
+    
 end;
 
 procedure DrawGame(var gData : GameData);
@@ -217,12 +241,18 @@ var
   mousePos : Point2D;
   i : Integer;
 begin
+
   if MouseClicked(LeftButton) then
   begin
     mousePos := MousePosition();
-    for i := 1 to numberOfHoles do  
-      if SpriteOnScreenAt(gData.hole[i].moleSprite, mousePos) then  
-        if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;    
+    
+    for i := 1 to numberOfHoles do
+    begin
+      if SpriteOnScreenAt(gData.hole[i].moleSprite, mousePos) then
+      begin
+        if not (gData.hole[i].holeState = Bam) then gData.hole[i].holeState := Wack;        
+      end;
+    end;
   end
 end;
 
@@ -234,9 +264,13 @@ begin
   OpenAudio();
   OpenGraphicsWindow('Whack A Mole', 1024, 768);
   LoadDefaultColors();  
-  LoadResourceBundle('WhacAMole.txt');  
+  LoadResourceBundle('WhacAMoleBundle.txt');  
   InitGame(gData);
+
+  LoadSoundEffect('comedy_boing.ogg');
   
+  PlayMusic('WhacMusic');
+
   repeat // The game loop...
     ProcessEvents();    
     ClearScreen(ColorWhite);
@@ -254,6 +288,7 @@ begin
       else DrawSprite(gData.hole[i].moleSprite);    
     end;        
     
+    DrawFramerate(0,0);      
     RefreshScreen();    
   until WindowCloseRequested();
   
