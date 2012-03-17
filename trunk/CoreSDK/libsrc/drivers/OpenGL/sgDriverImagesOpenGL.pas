@@ -281,6 +281,10 @@ implementation
     
     //Load the image
     loadedImage := IMG_Load(PChar(filename));
+    if not CheckAssigned('OpenGL ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage) then
+    begin      
+      exit;
+    end;
 
     optimizeSizedImage := SDL_CreateRGBSurface(0,PowerOfTwo(loadedImage^.w),
                                           PowerOfTwo(loadedImage^.h),
@@ -290,6 +294,7 @@ implementation
                                           $00FF0000, //loadedImage^.format^.Bmask,
                                           $FF000000 //loadedImage^.format^.Amask
                                            );
+    
     //optimizeSizedImage := IMG_Load(PChar(filename));
     dRect.x := 0;               dRect.y := 0;
     dRect.w := loadedImage^.w;  dRect.h := loadedImage^.h;
@@ -301,7 +306,10 @@ implementation
     //SDL_BlitSurface(loadedImage, nil, optimizeSizedImage, @dRect);
     SDL_FreeSurface(loadedImage);
 
-    CheckAssigned('OpenGL ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage);
+    if not CheckAssigned('OpenGL ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage) then
+    begin      
+      exit;
+    end;
 
     // Image loaded, so create SwinGame bitmap    
     new(result);

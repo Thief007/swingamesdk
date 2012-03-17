@@ -16,18 +16,17 @@ unit sgDriverGraphicsSDL;
 //=============================================================================
 interface
 uses sgTypes, SDL;
+
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
 	
 	procedure LoadSDLGraphicsDriver();
 	    
-    function ToGfxColorProcedure(val : Color): Color;
+  function ToGfxColorProcedure(val : Color): Color;
 	
 implementation
 	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry,
 		SDL_gfx, SDL_Image, sgSavePNG, sgInputBackend, sgTrace;
-	
-
   
 	
 	
@@ -141,8 +140,6 @@ implementation
   begin
       result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
   end;
-
-  
 
   procedure DrawTriangleProcedure(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single);
   begin

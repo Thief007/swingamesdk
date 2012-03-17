@@ -32,6 +32,9 @@ begin
   LoadAnimationScriptNamed('blah', 'blah');
   LoadPanel('blah');
   LoadAnimationScript('test.txt');
+  FillRectangle(ColorRed, 0, 0, 10, 10);
+  LoadDefaultColors();
+  // LoadBitmap('cape.jpg');
   
   OpenGraphicsWindow('Hello World', 640, 480);
   LoadDefaultColors();
