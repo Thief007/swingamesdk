@@ -24,7 +24,7 @@ implementation
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
- 	  CheckAssigned('SDL1.3 ImagesDriver - InitBitmapColorsProcedure recieved empty Bitmap', GetSurface(bmp));
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - InitBitmapColorsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
     SDL_FillRect(GetSurface(bmp), nil, ColorTransparent);
  	end;
@@ -43,7 +43,7 @@ implementation
 	procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);
 	begin
 	  bmp^.surface := New(PSDL13Surface);
- 	  CheckAssigned('SDL1.3 ImagesDriver - CreateBitmapProcedure recieved unassigned Bitmap', bmp);
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - CreateBitmapProcedure recieved unassigned Bitmap', bmp) then exit;
 		if (GetSurface(screen) = nil) or (GetSurface(screen)^.format = nil) then
     begin
       RaiseWarning('Creating ARGB surface as screen format unknown.');
@@ -68,7 +68,7 @@ implementation
   var
     r, c: Longint;
   begin
- 	  CheckAssigned('SDL1.3 ImagesDriver - SetNonTransparentPixels recieved unassigned Bitmap', bmp);
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - SetNonTransparentPixels recieved unassigned Bitmap', bmp) then exit;
 
     SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
 
@@ -86,7 +86,7 @@ implementation
     r, c: Longint;
     hasAlpha: Boolean;
   begin
-   	CheckAssigned('SDL1.3 ImagesDriver - SetNonAlphaPixelsProcedure recieved empty Bitmap', GetSurface(bmp));
+   	if not CheckAssigned('SDL1.3 ImagesDriver - SetNonAlphaPixelsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
     hasAlpha := GetSurface(bmp)^.format^.BytesPerPixel = 4;
 
@@ -110,7 +110,7 @@ implementation
     //Load the image
     loadedImage := IMG_Load(PChar(filename));
 
- 	  CheckAssigned('SDL1.3 ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage);
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - Error loading image: ' + filename + ': ' + SDL_GetError(), loadedImage) then exit;
 
     // Image loaded, so create SwinGame bitmap
     new(result);
@@ -162,27 +162,27 @@ implementation
 	
 	procedure MakeOpaqueProcedure(bmp : Bitmap);
 	begin
-    CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp));
+    if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     SDL_SetAlpha(GetSurface(bmp), 0, 255);
 	end;
 
 	procedure SetOpacityProcedure(bmp : Bitmap; pct : Single);
 	begin
-    CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp));
+    if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, RoundUByte(pct * 255));
 	end;
 
 	procedure MakeTransparentProcedure(bmp : Bitmap);
 	begin
-     CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp));
+    if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     
     SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
 	end;
 
 	procedure RotateScaleSurfaceProcedure(resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
 	begin
-   	CheckAssigned('SDL1.3 ImagesDriver - RotateScaleSurfaceProcedure recieved unassigned Result Bitmap', resultBmp);
-    CheckAssigned('SDL1.3 ImagesDriver - RotateScaleSurfaceProcedure recieved empty Source Bitmap Surface', GetSurface(src));
+   	if not CheckAssigned('SDL1.3 ImagesDriver - RotateScaleSurfaceProcedure recieved unassigned Result Bitmap', resultBmp) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - RotateScaleSurfaceProcedure recieved empty Source Bitmap Surface', GetSurface(src)) then exit;
         
     resultBmp^.surface := rotozoomSurface(GetSurface(src), deg, scale, 0);
     resultBmp^.width   := GetSurface(resultBmp)^.w;
@@ -202,10 +202,10 @@ implementation
 	  clearTexture : Boolean = False;
 	  srcW : LongInt;
 	begin
-   {	CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Source Bitmap', srcBmp);
-    CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Source Bitmap Surface', srcBmp^.surface);
-    CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp);
-    CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface);  }
+    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Source Bitmap', srcBmp) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Source Bitmap Surface', srcBmp^.surface) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface) then exit;
   
     srcW := srcBmp^.width;
     if Assigned(GetSurface(srcBmp)) and Assigned(srcRect) then
@@ -253,10 +253,10 @@ implementation
 	procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 
 	var
 	  r, g, b, a : Byte;
-      // x, y, w, h : LongInt;
   begin
- //  	CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap', dest);
-//    CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap Surface', dest^.surface);
+   	if not CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap', dest) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap Surface', dest^.surface) then exit;
+
     if dest <> screen then
     begin
       SDL_FillRect(GetSurface(dest), @PSDL13Surface(dest^.surface)^.surface^.clip_rect, toColor);
@@ -272,8 +272,8 @@ implementation
   var
     oldSurface: PSDL_Surface;
   begin
- 	  CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap', surface);
-   	CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap Surface', surface^.surface);
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap', surface) then exit;
+   	if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap Surface', surface^.surface) then exit;
   
     oldSurface := GetSurface(surface);
     SetNonAlphaPixelsProcedure(surface);
@@ -283,8 +283,8 @@ implementation
   
   procedure SaveBitmapProcedure(src : Bitmap; filepath : String);
   begin
- 	  CheckAssigned('SDL1.3 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap', src);
-   	CheckAssigned('SDL1.3 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap Surface', src^.surface);   
+ 	  if not CheckAssigned('SDL1.3 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap', src) then exit;
+   	if not CheckAssigned('SDL1.3 ImagesDriver - SaveBitmapProcedure recieved empty Bitmap Surface', src^.surface) then exit;
     SDL_SaveBMP(GetSurface(src), PChar(filepath));
   end;
     

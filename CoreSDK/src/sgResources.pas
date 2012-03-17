@@ -765,6 +765,8 @@ implementation
                     if isSkip then break;
                 end;
                 
+                StopSoundEffect('SwinGameStart');
+
                 // i := 1;
                 // while isPaused or (i < 30) do
                 // begin
@@ -786,12 +788,13 @@ implementation
             try
                 ReleaseResourceBundle('splash.txt');
             except on e1: Exception do
-                {$IFDEF TRACE}
                 begin
-                    Trace('sgResources', 'Error', 'ShowLogos', 'Error freeing splash.');
-                    Trace('sgResources', 'Error', 'ShowLogos', e1.Message);
+                    RaiseWarning('Error releating splash resources.');
+                    {$IFDEF TRACE}
+                        Trace('sgResources', 'Error', 'ShowLogos', 'Error freeing splash.');
+                        Trace('sgResources', 'Error', 'ShowLogos', e1.Message);
+                    {$ENDIF}
                  end;
-                {$ENDIF}
             end;
             // ToggleWindowBorder();
             

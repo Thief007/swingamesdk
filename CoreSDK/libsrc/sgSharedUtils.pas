@@ -53,7 +53,7 @@ uses sgTypes;
   function WithinRange(arrayLength : Integer; currentIndex : Integer) : Boolean;
     
   //Checks if pointer is assigned, then raises a warning and exits
-  procedure CheckAssigned(msg : String; ptr : Pointer);
+  function CheckAssigned(msg : String; ptr : Pointer): Boolean;
     
   type
     LineData = record
@@ -520,11 +520,14 @@ implementation
     {$ENDIF}
   end;
     
-  procedure CheckAssigned(msg : String; ptr : Pointer);
+  function CheckAssigned(msg : String; ptr : Pointer): Boolean;
   begin
+    result := true;
+    
     if not Assigned(ptr) then 
     begin 
-      RaiseWarning(msg); 
+      RaiseWarning(msg);
+      result := false;
       exit; 
     end;
   end;
