@@ -20,7 +20,8 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgTrace; // sdl;
+	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, 
+       sgTrace, sgSDLUtils; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -82,21 +83,8 @@ implementation
   end;
   
   procedure SetNonAlphaPixelsProcedure(bmp : Bitmap); 
-  var
-    r, c: Longint;
-    hasAlpha: Boolean;
   begin
-   	if not CheckAssigned('SDL1.3 ImagesDriver - SetNonAlphaPixelsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
-    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-    hasAlpha := GetSurface(bmp)^.format^.BytesPerPixel = 4;
-
-    for c := 0 to bmp^.width - 1 do
-    begin
-      for r := 0 to bmp^.height - 1 do
-      begin
-        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GraphicsDriver.GetPixel32(bmp, c, r) and SDL_Swap32($000000FF)) > 0);
-      end;
-    end;
+    if Assigned(bmp) then SetNonAlphaPixels(bmp, GetSurface(bmp));
   end;
   
   function DoLoadBitmapProcedure(filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
