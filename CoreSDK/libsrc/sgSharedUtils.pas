@@ -24,6 +24,7 @@ uses sgTypes;
   {$ifndef FPC} // Delphi land
   function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
   {$endif}
+  
   function ExtractAfterFirstDelim(index: integer; value: string; delim: Char): string;
 
   function CountDelimiter(value: String; delim: Char): Longint;
