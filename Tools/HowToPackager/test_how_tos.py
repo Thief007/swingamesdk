@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #
 # Test how tos
 #
