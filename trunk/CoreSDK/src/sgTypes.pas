@@ -1079,7 +1079,7 @@ interface
       msgCount        : LongInt;
       isTCP           : Boolean;
       
-      msgLen          : Integer;  // This data is used to handle splitting of messages
+      msgLen          : LongInt;  // This data is used to handle splitting of messages
       partMsgData     : String;   //   over multiple packets
     end;
     

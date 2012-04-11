@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import subprocess
 import shutil
 from shutil import make_archive
@@ -167,13 +169,14 @@ def build_all_how_tos():
         quit()
 
 def main():
-    # prepare_directories()
-    # generate_resource_list()
-    # copy_how_tos()
-    # parse_how_tos()
-    # generate_templates()
-    # build_all_how_tos()
+    prepare_directories()
+    generate_resource_list()
+    copy_how_tos()
+    parse_how_tos()
+    generate_templates()
+    build_all_how_tos()
     zip_how_tos()
+    
     print "*" * 70
     print "Finished generating how tos"
     print "*" * 70
