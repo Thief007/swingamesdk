@@ -1078,6 +1078,9 @@ interface
       lastMsg         : MessagePtr;
       msgCount        : LongInt;
       isTCP           : Boolean;
+      
+      msgLen          : Integer;  // This data is used to handle splitting of messages
+      partMsgData     : String;   //   over multiple packets
     end;
     
     /// The Pointer to ConnectionData
