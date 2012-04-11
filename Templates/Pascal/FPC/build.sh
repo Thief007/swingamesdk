@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Step 1: Detect the operating system
@@ -73,7 +73,7 @@ Usage()
 
 RELEASE=""
 
-while getopts chdi:g:b: o
+while getopts chri:g:b: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
