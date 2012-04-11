@@ -58,9 +58,9 @@ begin
 	for i := 0 to AUTO_MESSAGE_COUNT do
   begin
 		if (aIsHost) then
-			SendTCPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Host. The client should receive it.', aPeer)
+			SendTCPMessage('Hello. This Message Number is from the Host. The client should receive it.', aPeer)
 		else
-			SendTCPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Client. The host should receive it.', aPeer);
+			SendTCPMessage('Hello. This Message Number is from the Client. The host should receive it.', aPeer);
 			
     Delay(SEND_DELAY);
 		
