@@ -52,9 +52,9 @@ begin
 	for i := 0 to AUTO_MESSAGE_COUNT do
   begin
 		if (aIsHost) then
-			SendUDPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Host. The client should receive it.', aPeer)
+			SendUDPMessage('Hello. This Message is from the Host. The client should receive it.', aPeer)
 		else
-			SendUDPMessage('Hello. This Message Number ['+IntToStr(i)+'] is from the Client. The host should receive it.', aPeer);
+			SendUDPMessage('Hello. This Message is from the Client. The host should receive it.', aPeer);
 			
     Delay(SEND_DELAY);
 		
