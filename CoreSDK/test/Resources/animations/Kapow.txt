@@ -1,15 +1,9 @@
 SwinGame Animation #v1
 
-f:0,0,20,
+f:0,0,1,
 
 //sounds
 s:0,splattt,splattt.wav
-
-//vectors
-//v:[0-39],1.5,10
-//v:[43-82],-1.5,20
-//v:[83-90],2.5,-5
-//v:[91-98],-2.5,+5
 
 //identifiers
 i:Kapow,0
