@@ -386,17 +386,17 @@ implementation
     
     procedure ReleaseAllResources();
     begin
-        ReleaseAllAnimationScripts();
         ReleaseAllTimers();
         ReleaseAllFonts();
-        ReleaseAllBitmaps();
         ReleaseAllMusic();
-        ReleaseAllSoundEffects();
         ReleaseAllPanels();
         ReleaseAllMaps();
         ReleaseAllSprites();
         ReleaseAllCharacters();
         ReleaseAllConnections();
+        ReleaseAllAnimationScripts();
+        ReleaseAllSoundEffects();
+        ReleaseAllBitmaps();
         _Bundles.deleteAll();
     end;
     
