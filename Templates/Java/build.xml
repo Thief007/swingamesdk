@@ -3,7 +3,7 @@
     <property name="bin.dir" value="${basedir}/bin"/>
     <property name="dist.dir" value="${basedir}/dist"/>
     <property name="lib.dir" value="${basedir}/lib"/>
-    <property name="nativelib.dir" value="${basedir}/clib"/>
+    <!-- <property name="nativelib.dir" value="${basedir}/clib"/> -->
 
     <path id="libraries">
         <fileset dir="${lib.dir}">
@@ -45,19 +45,19 @@
 
     <target name="copy-resources">
         <copy todir="${bin.dir}">
-			<fileset dir="${nativelib.dir}">
+<!-- 			<fileset dir="${nativelib.dir}">
 				<include name="*.dll" />
 				<include name="*.jnilib" />
-			</fileset>
+			</fileset> -->
             <fileset dir="${src.dir}">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-        <copy todir="${basedir}">
+<!--         <copy todir="${basedir}">
 			<fileset dir="${nativelib.dir}">
 				<include name="*.dll" />
 			</fileset>
-        </copy>
+        </copy> -->
     </target>
     
     <target name="run" depends="compile">

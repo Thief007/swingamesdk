@@ -14,9 +14,9 @@ from swin_template_utils import *
 
 
 local_how_to_folder = dist_folder + 'HowTo/'
-server = "ictnetcontrolsvm2.ict.swin.edu.au"
+server = "venus.it.swin.edu.au" #"ictnetcontrolsvm2.ict.swin.edu.au"
 
-server_base_path        = '/home/shared/g_sgdocs/www/htdocs/'
+server_base_path        = '/home/www/swingame.ict.swin.edu.au/' #'/home/shared/g_sgdocs/www/htdocs/'
 server_downloads_path   = server_base_path + 'images/downloads/'
 server_install_path     = server_downloads_path + 'SwinGame%s/' % sg_version
 server_api_path         = server_base_path + 'apidocs/'
@@ -24,7 +24,7 @@ server_howto_path       = server_base_path + 'howto/'
 server_howto_proj_path  = server_downloads_path + 'howtos/'
 server_docs_path        = server_base_path + 'apidocs/'
 server_docs_path        = server_base_path + 'apidocs/'
-server_sql_path         = '/home/shared/g_sgdocs/scripts/'
+server_sql_path         = '/home/acad/acain/swingame_sql/' #'/home/shared/g_sgdocs/scripts/'
 
 _languages = [
     {
