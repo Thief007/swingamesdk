@@ -462,8 +462,8 @@ implementation
   end;
   
   procedure HandleTouchEvent(const finger : FingerArray; down: Boolean);
-  var
-    i: Integer;
+  // var
+  //   i: Integer;
   begin
     _justTouched := _justTouched or down;
     _fingers := finger;
@@ -476,15 +476,6 @@ implementation
     begin
       _LastFingerPosition.x := _fingers[0].position.x;
       _LastFingerPosition.y := _fingers[0].position.y;
-        
-      // if down and (length(_fingers) > 1) then
-      // begin
-      //   _ButtonsClicked[RightButton] := true;
-      // end
-      // else
-      // begin
-      //   _ButtonsClicked[LeftButton] := down and finger[0].down;
-      // end;
     end;
   end;
   
