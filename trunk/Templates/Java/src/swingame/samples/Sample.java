@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import swingame.Graphics;
 import swingame.Input;
+import swingame.Images;
 
 import swingame.MouseButton;
 import swingame.KeyCode;
@@ -23,6 +24,8 @@ public final class Sample
         
         Graphics.openGraphicsWindow("Hello World", 800, 600);
         
+        Images.loadBitmapNamed("swin", "Swinburne.jpg");
+
         float x = 0.0f;
         Color c = Color.RED;
         Color c1 = Color.BLUE;
@@ -43,7 +46,9 @@ public final class Sample
             
             Graphics.clearScreen(Color.BLACK);
             Graphics.fillRectangle(c, x, 10.0f, 10, 20);
-            Graphics.fillEllipse(c1, x, 40.0f, 20, 10);    
+            Graphics.fillEllipse(c1, x, 40.0f, 20, 10);
+
+            Images.drawBitmap("swin", 50, 50);    
             
             if( false == Input.keyDown(KeyCode.VK_L) )
                 Graphics.drawLine(Color.WHITE, x, 70.0f, x + 10, 75.0f);

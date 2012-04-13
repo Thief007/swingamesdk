@@ -47,7 +47,7 @@ begin
   WriteLn('Connected to Host');
 end;
 
-procedure HandleMessages(const aPeer : Connection; const aIsHost : Boolean);
+procedure HandleMessages(const aPeer : Connection; aIsHost : Boolean);
 var
   lMessage : String = '';
   i : Integer;

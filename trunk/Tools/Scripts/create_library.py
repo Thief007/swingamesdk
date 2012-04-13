@@ -33,6 +33,7 @@ def copy_coresdk_to_dist_source():
 _sgsdk_creation_script_options = {
     'Mac OS X': [['-badass','-static'], ['-godly','-static'], None],            # default must be last
     'Windows':  [None], #, '-badass', '-godly'],
+    'Linux':  [None], #, '-badass', '-godly'],
 }
 
 def create_sgsdk_library():
