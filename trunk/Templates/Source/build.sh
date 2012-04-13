@@ -27,7 +27,7 @@ APP_PATH="."
 #
 # Step 3: Setup options
 #
-EXTRA_OPTS="-O3 -Sewn -vwn -dSWINGAME_LIB"
+EXTRA_OPTS="-O3 -fPIC -Sewn -vwn -dSWINGAME_LIB"
 VERSION_NO=3.0
 VERSION=3.0
 CLEAN="N"
@@ -157,6 +157,8 @@ elif [ "$OS" = "$WIN" ]; then
     # FPC paths require c:/
     SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
     OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
+else #linux
+    OUT_DIR="${APP_PATH}/bin/linux"
 fi
 
 if [ $INSTALL != "N" ]; then
@@ -400,7 +402,7 @@ then
             #Combine into a fat dylib
             doLipo "i386" "ppc"
         else
-            if [[ $HAS_LION ]]; then
+            if [ $HAS_LION = true ]; then
                 PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
             fi
             
@@ -475,10 +477,7 @@ then
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
 
-        mv "${TMP_DIR}/SGSDK.dll" "${OUT_DIR}/SGSDK.dll"
-        
-        mv "${OUT_DIR}/libSGSDK.so" "${OUT_DIR}/libsgsdk.so"
-        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
+        mv "${TMP_DIR}/libSGSDK.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
         ln -s "${OUT_DIR}/libsgsdk.so.${VERSION}" "${OUT_DIR}/libsgsdk.so"
         
         if [ ! $INSTALL = "N" ]
