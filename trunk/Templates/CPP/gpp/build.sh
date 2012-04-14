@@ -150,6 +150,8 @@ elif [ "$OS" = "$WIN" ]; then
     OPENGL=false
     LIB_DIR="${APP_PATH}/lib/win"
     # fi
+else #linux
+    LIB_DIR="/usr/lib"
 fi
 
 if [ -f "${LOG_FILE}" ]
