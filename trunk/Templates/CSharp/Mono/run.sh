@@ -27,7 +27,7 @@ GAME_NAME=${APP_PATH##*/}
 if [ "$OS" = "$MAC" ]; then
     EXE_PATH=$APP_PATH/bin/Debug/${GAME_NAME}.app/Contents/MacOS/${GAME_NAME}
 elif [ "$OS" = "$LIN" ]; then
-    EXE_PATH=$APP_PATH/bin/Debug/${GAME_NAME}
+    EXE_PATH=$APP_PATH/bin/Debug/${GAME_NAME}.exe
 else #Windows
     EXE_PATH=$APP_PATH/bin/Debug/${GAME_NAME}.exe
 fi
@@ -38,7 +38,7 @@ if [ ! -f "${EXE_PATH}" ]; then
     if [ "$OS" = "$MAC" ]; then
         EXE_PATH=$APP_PATH/bin/Release/${GAME_NAME}.app/Contents/MacOS/${GAME_NAME}
     elif [ "$OS" = "$LIN" ]; then
-        EXE_PATH=$APP_PATH/bin/Release/${GAME_NAME}
+        EXE_PATH=$APP_PATH/bin/Release/${GAME_NAME}.exe
     else #Windows
         EXE_PATH=$APP_PATH/bin/Release/${GAME_NAME}.exe
     fi
