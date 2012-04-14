@@ -305,6 +305,7 @@ template_details = {
                 },
                 { 
                   'target':         'vs08',
+                  'source':         'VS08',
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
@@ -319,6 +320,7 @@ template_details = {
                 },
                 { 
                   'target':         'vs10',
+                  'source':         'VS10',
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
                   'staticsgsdk':    False,
@@ -341,6 +343,7 @@ template_details = {
                 },
                 { 
                   'lang':           'VB',
+                  'source':         'VS08',
                   'target':         'vs08',
                   'os':             [ 'Windows' ],
                   'lib':            'lib/win',
