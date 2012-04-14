@@ -138,7 +138,7 @@ if [ "$OS" = "$MAC" ]; then
 elif [ "$OS" = "$WIN" ]; then
     #
     # This needs 1.3 versions of SDL for Windows...
-    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    # along with functional sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
     #
     
     # if [ ${SDL_13} = true ]; then
@@ -149,8 +149,8 @@ elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib/win"
     OPENGL=false
     SDL_13=false
-    
-    # fi
+else #linux
+    LIB_DIR="/usr/lib"
 fi
 
 if [ -f "${LOG_FILE}" ]

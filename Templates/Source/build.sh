@@ -68,6 +68,7 @@ Usage()
         echo " - SDL-mixer dev"
         echo " - SDL-ttf dev"
         echo " - SDL-gfx dev"
+        echo " - SDL-net dev"
     fi
     exit 0
 }
@@ -477,14 +478,16 @@ then
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
 
-        mv "${TMP_DIR}/libSGSDK.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
-        ln -s "${OUT_DIR}/libsgsdk.so.${VERSION}" "${OUT_DIR}/libsgsdk.so"
+        mv "${TMP_DIR}/libSGSDK.so" "${OUT_DIR}/libSGSDK.so.${VERSION}"
+        ln -s -f "${OUT_DIR}/libSGSDK.so.${VERSION}" "${OUT_DIR}/libsgsdk.so"
+        ln -s -f "${OUT_DIR}/libSGSDK.so.${VERSION}" "${OUT_DIR}/libSGSDK.so"
         
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
-            cp -p -f "${OUT_DIR}/libsgsdk.so.${VERSION}" "${INSTALL_DIR}"
-            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" "${INSTALL_DIR}/libsgsdk.so"
+            cp -p -f "${OUT_DIR}/libSGSDK.so.${VERSION}" "${INSTALL_DIR}"
+            ln -s -f "/usr/lib/libSGSDK.so.${VERSION}" "${INSTALL_DIR}/libsgsdk.so"
+            ln -s -f "/usr/lib/libSGSDK.so.${VERSION}" "${INSTALL_DIR}/libSGSDK.so"
 
             if [ ! -d ${HEADER_DIR} ]
             then
