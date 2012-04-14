@@ -48,8 +48,10 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
     common_template_folder =        template_folder + "Common/"
     lang_template_folder =          template_folder + (language if not part_from else part_from) +'/'
     
+    source = dist_dict['target'] if not dist_dict.has_key('source') else dist_dict['source']
+
     common_lang_template_folder =   lang_template_folder + "Common/"
-    specific_template_folder =      lang_template_folder + dist_dict['target'] + '/'
+    specific_template_folder =      lang_template_folder + source + '/'
     
     specificdist_folder =           langdist_folder + dist_dict['target'] + '/'
     specific_dist_lib_folder =      specificdist_folder + "lib/"

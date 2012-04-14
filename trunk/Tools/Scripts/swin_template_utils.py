@@ -217,6 +217,7 @@ template_details = {
               'copy_dist':    [
                   { 
                     'target':         'fpc',
+                    'source':         'FPC',
                     'os':             ['Mac OS X', 'Windows', 'Linux'],
                     'lib':            'lib',
                   },
