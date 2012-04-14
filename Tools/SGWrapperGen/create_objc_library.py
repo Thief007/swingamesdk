@@ -420,7 +420,7 @@ def _file_visitor(the_file, other):
     
 def create_swingame_h():
   objc_generated_lib = '../../Generated/ObjC/lib/'
-  objc_common_template = '../../Templates/ObjC/common/lib/'
+  objc_common_template = '../../Templates/ObjC/Common/lib/'
   swingame_h_path = objc_generated_lib + 'SwinGame.h'
   
   if os.path.isfile(swingame_h_path):
