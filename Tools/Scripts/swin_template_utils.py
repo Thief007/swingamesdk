@@ -297,6 +297,7 @@ template_details = {
             'use_sgsdk':    True,
             'copy_dist':    [
                 { 
+                  'source':         'Mono',
                   'target':         'mono',
                   'os':             [ 'Mac OS X', 'Linux' ],
                   'lib':            'lib',
@@ -332,6 +333,7 @@ template_details = {
                 },
                 { 
                   'lang':           'VB',
+                  'source':         'Mono',
                   'target':         'mono',
                   'os':             [ 'Mac OS X', 'Linux' ],
                   'lib':            'lib',
