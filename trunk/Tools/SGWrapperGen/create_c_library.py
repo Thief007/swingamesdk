@@ -15,7 +15,7 @@ from sg import parser_runner
 
 def create_swingame_h():
   c_generated_lib = '../../Generated/C/lib/'
-  c_common_template = '../../Templates/C/common/lib/'
+  c_common_template = '../../Templates/C/Common/lib/'
   swingame_h_path = c_generated_lib+'SwinGame.h'
 
   if os.path.isfile(swingame_h_path):
