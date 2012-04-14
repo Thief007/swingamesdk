@@ -303,7 +303,7 @@ implementation
             begin
                 if Length(current.data) <> 5 then
                 begin
-                        RaiseException('Invalid number of values for bitmap ' + current.name + ' expected 5 values for width, height, cellRows, cellCols, cellCount');
+                        RaiseException('Invalid number of values for bitmap ' + current.name + ' expected 5 values for width, height, cellCols, cellRows, cellCount');
                         exit;
                 end;
                 
