@@ -923,7 +923,12 @@ implementation
         try
             
             if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
-            else _GuessAppPath()
+            else _GuessAppPath();
+            
+            {$IFDEF IOS}
+                applicationPath := applicationPath + '/MyResources/Resources';
+            {$ENDIF}
+            
             
         except
         end;

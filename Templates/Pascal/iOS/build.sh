@@ -1,29 +1,43 @@
 #!/bin/bash
 
-#clean
-rm -rf tmp
-mkdir tmp
 
 # declare variables
 
+# if [ "${1}" = "-iphone" ]; then
+#   iphone=true
+# elif [ "${1}" = "-ipad" ]; then
+#   ipad=true
+# fi
 
-
-if [ "${1}" = "-iphone" ]; then
-  iphone=true
-elif [ "${1}" = "-ipad" ]; then
-  ipad=true
-fi
-
+# Get path to script - ensure we start here
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+
 FULL_APP_PATH=$APP_PATH
-GAME_NAME=${APP_PATH##*/}
-SRC_DIR="${APP_PATH}/src"
 APP_PATH="."
+
+GAME_NAME=${FULL_APP_PATH##*/}
+
+OUT_DIR="${APP_PATH}/bin"
+LIB_DIR="${APP_PATH}/lib/godly/mac"
+TMP_DIR="${APP_PATH}/tmp"
+SRC_DIR="${APP_PATH}/src"
+
 LOG_FILE="${APP_PATH}/out.log"
+
 SG_INC="-Fi${APP_PATH}/lib -Fu${APP_PATH}/lib -Fu${APP_PATH}/src"
-homeDir=`echo ~`
+
+
+# process options
+while getopts n: o
+do
+    case "$o" in
+    n)  GAME_NAME="${OPTARG}";;
+    esac
+done
+
+
 
 locateGameMain()
 {
@@ -54,8 +68,6 @@ locateGameMain()
   fi
 }
 
-
-
 DoExitCompile ()
 { 
     echo "An error occurred while compiling"; 
@@ -63,240 +75,55 @@ DoExitCompile ()
     exit 1;  
 }
 
-
-#Generates UUID and save to txt file for future use.
-
-
-
 locateGameMain
+
 echo "--------------------------------------------------"
 echo "          Creating $GAME_NAME"
 echo "          for iOS"
 echo "--------------------------------------------------"
 echo "  Running script from $APP_PATH"
-FILE=UUID.txt
-UUID=""
-if [ ! -f $FILE ];
-then 
-  echo "  ... UUID file not found."
-  echo "  ... Generating UUID."
-  echo `uuidgen`>>UUID.txt
-  echo "  ... Saving UUID file."
-
-fi
-
-  echo "  ... Reading UUID file."
-  while read line    
-  do    
-    UUID=$line    
-  done <UUID.txt
-  OUT_DIR="${homeDir}/Library/Application Support/iPhone Simulator/5.0/Applications/${UUID}/"
-echo "  Saving output to $OUT_DIR"
 #echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
 echo "--------------------------------------------------"
 echo "  ... Compiling ${GAME_NAME}"
 
-mkdir ./tmp/arm ./tmp/i386
+if [ ! -d ${TMP_DIR} ]; then
+    mkdir -p "${TMP_DIR}"
+    mkdir "${TMP_DIR}/arm" "${TMP_DIR}/i386"
+fi
 
-LIB_DIR="${APP_PATH}/lib/godly/mac"
+if [ ! -d ${OUT_DIR} ]; then
+    mkdir "${OUT_DIR}"
+fi
 
 
-ppcarm -gw -Mobjfpc -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"./${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
+ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile; 
 fi
 
-ppc386 -gw -Mobjfpc -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"./${GAME_NAME}.i386" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
+ppc386 -gw -S2 -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile;
 fi
 
-lipo -create -output "./Test" "./${GAME_NAME}.i386" "./${GAME_NAME}.arm"
+lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
 
-/Developer/usr/bin/dsymutil --verbose ./Test -o ./Test.app.dSYM
-
+/Developer/usr/bin/dsymutil --verbose "${OUT_DIR}/${GAME_NAME}" -o "${OUT_DIR}/${GAME_NAME}.app.dSYM" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
-   exit 1;
+    echo 'Failed to create debug symbols'
+    cat out.log
+    exit 1;
 fi
 
-echo 'fix script!'
-exit 1
-
-
-
-OUT_APP_DIR="${OUT_DIR}${GAME_NAME}.app/"
-
-
-echo "  ... Installing ${GAME_NAME} to iOS Simulator."
-#move file to simulator install folder
-
-if ! [ -d "${OUT_APP_DIR}" ]; then
-  mkdir -p "${OUT_APP_DIR}"
+echo "  ... Creating XCode Project"
+python ${APP_PATH}/tools/create_xcode_project.py ${GAME_NAME} > ${LOG_FILE} 2> ${LOG_FILE}
+if [ $? != 0 ]; then
+    echo 'Failed to create xcode project'
+    cat out.log
+    exit 1;
 fi
 
-
-mv "${GAME_NAME}" "${OUT_APP_DIR}${GAME_NAME}"
-
-#generate info.plist and pkginfo
-if [ "${iphone}" = true ]; then
-
-  echo "<?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
-      <key>CFBundleIdentifier</key>
-      <string>com.yourcompany.${GAME_NAME}</string>
-      <key>CFBundleName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleDisplayName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleInfoDictionaryVersion</key>
-      <string>6.0</string>
-      <key>CFBundleDevelopmentRegion</key>
-      <string>English</string>
-      <key>CFBundleExecutable</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundlePackageType</key>
-      <string>APPL</string>
-      <key>CFBundleSignature</key>
-      <string>SWIN</string>
-      <key>CFBundleVersion</key>
-      <string>1.0</string>
-      <key>DTPlatformName</key>
-      <string>iphonesimulator</string>
-      <key>DTSDKName</key>
-      <string>iphonesimulator5.0</string>
-      <key>UIDeviceFamily</key>
-      <array>
-          <integer>1</integer>
-          <integer>2</integer>
-      </array>
-      <key>CFBundleSUpportedPlatforms</key>
-      <array>
-          <string>iPhoneSimulator</string>
-      </array>
-  </dict>
-  </plist>" > "${OUT_APP_DIR}/Info.plist"
-
-elif [ "${ipad}" = true ]; then
-  echo "<?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
-      <key>CFBundleIdentifier</key>
-      <string>com.yourcompany.${GAME_NAME}</string>
-      <key>CFBundleName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleDisplayName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleInfoDictionaryVersion</key>
-      <string>6.0</string>
-      <key>CFBundleDevelopmentRegion</key>
-      <string>English</string>
-      <key>CFBundleExecutable</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundlePackageType</key>
-      <string>APPL</string>
-      <key>CFBundleSignature</key>
-      <string>SWIN</string>
-      <key>CFBundleVersion</key>
-      <string>1.0</string>
-      <key>DTPlatformName</key>
-      <string>iphonesimulator</string>
-      <key>DTSDKName</key>
-      <string>iphonesimulator5.0</string>
-      <key>UIDeviceFamily</key>
-      <array>
-          <integer>2</integer>
-      </array>
-      <key>CFBundleSUpportedPlatforms</key>
-      <array>
-          <string>iPhoneSimulator</string>
-      </array>
-  </dict>
-  </plist>" > "${OUT_APP_DIR}/Info.plist"
-#else generate for both.
-else
-  echo "<?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-  <dict>
-      <key>CFBundleIdentifier</key>
-      <string>com.yourcompany.${GAME_NAME}</string>
-      <key>CFBundleName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleDisplayName</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundleInfoDictionaryVersion</key>
-      <string>6.0</string>
-      <key>CFBundleDevelopmentRegion</key>
-      <string>English</string>
-      <key>CFBundleExecutable</key>
-      <string>${GAME_NAME}</string>
-      <key>CFBundlePackageType</key>
-      <string>APPL</string>
-      <key>CFBundleSignature</key>
-      <string>SWIN</string>
-      <key>CFBundleVersion</key>
-      <string>1.0</string>
-      <key>DTPlatformName</key>
-      <string>iphonesimulator</string>
-      <key>DTSDKName</key>
-      <string>iphonesimulator5.0</string>
-      <key>UIDeviceFamily</key>
-      <array>
-          <integer>1</integer>
-          <integer>2</integer>
-      </array>
-      <key>CFBundleSUpportedPlatforms</key>
-      <array>
-          <string>iPhoneSimulator</string>
-      </array>
-  </dict>
-  </plist>" > "${OUT_APP_DIR}/Info.plist"
-fi
-echo "APPLSWIN" > "${OUT_APP_DIR}/PkgInfo"
-
-copyWithoutSVN()
-{
-    FROM_DIR=$1
-    TO_DIR=$2
-    
-    cd "${FROM_DIR}"
-    
-    # Create directory structure
-    find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
-    # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-    cd "${FULL_APP_PATH}"
-}
-
-
-echo "  ... Copying resources."
-mkdir -p "${OUT_DIR}Resources"
-
-
-
-copyWithoutSVN "./Resources" "${OUT_DIR}/Resources"
-#setting icon
-cp "./Resources/SwinGame.ico" "${OUT_APP_DIR}/icon.png"
-#setting pre splash
-cp "./Resources/images/Swinburne.jpg" "${OUT_APP_DIR}/default.png"
-rm -f ${LOG_FILE} 2>> /dev/null
-echo "  ... Starting iOS Simulator."
-#restart simulator
-osascript <<EOF
-tell application "System Events" 
-  set SimulatorOpen to ("iPhone Simulator") 
-end tell
-tell application "iPhone Simulator"
-  if (SimulatorOpen contains "iPhone Simulator") is true then 
-      quit
-      delay 1
-    end if
-    activate
-end tell
-EOF
+open ${GAME_NAME}.xcodeproj
 
 echo "--------------------------------------------------"
 echo "Finished!"

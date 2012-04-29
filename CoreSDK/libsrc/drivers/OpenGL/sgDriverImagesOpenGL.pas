@@ -128,7 +128,7 @@ implementation
     begin
       
       // check not 0 w/h    
-      if ( lLoadedImg^.w  = 0 ) or ( lLoadedImg^.h = 0 ) then
+      if ( lLoadedImg^.w  <= 0 ) or ( lLoadedImg^.h <= 0 ) then
       begin
         RaiseWarning('Loaded bitmap with 0 width and/or height.');
         exit;
