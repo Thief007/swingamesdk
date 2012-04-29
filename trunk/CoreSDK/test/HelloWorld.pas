@@ -24,7 +24,7 @@ var
 begin
   OpenAudio();  
   
-  //LoadResourceBundle('splash.txt');
+  LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
   LoadSoundEffectNamed('blah', 'blah');
   LoadMusicNamed('blah', 'blah');

@@ -43,8 +43,10 @@ implementation
 	procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);
 	begin
  	  if not CheckAssigned('SDL1.2 ImagesDriver - CreateBitmapProcedure recieved unassigned Bitmap', bmp) then exit;
+    // if not CheckAssigned('SDL1.2 ImagesDriver - Screen must be loaded to create bitmap', screen) then exit;
+    // if not CheckAssigned('SDL1.2 ImagesDriver - Screen must be loaded to create bitmap', screen^.surface) then exit;
     
-		if (screen^.surface = nil) or (PSDL_Surface(screen^.surface)^.format = nil) then
+		if (screen = nil) or (screen^.surface = nil) or (PSDL_Surface(screen^.surface)^.format = nil) then
     begin
       RaiseWarning('Creating ARGB surface as screen format unknown.');
       bmp^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
@@ -106,7 +108,7 @@ implementation
     if not transparent then 
     begin
       // Only move to screen alpha if window is open...
-      if screen^.surface = nil then
+      if (screen = nil) or (screen^.surface = nil) then
         result^.surface := loadedImage
       else
         result^.surface := SDL_DisplayFormatAlpha(loadedImage);
@@ -146,7 +148,7 @@ implementation
 	procedure FreeSurfaceProcedure(bmp : Bitmap);
 	begin
 	  //Free the surface
-    if Assigned(bmp^.surface) then
+    if Assigned(bmp) and Assigned(bmp^.surface) then
     begin
       SDL_FreeSurface(bmp^.surface);
     end;
@@ -189,7 +191,14 @@ implementation
 
 	function SameBitmapProcedure(const bitmap1,bitmap2 : Bitmap) : Boolean;
 	begin
-	 result := (Bitmap1^.surface = Bitmap2^.surface);
+   	if not Assigned(bitmap1) or not Assigned(bitmap2) then
+   	begin
+   	  result := false;
+   	end
+	  else
+	  begin
+	    result := (bitmap1^.surface = bitmap2^.surface);
+    end;
 	end;
 	
 	procedure BlitSurfaceProcedure(srcBmp, destBmp : Bitmap; srcRect, destRect : RectPtr); 
@@ -203,6 +212,7 @@ implementation
     if not CheckAssigned('SDL1.2 ImagesDriver - BlitSurfaceProcedure recieved empty Source Bitmap Surface', srcBmp^.surface) then exit;
     if not CheckAssigned('SDL1.2 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp) then exit;
     if not CheckAssigned('SDL1.2 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface) then exit;
+	  
 	  if assigned(srcRect) then
 	  begin
 	    sRect := NewSDLRect(srcRect^);
@@ -221,6 +231,7 @@ implementation
   begin
    	if not CheckAssigned('SDL1.2 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap', dest) then exit;
     if not CheckAssigned('SDL1.2 ImagesDriver - ClearSurfaceProcedure recieved empty Bitmap Surface', dest^.surface) then exit;
+    
     SDL_FillRect(dest^.surface, @PSDL_Surface(dest^.surface)^.clip_rect, toColor);
   end;
   
