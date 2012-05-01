@@ -28,6 +28,39 @@ LOG_FILE="${APP_PATH}/out.log"
 
 SG_INC="-Fi${APP_PATH}/lib -Fu${APP_PATH}/lib -Fu${APP_PATH}/src"
 
+IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk"
+
+if [ ! -d ${IPHONE_SDK_ARM} ]; then
+  IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
+  if [ ! -d ${IPHONE_SDK_ARM} ]; then
+    IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+    if [ ! -d ${IPHONE_SDK_ARM} ]; then
+      IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
+      if [ ! -d ${IPHONE_SDK_ARM} ]; then
+        echo "Unable to find iOS SDK"
+        exit -1
+      fi
+    fi
+  fi
+fi
+
+IPHONE_SDK_SIM="/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk"
+
+if [ ! -d ${IPHONE_SDK_SIM} ]; then
+  IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
+  if [ ! -d ${IPHONE_SDK_SIM} ]; then
+    IPHONE_SDK_SIM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+    if [ ! -d ${IPHONE_SDK_SIM} ]; then
+      IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
+      if [ ! -d ${IPHONE_SDK_SIM} ]; then
+        echo "Unable to find iOS Simulator SDK"
+        exit -1
+      fi
+    fi
+  fi
+fi
+
+
 
 # process options
 while getopts n: o
@@ -36,6 +69,22 @@ do
     n)  GAME_NAME="${OPTARG}";;
     esac
 done
+
+#check for the compilers...
+PPC_386_BIN=`which ppc386 2>> /dev/null`
+if [ -z "$PPC_386_BIN" ]; then
+  echo "Unable to find a Pascal compiler. Install fpc-intel compiler."
+  open "http://sourceforge.net/projects/freepascal/files/Mac%20OS%20X/2.6.0/"
+  exit -1
+fi
+
+PPC_ARM_BIN=`which ppcarm 2>> /dev/null`
+if [ -z "$PPC_ARM_BIN" ]; then
+  echo "Unable to find a Pascal ARM compiler. Install fpc-arm-iOS compiler."
+  open "http://sourceforge.net/projects/freepascal/files/Mac%20OS%20X/2.6.0/"
+  exit -1
+fi
+
 
 
 
@@ -60,7 +109,7 @@ locateGameMain()
     done
   fi
   
-  cd ${FULL_APP_PATH}
+  cd "${FULL_APP_PATH}"
   
   if [ ! -f "${SRC_DIR}/${GAME_MAIN}" ]; then
     echo "Cannot find file to compile, was looking for ${GAME_MAIN}"
@@ -95,20 +144,19 @@ if [ ! -d ${OUT_DIR} ]; then
     mkdir "${OUT_DIR}"
 fi
 
-
-ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
+ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_ARM}" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile; 
 fi
 
-ppc386 -gw -S2 -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
+ppc386 -gw -S2 -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_SIM}" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "src/${GAME_MAIN}" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile;
 fi
 
 lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
 
-/Developer/usr/bin/dsymutil --verbose "${OUT_DIR}/${GAME_NAME}" -o "${OUT_DIR}/${GAME_NAME}.app.dSYM" > ${LOG_FILE} 2> ${LOG_FILE}
+dsymutil --verbose "${OUT_DIR}/${GAME_NAME}" -o "${OUT_DIR}/${GAME_NAME}.app.dSYM" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
     echo 'Failed to create debug symbols'
     cat out.log
@@ -116,14 +164,14 @@ if [ $? != 0 ]; then
 fi
 
 echo "  ... Creating XCode Project"
-python ${APP_PATH}/tools/create_xcode_project.py ${GAME_NAME} > ${LOG_FILE} 2> ${LOG_FILE}
+python ${APP_PATH}/tools/create_xcode_project.py "${GAME_NAME}" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
     echo 'Failed to create xcode project'
     cat out.log
     exit 1;
 fi
 
-open ${GAME_NAME}.xcodeproj
+open "${GAME_NAME}.xcodeproj"
 
 echo "--------------------------------------------------"
 echo "Finished!"
