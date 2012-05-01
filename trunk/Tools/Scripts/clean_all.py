@@ -12,6 +12,9 @@ def main():
     
     clean_locs = [
             dist_folder + "Source/",
+            dist_folder + "CPP/",
+            dist_folder + "VB/",
+            dist_folder + "Documentation/",
             swingame_path + "Generated/",
         ]
     

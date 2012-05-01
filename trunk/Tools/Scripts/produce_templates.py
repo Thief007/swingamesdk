@@ -71,7 +71,7 @@ def main():
                 copy_dist['pkg_script'](copy_dist, tmp_dir, to_dir)
             
     
-    #swin_shutil.rmtree(tmp_dir)
+    swin_shutil.rmtree(tmp_dir)
     print("\nFinished!")
     
     
