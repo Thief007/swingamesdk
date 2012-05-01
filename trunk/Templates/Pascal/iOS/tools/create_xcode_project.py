@@ -18,18 +18,22 @@ derived_data_path	    = os.path.join(project_path, 'DerivedData')
 bin_dir_path		    = os.path.join(project_path, 'bin')
 app_name_path		    = os.path.join(project_path, app_name)
 xcode_proj_path         = os.path.join(project_path, app_name + '.xcodeproj')
+workspace_settings_path = os.path.join(xcode_proj_path, 'project.xcworkspace')
 project_settings_path   = os.path.join(xcode_proj_path, 'project.xcworkspace', 'xcuserdata', os.environ.get("USER") + '.xcuserdatad')
+
 
 required_paths		= [ derived_data_path, 
 						bin_dir_path,
 						app_name_path,
 						xcode_proj_path,
+						workspace_settings_path,
                         project_settings_path,
 						]
 
 #files
 info_plist 			    = os.path.join(app_name_path, app_name + '-Info.plist')
 project_file		    = os.path.join(xcode_proj_path, 'project.pbxproj')
+workspace_settings_file = os.path.join(workspace_settings_path, 'contents.xcworkspacedata')
 project_settings_file   = os.path.join(xcode_proj_path, 'project.xcworkspace', 'xcuserdata', os.environ.get("USER") + '.xcuserdatad', 'WorkspaceSettings.xcsettings')
 
 print project_settings_file
@@ -240,7 +244,7 @@ def create_project_file():
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -258,7 +262,7 @@ def create_project_file():
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -343,6 +347,21 @@ def create_project_settings():
     out_file = open(project_settings_file, 'w')
     out_file.write(proj_settings_text)
     out_file.close()
+    
+def create_workspace_settings():
+    workspace_settings = '''<?xml version="1.0" encoding="UTF-8"?>
+    <Workspace
+       version = "1.0">
+       <FileRef
+          location = "self:%s.xcodeproj">
+       </FileRef>
+    </Workspace>
+    ''' % app_name
+    
+    out_file = open(workspace_settings_file, 'w')
+    out_file.write(workspace_settings)
+    out_file.close()
+    
 
 def main():
     print '  Creating XCode Project'
@@ -351,6 +370,7 @@ def main():
     create_dirs()
     create_info_plist()
     create_project_file()
+    create_workspace_settings()
     create_project_settings()
 
     print "  XCode Project Created"
