@@ -107,18 +107,18 @@ uses
   ///
   /// @lib
   function ConnectionQueueSize() : LongInt;
-	
-	/// Returns the count of Active Connections
-	///
-	/// @lib
-	function ConnectionCount() : LoNgInt;
-	
-	/// Retrieves the connection at the specified index
-	///
-	/// @param aConnectionAt The index of the connection
-	///
-	/// @lib
-	function RetreiveConnection(aConnectionAt : LongInt) : Connection;
+  
+  /// Returns the count of Active Connections
+  ///
+  /// @lib
+  function ConnectionCount() : LoNgInt;
+  
+  /// Retrieves the connection at the specified index
+  ///
+  /// @param aConnectionAt The index of the connection
+  ///
+  /// @lib
+  function RetreiveConnection(aConnectionAt : LongInt) : Connection;
 
 //----------------------------------------------------------------------------
 // UDP
@@ -168,14 +168,14 @@ uses
   /// @self 2
   /// @sn sendUDPMessage:%s toConnection:%s
   function SendUDPMessage             ( aMsg : String; aConnection : Connection) : Boolean;
-	
-	/// Sends a UDP packet to All connections with the message.
+  
+  /// Sends a UDP packet to All connections with the message.
   ///
   /// @param aMsg The message to be sent
   ///
   /// @lib
   /// @sn broadcastUDPMessage:%s
-	procedure BroadcastUDPMessage( aMsg : String );
+  procedure BroadcastUDPMessage( aMsg : String );
 
 //----------------------------------------------------------------------------
 // Messages and Connection Data Access
@@ -210,7 +210,7 @@ uses
   /// @method ReadMessage
   /// @sn readMessage:%s
   function ReadMessage            (aConnection : Connection) : String ;
-	
+  
   /// Dequeues the Last (Newest) Message
   ///
   /// @param aConnection The connection to extract data from
@@ -219,7 +219,7 @@ uses
   /// @class Connection
   /// @method ReadLastMessage
   /// @sn readLastMessage:%s
-	function ReadLastMessage(aConnection : Connection) : String;
+  function ReadLastMessage(aConnection : Connection) : String;
 
   /// Clears the Message Queue
   ///
@@ -479,7 +479,7 @@ var
   begin
     result := NetworkingDriver.AcceptTCPConnection();
   end;
-	
+  
 //----------------------------------------------------------------------------
 // Connection
 //----------------------------------------------------------------------------
@@ -525,17 +525,17 @@ var
   begin
     result := _NewConnectionCount;
   end;
-	
-	function ConnectionCount() : LongInt;
-	begin
-		result := NetworkingDriver.ConnectionCount();
-	end;
+  
+  function ConnectionCount() : LongInt;
+  begin
+    result := NetworkingDriver.ConnectionCount();
+  end;
 
-	function RetreiveConnection(aConnectionAt : LongInt) : Connection;
-	begin
-		result := RetreiveConnection(aConnectionAt);
-	end;
-	
+  function RetreiveConnection(aConnectionAt : LongInt) : Connection;
+  begin
+    result := RetreiveConnection(aConnectionAt);
+  end;
+  
 //----------------------------------------------------------------------------
 // Messages
 //----------------------------------------------------------------------------
@@ -586,21 +586,20 @@ var
       lTmp^.prev := nil;
     end;
 
-		if aConnection^.msgCount = 0 then
-		begin
-			aConnection^.lastMsg := nil;
-			aConnection^.firstMsg := nil;
-		end;
+    if aConnection^.msgCount = 0 then
+    begin
+      aConnection^.lastMsg := nil;
+      aConnection^.firstMsg := nil;
+    end;
   end;
-	
-	function ReadLastMessage(aConnection : Connection) : String;
+  
+  function ReadLastMessage(aConnection : Connection) : String;
   var
     lTmp : MessagePtr;
-		i		 : LongInt;
   begin
     result := '';      
     if not Assigned(aConnection) or (aConnection^.msgCount = 0) then exit;
-    if not Assigned(aConnection^.lastMsg) then begin aConnection^.fistMsg := nil; exit; end; 
+    if not Assigned(aConnection^.lastMsg) then begin aConnection^.firstMsg := nil; exit; end; 
 
     // Get the message text from the last node
     result := aConnection^.lastMsg^.data;
@@ -622,12 +621,12 @@ var
       aConnection^.lastMsg^.next := nil;
     end;
 
-		if aConnection^.msgCount = 0 then
-		begin
-			aConnection^.lastMsg := nil;
-			aConnection^.firstMsg := nil;
-			exit;
-		end;
+    if aConnection^.msgCount = 0 then
+    begin
+      aConnection^.lastMsg := nil;
+      aConnection^.firstMsg := nil;
+      exit;
+    end;
   end;
   
   procedure ClearMessageQueue(aConnection : Connection);
@@ -701,8 +700,8 @@ var
   begin
     result := NetworkingDriver.SendUDPMessage(aMsg, aConnection);
   end;
-	
-	procedure BroadcastUDPMessage( aMsg : String );
+  
+  procedure BroadcastUDPMessage( aMsg : String );
   begin
     NetworkingDriver.BroadcastUDPMessage(aMsg);
   end;
