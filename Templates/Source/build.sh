@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Step 1: Detect the operating system
@@ -39,6 +39,7 @@ INSTALL="N"
 OPENGL=false
 SDL_13=false
 STATIC=false
+IOS=false
 STATIC_NAME="sgsdk-sdl12.a"
 
 #
@@ -46,7 +47,7 @@ STATIC_NAME="sgsdk-sdl12.a"
 #
 Usage()
 {
-    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [-static] [version]"
+    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [-IOS] [-static] [version]"
     echo 
     echo "Creates and Compiles the native SGSDK library."
     echo
@@ -73,7 +74,7 @@ Usage()
     exit 0
 }
 
-while getopts chdib:g:s: o
+while getopts chdiI:b:g:s: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
@@ -94,6 +95,9 @@ do
         ;;
     d)  EXTRA_OPTS="-vwn -gw -dTRACE -dSWINGAME_LIB"
         DEBUG="Y" ;;
+    I)  if [ "${OPTARG}" = "OS" ]; then
+            IOS=true
+        fi;;
     i)  INSTALL="Y";;
     [?]) print >&2 "Usage: $0 [-c] [-d] [-i] [-h] [version]"
          exit -1;;
@@ -127,7 +131,65 @@ if [ ${OPENGL} = true ]; then
   VERSION="${VERSION}godly"
 fi
 
-if [ "$OS" = "$MAC" ]; then
+if [ ${IOS} = true ]; then
+  IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk"
+  
+  if [ ! -d ${IPHONE_SDK_ARM} ]; then
+    IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
+    if [ ! -d ${IPHONE_SDK_ARM} ]; then
+      IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+      if [ ! -d ${IPHONE_SDK_ARM} ]; then
+        IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
+        if [ ! -d ${IPHONE_SDK_ARM} ]; then
+          echo "Unable to find iOS SDK"
+          exit -1
+        fi
+      fi
+    fi
+  fi
+  
+  IPHONE_SDK_SIM="/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk"
+  
+  if [ ! -d ${IPHONE_SDK_SIM} ]; then
+    IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
+    if [ ! -d ${IPHONE_SDK_SIM} ]; then
+      IPHONE_SDK_SIM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+      if [ ! -d ${IPHONE_SDK_SIM} ]; then
+        IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
+        if [ ! -d ${IPHONE_SDK_SIM} ]; then
+          echo "Unable to find iOS Simulator SDK"
+          exit -1
+        fi
+      fi
+    fi
+  fi
+  
+  #check for the compilers...
+  PPC_386_BIN=`which ppc386 2>> /dev/null`
+  if [ -z "$PPC_386_BIN" ]; then
+    echo "Unable to find a Pascal Intel compiler. Install fpc-intel compiler."
+    open "http://sourceforge.net/projects/freepascal/files/Mac%20OS%20X/2.6.0/"
+    exit -1
+  fi
+  
+  PPC_ARM_BIN=`which ppcarm 2>> /dev/null`
+  if [ -z "$PPC_ARM_BIN" ]; then
+    echo "Unable to find a Pascal ARM compiler. Install fpc-arm-iOS compiler."
+    open "http://sourceforge.net/projects/freepascal/files/Mac%20OS%20X/2.6.0/"
+    exit -1
+  fi
+  
+  STATIC_NAME="libSGSDK.a"
+  OUT_DIR="${APP_PATH}/bin/ios"
+  FULL_OUT_DIR="${FULL_APP_PATH}/bin/ios"
+  # VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
+  # HEADER_DIR="${VERSION_DIR}/Headers"
+  # RESOURCES_DIR="${VERSION_DIR}/Resources"
+  # CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
+  
+  LIB_DIR="${APP_PATH}/staticlib/godly/ios"
+
+elif [ "$OS" = "$MAC" ]; then
     OUT_DIR="${APP_PATH}/bin/mac"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/mac"
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
@@ -268,6 +330,37 @@ doMacCompile()
     mv ${TMP_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${1}.dylib
 }
 
+DoExitCompile ()
+{ 
+    echo "An error occurred while compiling"; 
+    cat tmp/out.log
+    exit 1;  
+}
+
+doIOSCompile()
+{
+    TMP_DIR="${APP_PATH}/tmp/ios"
+    PrepareTmp
+    mkdir "${TMP_DIR}/arm" "${TMP_DIR}/i386"
+    
+    "${PPC_ARM_BIN}" -Cn -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_ARM}" -gltw -FE"${TMP_DIR}/arm" -FU"${TMP_DIR}/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/SGSDK.arm" "${SDK_SRC_DIR}/SGSDK.pas" > ${LOG_FILE} 2> ${LOG_FILE}
+    if [ $? != 0 ]; then
+       DoExitCompile; 
+    fi
+    
+    ar -rcs ${TMP_DIR}/${STATIC_NAME}.arm ${TMP_DIR}/arm/*.o
+    
+    
+    "${PPC_386_BIN}" -Cn -gw -S2 -Sew -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_SIM}" -gltw -FE"${TMP_DIR}/i386" -FU"${TMP_DIR}/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "${SDK_SRC_DIR}/SGSDK.pas" -k-framework -kAudioToolbox -k-framework -kQuartzCore -k-framework -kOpenGLES -k-framework -kCoreGraphics -k"-framework MobileCoreServices" -k"-framework ImageIO" -k-framework -kUIKit -k-framework -kFoundation -k-framework -kCoreAudio -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
+    if [ $? != 0 ]; then
+       DoExitCompile;
+    fi
+    
+    ar -rcs ${TMP_DIR}/${STATIC_NAME}.i386 ${TMP_DIR}/i386/*.o
+    
+    lipo -create -output "${OUT_DIR}/${STATIC_NAME}" "${TMP_DIR}/${STATIC_NAME}.i386" "${TMP_DIR}/${STATIC_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
+}
+
 # 
 # Create fat dylib containing ppc and i386 code
 # 
@@ -357,11 +450,24 @@ then
     then
         DisplayHeader
         
+        if [ ${IOS} = true ]; then
+          doIOSCompile
+          echo "  Finished"
+          echo "--------------------------------------------------"
+          exit
+        fi
+        
+        
         HAS_PPC=false
         HAS_i386=false
         HAS_LEOPARD_SDK=false
         HAS_LION=false
         OS_VER=`sw_vers -productVersion | awk -F . '{print $1"."$2}'`
+        XCODE_PREFIX=''
+        
+        if [ -d /Applications/Xcode.app/Contents ]; then
+          XCODE_PREFIX='/Applications/Xcode.app/Contents'
+        fi
         
         if [ -f /usr/libexec/as/ppc/as ]; then
             HAS_PPC=true
@@ -371,7 +477,7 @@ then
             HAS_i386=true
         fi
         
-        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
+        if [ -d ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk ]; then
             HAS_LEOPARD_SDK=true
         fi
         
@@ -390,11 +496,11 @@ then
             
             #Compile i386 version of library
             FPC_BIN=`which ppc386`
-            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            doMacCompile "i386" "-syslibroot ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
             
             #Compile ppc version of library
             FPC_BIN=`which ppcppc`
-            doMacCompile "ppc" "-syslibroot /Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            doMacCompile "ppc" "-syslibroot ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
             #"-ldylib1.10.5.o"
             
             #FPC_BIN=`which ppcx64`
@@ -403,13 +509,25 @@ then
             #Combine into a fat dylib
             doLipo "i386" "ppc"
         else
+            OPTS=""
             if [ $HAS_LION = true ]; then
                 PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+                SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
+                if [ ! -d ${SDK_PATH} ]; then
+                    SDK_PATH="${XCODE_PREFIX}/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk"
+                    
+                    if [ ! -d ${SDK_PATH} ]; then
+                        echo "Unable to locate MacOS SDK."
+                        exit -1
+                    fi
+                fi
+                
+                OPTS="-syslibroot ${SDK_PATH} -macosx_version_min 10.7"
             fi
             
             #Compile i386 version of library
             FPC_BIN=`which ppc386`
-            doMacCompile "i386" "-syslibroot /Developer/SDKs/MacOSX10.7.sdk -macosx_version_min 10.7"
+            doMacCompile "i386" "${OPTS}"
             
             mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
         fi
