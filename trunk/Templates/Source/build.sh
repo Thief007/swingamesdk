@@ -199,11 +199,11 @@ elif [ "$OS" = "$MAC" ]; then
     
     # Set lib dir
     if [ ${SDL_13} = true ]; then
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/staticlib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
-      LIB_DIR="${APP_PATH}/lib/godly/mac"
+      LIB_DIR="${APP_PATH}/staticlib/godly/mac"
     else
-      LIB_DIR="${APP_PATH}/lib/mac"
+      LIB_DIR="${APP_PATH}/staticlib/mac"
     fi
 elif [ "$OS" = "$WIN" ]; then
     OUT_DIR="${APP_PATH}/bin/Win"
@@ -316,14 +316,20 @@ doMacCompile()
     
     LINK_OPTS="$2"
     
-    FRAMEWORKS=`cd ${LIB_DIR};ls -d *.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS='-framework AudioToolbox -framework AudioUnit -framework CoreAudio -framework IOKit -framework OpenGL -framework QuickTime -framework Carbon'
+    
+    # FRAMEWORKS=`cd ${LIB_DIR};ls -d *.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+
+    STATIC_LIBS=`cd ${LIB_DIR};ls -f *.a | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-l%s ", substr(patharr[idx],4)) }'`
+
+    echo $STATIC_LIBS
     
     if [ "*$DEBUG*" = "**" ] ; then
         EXTRA_OPTS="$EXTRA_OPTS -Xs"
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lstdc++" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
