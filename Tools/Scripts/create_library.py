@@ -18,20 +18,23 @@ def copy_coresdk_to_dist_source():
     lib_src_folder =            swingame_path + "CoreSDK/libsrc/"
     src_folder =                swingame_path + "CoreSDK/src/"
     lib_folder =                swingame_path + "CoreSDK/lib/"
+    staticlib_folder =          swingame_path + "CoreSDK/staticlib/"
     
-    dist_source_folder =        dist_folder + "Source/"
-    dist_source_src_folder =    dist_source_folder + "src/"
-    dist_source_lib_folder =    dist_source_folder + "lib/"
+    dist_source_folder =            dist_folder + "Source/"
+    dist_source_src_folder =        dist_source_folder + "src/"
+    dist_source_lib_folder =        dist_source_folder + "lib/"
+    dist_source_staticlib_folder =  dist_source_folder + "staticlib/"
     
     copy_without_svn(template_source_folder, dist_source_folder)
     copy_without_svn(lib_folder, dist_source_lib_folder, overwrite = False)
+    copy_without_svn(staticlib_folder, dist_source_staticlib_folder, overwrite = False)
     flat_copy_without_svn(generated_source_folder, dist_source_src_folder)
     flat_copy_without_svn(lib_src_folder, dist_source_src_folder)
     flat_copy_without_svn(src_folder, dist_source_src_folder)
 
 
 _sgsdk_creation_script_options = {
-    'Mac OS X': [['-badass','-static'], ['-godly','-static'], None],            # default must be last
+    'Mac OS X': [ ['-IOS'], ['-badass','-static'], ['-godly','-static'], None],     # default must be last (for framework creation)
     'Windows':  [None], #, '-badass', '-godly'],
     'Linux':  [None], #, '-badass', '-godly'],
 }

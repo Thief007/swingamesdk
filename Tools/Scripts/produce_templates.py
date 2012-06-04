@@ -11,7 +11,7 @@ from bundle_templates import *
 tmp_dir = dist_folder + 'tmp/'
 produced_folder = dist_folder + 'SwinGame %s/' % sg_version
 
-def zip_template(target, lang, template_path_name, part_from = None):
+def zip_template(target, lang, template_path_name, part_from = None, folder_name = 'ProjectTemplate'):
     """docstring for fname"""
     
     output_line("Packaging " + target)
@@ -28,7 +28,7 @@ def zip_template(target, lang, template_path_name, part_from = None):
         return
     
     base_dir = tmp_dir + template_path_name + '/'
-    to_dir = base_dir + 'ProjectTemplate'
+    to_dir = base_dir + folder_name
     to_zip = produced_folder + template_path_name + '.zip'
     
     # print specificdist_folder, ' -> ', to_dir
@@ -56,8 +56,8 @@ def main():
     src_temp_path_name = 'Source of SwinGame %s' % sg_version
     src_temp_path_name = src_temp_path_name.replace(' ', '_').replace('.', '_')
     
-    
-    zip_template('Source', None, src_temp_path_name)
+    run_bash(dist_folder + 'Source/clean.sh', None)
+    zip_template('Source', None, src_temp_path_name, 'SwinGameLibrary')
     
     for key, lang_template_dict in template_details.items():
         output_header(['Packaging %s Templates' % key])
