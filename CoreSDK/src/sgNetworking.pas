@@ -542,36 +542,51 @@ var
   
   procedure EnqueueMessage( aMsg : String; aConnection : Connection);
   var
-    MsgData   : MessagePtr;
+    msgData   : MessagePtr;
   begin
     if not Assigned(aConnection) then exit;
 
-    New(MsgData);  
-    MsgData^.data := aMsg;
-    MsgData^.next  := nil;
+    New(msgData); 
+    msgData^.data := aMsg;
+    msgData^.next := nil;
+    msgData^.prev := aConnection^.lastMsg;
+
     if aConnection^.firstMsg = nil then
     begin
-      aConnection^.firstMsg := MsgData;
-      aConnection^.lastMsg  := MsgData;
+      aConnection^.firstMsg := msgData;
     end else begin
-      aConnection^.lastMsg^.next := MsgData;
-      aConnection^.lastMsg       := MsgData;
+      aConnection^.lastMsg^.next := msgData;
     end;  
-    aConnection^.MsgCount += 1;    
+
+    aConnection^.lastMsg  := msgData;
+    aConnection^.msgCount += 1;    
   end;
    
   function ReadMessage(aConnection : Connection) : String;
   var
     lTmp : MessagePtr;
   begin      
+    result := '';
     if not Assigned(aConnection) or (aConnection^.msgCount = 0) then exit;
     if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
+
+    // Get the data from the first message
     result := aConnection^.firstMsg^.data;
+
+    // Get new first message (may be nil)
     lTmp := aConnection^.firstMsg^.next;
+
     Dispose(aConnection^.firstMsg);
     aConnection^.firstMsg := lTmp;
     aConnection^.msgCount -= 1;
-		if (aConnection^.msgCount = 0) then
+
+    // If there is a first node then, remove its prev link
+    if Assigned(lTmp) then
+    begin
+      lTmp^.prev := nil;
+    end;
+
+		if aConnection^.msgCount = 0 then
 		begin
 			aConnection^.lastMsg := nil;
 			aConnection^.firstMsg := nil;
@@ -582,24 +597,37 @@ var
   var
     lTmp : MessagePtr;
 		i		 : LongInt;
-  begin      
+  begin
+    result := '';      
     if not Assigned(aConnection) or (aConnection^.msgCount = 0) then exit;
-    if not Assigned(aConnection^.firstMsg) then begin aConnection^.lastMsg := nil; exit; end; 
+    if not Assigned(aConnection^.lastMsg) then begin aConnection^.fistMsg := nil; exit; end; 
+
+    // Get the message text from the last node
     result := aConnection^.lastMsg^.data;
-    Dispose(aConnection^.lastMsg);
+
+    // Remember so we can dispose
+    lTmp := aConnection^.lastMsg;
+
+    // Change last message
+    aConnection^.lastMsg := aConnection^.lastMsg^.prev;
+
+    // Delete old node
+    Dispose(lTmp);
     aConnection^.msgCount -= 1;
-		if (aConnection^.msgCount = 0) then
+
+    // If there is a node, then remove its next
+    if Assigned(aConnection^.lastMsg) then
+    begin
+      // New last message is not followed by anything
+      aConnection^.lastMsg^.next := nil;
+    end;
+
+		if aConnection^.msgCount = 0 then
 		begin
 			aConnection^.lastMsg := nil;
 			aConnection^.firstMsg := nil;
 			exit;
 		end;
-		lTmp := aConnection^.firstMsg^.next;
-		for i := 1 to aConnection^.msgCount - 1 do
-    begin
-			lTmp := lTmp^.next;
-    end;
-    aConnection^.lastMsg := lTmp;
   end;
   
   procedure ClearMessageQueue(aConnection : Connection);
