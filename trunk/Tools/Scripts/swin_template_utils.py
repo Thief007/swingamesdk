@@ -14,7 +14,21 @@ dist_folder        = swingame_path + "Dist/"
 produced_folder    = dist_folder + 'SwinGame %s/' % sg_version
 generated_folder   = swingame_path + "Generated/"
 tempate_folder     = swingame_path + "Templates/"
+coresdk_folder     = swingame_path + "CoreSDK/"
+lib_folder         = coresdk_folder + "lib"
+staticlib_folder   = coresdk_folder + "staticlib"
 
+# library_paths = {
+#     "staticlib" : {
+#         "iOS"       : os.path.join(staticlib_folder, "godly", "ios"),
+#         "Mac OS X"  : os.path.join(staticlib_folder, "godly", "mac"),
+#     },
+#     "lib" : {
+#         "Mac OS X"  : os.path.join(lib_folder, "mac"),
+#         "Windows"  : os.path.join(lib_folder, "win"),
+#     }
+# }
+# 
 # ====================
 # = Helper functions =
 # ====================
@@ -213,7 +227,9 @@ def pkg_rename_cpp(dist_dict, tmp_dir, to_dir):
 template_details = {
     'Pascal':   {
               'script':       'create_pascal_library.py',
+              
               'use_sgsdk':    False,
+              
               'copy_dist':    [
                   { 
                     'target':         'fpc',
@@ -223,7 +239,7 @@ template_details = {
                   },
                   {
                     'target':     'iOS',
-                    'os':         ['Mac OS X'],
+                    'os':         ['iOS'],
                     'lib':        'staticlib',
                   },
               ],
@@ -231,7 +247,9 @@ template_details = {
           },
       'C':    {
               'script':       'create_c_library.py',
+              
               'use_sgsdk':    True,
+              
               'copy_dist':    [
                   { 
                     'lang':          'CPP',
@@ -259,10 +277,10 @@ template_details = {
                       'staticsgsdk':  False,
                   },
                   { 
-                    'target':     'iOS',
-                    'os':         ['Mac OS X'],
-                    'lib':        'staticlib',
-                    'staticsgsdk':    True,
+                    'target':       'iOS',
+                    'os':           ['iOS'],
+                    'lib':          'staticlib',
+                    'staticsgsdk':  True,
                   },
               ],
               'pre_copy_script': None,

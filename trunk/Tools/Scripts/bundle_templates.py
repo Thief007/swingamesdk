@@ -92,6 +92,16 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
             else:    
                 copy_without_svn(dist_source_folder+"bin/win", specificdist_folder+"lib/win", overwrite = False)
             
+        if "iOS" in dist_dict['os']:
+            if dist_dict['staticsgsdk']:
+                # Copy staticlibs
+                if not os.path.exists(dist_source_folder+"bin/ios/sgsdk-sdl13.a"):
+                    print >> sys.stderr, 'Missing static libraries for mac'
+                else:
+                    swin_shutil.copyfile(dist_source_folder+"bin/ios/sgsdk-sdl13.a", specificdist_folder+"lib/sdl13/ios/libSGSDK.a")
+                    swin_shutil.copyfile(dist_source_folder+"bin/ios/sgsdk-godly.a", specificdist_folder+"lib/godly/ios/libSGSDK.a")
+            
+
         if "Mac OS X" in dist_dict['os']:
             if dist_dict['staticsgsdk']:
                 # Copy staticlibs
