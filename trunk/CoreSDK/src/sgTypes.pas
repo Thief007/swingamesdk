@@ -1065,6 +1065,7 @@ interface
     ///@via_pointer
     MessageLink = packed record
       data  : String;
+      prev  : MessagePtr;
       next  : MessagePtr;
     end;  
     
