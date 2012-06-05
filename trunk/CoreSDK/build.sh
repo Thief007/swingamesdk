@@ -77,13 +77,13 @@ shift $((${OPTIND}-1))
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       TMP_DIR="${APP_PATH}/tmp/sdl13"
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/staticlib/sdl13/mac"
     elif [ ${OPENGL} = true ]; then
       TMP_DIR="${APP_PATH}/tmp/godly"
       LIB_DIR="${APP_PATH}/staticlib/godly/mac"
     else
-      TMP_DIR="${APP_PATH}/tmp/badass"
-      LIB_DIR="${APP_PATH}/lib/mac"
+      TMP_DIR="${APP_PATH}/tmp/sdl12"
+      LIB_DIR="${APP_PATH}/staticlib/sdl12/mac"
     fi
 elif [ "$OS" = "$WIN" ]; then
     if [ ${SDL_13} = true ]; then
@@ -109,11 +109,13 @@ fi
 
 if [ ${SDL_13} = true ]; then
   PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_SDL13"
+elif [ ${OPENGL} = true ]; then
+  PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
+else
+  PAS_FLAGS="${PAS_FLAGS} -k\"-lstdc++\""
 fi
 
-if [ ${OPENGL} = true ]; then
-  PAS_FLAGS="${PAS_FLAGS} -dSWINGAME_OPENGL -dSWINGAME_SDL13"
-fi
+echo ${PAS_FLAGS}
 
 DRV_LIB=`find ./libsrc -type d ! -path \*.svn\* | awk -F . '{print "-Fu"$0}'`
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src ${DRV_LIB}"
