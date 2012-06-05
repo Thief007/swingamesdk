@@ -6,9 +6,9 @@ ARM_ARCHIVE='arm_fpc.a'
 I386_ARCHIVE='i386_fpc.a'
 UNIVERSAL_LIB='fpc.a'
 
-ARM_OBJ_LIST=$(find "/usr/local/lib/fpc/2.6.0/units/arm-darwin" -maxdepth 2 -type f -name \*.o)
+ARM_OBJ_LIST=$(find "/usr/local/lib/fpc/2.6.0/units/arm-darwin" -maxdepth 2 -type f -name \*.o ! -name freetype\*)
 
-I386_OBJ_LIST=$(find "/usr/local/lib/fpc/2.6.0/units/i386-iphonesim" -maxdepth 2 -type f -name \*.o)
+I386_OBJ_LIST=$(find "/usr/local/lib/fpc/2.6.0/units/i386-iphonesim" -maxdepth 2 -type f -name \*.o ! -name freetype\*)
 
 
 
