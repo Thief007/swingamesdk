@@ -176,7 +176,8 @@ implementation
       else begin RaiseWarning('Invalid font alignment'); exit; end;
         
       // Render the current line. Ignore alpha in this draw
-          // if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
+      if bgTransparent then SDL_SetSurfaceBlendMode(temp, SDL_BLENDMODE_NONE); //SDL_SetSurfaceAlphaMod(temp, 0);
+        // SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
       SDL_UpperBlit(temp, nil, PSDL13Surface(sText^.surface)^.surface, @rect);
     
       // Clean up:
@@ -185,10 +186,11 @@ implementation
 
 		// Draw the text on top of that:
 		rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-    // if (not bgTransparent) or (Screen <> dest) then 
-    // begin
-    //   SDL_SetAlpha(GetSurface(sText), 0, 255);
-    // end;
+    if (not bgTransparent) or (Screen <> dest) then 
+    begin
+      // SDL_SetAlpha(GetSurface(sText), 0, 255);
+      // SDL_SetSurfaceAlphaMod(GetSurface(sText), 255);
+    end;
 
 		SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);
 	
@@ -196,7 +198,6 @@ implementation
 	
 	  if (Screen <> dest) then 
 	  begin
-	    
 		  SDL_UpperBlit(GetSurface(sText), @SDLrc, GetSurface(dest), @rect );
 		  _ScreenDirty := True;
 		  FreeBitmap(sText);
@@ -277,51 +278,53 @@ implementation
 	    sText := CreateBitmap(width, height);
 	    ClearSurface(sText, clrBg);
 
-	    // Actually render the text:
-	    for i := 0 to High(lines) do
-	    begin
-	      if length(lines[i]) = 0 then continue;
-	      // The rendered text:
-	      //temp := TTF_RenderText_Blended(font^.fptr, PUint16(lines[i]), colorFG);
-	      temp := TTF_RenderUNICODE_Blended(font^.fptr, PUint16(lines[i]), colorFG);
-
-	      // Put it on the surface:
-	      if IsSet(flags, AlignLeft) or
-	         (not (IsSet(flags, AlignCenter) or
-	               IsSet(flags, AlignRight))) then
-	      begin
-	        // If it's specifically LEFT or none of the others:
-	        rect := NewSDLRect(0,i*lineSkip,0,0);
-	      end
-	      else if IsSet(flags, AlignCenter) then
-	      begin
-	        w := 0;
-	        h := 0;
-
-	        TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
-	        rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
-	      end
-	      else if IsSet(flags, AlignRight) then
-	      begin
-	        w := 0;
-	        h := 0;
-
-	        TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
-	        rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
-	      end
-	      else begin RaiseWarning('Invalid font alignment'); exit; end;
-
-	      // Render the current line. Ignore alpha in this draw
-        // if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
-	      SDL_UpperBlit(temp, nil, GetSurface(sText), @rect);
-
-	      // Clean up:
-	      SDL_FreeSurface(temp);
-	    end;
+      // Actually render the text:
+      for i := 0 to High(lines) do
+      begin
+        if length(lines[i]) = 0 then continue;
+        // The rendered text:
+        //temp := TTF_RenderText_Blended(font^.fptr, PUint16(lines[i]), colorFG);
+        temp := TTF_RenderUNICODE_Blended(font^.fptr, PUint16(lines[i]), colorFG);
+      
+        // Put it on the surface:
+        if IsSet(flags, AlignLeft) or
+           (not (IsSet(flags, AlignCenter) or
+                 IsSet(flags, AlignRight))) then
+        begin
+          // If it's specifically LEFT or none of the others:
+          rect := NewSDLRect(0,i*lineSkip,0,0);
+        end
+        else if IsSet(flags, AlignCenter) then
+        begin
+          w := 0;
+          h := 0;
+      
+          TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
+          rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
+        end
+        else if IsSet(flags, AlignRight) then
+        begin
+          w := 0;
+          h := 0;
+      
+          TTF_SizeUNICODE(font^.fptr, PUint16(lines[i]), w, h);
+          rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
+        end
+        else begin RaiseWarning('Invalid font alignment'); exit; end;
+      
+        // Render the current line. Ignore alpha in this draw
+        // if bgTransparent then SDL_SetSurfaceAlphaMod(temp, 0);
+                //SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
+        SDL_UpperBlit(temp, nil, GetSurface(sText), @rect);
+      
+        // Clean up:
+        SDL_FreeSurface(temp);
+      end;
 
 	    // Draw the text on top of that:
 	    rect.x := 0; rect.y := 0; rect.w := rc.width; rect.h := rc.height;
-      // if (not bgTransparent or (Screen <> dest)) then SDL_SetAlpha(GetSurface(sText), 0, SDL_ALPHA_TRANSPARENT);
+      // if (not bgTransparent or (Screen <> dest)) then SDL_SetSurfaceAlphaMod(GetSurface(sText), 255);
+      //SDL_SetAlpha(GetSurface(sText), 0, SDL_ALPHA_TRANSPARENT);
 		  
 		  SDLrc := NewSDLRect(trunc(rc.x),trunc(rc.y),rc.width,rc.height);  
 	  //  SDL_UpperBlit(sText^.surface, @rect, dest^.surface, @SDLrc );

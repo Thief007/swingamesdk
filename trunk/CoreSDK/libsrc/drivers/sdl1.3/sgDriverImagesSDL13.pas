@@ -27,6 +27,7 @@ implementation
  	begin	  
  	  if not CheckAssigned('SDL1.3 ImagesDriver - InitBitmapColorsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     // SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
+    SDL_SetSurfaceAlphaMod(GetSurface(bmp), 0);
     SDL_FillRect(GetSurface(bmp), nil, ColorTransparent);
  	end;
      	
@@ -48,15 +49,17 @@ implementation
 		if (GetSurface(screen) = nil) or (GetSurface(screen)^.format = nil) then
     begin
       RaiseWarning('Creating ARGB surface as screen format unknown.');
-      PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
+      PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(0, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
     end
     else
     begin
       with GetSurface(screen)^.format^ do
       begin
-        PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, RMask, GMask, BMask, AMask);
+        PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(0, width, height, 32, RMask, GMask, BMask, AMask);
       end;
     end;
+    SDL_SetSurfaceAlphaMod(PSDL13Surface(bmp^.surface)^.surface, 255);
+    SDL_SetSurfaceBlendMode(PSDL13Surface(bmp^.surface)^.surface, SDL_BLENDMODE_BLEND);
     PSDL13Surface(bmp^.surface)^.texture := nil;
 	end;
 
@@ -249,6 +252,7 @@ implementation
     begin
       SDL_FillRect(GetSurface(dest), @PSDL13Surface(dest^.surface)^.surface^.clip_rect, toColor);
       // SDL_SetAlpha(GetSurface(dest), SDL_SRCALPHA, 255);
+      SDL_SetSurfaceAlphaMod(GetSurface(dest), 255);
     end else begin
       GraphicsDriver.ColorComponents(toColor, r, g, b, a);
       SDL_SetRenderDrawColor(PSDL13Screen(_screen)^.renderer, r, g, b, a);
