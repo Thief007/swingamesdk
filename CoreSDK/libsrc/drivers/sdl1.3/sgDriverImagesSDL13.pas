@@ -26,7 +26,7 @@ implementation
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
  	  if not CheckAssigned('SDL1.3 ImagesDriver - InitBitmapColorsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
-    SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
+    // SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
     SDL_FillRect(GetSurface(bmp), nil, ColorTransparent);
  	end;
      	
@@ -48,13 +48,13 @@ implementation
 		if (GetSurface(screen) = nil) or (GetSurface(screen)^.format = nil) then
     begin
       RaiseWarning('Creating ARGB surface as screen format unknown.');
-      PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
+      PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
     end
     else
     begin
       with GetSurface(screen)^.format^ do
       begin
-        PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
+        PSDL13Surface(bmp^.surface)^.surface := SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, RMask, GMask, BMask, AMask);
       end;
     end;
     PSDL13Surface(bmp^.surface)^.texture := nil;
@@ -151,20 +151,20 @@ implementation
 	procedure MakeOpaqueProcedure(bmp : Bitmap);
 	begin
     if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
-    SDL_SetAlpha(GetSurface(bmp), 0, 255);
+    // SDL_SetAlpha(GetSurface(bmp), 0, 255);
 	end;
 
 	procedure SetOpacityProcedure(bmp : Bitmap; pct : Single);
 	begin
     if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
-    SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, RoundUByte(pct * 255));
+    // SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, RoundUByte(pct * 255));
 	end;
 
 	procedure MakeTransparentProcedure(bmp : Bitmap);
 	begin
     if not CheckAssigned('SDL1.3 ImagesDriver - MakeOpaqueProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
     
-    SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
+    // SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
 	end;
 
 	procedure RotateScaleSurfaceProcedure(resultBmp, src : Bitmap; deg, scale : Single; smooth : LongInt);
@@ -248,7 +248,7 @@ implementation
     if dest <> screen then
     begin
       SDL_FillRect(GetSurface(dest), @PSDL13Surface(dest^.surface)^.surface^.clip_rect, toColor);
-      SDL_SetAlpha(GetSurface(dest), SDL_SRCALPHA, 255);
+      // SDL_SetAlpha(GetSurface(dest), SDL_SRCALPHA, 255);
     end else begin
       GraphicsDriver.ColorComponents(toColor, r, g, b, a);
       SDL_SetRenderDrawColor(PSDL13Screen(_screen)^.renderer, r, g, b, a);
@@ -263,10 +263,10 @@ implementation
  	  if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap', surface) then exit;
    	if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap Surface', surface^.surface) then exit;
   
-    oldSurface := GetSurface(surface);
+    // oldSurface := GetSurface(surface);
     SetNonAlphaPixelsProcedure(surface);
-    surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
-    SDL_FreeSurface(oldSurface);
+    // surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
+    // SDL_FreeSurface(oldSurface);
   end;
   
   procedure SaveBitmapProcedure(src : Bitmap; filepath : String);
