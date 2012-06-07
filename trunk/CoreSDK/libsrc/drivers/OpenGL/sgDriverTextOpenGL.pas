@@ -1,13 +1,12 @@
 unit sgDriverTextOpenGL;
 
 //=============================================================================
-// sgDriverTextSDL.pas
+// sgDriverTextOpenGL.pas
 //=============================================================================
 //
-// This file contains SDL 1.2 specific implementation of text functions that is called by the text driver.
+// This file contains OpenGL with FreeType implementation of text functions that is called by the text driver.
 //
 // Change History:
-//  2012-01-05: Aaron : Created File.
 //  
 // Notes:
 //    -
@@ -17,8 +16,6 @@ unit sgDriverTextOpenGL;
 interface
   uses 
     {$IFDEF IOS} gles11, {$ELSE} gl, glext, glu, {$ENDIF} FreeType;
-
-
 
   type 
     // SwinGame type to store glyph (char) data for a font with OpenGL
@@ -81,16 +78,17 @@ var
 begin
   result := false;
   if not assigned(font) then exit;
+    
   face := font^.face;
   if not assigned(face) then exit;
-
+  
   numGlyphs := face^.num_glyphs;
-  //WriteLn('Loading ', numGlyphs, ' glyphs');
-
+  // WriteLn('Loading ', numGlyphs, ' glyphs');
+  
   // Allocate space for the font's bitmaps
   SetLength(font^.glyphs, numGlyphs);
   SetLength(font^.textures, numGlyphs);
-
+  
   // Generate textures for each glyph
   glGenTextures(numGlyphs, @font^.textures[0]);
 
@@ -99,7 +97,7 @@ begin
   begin
     // WriteLn('Setting up glyph ', i);
     font^.glyphs[i].texture := font^.textures[i];
-
+    
     // get bitmap
     // error := FT_Load_Glyph(face, FT_Get_Char_Index(face, i), FT_LOAD_DEFAULT);
     error := FT_Load_Glyph(face, i, FT_LOAD_DEFAULT);
@@ -108,14 +106,14 @@ begin
       RaiseWarning('Error creating glyph ' + IntToStr(i) + ': ' + IntToStr(error));
       continue;
     end;
-
+    
     error := FT_Get_Glyph(face^.glyph, @glyph);
     if error <> 0 then
     begin
       RaiseWarning('Error getting glyph ' + IntToStr(i) + ': ' + IntToStr(error));
       continue;
     end;
-
+    
     // Get the glyph's bitmap, deleting the old bmp
     error := FT_Glyph_To_Bitmap(@glyph, FT_RENDER_MODE_NORMAL, nil, FT_TRUE);
     if error <> 0 then
@@ -123,22 +121,25 @@ begin
       RaiseWarning('Error converting glyph to bitmap ' + IntToStr(i) + ': ' + IntToStr(error));
       continue;
     end;
-
+    
     bmpGlyph := FT_BitmapGlyph(glyph);
     bitglyph := @bmpGlyph;
     bitmap := @(bmpGlyph^.bitmap);
-
+    
     // WriteLn(i, ' Advance ', face^.glyph^.advance.x, ':', face^.glyph^.advance.y);
     // WriteLn('advance - glyph ', DWord(@(face^.glyph^.advance)) - dword(face^.glyph));
     // WriteLn('glyph - face ', DWord(@(face^.glyph)) - dword(face));
-
+    
     // Get texture width and height (power of 2)
     w := Pow2GEQ(bitmap^.width);
     h := Pow2GEQ(bitmap^.rows);
     // WriteLn('w:', w, ' h:', h, ' ', 2*w*h);
-
+    
     // make bitmap
     SetLength(buffer, 4 * w * h);
+    
+    xpos := 0;
+    ypos := 0;
     
     for ypos := 0 to bitmap^.rows -1 do
     begin
@@ -146,13 +147,13 @@ begin
       begin
         // if FT_Get_Char_Index(face, LongInt('U')) = i then
         //   Write(HexStr(bitmap^.buffer[ xpos + ypos * bitmap^.width], 2), ' ');
-
+        
         buffer[4 * (xpos + ypos * w) + 0] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
         buffer[4 * (xpos + ypos * w) + 1] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
         buffer[4 * (xpos + ypos * w) + 2] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
         buffer[4 * (xpos + ypos * w) + 3] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
         // buffer[xpos + ypos * w] :=    bitmap^.buffer[ xpos + ypos * bitmap^.width];
-
+        
         //WriteLn(xpos + ypos * w);
       end;
       
@@ -173,16 +174,19 @@ begin
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
     //   WriteLn((xpos + ypos * w), ' to ', Length(buffer) - 1);
     
+    // WriteLn('Here ', Length(buffer));
+    // WriteLn('4 * (', xpos, ' + ', ypos, ' * ', w, ') + 4 = ', 4 * (xpos + ypos * w) + 4);
     idx := 4 * (xpos + ypos * w) + 4;
-    while idx <= Length(buffer) - 4 do
+    while (idx >= 0) and (idx <= Length(buffer) - 4) do
     begin
+      // WriteLn(' ', idx);
       buffer[idx + 0] := $FF;
       buffer[idx + 1] := $FF;
       buffer[idx + 2] := $FF;
       buffer[idx + 3] := $00;
       idx += 4;
     end;
-
+    
     // if FT_Get_Char_Index(face, LongInt('U')) = i then
     // begin
     //   // WriteLn();
@@ -223,6 +227,7 @@ begin
 
   // Clear the buffer
   SetLength(buffer, 0);
+  result := True;
 end;
 
 function LoadFont(filepath: String; height: Integer) : GLFont;
@@ -233,8 +238,8 @@ var
 begin
   result := nil;
   New(temp);
-  // WriteLn('Loading ', filepath);
-
+  //WriteLn('Loading ', filepath);
+  
   error := FT_New_Face(_freeTypeLib, PChar(filepath), 0, @temp^.face);
   if error <> 0 then
   begin
@@ -242,25 +247,31 @@ begin
     Dispose(temp);
     exit;
   end;
-
-  error := FT_Set_Char_Size(temp^.face, height shl 6, height shl 6, 96, 96);
+  
+  error := FT_Set_Char_Size(temp^.face, height shl 6, height shl 6, 72, 72);
   if error <> 0 then
   begin
     _lastError := 'Error setting font size: ' + IntToStr(error);
-    Dispose(temp);
     FT_Done_Face(temp^.face);
+    Dispose(temp);
     exit;
   end;
-
+  
   // Load font related data
-  pixelSize := height * 96 / 72 / temp^.face^.units_per_EM; // pixel scale factor
+  pixelSize := height / temp^.face^.units_per_EM; // pixel scale factor
   temp^.baseOffset  := (temp^.face^.ascender + temp^.face^.descender) * pixelSize;
   temp^.lineSize    := (temp^.face^.height) * pixelSize;
   temp^.lineGap     := temp^.lineSize - temp^.baseOffset;
-
-  SetupGlyphCache(temp);
-
-  result := temp;
+  
+  if SetupGlyphCache(temp) then  
+  begin
+    result := temp;
+  end
+  else
+  begin
+    Dispose(temp);
+    result := nil;
+  end;
 end;
 
 // Draw the text starting at x, y

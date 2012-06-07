@@ -694,6 +694,10 @@ implementation
     var
       filename: String;
     begin
+      {$IFDEF TRACE}
+        TraceEnter('sgText', '_DoLoadFont(', fontName + ' ' + IntToStr(size));
+      {$ENDIF}
+      
       filename := fontName;
       if not FileExists(filename) then
       begin
@@ -711,15 +715,29 @@ implementation
           end;
         end;
       end;
-      result := TextDriver.LoadFont(name, filename, size);
+      {$IFDEF TRACE}
+        TraceIf(tlInfo, 'sgText', 'Info', '_DoLoadFont', 'About to load font from driver');
+      {$ENDIF}      
       
+      result := TextDriver.LoadFont(name, filename, size);
+      {$IFDEF TRACE}
+        TraceExit('sgText', '_DoLoadFont = ' + HexStr(result) );
+      {$ENDIF}      
     end;
 
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgText', 'LoadFontNamed(', name + ' ' + IntToStr(size));
+    {$ENDIF}
     
     if _Fonts.containsKey(name) then
     begin
       result := FontNamed(name);
+      
+      {$IFDEF TRACE}
+        TraceExit('sgText', 'Exit LoadFontNamed = ' + HexStr(result));
+      {$ENDIF}
+      
       exit;
     end;
     
@@ -730,6 +748,11 @@ implementation
       if not _Fonts.setValue(name, obj) then raise Exception.create('Error loaded Font resource - ' + name);
     end;
     result := fnt;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgText', 'LoadFontNamed = ' + HexStr(result));
+    {$ENDIF}
+    
   end;
 
   function HasFont(name: String): Boolean;

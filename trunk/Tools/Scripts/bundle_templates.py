@@ -20,7 +20,7 @@ def create_lang_libraries():
       
       for copy_dist in lang_template_dict['copy_dist']:
           output_line("Packaging " + copy_dist["target"])
-          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'], None if not copy_dist.has_key('lang') else copy_dist['lang'])
+          assemble_dist(key, copy_dist, lang_template_dict['use_sgsdk'], None if not copy_dist.has_key('lang') else copy_dist['lang'], lang_template_dict['libsgsdk'])
 
 def create_docs():
     run_python('create_documentation.py')
@@ -37,7 +37,7 @@ def create_docs():
 
 
 #assembles the files for the dist folder
-def assemble_dist(language, dist_dict, use_sgsdk, part_from):
+def assemble_dist(language, dist_dict, use_sgsdk, part_from, use_dylib):
     coresdk_folder =            swingame_path + "CoreSDK/"
     lib_src_folder =            swingame_path + "CoreSDK/libsrc/"
     src_folder =                swingame_path + "CoreSDK/src/"
@@ -57,7 +57,6 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
     specific_dist_lib_folder =      specificdist_folder + "lib/"
     
     copy_lib_dir =  dist_dict["lib"]
-    lib_folder =    coresdk_folder + copy_lib_dir
     
     #clean dist folder
     # print("\n  Copying common files...")
@@ -74,7 +73,16 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
     copy_without_svn(generated_folder, specific_dist_lib_folder, overwrite = False)
     
     # print("\n  Copying lib files...")
-    copy_without_svn(lib_folder, specific_dist_lib_folder, overwrite = False)
+    if copy_lib_dir:
+        lib_folder =    coresdk_folder + copy_lib_dir
+        copy_without_svn(lib_folder, specific_dist_lib_folder, overwrite = False)
+    else:
+        for lib_from, lib_to in dist_dict['libs']:
+            lib_from_full = os.path.join(coresdk_folder, lib_from)
+            lib_to_full = os.path.join(specificdist_folder, lib_to)
+            
+            # print("\n Copying %s to %s " % (lib_from_full, lib_to_full))
+            copy_without_svn(lib_from_full, lib_to_full, overwrite = False)
     
     if language == "Pascal":
         flat_copy_without_svn(lib_src_folder, specific_dist_lib_folder)
@@ -95,11 +103,11 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
         if "iOS" in dist_dict['os']:
             if dist_dict['staticsgsdk']:
                 # Copy staticlibs
-                if not os.path.exists(dist_source_folder+"bin/ios/sgsdk-sdl13.a"):
+                if not os.path.exists(dist_source_folder+"bin/ios/libSGSDK.a"):
                     print >> sys.stderr, 'Missing static libraries for mac'
                 else:
-                    swin_shutil.copyfile(dist_source_folder+"bin/ios/sgsdk-sdl13.a", specificdist_folder+"lib/sdl13/ios/libSGSDK.a")
-                    swin_shutil.copyfile(dist_source_folder+"bin/ios/sgsdk-godly.a", specificdist_folder+"lib/godly/ios/libSGSDK.a")
+                    swin_shutil.copyfile(dist_source_folder+"bin/ios/libSGSDK.a", specificdist_folder+"lib/ios/libSGSDK.a")
+                    # swin_shutil.copyfile(dist_source_folder+"bin/ios/sgsdk-godly.a", specificdist_folder+"lib/godly/ios/libSGSDK.a")
             
 
         if "Mac OS X" in dist_dict['os']:
@@ -108,8 +116,18 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
                 if not os.path.exists(dist_source_folder+"bin/mac/sgsdk-sdl13.a"):
                     print >> sys.stderr, 'Missing static libraries for mac'
                 else:
+                    print >> sys.stderr, 'Static libraries should be for iOS only!'
+                    assert false
+                    
                     swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-sdl13.a", specificdist_folder+"lib/sdl13/mac/libSGSDK.a")
                     swin_shutil.copyfile(dist_source_folder+"bin/mac/sgsdk-godly.a", specificdist_folder+"lib/godly/mac/libSGSDK.a")
+            elif use_dylib:
+                if not os.path.exists(dist_source_folder+"bin/mac/libSGSDK-sdl12.dylib"):
+                    print >> sys.stderr, 'Missing dynamic libraries for mac'
+                else:
+                    swin_shutil.copyfile(dist_source_folder+"bin/mac/libSGSDK-sdl12.dylib", specificdist_folder+"lib/mac/libSGSDK.dylib")
+                    swin_shutil.copyfile(dist_source_folder+"bin/mac/libSGSDK-sdl13.dylib", specificdist_folder+"lib/sdl13/libSGSDK.dylib")
+                    swin_shutil.copyfile(dist_source_folder+"bin/mac/libSGSDK-godly.dylib", specificdist_folder+"lib/godly/libSGSDK.dylib")
             else:
                 if not os.path.exists(dist_source_folder+"bin/mac/SGSDK.framework"):
                     print >> sys.stderr, 'Missing SwinGame framework for mac'
@@ -130,6 +148,8 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from):
                     os.remove('Current')
                     os.symlink('./3.0godly', 'Current')
                     os.chdir(cur)
+    if dist_dict.has_key('post_copy'):
+        dist_dict['post_copy'](specificdist_folder, dist_dict)
 
 def main():
     output_header(['Packaging SwinGame Templates'])

@@ -96,13 +96,13 @@ shift $((${OPTIND}-1))
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       TMP_DIR="${TMP_DIR}/badass"
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/lib/sdl13"
     elif [ ${OPENGL} = true ]; then
         TMP_DIR="${TMP_DIR}/godly"
-      LIB_DIR="${APP_PATH}/lib/godly/mac"
+      LIB_DIR="${APP_PATH}/lib/godly"
     else
       TMP_DIR="${TMP_DIR}/sdl12"
-      LIB_DIR="${APP_PATH}/lib/mac"
+      LIB_DIR="${APP_PATH}/lib/sdl12"
     fi
 elif [ "$OS" = "$WIN" ]; then
     #
@@ -190,35 +190,12 @@ doBasicMacCompile()
     mkdir -p ${TMP_DIR}
     echo "  ... Compiling $GAME_MAIN"
     
-    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    FRAMEWORKS='-framework AudioToolbox -framework AudioUnit -framework CoreAudio -framework IOKit -framework OpenGL -framework QuickTime -framework Carbon -framework ForceFeedback'
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/${GAME_MAIN}" > "${LOG_FILE}"
+    STATIC_LIBS=`cd ${LIB_DIR};ls -f *.a | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-l%s ", substr(patharr[idx],4)) }'`
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -k"-lstdc++" -k"${STATIC_LIBS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" -k"-rpath @loader_path" "${SRC_DIR}/${GAME_MAIN}" > "${LOG_FILE}"
     if [ $? != 0 ]; then DoExitCompile; fi
-}
-
-#
-# Compile for Mac - manually assembles and links files
-# argument 1 is arch
-#
-doMacCompile()
-{
-    mkdir -p ${TMP_DIR}/${1}
-    echo "  ... Compiling $GAME_MAIN - $1"
-    
-    FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${TMP_DIR}/${1}/${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" "${SRC_DIR}/${GAME_MAIN}" > ${LOG_FILE}
-    
-    if [ $? != 0 ]; then DoExitCompile; fi
-}
-
-# 
-# Create fat executable (i386 + ppc)
-# 
-doLipo()
-{
-    echo "  ... Combining ${1} and ${2} into Universal Binary"
-    lipo -arch ${1} "${TMP_DIR}/${1}/${GAME_NAME}" -arch ${2} "${TMP_DIR}/${2}/${GAME_NAME}" -output "${OUT_DIR}/${GAME_NAME}" -create
 }
 
 doMacPackage()
@@ -236,10 +213,9 @@ doMacPackage()
     mkdir "${GAMEAPP_PATH}/Contents"
     mkdir "${GAMEAPP_PATH}/Contents/MacOS"
     mkdir "${GAMEAPP_PATH}/Contents/Resources"
-    mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
-
-    echo "  ... Adding Private Frameworks"
-    cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    # mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
+    # echo "  ... Adding Private Frameworks"
+    # cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
     
     mv "${FULL_OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
@@ -402,57 +378,17 @@ then
     echo "  ... Creating ${GAME_NAME}"
     
     if [ "$OS" = "$MAC" ]; then
-        HAS_PPC=false
-        HAS_i386=false
-        HAS_LEOPARD_SDK=false
         HAS_LION=false
         OS_VER=`sw_vers -productVersion | awk -F . '{print $1"."$2}'`
-        
-        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
-            HAS_PPC=true
-        fi
-        
-        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
-            HAS_i386=true
-        fi
-        
-        if [ -d /Developer/SDKs/MacOSX10.5.sdk ]; then
-            HAS_LEOPARD_SDK=true
-        fi
-        
-        if [ $OS_VER = '10.5' ]; then
-            HAS_LEOPARD_SDK=true
-        fi
         
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
         fi
         
-        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
-            echo "  ... Building Universal Binary"
-            
-            if [ $OS_VER = '10.5' ]; then
-                FPC_BIN=`which ppc386`
-                doMacCompile "i386" ""
-                
-                FPC_BIN=`which ppcppc`
-                doMacCompile "ppc" ""
-            else
-                FPC_BIN=`which ppc386`
-                doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
-                
-                FPC_BIN=`which ppcppc`
-                doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
-            fi
-            
-            doLipo "i386" "ppc"
-        else
-            if [ $HAS_LION = true ]; then
-                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
-            fi
-            doBasicMacCompile
+        if [ $HAS_LION = true ]; then
+            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
         fi
-        
+        doBasicMacCompile
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile

@@ -11,7 +11,7 @@ begin
   repeat // The game loop...
     ProcessEvents();
     
-    ClearScreen(ColorBlack);
+    ClearScreen(ColorWhite);
     DrawFramerate(0,0);
     
     RefreshScreen();

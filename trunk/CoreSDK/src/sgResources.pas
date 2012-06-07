@@ -576,11 +576,27 @@ implementation
         end;
     end;
     
+    var _mac_relative_path: String = '/../Resources/';
+    
+    procedure _SetMacRelativePath();
+    begin
+        if DirectoryExists(applicationPath + '/Resources') then
+        begin
+            _mac_relative_path := '/Resources/';
+        end
+        else //DirectoryExists(applicationPath + '../Resources') then
+        begin
+            _mac_relative_path := '/../Resources/';
+        end;
+        
+        // WriteLn('Set _mac_relative_path to ', _mac_relative_path, ' = ', applicationPath + _mac_relative_path);
+    end;
+    
     function PathToResourceWithBase(path, filename: String): String; overload;
     begin
         {$ifdef UNIX}
             {$ifdef DARWIN}
-                result := path + '/../Resources/';
+                result := path + _mac_relative_path;
             {$else}
                 result := path + '/Resources/';
             {$endif}
@@ -654,6 +670,10 @@ implementation
         
         if withExe then applicationPath := ExtractFileDir(path)
         else applicationPath := path;
+        
+        {$IFDEF DARWIN}
+        _SetMacRelativePath();
+        {$ENDIF}
         
         {$IFDEF TRACE}
             TraceExit('sgResources', 'SetAppPath', applicationPath);

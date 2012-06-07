@@ -26,23 +26,9 @@
 		94DB1FCE14ECD33900AFBF51 /* Timers.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DB1FB114ECD33900AFBF51 /* Timers.c */; };
 		94DB1FCF14ECD33900AFBF51 /* UserInterface.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DB1FB414ECD33900AFBF51 /* UserInterface.c */; };
 		94DB1FD014ECD33900AFBF51 /* Utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DB1FB614ECD33900AFBF51 /* Utils.c */; };
-		94DB207514ECD42D00AFBF51 /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1E14ECD22200AFBF51 /* SDL_ttf.framework */; };
 		94DB207614ECD42E00AFBF51 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E963E6138A1D860016765E /* Cocoa.framework */; };
-		94DB207714ECD42F00AFBF51 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1F14ECD22200AFBF51 /* SDL.framework */; };
 		94DB207A14ECD43100AFBF51 /* SGSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F2014ECD22200AFBF51 /* SGSDK.framework */; };
-		94DB207B14ECD43200AFBF51 /* SDL_gfx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1A14ECD22200AFBF51 /* SDL_gfx.framework */; };
 		94DB207E14ECD43600AFBF51 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E963E8138A1D860016765E /* Foundation.framework */; };
-		94DB207F14ECD43700AFBF51 /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1D14ECD22200AFBF51 /* SDL_net.framework */; };
-		94DB208114ECD43800AFBF51 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1914ECD22200AFBF51 /* libpng.framework */; };
-		94DB208214ECD43A00AFBF51 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1B14ECD22200AFBF51 /* SDL_image.framework */; };
-		94DB208414ECD43B00AFBF51 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1C14ECD22200AFBF51 /* SDL_mixer.framework */; };
-		94DB20AA14ECD4FD00AFBF51 /* libpng.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1914ECD22200AFBF51 /* libpng.framework */; };
-		94DB20AB14ECD4FD00AFBF51 /* SDL_gfx.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1A14ECD22200AFBF51 /* SDL_gfx.framework */; };
-		94DB20AC14ECD4FD00AFBF51 /* SDL_image.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1B14ECD22200AFBF51 /* SDL_image.framework */; };
-		94DB20AD14ECD4FD00AFBF51 /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1C14ECD22200AFBF51 /* SDL_mixer.framework */; };
-		94DB20AE14ECD4FD00AFBF51 /* SDL_net.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1D14ECD22200AFBF51 /* SDL_net.framework */; };
-		94DB20AF14ECD4FD00AFBF51 /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1E14ECD22200AFBF51 /* SDL_ttf.framework */; };
-		94DB20B014ECD4FD00AFBF51 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F1F14ECD22200AFBF51 /* SDL.framework */; };
 		94DB20B114ECD4FD00AFBF51 /* SGSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94DB1F2014ECD22200AFBF51 /* SGSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,13 +39,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				94DB20AA14ECD4FD00AFBF51 /* libpng.framework in Copy Frameworks */,
-				94DB20AB14ECD4FD00AFBF51 /* SDL_gfx.framework in Copy Frameworks */,
-				94DB20AC14ECD4FD00AFBF51 /* SDL_image.framework in Copy Frameworks */,
-				94DB20AD14ECD4FD00AFBF51 /* SDL_mixer.framework in Copy Frameworks */,
-				94DB20AE14ECD4FD00AFBF51 /* SDL_net.framework in Copy Frameworks */,
-				94DB20AF14ECD4FD00AFBF51 /* SDL_ttf.framework in Copy Frameworks */,
-				94DB20B014ECD4FD00AFBF51 /* SDL.framework in Copy Frameworks */,
 				94DB20B114ECD4FD00AFBF51 /* SGSDK.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -77,13 +56,6 @@
 		944473E10FF76057002B4FFA /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		944473E40FF76057002B4FFA /* MyGame-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyGame-Info.plist"; sourceTree = "<group>"; };
 		9477423E101EA74300AB691F /* Swinburne.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Swinburne.jpg; path = Resources/images/Swinburne.jpg; sourceTree = SOURCE_ROOT; };
-		94DB1F1914ECD22200AFBF51 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libpng.framework; path = mac/libpng.framework; sourceTree = "<group>"; };
-		94DB1F1A14ECD22200AFBF51 /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_gfx.framework; path = mac/SDL_gfx.framework; sourceTree = "<group>"; };
-		94DB1F1B14ECD22200AFBF51 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = mac/SDL_image.framework; sourceTree = "<group>"; };
-		94DB1F1C14ECD22200AFBF51 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = mac/SDL_mixer.framework; sourceTree = "<group>"; };
-		94DB1F1D14ECD22200AFBF51 /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_net.framework; path = mac/SDL_net.framework; sourceTree = "<group>"; };
-		94DB1F1E14ECD22200AFBF51 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_ttf.framework; path = mac/SDL_ttf.framework; sourceTree = "<group>"; };
-		94DB1F1F14ECD22200AFBF51 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = mac/SDL.framework; sourceTree = "<group>"; };
 		94DB1F2014ECD22200AFBF51 /* SGSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SGSDK.framework; path = mac/SGSDK.framework; sourceTree = "<group>"; };
 		94DB1F8914ECD33800AFBF51 /* Animations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Animations.c; sourceTree = "<group>"; };
 		94DB1F8A14ECD33800AFBF51 /* Animations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animations.h; sourceTree = "<group>"; };
@@ -145,16 +117,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94DB207514ECD42D00AFBF51 /* SDL_ttf.framework in Frameworks */,
 				94DB207614ECD42E00AFBF51 /* Cocoa.framework in Frameworks */,
-				94DB207714ECD42F00AFBF51 /* SDL.framework in Frameworks */,
 				94DB207A14ECD43100AFBF51 /* SGSDK.framework in Frameworks */,
-				94DB207B14ECD43200AFBF51 /* SDL_gfx.framework in Frameworks */,
 				94DB207E14ECD43600AFBF51 /* Foundation.framework in Frameworks */,
-				94DB207F14ECD43700AFBF51 /* SDL_net.framework in Frameworks */,
-				94DB208114ECD43800AFBF51 /* libpng.framework in Frameworks */,
-				94DB208214ECD43A00AFBF51 /* SDL_image.framework in Frameworks */,
-				94DB208414ECD43B00AFBF51 /* SDL_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,13 +261,6 @@
 				94DB1FB514ECD33900AFBF51 /* UserInterface.h */,
 				94DB1FB614ECD33900AFBF51 /* Utils.c */,
 				94DB1FB714ECD33900AFBF51 /* Utils.h */,
-				94DB1F1914ECD22200AFBF51 /* libpng.framework */,
-				94DB1F1A14ECD22200AFBF51 /* SDL_gfx.framework */,
-				94DB1F1B14ECD22200AFBF51 /* SDL_image.framework */,
-				94DB1F1C14ECD22200AFBF51 /* SDL_mixer.framework */,
-				94DB1F1D14ECD22200AFBF51 /* SDL_net.framework */,
-				94DB1F1E14ECD22200AFBF51 /* SDL_ttf.framework */,
-				94DB1F1F14ECD22200AFBF51 /* SDL.framework */,
 				94DB1F2014ECD22200AFBF51 /* SGSDK.framework */,
 				94E963E6138A1D860016765E /* Cocoa.framework */,
 				94E963E8138A1D860016765E /* Foundation.framework */,

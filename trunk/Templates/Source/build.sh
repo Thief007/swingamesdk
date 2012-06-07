@@ -39,15 +39,17 @@ INSTALL="N"
 OPENGL=false
 SDL_13=false
 STATIC=false
+FRAMEWORK=false
 IOS=false
 STATIC_NAME="sgsdk-sdl12.a"
+NAME_SUFFIX="-sdl12"
 
 #
 # Step 4: Usage message and process command line arguments
 #
 Usage()
 {
-    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [-IOS] [-static] [version]"
+    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [-badass] [-godly] [-IOS] [-framework] [-static] [version]"
     echo 
     echo "Creates and Compiles the native SGSDK library."
     echo
@@ -74,19 +76,25 @@ Usage()
     exit 0
 }
 
-while getopts chdiI:b:g:s: o
+while getopts chdif:I:b:g:s: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     b)  if [ "${OPTARG}" = "adass" ]; then
             SDL_13=true
             STATIC_NAME="sgsdk-sdl13.a"
+            NAME_SUFFIX="-sdl13"
         fi 
         ;;
     h)  Usage ;;
+    f)  if [ "${OPTARG}" = "ramework" ]; then
+            FRAMEWORK=true
+        fi 
+        ;;
     g)  if [ "${OPTARG}" = "odly" ]; then
             OPENGL=true
             STATIC_NAME="sgsdk-godly.a"
+            NAME_SUFFIX="-godly"
         fi 
         ;;
     s)  if [ "${OPTARG}" = "tatic" ]; then
@@ -203,8 +211,20 @@ elif [ "$OS" = "$MAC" ]; then
     elif [ ${OPENGL} = true ]; then
       LIB_DIR="${APP_PATH}/staticlib/godly/mac"
     else
-      LIB_DIR="${APP_PATH}/staticlib/mac"
+      LIB_DIR="${APP_PATH}/staticlib/sdl12/mac"
     fi
+    
+    #
+    # Setup framework/dylib details
+    #
+    if [ ${FRAMEWORK} = true ]; then
+      OUT_FILE="SGSDK"
+      INSTALL_NAME="@rpath/SGSDK.framework/Versions/${VERSION}/${OUT_FILE}"
+    else
+      OUT_FILE="libSGSDK.dylib"
+      INSTALL_NAME="@rpath/${OUT_FILE}"
+    fi
+    
 elif [ "$OS" = "$WIN" ]; then
     OUT_DIR="${APP_PATH}/bin/Win"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/Win"
@@ -316,20 +336,18 @@ doMacCompile()
     
     LINK_OPTS="$2"
     
-    FRAMEWORKS='-framework AudioToolbox -framework AudioUnit -framework CoreAudio -framework IOKit -framework OpenGL -framework QuickTime -framework Carbon'
+    FRAMEWORKS='-framework AudioToolbox -framework AudioUnit -framework CoreAudio -framework IOKit -framework OpenGL -framework QuickTime -framework Carbon -framework ForceFeedback'
     
     # FRAMEWORKS=`cd ${LIB_DIR};ls -d *.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
 
     STATIC_LIBS=`cd ${LIB_DIR};ls -f *.a | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-l%s ", substr(patharr[idx],4)) }'`
 
-    echo $STATIC_LIBS
-    
     if [ "*$DEBUG*" = "**" ] ; then
         EXTRA_OPTS="$EXTRA_OPTS -Xs"
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lstdc++" -k"-install_name '@rpath/SGSDK.framework/Versions/${VERSION}/SGSDK'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lstdc++" -k"-install_name '${INSTALL_NAME}'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
@@ -543,38 +561,42 @@ then
         fi
         
         #Convert into a Framework
-        doCreateFramework
-        
-        if [ ! $INSTALL = "N" ]
-        then
-            echo "  ... Installing SwinGame"
-            if [ ! -d "${INSTALL_DIR}" ]
-            then
-                mkdir -p "${INSTALL_DIR}"
-            fi
-        
-            doCopyFramework()
-            {
-                # $1 = framework
-                # $2 = dest
-                fwk_name=${1##*/} # ## = delete longest match for */... ie all but file name
+        if [ ${FRAMEWORK} = true ]; then
+            doCreateFramework
             
-                if [ -d "${2}/${fwk_name}" ]
+            if [ ! $INSTALL = "N" ]
+            then
+                echo "  ... Installing SwinGame"
+                if [ ! -d "${INSTALL_DIR}" ]
                 then
-                    #framework exists at destn, just copy the version details
-                    rm $2/${fwk_name}/Versions/Current
-                    cp -p -R -f "${1}/Versions/"* "${2}/${fwk_name}/Versions"
-                else
-                    cp -p -R "$1" "$2"
+                    mkdir -p "${INSTALL_DIR}"
                 fi
-            }
         
-            doCopyFramework "${FULL_OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
-            for file in `find ${LIB_DIR} -depth 1 | grep [.]framework$`
-            do
-                doCopyFramework ${file} "${INSTALL_DIR}"
-            done
-        fi # install
+                doCopyFramework()
+                {
+                    # $1 = framework
+                    # $2 = dest
+                    fwk_name=${1##*/} # ## = delete longest match for */... ie all but file name
+            
+                    if [ -d "${2}/${fwk_name}" ]
+                    then
+                        #framework exists at destn, just copy the version details
+                        rm $2/${fwk_name}/Versions/Current
+                        cp -p -R -f "${1}/Versions/"* "${2}/${fwk_name}/Versions"
+                    else
+                        cp -p -R "$1" "$2"
+                    fi
+                }
+        
+                doCopyFramework "${FULL_OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
+                for file in `find ${LIB_DIR} -depth 1 | grep [.]framework$`
+                do
+                    doCopyFramework ${file} "${INSTALL_DIR}"
+                done
+            fi # install
+        else #not framework = dylib
+            mv ${OUT_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${NAME_SUFFIX}.dylib 
+        fi # framework
     elif [ "$OS" = "$WIN" ] 
     then
         DisplayHeader
