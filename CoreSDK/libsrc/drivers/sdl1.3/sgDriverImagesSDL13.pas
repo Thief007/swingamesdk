@@ -261,8 +261,8 @@ implementation
   end;
   
 	procedure OptimiseBitmapProcedure(surface : Bitmap); 
-  var
-    oldSurface: PSDL_Surface;
+  // var
+  //   oldSurface: PSDL_Surface;
   begin
  	  if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap', surface) then exit;
    	if not CheckAssigned('SDL1.3 ImagesDriver - OptimiseBitmapProcedure recieved empty Bitmap Surface', surface^.surface) then exit;

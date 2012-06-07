@@ -121,6 +121,18 @@ def flat_copy_without_svn(src, dest):
 # = Language specific function called within the Template details dict =
 # ======================================================================
 
+def rename_c_to_cpp(specificdist_folder, dist_dict):
+    """Rename the C files CPP."""
+    output_line('Renaming C files CPP for C++')
+    
+    lib_folder = os.path.join(specificdist_folder, 'lib')
+    # print lib_folder
+    for filename in os.listdir(lib_folder):
+        # print filename
+        if filename.endswith(".c"):
+            full_name = os.path.join(lib_folder, filename)
+            os.rename(full_name, full_name[:-1] + 'cpp')
+
 def build_csharp_lib():
     """The C# code has been generated, now turn it into a DLL"""
     output_line('Compiling .NET class library')
@@ -130,8 +142,7 @@ def build_csharp_lib():
         'cs_generated_code_dir':    os.path.join(swingame_path, 'Generated','CSharp','Code'),
         'cs_lib_dir':               os.path.join(swingame_path, 'Templates','CSharp','Library')
     }
-
-
+    
     if get_os_name() == "Windows":
         csc = ['csc', '-t:library', '-r:System.dll', '-r:System.Drawing.dll', '-define:DEBUG', '-debug+', '-out:%(cs_generated_lib_dir)s\\SwinGame.dll' % dirs, '%(cs_lib_dir)s\\*.cs' % dirs, '%(cs_generated_code_dir)s\\*.cs' % dirs]
     else:
@@ -229,13 +240,20 @@ template_details = {
               'script':       'create_pascal_library.py',
               
               'use_sgsdk':    False,
+              'libsgsdk':     False,
               
               'copy_dist':    [
                   { 
                     'target':         'fpc',
                     'source':         'FPC',
                     'os':             ['Mac OS X', 'Windows', 'Linux'],
-                    'lib':            'lib',
+                    'lib':            None,
+                    'libs':           [
+                                        ('staticlib/sdl12/mac','lib/sdl12'),
+                                        ('staticlib/godly/mac','lib/godly'),
+                                        ('staticlib/sdl13/mac','lib/sdl13'),
+                                        ('lib/win','lib/win'),
+                                      ],
                   },
                   {
                     'target':     'iOS',
@@ -249,6 +267,7 @@ template_details = {
               'script':       'create_c_library.py',
               
               'use_sgsdk':    True,
+              'libsgsdk':     False,
               
               'copy_dist':    [
                   { 
@@ -257,6 +276,31 @@ template_details = {
                     'os':            ['Mac OS X', 'Windows', 'Linux'],
                     'lib':           'lib',
                     'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'Eclipse-Mac',
+                    'os':            ['Mac OS X'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'Eclipse-Windows',
+                    'os':            ['Windows'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'xcode 4',
+                    'os':            ['Mac OS X'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
                   },
                   { 
                     'target':     'gcc',
@@ -279,7 +323,7 @@ template_details = {
                   { 
                     'target':       'iOS',
                     'os':           ['iOS'],
-                    'lib':          'staticlib',
+                    'lib':          'staticlib/godly',
                     'staticsgsdk':  True,
                   },
               ],
@@ -287,7 +331,10 @@ template_details = {
           },
       'ObjC': {
               'script':       'create_objc_library.py',
+              
               'use_sgsdk':    True,
+              'libsgsdk':     False,
+              
               'copy_dist':    [
                   {
                       'target':       'gcc',
@@ -313,11 +360,19 @@ template_details = {
     'CSharp':   {
             'script':       'create_csharp_library.py',
             'use_sgsdk':    True,
+            'libsgsdk':     True,
             'copy_dist':    [
                 { 
                   'source':         'Mono',
                   'target':         'mono',
                   'os':             [ 'Mac OS X', 'Linux' ],
+                  'lib':            'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
+                  'source':         'MonoDevelop',
+                  'target':         'MonoDevelop',
+                  'os':             [ 'Mac OS X', 'Windows', 'Linux' ],
                   'lib':            'lib',
                   'staticsgsdk':    False,
                 },

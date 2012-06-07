@@ -157,17 +157,20 @@ doMacPackage()
     echo "  ... Creating Application Bundle"
     
     macpack -m winforms -n "${GAME_NAME}" -o "${OUT_DIR}" "${OUT_DIR}/${GAME_NAME}.exe"
-    mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
+    # mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
     
-    echo "  ... Adding Private Frameworks"
-    cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    # echo "  ... Adding Private Frameworks"
+    # cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    # cp -R -p "./lib/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
+    
+    # pushd . >> /dev/null
+    # cd "${GAMEAPP_PATH}/Contents/Resources"
+    # ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
+    # ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
+    # popd >> /dev/null
+    
+    cp ${LIB_DIR}/libSGSDK.dylib ${GAMEAPP_PATH}/Contents/Resources/libSGSDK.dylib
     cp -R -p "./lib/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
-    
-    pushd . >> /dev/null
-    cd "${GAMEAPP_PATH}/Contents/Resources"
-    ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
-    ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
-    popd >> /dev/null
     
     rm -f "${OUT_DIR}/${GAME_NAME}.exe"
     

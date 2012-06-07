@@ -224,13 +224,13 @@ implementation
 	    rect: SDL_Rect;
 	    colorFG: SDL_Color;
 		  SDLrc: SDL_Rect;
-	    bgTransparent: Boolean;
+	    // bgTransparent: Boolean;
   	  texture : PSDL_Texture;
 	  begin
 	    if GetSurface(dest) = nil then begin RaiseWarning('Error Printing Strings: There was no surface to draw onto.'); exit; end;
 
 	    colorFG := ToSDLColor(clrFg);
-	    bgTransparent := TransparencyOf(clrBg) < 255;
+	    // bgTransparent := TransparencyOf(clrBg) < 255;
 
 	    // This is the surface that everything is printed to.
 	    lineSkip  := TTF_FontLineSkip( font^.fptr );
