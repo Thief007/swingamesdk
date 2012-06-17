@@ -42,6 +42,89 @@ _property_class_indexer = ''
 _pointer_wrapper_class_header = ''
 _no_free_pointer_wrapper_class_header = ''
 
+_fixed_properties = {
+        "Triangle" : {
+            "points": """
+internal fixed float _points[6];
+public Point2D[] Points
+{
+    get
+    {
+        Point2D[] result = new Point2D[3];
+        unsafe
+        {
+            fixed (float *p = _points)
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    result[i]._x = p[i * 2];
+                    result[i]._y = p[i * 2 + 1];
+                }
+            }
+        }
+        return result;
+    }
+    set
+    {
+        unsafe
+        {
+            fixed (float *p = _points)
+            {
+                for(int i = 0; i < (3 > value.Length ? value.Length : 3); i++)
+                {
+                    p[i * 2] = value[i]._x;
+                    p[i * 2 + 1] = value[i]._y;
+                }
+            }
+        }        
+    }
+}
+"""
+    },  #end Triangle
+
+        "Matrix2D" : {
+            "elements": """
+internal fixed float _elements[9];
+public float[,] Elements
+{
+    get
+    {
+        float[,] result = new float[3,3];
+        unsafe
+        {
+            fixed (float *e = _elements)
+            {
+                for(int i = 0; i < 9; i++)
+                {
+                    result[i/3,i%3] = e[i];
+                }
+            }
+        }
+        return result;
+    }
+    set
+    {
+        unsafe
+        {
+            fixed (float *e = _elements)
+            {
+                for(int col = 0; col < (3 > value.GetLength(0) ? value.GetLength(0) : 3); col++)
+                {
+                    for(int row = 0; row < (3 > value.GetLength(1) ? value.GetLength(1) : 3); row++)
+                    {
+                        e[col * 3 + row] = value[col,row];
+                    }
+                }
+            }
+        }        
+    }
+}
+"""
+    }
+
+
+}
+
 _type_switcher = {
     None : {    
         #Pascal type: what it maps to
@@ -55,7 +138,7 @@ _type_switcher = {
         'color': 'Color %s',
         
         #Resources
-        'animationscript':    'AnimationScript %s',
+        'animationscript':      'AnimationScript %s',
         'animation':            'Animation %s',
         'character':            'Character %s',
         'soundeffect':          'SoundEffect %s',
@@ -68,9 +151,9 @@ _type_switcher = {
         'region':               'Region %s',
         'guiradiogroup':        'GUIRadioGroup %s',
         'guilist':              'GUIList %s',
-        'guicheckbox':              'GUICheckbox %s',
-        'guitextbox':              'GUITextbox %s',
-        'guilabel':              'GUILabel %s',
+        'guicheckbox':          'GUICheckbox %s',
+        'guitextbox':           'GUITextbox %s',
+        'guilabel':             'GUILabel %s',
         'connection':           'Connection %s',    
         
         
@@ -749,10 +832,16 @@ _struct_type_switcher = {
     'resourcekind': 'internal ResourceKind _%s',
     'longword': 'internal uint _%s',
     'bitmap': 'internal Bitmap _%s',
-    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal float[,] _%s',
     'vector': 'internal Vector _%s',
     'point2d': 'internal Point2D _%s',
-    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal Point2D[] _%s',
+
+    # fixed size array fields
+    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal fixed float _%s[9]',
+    'single[0..2][0..2] property': 'internal float[,] _%s',
+
+    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal fixed Point2D _%s[3]',
+    'point2d[0..2] property': 'internal Point2D[] _%s',
+    
     'linesegment': 'internal LineSegment _%s',
 
     'rectangle': 'internal Rectangle _%s',
@@ -969,10 +1058,14 @@ def type_visitor(the_type, modifier = None):
         logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
     return _type_switcher[modifier][key]
 
-def struct_type_visitor(the_type):
+def struct_type_visitor(the_type, for_property=False):
     '''switch types for the fields of a struct'''
     logger.debug('CREATE Cs : Changing model type %s', the_type)
-    return _struct_type_switcher[the_type.name.lower()]
+    if for_property and the_type.name.lower() + " property" in _struct_type_switcher:
+        # print _struct_type_switcher[the_type.name.lower() + " property"]
+        return _struct_type_switcher[the_type.name.lower() + " property"]
+    else:
+        return _struct_type_switcher[the_type.name.lower()]
 
 
 def param_visitor(the_param, last):
@@ -1051,7 +1144,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
         
         # But dont write constructors in structs
         if the_method.is_constructor and the_method.in_class.is_struct:
-            print the_method
+            # print the_method
             return other
         
         details = the_method.to_keyed_dict(other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
@@ -1082,7 +1175,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                                 the_method.fixed_result_size
                             )
                     elif the_method.length_call != None:
-                        print the_method.name, local_var.data_type.name, ' = ', details['length_call']
+                        # print the_method.name, local_var.data_type.name, ' = ', details['length_call']
                         #FIX THIS...
                         assert local_var.data_type.name in ['LongintArray','Point2DArray','StringArray','LinesArray','BitmapArray','FingerArray']
                         
@@ -1251,10 +1344,12 @@ def property_visitor(the_property, other):
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
     
     if is_wrapped:
+        # print the_property
         _write_wrapped_property(the_property, other)
         writer.write('private %s\n{\n' % type_name % the_property.name)
     else:    
         # Write standard property
+        # print the_property
         writer.write('public %s%s\n{\n' % ('static ' if the_property.is_static else '', type_name) % the_property.name)
     
     writer.indent(2)
@@ -1391,18 +1486,22 @@ def write_struct(member, other):
     
     writer.write('/// <summary>\n/// %s\n/// </summary>\n' % doc_transform(member.doc))
     writer.write('[ StructLayout( LayoutKind.Sequential, CharSet=CharSet.Ansi )]\n')
-    writer.write('public struct %s\n{\n' % member.name)
+    writer.write('public%s struct %s\n{\n' % ((' unsafe' if member.name in _fixed_properties else ''), member.name))
     
     writer.indent(2)
     
     for field in member.field_list:
-        writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
+        # print member.name, field.name
+        if (member.name in _fixed_properties) and (field.name in _fixed_properties[member.name]):
+            prop_decl = _fixed_properties[member.name][field.name]
+            writer.writeln(prop_decl)
+        else:
+            writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
+            #hack
+            prop_decl = (struct_type_visitor(field.data_type, True).replace("_","").replace("internal", "public") % field.pascalName)\
+                .split('\n')[-1]
         
-        #hack
-        prop_decl = (struct_type_visitor(field.data_type).replace("_","").replace("internal", "public") % field.pascalName)\
-            .split('\n')[-1]
-        
-        writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
+            writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
     
     if member.wraps_array:
         # add accessor methods
