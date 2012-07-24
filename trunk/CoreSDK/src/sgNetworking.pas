@@ -533,7 +533,7 @@ var
 
   function RetreiveConnection(aConnectionAt : LongInt) : Connection;
   begin
-    result := RetreiveConnection(aConnectionAt);
+    result := NetworkingDriver.RetreiveConnection(aConnectionAt);
   end;
   
 //----------------------------------------------------------------------------
