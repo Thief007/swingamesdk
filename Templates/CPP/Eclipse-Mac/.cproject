@@ -23,7 +23,7 @@
 							<builder buildPath="${workspace_loc:/gpp/Debug}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.468541326" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.1584964468" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
 							<tool commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.120510510" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
-								<option id="macosx.cpp.link.option.flags.1717646604" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-arch i386 -F&quot;${workspace_loc:/${ProjName}/lib/godly/mac}&quot; -framework SGSDK -Wl,-rpath,@loader_path/../Frameworks -Wl,-rpath,@loader_path -Wl,-rpath,@loader_path/../lib/mac" valueType="string"/>
+								<option id="macosx.cpp.link.option.flags.1717646604" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-arch i386 -F&quot;${workspace_loc:/${ProjName}/lib/sdl13/mac}&quot; -framework SGSDK -Wl,-rpath,@loader_path/../Frameworks -Wl,-rpath,@loader_path -Wl,-rpath,@loader_path/../lib/mac" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.3737198" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

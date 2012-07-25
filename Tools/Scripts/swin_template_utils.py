@@ -4,7 +4,7 @@ import platform
 import subprocess
 import swin_shutil
 
-sg_version         ="3.0"
+sg_version         ="3.01"
 
 script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
 swingame_path      = os.path.realpath(script_path + '../..') + '/'

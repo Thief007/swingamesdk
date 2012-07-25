@@ -212,7 +212,7 @@ doCompileGameMain()
 doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR} | grep [.]cpp$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         out_file="${TMP_DIR}/${name}.o"
@@ -239,7 +239,7 @@ doMacCompile()
     mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${LIBSRC_DIR} | grep [.]c$` ; do
+    for file in `find ${LIBSRC_DIR} | grep [.]cpp$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         out_file="${TMP_DIR}/${1}/${name}.o"
@@ -321,7 +321,7 @@ doMacPackage()
 doLinuxCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
+    for file in `find ${LIBSRC_DIR} | grep [.]cpp$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
@@ -344,7 +344,7 @@ doLinuxPackage()
 doWindowsCompile()
 {
     mkdir -p "${TMP_DIR}"
-    for file in `find ${LIBSRC_DIR} | grep [.]c$`; do
+    for file in `find ${LIBSRC_DIR} | grep [.]cpp$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.cpp} # %% = delete longest match from back, i.e. extract .cpp
         doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""

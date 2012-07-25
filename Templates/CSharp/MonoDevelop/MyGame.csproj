@@ -136,7 +136,7 @@
     <None Include="Resources\SwinGame.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <MacLibraryFiles Include="lib\godly\libSGSDK.dylib" />
+    <MacLibraryFiles Include="lib\sdl13\libSGSDK.dylib" />
     <WinLibraryFiles Include="lib\win\jpeg.dll" />
     <WinLibraryFiles Include="lib\win\libfreetype-6.dll" />
     <WinLibraryFiles Include="lib\win\libogg-0.dll" />

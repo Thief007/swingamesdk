@@ -347,7 +347,7 @@ doMacCompile()
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lstdc++" -k"-install_name '${INSTALL_NAME}'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lbz2" -k"-lstdc++" -k"-install_name '${INSTALL_NAME}'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
@@ -386,7 +386,7 @@ doIOSCompile()
 }
 
 # 
-# Create fat dylib containing ppc and i386 code
+# Create fat dylib containing x64 and i386 code
 # 
 doLipo()
 {
@@ -470,8 +470,7 @@ then
         mkdir -p "${OUT_DIR}"
     fi
     
-    if [ "$OS" = "$MAC" ]
-    then
+    if [ "$OS" = "$MAC" ]; then
         DisplayHeader
         
         if [ ${IOS} = true ]; then
@@ -481,77 +480,75 @@ then
           exit
         fi
         
-        
-        HAS_PPC=false
         HAS_i386=false
-        HAS_LEOPARD_SDK=false
+        HAS_x64=false
+        
+        HAS_SNOW_LEOPARD_SDK=false
+        SDK_FLAGS=""
         HAS_LION=false
         OS_VER=`sw_vers -productVersion | awk -F . '{print $1"."$2}'`
         XCODE_PREFIX=''
         
         if [ -d /Applications/Xcode.app/Contents ]; then
-          XCODE_PREFIX='/Applications/Xcode.app/Contents'
-        fi
-        
-        if [ -f /usr/libexec/as/ppc/as ]; then
-            HAS_PPC=true
+          if [ -d /Applications/Xcode.app/Contents/Developer/Platforms ]; then
+            XCODE_PREFIX='/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform'
+          else
+            XCODE_PREFIX='/Applications/Xcode.app/Contents'
+          fi
         fi
         
         if [ -f /usr/libexec/as/i386/as ]; then
             HAS_i386=true
         fi
         
-        if [ -d ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk ]; then
-            HAS_LEOPARD_SDK=true
+        if [ -f /usr/libexec/as/x86_64/as ]; then
+            HAS_x64=true
         fi
         
-        if [ $OS_VER = '10.5' ]; then
-            HAS_LEOPARD_SDK=true
+        if [ -d ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.6.sdk ]; then
+            HAS_SNOW_LEOPARD_SDK=true
+            SDK_FLAGS="-syslibroot ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.6.sdk -macosx_version_min 10.6"
+        fi
+        
+        if [ $OS_VER = '10.6' ]; then
+            HAS_SNOW_LEOPARD_SDK=true
         fi
         
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
+            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
+            if [ ! -d ${SDK_PATH} ]; then
+                echo "Unable to locate MacOS SDK."
+                exit -1
+            fi
+            SDK_FLAGS="-syslibroot ${SDK_PATH} -macosx_version_min 10.7"
         fi
         
         echo "  ... Compiling Library"
         
-        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK ]]; then
-            echo "  ... Building Universal Binary"
+        if [[ $HAS_i386 = true && $HAS_x64 = true ]]; then
+            echo "  ... Building Universal Binary (DISABLED ATM i386 only)"
             
-            #Compile i386 version of library
-            FPC_BIN=`which ppc386`
-            doMacCompile "i386" "-syslibroot ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
+            # #Compile i386 version of library
+            # FPC_BIN=`which ppc386`
+            # doMacCompile "i386" "$SDK_FLAGS"
             
             #Compile ppc version of library
-            FPC_BIN=`which ppcppc`
-            doMacCompile "ppc" "-syslibroot ${XCODE_PREFIX}/Developer/SDKs/MacOSX10.5.sdk -macosx_version_min 10.5"
-            #"-ldylib1.10.5.o"
-            
-            #FPC_BIN=`which ppcx64`
-            #doMacCompile "x86_64"
+            # FPC_BIN=`which ppcx64`
+            # doMacCompile "x86_64" "$SDK_FLAGS"
             
             #Combine into a fat dylib
-            doLipo "i386" "ppc"
-        else
-            OPTS=""
-            if [ $HAS_LION = true ]; then
-                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
-                SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
-                if [ ! -d ${SDK_PATH} ]; then
-                    SDK_PATH="${XCODE_PREFIX}/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk"
-                    
-                    if [ ! -d ${SDK_PATH} ]; then
-                        echo "Unable to locate MacOS SDK."
-                        exit -1
-                    fi
-                fi
-                
-                OPTS="-syslibroot ${SDK_PATH} -macosx_version_min 10.7"
-            fi
+            # doLipo "i386" "x86_64"
             
+            FPC_BIN=`which ppc386`
+            doMacCompile "i386" "$SDK_FLAGS"
+            
+            mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
+        else
             #Compile i386 version of library
             FPC_BIN=`which ppc386`
-            doMacCompile "i386" "${OPTS}"
+            doMacCompile "i386" "$SDK_FLAGS"
             
             mv ${OUT_DIR}/libSGSDKi386.dylib ${OUT_DIR}/libSGSDK.dylib
         fi
@@ -597,6 +594,7 @@ then
         else #not framework = dylib
             mv ${OUT_DIR}/libSGSDK.dylib ${OUT_DIR}/libSGSDK${NAME_SUFFIX}.dylib 
         fi # framework
+    
     elif [ "$OS" = "$WIN" ] 
     then
         DisplayHeader
