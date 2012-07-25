@@ -14,12 +14,6 @@
 
 @end
 
-@interface SGTriangle (SGTriangleUtils)
-
-+ (NSArray *) arrayOfTriangles:(triangle *)firstPtr size:(int)sz;
-
-@end
-
 @interface SGObjcUtils : NSObject
 
 + (NSArray *) arrayOfIntegers:(int *)firstPtr size:(int)sz;

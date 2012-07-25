@@ -37,25 +37,6 @@
 
 @end
 
-@implementation SGTriangle (SGTriangleUtils)
-
-+ (NSArray *) arrayOfTriangles:(triangle *)firstPtr size:(int)sz
-{
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
-    int i;
-    SGTriangle *obj;
-    
-    for (i = 0; i < sz; i++)
-    {
-        obj = [SGTriangle triangleForData:*(firstPtr + i)]; //obj has 0 retain - not init or new...
-        [result addObject: obj];
-    }
-    
-    return [result autorelease];
-}
-
-@end
-
 @implementation SGObjcUtils : NSObject
 
 + (NSArray *) arrayOfIntegers:(int *)firstPtr size:(int)sz

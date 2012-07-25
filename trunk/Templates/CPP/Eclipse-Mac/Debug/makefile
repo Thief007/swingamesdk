@@ -45,7 +45,7 @@ all: Eclipse-Mac
 Eclipse-Mac: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MacOS X C++ Linker'
-	g++ -arch i386 -F"/Users/acain/Desktop/eclipse data/Eclipse-Mac/lib/godly/mac" -framework SGSDK -Wl,-rpath,@loader_path/../Frameworks -Wl,-rpath,@loader_path -Wl,-rpath,@loader_path/../lib/mac -o "Eclipse-Mac" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -arch i386 -F"/Users/acain/Desktop/eclipse data/Eclipse-Mac/lib/sdl13/mac" -framework SGSDK -Wl,-rpath,@loader_path/../Frameworks -Wl,-rpath,@loader_path -Wl,-rpath,@loader_path/../lib/mac -o "Eclipse-Mac" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

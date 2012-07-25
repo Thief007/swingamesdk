@@ -54,7 +54,8 @@ CLEAN="N"
 # Library versions
 #
 OPENGL=false
-SDL_13=false
+SDL_13=true
+SDL_12=false
 
 Usage()
 {
@@ -73,16 +74,26 @@ Usage()
 
 RELEASE=""
 
-while getopts chri:g:b: o
+while getopts chri:g:b:s: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    s)  if [ "${OPTARG}" = "dl12" ]; then
+            SDL_12=true
+            SDL_13=false
+            OPENGL=false
+        fi 
+        ;;
     b)  if [ "${OPTARG}" = "adass" ]; then
-            SDL_13=true
+            SDL_12=true
+            SDL_13=false
+            OPENGL=false
         fi 
         ;;
     h)  Usage ;;
     g)  if [ "${OPTARG}" = "odly" ]; then
+            SDL_12=false
+            SDL_13=false
             OPENGL=true
         fi 
         ;;
@@ -101,10 +112,10 @@ fi
 if [ "$OS" = "$MAC" ]; then
     if [ ${SDL_13} = true ]; then
       TMP_DIR="${TMP_DIR}/badass"
-      LIB_DIR="${APP_PATH}/lib/sdl13/mac"
+      LIB_DIR="${APP_PATH}/lib/sdl13"
     elif [ ${OPENGL} = true ]; then
         TMP_DIR="${TMP_DIR}/godly"
-      LIB_DIR="${APP_PATH}/lib/godly/mac"
+      LIB_DIR="${APP_PATH}/lib/godly"
     else
       TMP_DIR="${TMP_DIR}/sdl12"
       LIB_DIR="${APP_PATH}/lib/mac"

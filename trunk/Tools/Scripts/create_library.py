@@ -11,6 +11,31 @@ from swin_template_utils import *
 # = Create SGSDK libraries =
 # ==========================
 
+def rewrite_file(file, pattern, replace_with):
+    f = open(file)
+    lines = f.readlines()
+    f.close()
+    
+    new_file = open(file,'w')
+    for line in lines:
+        new_file.write(line.replace( pattern, replace_with))
+    new_file.close
+    
+#
+# Version data in sgShared.pas and build.sh need to be corrected
+#
+def rewrite_versions():
+    dist_source_folder = dist_folder + "Source/"
+    
+    sgShared = dist_source_folder + "src/sgShared.pas"
+    rewrite_file(sgShared, "DLL_VERSION = 'TEST BUILD';", "DLL_VERSION = '%s';" % sg_version)
+    
+    build = dist_source_folder + "build.sh"
+    
+    rewrite_file(build, "VERSION_NO=3.0", "VERSION_NO=%s" % sg_version)
+    rewrite_file(build, "VERSION=3.0", "VERSION_NO=%s" % sg_version)
+    
+
 # for compiling SGSDK
 def copy_coresdk_to_dist_source():
     generated_source_folder =   generated_folder + "Source/src/"
@@ -51,6 +76,9 @@ def create_sgsdk_library():
     
     output_line('Copying code to dist source directory')
     copy_coresdk_to_dist_source()
+    
+    output_line('Setting version to %s' % sg_version )
+    rewrite_versions()
     
     output_header(['Compiling SGSDK framework/dll'])
     option_list = _sgsdk_creation_script_options[get_os_name()]

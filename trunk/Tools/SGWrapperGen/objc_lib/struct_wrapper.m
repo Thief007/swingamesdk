@@ -6,10 +6,6 @@
 #import "SGSDK.h"
 #import "SwinGame.h"
 
-@interface SG%(name)s ( Private )
-- (id) init;
-@end
-
 @implementation SGWrapped%(name)s : SG%(name)s
 
 + (SGWrapped%(name)s *) %(camel_name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
@@ -64,16 +60,6 @@
 }
 
 %(wrapped_property_bodies)s
-
-@end
-
-
-@implementation SG%(name)s ( Private )
-
-- (id) init
-{
-    return [super init];
-}
 
 @end
 

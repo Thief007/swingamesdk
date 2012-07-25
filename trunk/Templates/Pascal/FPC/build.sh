@@ -194,7 +194,7 @@ doBasicMacCompile()
     
     STATIC_LIBS=`cd ${LIB_DIR};ls -f *.a | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-l%s ", substr(patharr[idx],4)) }'`
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -k"-lstdc++" -k"${STATIC_LIBS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" -k"-rpath @loader_path" "${SRC_DIR}/${GAME_MAIN}" > "${LOG_FILE}"
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -k"-lbz2" -k"-lstdc++" -k"${STATIC_LIBS}" -o"${GAME_NAME}" -k"-rpath @loader_path/../Frameworks" -k"-rpath @loader_path" "${SRC_DIR}/${GAME_MAIN}" > "${LOG_FILE}"
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 

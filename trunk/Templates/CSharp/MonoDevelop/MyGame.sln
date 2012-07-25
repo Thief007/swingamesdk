@@ -7,12 +7,15 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug-Mac|x86 = Debug-Mac|x86
 		Debug-Windows|x86 = Debug-Windows|x86
+		Debug-Unix|x86 = Debug-Unix|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Mac|x86.ActiveCfg = Debug-Mac|x86
 		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Mac|x86.Build.0 = Debug-Mac|x86
 		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Windows|x86.ActiveCfg = Debug-Windows|x86
 		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Windows|x86.Build.0 = Debug-Windows|x86
+		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Unix|x86.ActiveCfg = Debug-Unix|x86
+		{871B5A90-103A-46A5-BBB9-07C02B9851D1}.Debug-Unix|x86.Build.0 = Debug-Unix|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MyGame.csproj

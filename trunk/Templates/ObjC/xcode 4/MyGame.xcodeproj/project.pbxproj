@@ -8,13 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		941D191F14F4BD82005D6036 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191714F4BD82005D6036 /* libpng.framework */; };
-		941D192014F4BD82005D6036 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191814F4BD82005D6036 /* SDL.framework */; };
-		941D192114F4BD82005D6036 /* SDL_gfx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191914F4BD82005D6036 /* SDL_gfx.framework */; };
-		941D192214F4BD82005D6036 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191A14F4BD82005D6036 /* SDL_image.framework */; };
-		941D192314F4BD82005D6036 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191B14F4BD82005D6036 /* SDL_mixer.framework */; };
-		941D192414F4BD82005D6036 /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191C14F4BD82005D6036 /* SDL_net.framework */; };
-		941D192514F4BD82005D6036 /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191D14F4BD82005D6036 /* SDL_ttf.framework */; };
 		941D192614F4BD82005D6036 /* SGSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191E14F4BD82005D6036 /* SGSDK.framework */; };
 		941D1A0A14F4BE26005D6036 /* Animations.c in Sources */ = {isa = PBXBuildFile; fileRef = 941D198314F4BE25005D6036 /* Animations.c */; };
 		941D1A0B14F4BE26005D6036 /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 941D198514F4BE25005D6036 /* Audio.c */; };
@@ -82,13 +75,6 @@
 		941D1A4914F4BE26005D6036 /* Timers.c in Sources */ = {isa = PBXBuildFile; fileRef = 941D1A0314F4BE26005D6036 /* Timers.c */; };
 		941D1A4A14F4BE26005D6036 /* UserInterface.c in Sources */ = {isa = PBXBuildFile; fileRef = 941D1A0614F4BE26005D6036 /* UserInterface.c */; };
 		941D1A4B14F4BE26005D6036 /* Utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 941D1A0814F4BE26005D6036 /* Utils.c */; };
-		941D1A5114F4BE48005D6036 /* libpng.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191714F4BD82005D6036 /* libpng.framework */; };
-		941D1A5214F4BE48005D6036 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191814F4BD82005D6036 /* SDL.framework */; };
-		941D1A5314F4BE48005D6036 /* SDL_gfx.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191914F4BD82005D6036 /* SDL_gfx.framework */; };
-		941D1A5414F4BE48005D6036 /* SDL_image.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191A14F4BD82005D6036 /* SDL_image.framework */; };
-		941D1A5514F4BE48005D6036 /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191B14F4BD82005D6036 /* SDL_mixer.framework */; };
-		941D1A5614F4BE48005D6036 /* SDL_net.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191C14F4BD82005D6036 /* SDL_net.framework */; };
-		941D1A5714F4BE48005D6036 /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191D14F4BD82005D6036 /* SDL_ttf.framework */; };
 		941D1A5814F4BE48005D6036 /* SGSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 941D191E14F4BD82005D6036 /* SGSDK.framework */; };
 		9424DA6F101EC34F00E5B4BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		94F1F568101EC46F006F3D32 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 94F1F567101EC46F006F3D32 /* main.m */; };
@@ -101,13 +87,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				941D1A5114F4BE48005D6036 /* libpng.framework in Copy Frameworks */,
-				941D1A5214F4BE48005D6036 /* SDL.framework in Copy Frameworks */,
-				941D1A5314F4BE48005D6036 /* SDL_gfx.framework in Copy Frameworks */,
-				941D1A5414F4BE48005D6036 /* SDL_image.framework in Copy Frameworks */,
-				941D1A5514F4BE48005D6036 /* SDL_mixer.framework in Copy Frameworks */,
-				941D1A5614F4BE48005D6036 /* SDL_net.framework in Copy Frameworks */,
-				941D1A5714F4BE48005D6036 /* SDL_ttf.framework in Copy Frameworks */,
 				941D1A5814F4BE48005D6036 /* SGSDK.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -119,13 +98,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		941D191714F4BD82005D6036 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libpng.framework; sourceTree = "<group>"; };
-		941D191814F4BD82005D6036 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
-		941D191914F4BD82005D6036 /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_gfx.framework; sourceTree = "<group>"; };
-		941D191A14F4BD82005D6036 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
-		941D191B14F4BD82005D6036 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_mixer.framework; sourceTree = "<group>"; };
-		941D191C14F4BD82005D6036 /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_net.framework; sourceTree = "<group>"; };
-		941D191D14F4BD82005D6036 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_ttf.framework; sourceTree = "<group>"; };
 		941D191E14F4BD82005D6036 /* SGSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SGSDK.framework; sourceTree = "<group>"; };
 		941D198314F4BE25005D6036 /* Animations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Animations.c; path = lib/Animations.c; sourceTree = "<group>"; };
 		941D198414F4BE25005D6036 /* Animations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Animations.h; path = lib/Animations.h; sourceTree = "<group>"; };
@@ -293,13 +265,6 @@
 			files = (
 				9424DA6F101EC34F00E5B4BA /* Foundation.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				941D191F14F4BD82005D6036 /* libpng.framework in Frameworks */,
-				941D192014F4BD82005D6036 /* SDL.framework in Frameworks */,
-				941D192114F4BD82005D6036 /* SDL_gfx.framework in Frameworks */,
-				941D192214F4BD82005D6036 /* SDL_image.framework in Frameworks */,
-				941D192314F4BD82005D6036 /* SDL_mixer.framework in Frameworks */,
-				941D192414F4BD82005D6036 /* SDL_net.framework in Frameworks */,
-				941D192514F4BD82005D6036 /* SDL_ttf.framework in Frameworks */,
 				941D192614F4BD82005D6036 /* SGSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -500,13 +465,6 @@
 		941D191614F4BD82005D6036 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				941D191714F4BD82005D6036 /* libpng.framework */,
-				941D191814F4BD82005D6036 /* SDL.framework */,
-				941D191914F4BD82005D6036 /* SDL_gfx.framework */,
-				941D191A14F4BD82005D6036 /* SDL_image.framework */,
-				941D191B14F4BD82005D6036 /* SDL_mixer.framework */,
-				941D191C14F4BD82005D6036 /* SDL_net.framework */,
-				941D191D14F4BD82005D6036 /* SDL_ttf.framework */,
 				941D191E14F4BD82005D6036 /* SGSDK.framework */,
 			);
 			name = mac;
