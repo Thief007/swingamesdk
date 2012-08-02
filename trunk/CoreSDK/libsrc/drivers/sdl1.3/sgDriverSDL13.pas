@@ -48,7 +48,7 @@ implementation
     //321 is Highest Value 321
     _KeyCode     : array[0..321] of LongInt;
 	
-	function GetSurface(bmp : Bitmap) : PSDL_Surface;
+  function GetSurface(bmp : Bitmap) : PSDL_Surface;
   begin
     if not Assigned(bmp) or not Assigned(bmp^.surface) then
       result := nil

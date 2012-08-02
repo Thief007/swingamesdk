@@ -21,7 +21,7 @@ interface
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
 	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, 
-       sgTrace, sgSDLUtils; // sdl;
+       sgTrace, sgSDLUtils, sgSDL13Utils; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
@@ -98,6 +98,8 @@ implementation
   begin
     result := nil; //start at nil to exit cleanly on error
     
+    if not CheckAssigned('SDL1.3 ImagesDriver - Error, window not open', _screen) then exit;
+
     //Load the image
     loadedImage := IMG_Load(PChar(filename));
 
@@ -192,12 +194,14 @@ implementation
 	  pSRect : ^SDL_Rect = nil;
 	  clearTexture : Boolean = False;
 	  srcW : LongInt;
+    // source, dest: PSDL13Surface;
 	begin
     if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Source Bitmap', srcBmp) then exit;
     if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Source Bitmap Surface', srcBmp^.surface) then exit;
-    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp) then exit;
+    if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved unassigned Destination Bitmap', destBmp) then 
+      exit;
     if not CheckAssigned('SDL1.3 ImagesDriver - BlitSurfaceProcedure recieved empty Destination Bitmap Surface', destBmp^.surface) then exit;
-  
+
     srcW := srcBmp^.width;
     if Assigned(GetSurface(srcBmp)) and Assigned(srcRect) then
     begin
@@ -224,21 +228,32 @@ implementation
   	  pDRect := @dRect;
 	  end;
 	  
-	  if not Assigned(PSDL13Surface(srcbmp^.surface)^.texture) then
-	  begin
-	    PSDL13Surface(srcbmp^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, PSDL13Surface(srcbmp^.surface)^.surface);
-	    clearTexture := True;
-	  end;
-	  
-	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, PSDL13Surface(srcbmp^.surface)^.texture, pSRect, pDRect);
-	  
-	  if clearTexture then
-	  begin
-	    SDL_DestroyTexture(PSDL13Surface(srcbmp^.surface)^.texture);
-	    PSDL13Surface(srcbmp^.surface)^.texture:= nil;
-	  end;
-	  
-	  
+    if destBmp = screen then
+    begin
+  	  if not Assigned(PSDL13Surface(srcbmp^.surface)^.texture) then
+  	  begin
+  	    PSDL13Surface(srcbmp^.surface)^.texture := SDL_CreateTextureFromSurface(PSDL13Screen(_screen)^.renderer, PSDL13Surface(srcbmp^.surface)^.surface);
+  	    clearTexture := True;
+  	  end;
+  	  
+  	  SDL_RenderCopy(PSDL13Screen(_screen)^.renderer, PSDL13Surface(srcbmp^.surface)^.texture, pSRect, pDRect);
+  	  
+  	  if clearTexture then
+  	  begin
+  	    SDL_DestroyTexture(PSDL13Surface(srcbmp^.surface)^.texture);
+  	    PSDL13Surface(srcbmp^.surface)^.texture:= nil;
+  	  end;
+    end
+    else
+    begin
+      SDL_UpperBlit(PSDL13Surface(srcBmp^.surface)^.surface, pSRect, PSDL13Surface(destBmp^.surface)^.surface, pDRect);
+
+      // Recreate texture
+      if Assigned(PSDL13Surface(destbmp^.surface)^.texture) and Assigned(_screen) then
+      begin
+        RecreateTexture(destbmp);
+      end;
+    end;
 	end;
 	
 	procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 

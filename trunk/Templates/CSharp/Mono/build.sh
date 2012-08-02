@@ -85,8 +85,8 @@ do
         fi 
         ;;
     b)  if [ "${OPTARG}" = "adass" ]; then
-            SDL_12=true
-            SDL_13=false
+            SDL_12=false
+            SDL_13=true
             OPENGL=false
         fi 
         ;;

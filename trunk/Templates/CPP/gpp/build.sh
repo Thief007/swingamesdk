@@ -90,10 +90,12 @@ do
     c)  CLEAN="Y" ;;
     b)  if [ "${OPTARG}" = "adass" ]; then
             SDL_13=true
+            OPENGL=false
         fi 
         ;;
     h)  Usage ;;
     g)  if [ "${OPTARG}" = "odly" ]; then
+            SDL13=false
             OPENGL=true
         fi 
         ;;

@@ -430,10 +430,11 @@ implementation
   end;
 
 
-    procedure RefreshScreenProcedure(screen : Bitmap);
+  procedure RefreshScreenProcedure(screen : Bitmap);
   begin
     SDL_GL_SwapWindow(POpenGLWindow(_screen)^.window);
   end;
+
   procedure InitializeGraphicsWindowProcedure(caption: String; screenWidth, screenHeight: Longint);
   {$IFDEF IOS}
   var
@@ -497,6 +498,7 @@ implementation
     {$ENDIF}
     
     glMatrixMode (GL_MODELVIEW);
+    glLoadIdentity ();
 
     {$IFDEF IOS}
       deviceResolution := AvailableResolutionsProcedure();
@@ -514,19 +516,19 @@ implementation
     glDisable(GL_DEPTH_TEST);
     glDepthFunc( GL_ALWAYS );
     
-    glLineWidth(1.5);
+    glLineWidth(1);
     
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable( GL_ALPHA_TEST);
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+    glEnable( GL_ALPHA_TEST );
     glEnable( GL_TEXTURE_2D );
     glEnable( GL_BLEND );  
     glEnable( GL_LINE_SMOOTH );
     glEnable( GL_POINT_SMOOTH );
-    glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+    glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST );
+    glHint( GL_POINT_SMOOTH_HINT, GL_FASTEST );
     {$ifndef IOS}
     glEnable( GL_POLYGON_SMOOTH );
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+    glHint( GL_POLYGON_SMOOTH_HINT, GL_FASTEST );
     {$endif}
   end;
   
