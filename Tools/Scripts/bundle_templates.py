@@ -140,13 +140,13 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from, use_dylib):
                     os.chdir(specificdist_folder+"lib/sdl13/mac/SGSDK.framework/Versions")
                     # print os.getcwd()
                     os.remove('Current')
-                    os.symlink('./3.0badass', 'Current')
+                    os.symlink('./%sbadass' % sg_version, 'Current')
                     
                     copy_without_svn(dist_source_folder+"bin/mac/SGSDK.framework", specificdist_folder+"lib/godly/mac/SGSDK.framework")
                     os.chdir(specificdist_folder+"lib/godly/mac/SGSDK.framework/Versions")
                     # print os.getcwd()
                     os.remove('Current')
-                    os.symlink('./3.0godly', 'Current')
+                    os.symlink('./%sgodly' % sg_version, 'Current')
                     os.chdir(cur)
     if dist_dict.has_key('post_copy'):
         dist_dict['post_copy'](specificdist_folder, dist_dict)

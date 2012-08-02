@@ -33,7 +33,7 @@ def rewrite_versions():
     build = dist_source_folder + "build.sh"
     
     rewrite_file(build, "VERSION_NO=3.0", "VERSION_NO=%s" % sg_version)
-    rewrite_file(build, "VERSION=3.0", "VERSION_NO=%s" % sg_version)
+    rewrite_file(build, "VERSION=3.0", "VERSION=%s" % sg_version)
     
 
 # for compiling SGSDK

@@ -384,6 +384,9 @@ then
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
         fi
+        if [ $OS_VER = '10.8' ]; then
+            HAS_LION=true
+        fi
         
         if [ $HAS_LION = true ]; then
             PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"

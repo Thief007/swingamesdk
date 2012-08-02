@@ -334,6 +334,7 @@ doMacCompile()
 {
     PrepareTmp
     
+    ARCH="$1"
     LINK_OPTS="$2"
     
     FRAMEWORKS='-framework AudioToolbox -framework AudioUnit -framework CoreAudio -framework IOKit -framework OpenGL -framework QuickTime -framework Carbon -framework ForceFeedback'
@@ -515,6 +516,17 @@ then
         fi
         
         if [ $OS_VER = '10.7' ]; then
+            HAS_LION=true
+            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
+            if [ ! -d ${SDK_PATH} ]; then
+                echo "Unable to locate MacOS SDK."
+                exit -1
+            fi
+            SDK_FLAGS="-syslibroot ${SDK_PATH} -macosx_version_min 10.7"
+        fi
+        
+        if [ $OS_VER = '10.8' ]; then
             HAS_LION=true
             PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
             SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"

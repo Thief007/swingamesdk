@@ -226,7 +226,7 @@ doBasicMacCompile()
     STATIC_LIBS=`cd ${LIB_DIR};ls -f *.a | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-l%s ", substr(patharr[idx],4)) }'`
     
     
-    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"${STATIC_LIBS}" -k"-rpath @loader_path/../Frameworks" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -gl -gw2 -Sew -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"${STATIC_LIBS}" -k"-rpath @loader_path/../Frameworks" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" -k"-lbz2" $2 -o"${OUT_DIR}/${GAME_NAME}" "./test/${SRC_FILE}" > ${LOG_FILE} 2> ${LOG_FILE}
     
     if [ $? != 0 ]; then DoExitCompile; fi
 }
@@ -305,8 +305,8 @@ doMacPackage()
     mkdir "${GAMEAPP_PATH}/Contents/Resources"
     mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
 
-    echo "  ... Added Private Frameworks"
-    cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    # echo "  ... Added Private Frameworks"
+    # cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
     mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
@@ -451,6 +451,10 @@ then
         fi
         
         if [ $OS_VER = '10.7' ]; then
+            HAS_LION=true
+        fi
+
+        if [ $OS_VER = '10.8' ]; then
             HAS_LION=true
         fi
         

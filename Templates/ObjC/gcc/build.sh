@@ -200,7 +200,7 @@ doBasicMacCompile()
 {
     mkdir -p "${TMP_DIR}"
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep '[.]c$\|[.]m$'` ; do
+    for file in `find ${APP_PATH} -mindepth 2 | grep '\([.]c$\)\|\([.]m$\)'` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${name}.o"
@@ -224,7 +224,7 @@ doMacCompile()
     mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${APP_PATH} -mindepth 2 | grep '[.]c$\|[.]m$'` ; do
+    for file in `find ${APP_PATH} -mindepth 2 | grep '\([.]c$\)\|\([.]m$\)'` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         out_file="${TMP_DIR}/${1}/${name}.o"

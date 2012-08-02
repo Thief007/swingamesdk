@@ -224,7 +224,7 @@ implementation
   	  pDRect := @dRect;
 	  end;
 	  
-	  SDL_BlitSurface(srcBmp^.surface, pSRect, destBmp^.surface, pDRect)
+	  SDL_BlitSurface(srcBmp^.surface, pSRect, destBmp^.surface, pDRect);
 	end;
 	
 	procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 
