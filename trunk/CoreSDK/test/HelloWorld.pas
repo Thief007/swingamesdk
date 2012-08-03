@@ -1,7 +1,7 @@
 program HelloWorld;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
-  SwinGame;
+  SwinGame, sgShared;
 
 procedure TestLineDraw();
 var
@@ -74,6 +74,7 @@ begin
     DrawFramerate(0,0);
     
     RefreshScreen();
+    // CyclePool();
   until WindowCloseRequested();
   
   WriteLn('Time: ', TimerTicks(TimerNamed('TestTimer')));

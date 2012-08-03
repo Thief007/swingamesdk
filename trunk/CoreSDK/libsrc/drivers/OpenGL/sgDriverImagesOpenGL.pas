@@ -1,8 +1,8 @@
 unit sgDriverImagesOpenGL;
+
 //=============================================================================
 // sgDriverImagesSDL13.pas
 //=============================================================================
-//
 //
 //
 // 
@@ -16,9 +16,6 @@ unit sgDriverImagesOpenGL;
 //=============================================================================
 interface
   uses {$IFDEF IOS}gles11;{$ELSE}gl, glext;{$ENDIF}
-
-  type
-    PTexture = ^Cardinal;
   
   procedure LoadOpenGLImagesDriver();
     
@@ -45,19 +42,30 @@ implementation
   // Setup a created bitmap, clearing surface and setting alpha blending options
   procedure InitBitmapColorsProcedure(bmp : Bitmap);
   begin   
+    // WriteLn('InitBitmapColorsProcedure');
+    bmp^.surface := nil;
     exit;
   end;
   
   // Returns true if the bitmap's surface exists
   function SurfaceExistsProcedure(bmp : Bitmap) : Boolean;
   begin
-    result := false;
+    result := Assigned(SurfaceOf(bmp));
   end;
   
 
   procedure CreateBitmapProcedure(bmp : Bitmap; width, height : LongInt);
-  begin   
-    exit;
+  var
+    surf: PSDL_Surface;
+  begin
+    // in case things fail...
+    bmp^.surface := nil;
+    if not CheckAssigned('OpenGL ImagesDriver - CreateBitmapProcedure received unassigned Bitmap', bmp) then exit;
+    
+    surf := SDL_CreateRGBSurface(0, width, height, 32, $FF000000, $00FF0000, $0000FF00, $000000FF);
+    
+    // Transfer ownership of surface to the Bitmap
+    bmp^.surface := CreateSurfaceData(surf);
   end;
 
   // Sets the non-transparent pixels in a Bitmap. This is then used for
@@ -105,91 +113,6 @@ implementation
     end;
   end;
 
-  // Gets next largest power of 2 (for texture creation)
-  function PowerOfTwo(dimension : LongInt) : LongInt;
-  begin
-    result := 1;
-    while (result <= dimension) do 
-    begin
-      result *= 2;
-    end;
-  end;
-  
-
-
-  function CreateGLTextureFromSurface(lLoadedImg : PSDL_Surface) : PTexture;
-  // var
-  //   lFormat : GLenum;
-  //   lNoOfColors : GLint;
-  begin
-    result := nil;
-
-    if Assigned(lLoadedImg) then
-    begin
-      
-      // check not 0 w/h    
-      if ( lLoadedImg^.w  <= 0 ) or ( lLoadedImg^.h <= 0 ) then
-      begin
-        RaiseWarning('Loaded bitmap with 0 width and/or height.');
-        exit;
-      end;
-
-      New(result);
-
-
-      // // get the number of channels in the SDL surface
-      // lNoOfColors := lLoadedImg^.format^.BytesPerPixel;
-
-      // if (lNoOfColors = 4) then    // contains an alpha channel
-      // begin
-      //   if (lLoadedImg^.format^.Rmask = $000000FF) then
-      //     lFormat := GL_RGBA
-      //   else
-      //     lFormat := GL_BGRA
-      // end else if (lNoOfColors = 3) then     // no alpha channel
-      // begin
-      //   if (lLoadedImg^.format^.Rmask = $0000FF) then
-      //     lFormat := GL_RGB
-      //   else
-      //     lFormat := GL_BGR;
-      // end;  
-      
-      // { $IFDEF IOS}
-      //   if(lFormat = GL_BGRA) then
-      //   begin    
-      //     lLoadedImg := BGRAToRGBA(lLoadedImg);
-      //     lFormat := GL_RGBA;
-      //   end;
-      // { $ENDIF}  
-    
-      // Have OpenGL generate a texture object handle for us
-      glGenTextures( 1, result );
-     
-      // Bind the texture object
-      glBindTexture( GL_TEXTURE_2D, result^ );
-
-      glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-     
-      // Set the texture's stretching properties
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-     
-     // WriteLn('lFormat ', lFormat, ' BGRA: ', GL_BGRA, ' RGBA: ', GL_RGBA);
-
-      // Edit the texture object's image data using the information SDL_Surface gives us
-      {$IFDEF IOS}
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0,
-                          GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
-      {$ELSE}
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0,
-                          GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
-        glBindTexture( GL_TEXTURE_2D, 0 );
-      {$ENDIF}
-    end;
-  end; 
-
   procedure ReplaceColors(surf : PSDL_Surface; originalColor, newColor : Color; width, height : LongInt);
   var
     x, y : LongInt;
@@ -235,8 +158,8 @@ implementation
       exit;
     end;
 
-    optimizeSizedImage := SDL_CreateRGBSurface(0,PowerOfTwo(loadedImage^.w),
-                                          PowerOfTwo(loadedImage^.h),
+    optimizeSizedImage := SDL_CreateRGBSurface(0, Pow2GEQ(loadedImage^.w),
+                                          Pow2GEQ(loadedImage^.h),
                                           32,
                                           $000000FF, //loadedImage^.format^.Rmask,
                                           $0000FF00, //loadedImage^.format^.Gmask,
@@ -276,23 +199,44 @@ implementation
       //offset.width := result^.width;
       //offset.height := result^.height;
       ReplaceColors(optimizeSizedImage, transparentColor, lColorToSetTo, result^.width, result^.height);
-
-      result^.surface := CreateGLTextureFromSurface(optimizeSizedImage);
-    end else begin    
+    end 
+    else
+    begin    
       SetNonAlphaPixels(result, optimizeSizedImage);
     end;
-
-    // Free the loaded image; if its not the result's surface
-    result^.surface := CreateGLTextureFromSurface(optimizeSizedImage);
-    SDL_FreeSurface(optimizeSizedImage);
-  end; 
     
+    // Transfer ownership of surface to the Bitmap
+    result^.surface := CreateSurfaceData(optimizeSizedImage);
+    // Setup the GL texture
+    CreateGLTexture(result);
+  end; 
+  
+  procedure RemoveTexture(bmp: Bitmap);
+  var
+    tex: Cardinal;
+  begin
+    if not (Assigned(bmp) and Assigned(bmp^.surface)) then exit;
+    tex := TextureOf(bmp);
+    glDeleteTextures(1, @tex);
+    PSGOpenGLSurface(bmp^.surface)^.texture := 0;
+  end;
+  
   procedure FreeSurfaceProcedure(bmp : Bitmap);
   begin
     if bmp = screen then exit;
-    if (Assigned(bmp) and Assigned(bmp^.surface)) then
+    
+    if Assigned(bmp) and Assigned(bmp^.surface) then
     begin
-      Dispose(PTexture(bmp^.surface));
+      RemoveTexture(bmp);
+      
+      // Delete texture and surface
+      SDL_FreeSurface(SurfaceOf(bmp));
+      
+      // nil just in case...
+      PSGOpenGLSurface(bmp^.surface)^.surface := nil;
+      
+      // Dispose surface structure
+      Dispose(PSGOpenGLSurface(bmp^.surface));
       bmp^.surface := nil;
     end;
   end; 
@@ -317,7 +261,7 @@ implementation
     exit;
   end;
 
-  function SameBitmapProcedure(const bitmap1,bitmap2 : Bitmap) : Boolean;
+  function SameBitmapProcedure(const bitmap1, bitmap2 : Bitmap) : Boolean;
   begin
    result := false;
   end;
@@ -337,6 +281,7 @@ implementation
     // textureCoord : Array[0..3] of Point2D;
     // vertices : Array[0..3] of Point2D;
     lRatioX, lRatioY, lRatioW, lRatioH, lTexWidth, lTexHeight : Single;
+    tex: Cardinal;
   begin
     
     if ((srcRect = nil) and (srcBmp^.textureWidthRatio <> 0) and ( srcBmp^.textureHeightRatio <> 0)) then //check for /0 s
@@ -359,7 +304,11 @@ implementation
     //reset color
     glColor4f(1,1,1,1);
     //glLoadIdentity();
-    RenderTexture(Cardinal(srcBmp^.Surface^), lRatioX, lRatioY, lRatioW, lRatioH, destRect);   
+    
+    tex := TextureOf(srcBmp);
+    if tex = 0 then CreateGLTexture(srcBmp);
+    RenderTexture(TextureOf(srcBmp), lRatioX, lRatioY, lRatioW, lRatioH, destRect);   
+    if tex = 0 then RemoveTexture(srcBmp);
   end;
   
   procedure ClearSurfaceProcedure(dest : Bitmap; toColor : Color); 
@@ -377,12 +326,11 @@ implementation
       glClearColor ( r/255,g/255,b/255,a/255 );
       glClear ( GL_COLOR_BUFFER_BIT );
     end;
-
   end;
   
   procedure OptimiseBitmapProcedure(surface : Bitmap); 
   begin   
-    exit;
+    if TextureOf(surface) = 0 then CreateGLTexture(surface);
   end;
   
   procedure SaveBitmapProcedure(src : Bitmap; filepath : String);

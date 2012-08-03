@@ -165,6 +165,18 @@ def build_csharp_lib():
         # path = dirs["cs_generated_code_dir"] + '/*.cs'
         [os.remove(os.path.join(dirs["cs_generated_code_dir"],f)) for f in os.listdir(dirs["cs_generated_code_dir"]) if f.endswith(".cs")]
 
+def bndl_vsproj(specificdist_folder, dist_dict):
+    """Package up the SwinGame C# project = move SGSDK.dll"""
+    
+    output_line('Moving dll in SwinGame C# project')
+    
+    sgsdk = os.path.join(specificdist_folder, 'lib', 'win', 'SGSDK.dll')
+    sgsdk_dest = os.path.join(specificdist_folder, 'lib', 'SGSDK.dll')
+    
+    # print sgsdk, sgsdk_dest
+    
+    run_bash('mv', [sgsdk, sgsdk_dest] )
+
 def pkg_vs_installer(dist_dict, tmp_dir, to_dir):
     """Package up the SwinGame C# installer"""
     
@@ -405,6 +417,14 @@ template_details = {
                   'search_for':     'MyGame', 
                   'replace_with':   "$safeprojectname$.src", 
                   'proj_zip_name':  'SwinGame C# Project.zip',
+                },
+                { 
+                  'target':         'vs10proj',
+                  'source':         'VS10Proj',
+                  'os':             [ 'Windows' ],
+                  'lib':            'lib/win',
+                  'staticsgsdk':    False,
+                  'post_copy':    bndl_vsproj,
                 },
                 { 
                   'lang':           'VB',

@@ -70,7 +70,8 @@ interface
   
   ///Creates a new panel
   ///
-  ///@lib
+  /// @lib
+  /// @sn createPanelNamed:%s
   ///
   /// @class Panel
   /// @constructor
