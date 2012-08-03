@@ -18,44 +18,16 @@ interface
 uses
   sgTypes, sdl13;
   
-  type	  
-    SDL13Surface = record
-      surface : PSDL_Surface;
-      texture : PSDL_Texture;
-      optimised  : Boolean;
-    end;
+  procedure LoadSDL13Driver();
 
-    
-    SDL13Screen = record
-      window : PSDL_Window;
-      renderer : PSDL_Renderer;
-    end;
-
-    PSDL13Screen = ^SDL13Screen;
-    PSDL13Surface = ^SDL13Surface;
-	
-	procedure LoadSDL13Driver();
-	function GetSurface(bmp : Bitmap) : PSDL_Surface;
-
-var
-  _ScreenDirty : Boolean = False;  
-		
 implementation
-	uses sgDriver, sgShared, SysUtils, sgTrace;
+	uses sgDriver, sgShared, SysUtils, sgTrace, sgSDL13Utils;
 	
 	var
 	  _Initialised : Boolean = False;
     //321 is Highest Value 321
     _KeyCode     : array[0..321] of LongInt;
 	
-  function GetSurface(bmp : Bitmap) : PSDL_Surface;
-  begin
-    if not Assigned(bmp) or not Assigned(bmp^.surface) then
-      result := nil
-    else 
-      result := PSDL13Surface(bmp^.surface)^.surface;
-  end;
-  
   procedure InitKeyCodes();
   begin
     _KeyCode[LongInt(vk_Unknown)]    := LongInt(SDLK_UNKNOWN);

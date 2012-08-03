@@ -1,21 +1,107 @@
 unit GLDriverUtils;
 
 interface
-  uses sgTypes, sgShared;
+  uses sgTypes, sgShared, sdl13;
   
-
-
+  type
+    SGOpenGLSurface = record
+      surface : PSDL_Surface;
+      texture : Cardinal;
+    end;
+    
+    PSGOpenGLSurface = ^SGOpenGLSurface;
+  
+  function  SurfaceOf(bmp: Bitmap): PSDL_Surface;
+  function  TextureOf(bmp: Bitmap): Cardinal;
+  
   procedure FloatColors(c: Color; var r, g, b, a: Single);
-
+  
   // Return a power of 2 that is greater than or equal to v.
   function Pow2GEQ(v: Longint) : Longint;
-
+  
   procedure RenderTexture(tex: Cardinal; ratioX, ratioY, ratioW, ratioH : Single; const destRect : RectPtr); 
   procedure SetColor(clr : Color);
+  
+  function  CreateSurfaceData(surf: PSDL_Surface) : Pointer;
+  procedure CreateGLTexture(bmp: Bitmap);
 
 implementation
-  uses {$IFDEF IOS}gles11 {$ELSE}gl{$ENDIF}, sgDriverGraphics;
-
+  uses {$IFDEF IOS}gles11{$ELSE}gl, glext{$ENDIF}, sgDriverGraphics;
+  
+  procedure CreateGLTexture(bmp: Bitmap);
+  var
+    lLoadedImg: PSDL_Surface;
+    tex: Cardinal;
+  begin
+    lLoadedImg := SurfaceOf(bmp);
+    if not Assigned(lLoadedImg) then exit;
+    
+    if ( lLoadedImg^.w  <= 0 ) or ( lLoadedImg^.h <= 0 ) then
+    begin
+      RaiseWarning('Loaded bitmap with 0 width and/or height.');
+      exit;
+    end;
+    
+    tex := TextureOf(bmp);
+    
+    if tex = 0 then
+    begin
+      // Have OpenGL generate a texture object handle for us
+      glGenTextures( 1, @tex );
+      PSGOpenGLSurface(bmp^.surface)^.texture := tex;
+    end;
+    
+    // Bind the texture object
+    glBindTexture( GL_TEXTURE_2D, tex );
+    
+    //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glBlendFunc( GL_ONE, GL_ZERO );
+    
+    // Just copy the data to the surface
+    glDisable( GL_BLEND );
+    
+    // Set the texture's stretching properties
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    // Edit the texture object's image data using the information SDL_Surface gives us
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, lLoadedImg^.w, lLoadedImg^.h, 0, 
+                  GL_RGBA, GL_UNSIGNED_BYTE, lLoadedImg^.pixels );
+    
+    // Switch to the 0 texture
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    glEnable( GL_BLEND );
+  end;
+  
+  function  CreateSurfaceData(surf: PSDL_Surface) : Pointer;
+  var
+    data: PSGOpenGLSurface;
+  begin
+    New(data);
+    
+    data^.surface := surf;
+    data^.texture := 0;
+    
+    result := data;
+  end;
+  
+  function  SurfaceOf(bmp: Bitmap): PSDL_Surface;
+  begin
+    if not (Assigned(bmp) and Assigned(bmp^.surface)) then result := nil
+    else result := PSGOpenGLSurface(bmp^.surface)^.surface;
+  end;
+  
+  function  TextureOf(bmp: Bitmap): Cardinal;
+  begin
+    if (not Assigned(bmp)) or (not Assigned(bmp^.surface)) then result := 0
+    else
+    begin
+      result := PSGOpenGLSurface(bmp^.surface)^.texture;
+    end;
+  end;
+  
   procedure SetColor(clr : Color);
   var
     r,g,b,a : Byte;

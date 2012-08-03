@@ -5,12 +5,37 @@ unit sgSDL13Utils;
 interface
 uses sgTypes, sdl13;
 
+  type	  
+    SDL13Surface = record
+      surface : PSDL_Surface;
+      texture : PSDL_Texture;
+      optimised  : Boolean;
+    end;
+    
+    SDL13Screen = record
+      window : PSDL_Window;
+      renderer : PSDL_Renderer;
+    end;
+    
+    PSDL13Screen = ^SDL13Screen;
+    PSDL13Surface = ^SDL13Surface;
+  
+  function  GetSurface(bmp: Bitmap): PSDL_Surface;
+  
 	procedure RecreateTexture(bmp: Bitmap);
 	procedure RenderTempSurface(bmp: Bitmap; srcRect, destRect: PSDL_Rect);
 
 implementation
 uses sgShared, sgDriverSDL13;
 
+  function GetSurface(bmp : Bitmap) : PSDL_Surface;
+  begin
+    if not Assigned(bmp) or not Assigned(bmp^.surface) then
+      result := nil
+    else 
+      result := PSDL13Surface(bmp^.surface)^.surface;
+  end;
+  
 	procedure RecreateTexture(bmp: Bitmap);
 	var
 		bmpData: PSDL13Surface;

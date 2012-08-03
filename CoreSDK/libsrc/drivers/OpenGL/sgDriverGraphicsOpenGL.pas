@@ -22,54 +22,27 @@ uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl, glext;{$ENDIF}
         window  : PSDL_window;
         context : SDL_GLContext;  
     end;
-  
-
-
-    POPenGLWindow = ^OpenGLWindow;
+    
+    POpenGLWindow = ^OpenGLWindow;
 
 
 
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   procedure LoadOpenGLGraphicsDriver();
-  function ToGfxColorProcedure(val : Color): Color;
-  procedure DrawSurfaceToRenderer();
-  procedure DrawDirtyScreen();
   
 implementation
   uses sgDriverGraphics, sgShared, Math, sgDriverImages, sgGraphics, GLDriverUtils;  
 
   var
     _screenWidth, _screenHeight : LongInt;
-
-  procedure DrawDirtyScreen();
-  begin  
-
-      exit
-
-  end;
-
-  procedure DisposeSurface(surface : Pointer);
-  begin
-    exit;
-  end;
+  
   
   function RGBAColorProcedure(red, green, blue, alpha: byte) : Color; 
   begin
     result := 0;
   end;
 
-  function CreateSurface(width, height : LongInt) : PSDL_Surface;  
-  begin
-    result := nil;
-  end;  
-  
-  // Used to draw Primitive Shapes to a Surface -> Bitmap - > Renderer.
-  procedure DrawSurfaceToRenderer();
-  begin  
-    exit;
-  end;
-  
   function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
   begin
     result := 0;
@@ -88,12 +61,6 @@ implementation
     r := c and $00FF0000 shr 16;
     g := c and $0000FF00 shr 8;
     b := c and $000000FF;
-  end;
-  
-  function ToGfxColorProcedure(val : Color): Color;
-  begin
-    RaiseException('Do not use SDL_gfx');
-    result := 0;
   end;
   
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
@@ -513,7 +480,7 @@ implementation
     {$ENDIF}
     _SetupScreen(screenWidth, screenHeight);
 
-    glDisable(GL_DEPTH_TEST);
+    glDisable( GL_DEPTH_TEST );
     glDepthFunc( GL_ALWAYS );
     
     glLineWidth(1);

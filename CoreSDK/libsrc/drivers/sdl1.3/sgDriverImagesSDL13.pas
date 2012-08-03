@@ -26,6 +26,7 @@ implementation
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);
  	begin	  
  	  if not CheckAssigned('SDL1.3 ImagesDriver - InitBitmapColorsProcedure recieved empty Bitmap', GetSurface(bmp)) then exit;
+    
     // SDL_SetAlpha(GetSurface(bmp), SDL_SRCALPHA, 0);
     SDL_SetSurfaceAlphaMod(GetSurface(bmp), 0);
     SDL_FillRect(GetSurface(bmp), nil, ColorTransparent);

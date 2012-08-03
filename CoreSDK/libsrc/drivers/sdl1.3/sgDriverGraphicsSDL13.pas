@@ -21,20 +21,10 @@ uses sgTypes, SDL13;
 	
 	procedure LoadSDL13GraphicsDriver();
 	function ToGfxColorProcedure(val : Color): Color;
-	procedure DrawSurfaceToRenderer();
-	procedure DrawDirtyScreen();
 	
 implementation
 	uses sgDriverGraphics, sysUtils, sgShared, sgGeometry, 
-		SDL13_gfx, SDL13_Image, sgSavePNG, sgInputBackend, sgDriverSDL13, sgDriverImages, sgUtils, sgSDLUtils;	
-
-  procedure DrawDirtyScreen();
-  begin  
-	  if _ScreenDirty then
-    begin
-      DrawSurfaceToRenderer();
-    end;
-  end;
+		SDL13_gfx, SDL13_Image, sgSavePNG, sgInputBackend, sgDriverSDL13, sgDriverImages, sgUtils, sgSDLUtils, sgSDL13Utils;	
 
   procedure DisposeSurface(surface : Pointer);
   begin
@@ -67,17 +57,16 @@ implementation
   end;  
   
   // Used to draw Primitive Shapes to a Surface -> Bitmap - > Renderer.
-  procedure DrawSurfaceToRenderer();
-  var
-    // surf : PSDL_Surface;
-    offset : Rectangle;
-  begin  
-    _ScreenDirty := False;
-    offset := RectangleFrom(0, 0, screen^.width, screen^.height); 
-    SDL_SetSurfaceAlphaMod(GetSurface(screen), 255);
-    ImagesDriver.BlitSurface(screen, nil, nil, @offset);
-    SDL_FillRect(GetSurface(screen), nil, RGBAColorProcedure(0, 0, 0, 0));   
-  end;
+  // procedure DrawSurfaceToRenderer();
+  // var
+  //   // surf : PSDL_Surface;
+  //   offset : Rectangle;
+  // begin  
+  //   offset := RectangleFrom(0, 0, screen^.width, screen^.height); 
+  //   SDL_SetSurfaceAlphaMod(GetSurface(screen), 255);
+  //   ImagesDriver.BlitSurface(screen, nil, nil, @offset);
+  //   SDL_FillRect(GetSurface(screen), nil, RGBAColorProcedure(0, 0, 0, 0));   
+  // end;
 	
 	function GetPixel32Procedure(bmp: Bitmap; x, y: Longint) :Color;
   begin
@@ -578,10 +567,6 @@ implementation
   procedure RefreshScreenProcedure(screen : Bitmap);
   begin  
     DrawCollectedText(screen);
-    if _ScreenDirty then
-    begin
-      DrawSurfaceToRenderer();
-    end;
     SDL_RenderPresent(PSDL13Screen(_screen)^.renderer);
   end;
   

@@ -958,6 +958,7 @@ begin
   if (not Assigned(result)) or (not ImagesDriver.SurfaceExists(result)) then
   begin
     Dispose(result);
+    result := nil;
     RaiseWarning('Failed to create a bitmap: ' + Driver.GetError());
     exit;
   end;
