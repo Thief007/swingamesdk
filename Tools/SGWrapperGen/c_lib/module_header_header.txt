@@ -9,5 +9,4 @@
 #ifndef %(pascal_name)s
 #define %(pascal_name)s
 
-#include <stdbool.h>
 #include <stdint.h>
