@@ -308,6 +308,14 @@ template_details = {
                   },
                   { 
                     'lang':          'CPP',
+                    'target':        'VisualStudio',
+                    'os':            ['Windows'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
                     'target':        'xcode 4',
                     'os':            ['Mac OS X'],
                     'lib':           'lib',

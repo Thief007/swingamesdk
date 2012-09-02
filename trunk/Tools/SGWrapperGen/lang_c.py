@@ -296,6 +296,14 @@ def _do_create_adapter_code(the_method):
     # Create signature
     method_data.signature = '%(return_type)s %(uname)s(%(params)s);' % details
     
+    # Create vcpp variable 
+    if the_method.is_function:
+        method_data.visual_cpp_variable = '%(return_type)s (*var_%(uname)s)(%(params)s);\n%(return_type)s %(uname)s(%(params)s)\n{\n\treturn var_%(uname)s(%(args)s);\n}' % details
+    else:
+        method_data.visual_cpp_variable = '%(return_type)s (*var_%(uname)s)(%(params)s);\n%(return_type)s %(uname)s(%(params)s)\n{\n\tvar_%(uname)s(%(args)s);\n}' % details
+    
+    method_data.visual_cpp_variable_init = '\t\tvar_%(uname)s = (%(return_type)s (__cdecl *)(%(params)s)) GetProcAddress( LibraryHandle, "%(uname)s" );' % details
+    
     # print method_data.signature
 
 def _do_create_type_code(member):
@@ -377,6 +385,24 @@ def write_c_code(method, other):
     
     return other
 
+def write_cpp_method_var(method, other):
+    writer = other['writer']
+    
+    method_data = method.lang_data['c']
+    
+    writer.writeln(method_data.visual_cpp_variable);
+    
+    return other
+
+def write_cpp_library_code(method, other):
+    writer = other['writer']
+    
+    method_data = method.lang_data['c']
+    
+    writer.writeln(method_data.visual_cpp_variable_init);
+    
+    return other
+
 def write_c_header_for(the_file, out_path):
     writer = FileWriter('%s/%s.h'% (out_path, the_file.name))
     
@@ -395,7 +421,7 @@ def write_c_header_for(the_file, out_path):
                 writer.writeln(c_lib.lib_import_header_txt % {'name': a_file.name})
     writer.writeln('')
     
-    other = { 'writer': writer }
+    other = { 'writer': writer, 'SGSDK': the_file.name == 'SGSDK' }
     
     seen_types = list()
     need_types = dict()
@@ -455,10 +481,48 @@ def write_c_body_for(the_file, out_path):
     
     other = { 'writer': writer }
     
-    # Visit_methods
-    for member in the_file.members:
-        if member.is_module:
-            the_file.members[0].visit_methods(write_c_code, other)
+    print the_file
+    
+    if the_file.name == 'SGSDK':
+        writer.writeln('#ifdef __cplusplus')
+        writer.writeln('#ifdef _MSC_VER')
+        
+        writer.writeln('#define WIN32_LEAN_AND_MEAN')
+        writer.writeln('#include <Windows.h>')
+        writer.writeln('')
+        the_file.members[0].visit_methods(write_cpp_method_var, other)
+        writer.writeln('')
+        writer.writeln('struct DLLLoader')
+        writer.writeln('{')
+        writer.writeln('	DLLLoader()')
+        writer.writeln('	{')
+        writer.writeln('		LibraryHandle = LoadLibrary( "SGSDK.dll" );')
+        writer.writeln('')
+        
+        the_file.members[0].visit_methods(write_cpp_library_code, other)
+        
+        writer.writeln('	}')
+        writer.writeln('')
+        writer.writeln('	~DLLLoader()')
+        writer.writeln('	{')
+        writer.writeln('		if( LibraryHandle != NULL )')
+        writer.writeln('		{')
+        writer.writeln('			FreeLibrary( LibraryHandle );')
+        writer.writeln('		}')
+        writer.writeln('	}')
+        writer.writeln('')
+        writer.writeln('	HMODULE LibraryHandle;')
+        writer.writeln('};')
+        writer.writeln('')
+        writer.writeln('static DLLLoader Loader;')
+        
+        writer.writeln('#endif')
+        writer.writeln('#endif')
+    else:
+        # Visit_methods
+        for member in the_file.members:
+            if member.is_module:
+                member.visit_methods(write_c_code, other)
     
     writer.close()
 
