@@ -331,7 +331,7 @@ doLinuxCompile()
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR} -maxdepth 1 -name \*.o` -lsgsdk
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
@@ -353,7 +353,7 @@ doWindowsCompile()
     
     #Assemble all of the .s files
     echo "  ... Creating game"
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -L${LIB_DIR} -static-libgcc -o "${OUT_DIR}/${GAME_NAME}.exe" `find ${TMP_DIR} -maxdepth 1 -name \*.o` -lsgsdk
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
 }
 
