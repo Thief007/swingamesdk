@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
+  sgTypes, SwinGame;
 
 procedure KeepOnScreen(s: Sprite);
 begin
@@ -185,7 +185,7 @@ var
 begin
   OpenAudio();
   OpenGraphicsWindow('Circle Collisions', 800, 600);
-  
+  LoadDefaultColors();
   LoadBitmapNamed('ball', 'ball_small.png');
   
   SetLength(testLines, 1);

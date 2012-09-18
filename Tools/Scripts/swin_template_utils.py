@@ -292,6 +292,14 @@ template_details = {
                   },
                   { 
                     'lang':          'CPP',
+                    'target':        'CodeBlocks-Win',
+                    'os':            ['Windows'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
                     'target':        'Eclipse-Mac',
                     'os':            ['Mac OS X'],
                     'lib':           'lib',
