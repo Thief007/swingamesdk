@@ -4,6 +4,7 @@ import platform
 import subprocess
 import swin_shutil
 
+# IMPORTANT: When changing version, remember to change it here and in Template/Source/build.sh
 sg_version         ="3.01"
 
 script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -286,6 +287,22 @@ template_details = {
                     'lang':          'CPP',
                     'target':        'gpp',
                     'os':            ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'CodeBlocks-Linux',
+                    'os':            ['Linux'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      rename_c_to_cpp
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'CodeBlocks-Mac',
+                    'os':            ['Mac OS X'],
                     'lib':           'lib',
                     'staticsgsdk':    False,
                     'post_copy':      rename_c_to_cpp
