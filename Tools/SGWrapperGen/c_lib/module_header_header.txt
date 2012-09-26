@@ -10,3 +10,7 @@
 #define %(pascal_name)s
 
 #include <stdint.h>
+
+#ifndef __cplusplus
+  #include <stdbool.h>
+#endif
