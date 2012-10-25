@@ -27,7 +27,17 @@ type
     FT_ULong    = dword;
     FT_F2Dot14  = smallint;
     FT_F26Dot6  = longint;
-    FT_Fixed    = longint;
+    
+    {$IFDEF CPU64}
+      FT_Fixed  = int64;
+      FT_Long   = int64;
+      FT_Pos     = Int64;
+    {$ELSE}
+      FT_Fixed  = longint;
+      FT_Long   = longint;
+      FT_Pos     = longint;
+    {$ENDIF}
+    
     FT_Error    = longint;
     FT_Pointer  = pointer;
     FT_Offset   = size_t;
@@ -79,7 +89,10 @@ type
 
 
 	// FT_Int32	= LongInt;
-    FT_Long 	= LongInt;
+    
+    
+    
+    
  //    FT_Error 	= LongInt;
  //    FT_UInt 	= LongWord;
  //    FT_F26Dot6 	= LongWord;
@@ -87,7 +100,6 @@ type
  //    FT_Pointer	= Pointer;
  //    FT_Bool		= Byte;
 	// FT_Int 		= LongInt; //check
-	FT_Pos 		= LongInt; //signed long
 	// PByte 		= ^Byte;
 	// FT_UShort 	= Word;
 	// FT_Short 	= SmallInt;
