@@ -57,6 +57,7 @@ if [ "$OS" = "$MAC" ]; then
     WAIT_PID=$!
     osascript <<EOF
     tell application "System Events"
+        delay 0.25
     	tell process "${GAME_NAME}"
     		set frontmost to true
     	end tell
