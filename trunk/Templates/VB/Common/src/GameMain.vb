@@ -5,6 +5,7 @@ Public Module GameMain
         
         'Open the game window
         Graphics.OpenGraphicsWindow("GameMain", 800, 600)
+        Graphics.ShowSwinGameSplashScreen()
         
         'Run the game loop
         Do While Not Input.WindowCloseRequested()

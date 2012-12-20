@@ -38,6 +38,8 @@ begin
   
   OpenGraphicsWindow('Hello World', 640, 480);
   LoadDefaultColors();
+  ShowSwinGameSplashScreen();
+  
   TestLineDraw();
   
   img := CreateBitmap(800, 600);

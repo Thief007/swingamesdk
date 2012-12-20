@@ -11,6 +11,7 @@ int main()
                              width:800
                             height:600];
     [SGColors loadDefaultColors];
+    [SGGraphics showSwinGameSplashScreen];
     
     while (![SGInput windowCloseRequested])
     {
