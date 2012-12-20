@@ -296,12 +296,24 @@ implementation
     {$ENDIF}
     
     if UseExceptions then raise Exception.Create(message)
-    else WriteLn(stderr, message);
+    else 
+    begin
+      // Wrap in error handler as exception will be raised on 
+      // Windows when program is an app and stderr is "full"
+      try
+        WriteLn(stderr, message);
+      except
+      end;
+    end; 
   end;
 
   procedure RaiseWarning(message: String);
   begin
-    WriteLn(stderr, message);
+    // Watch for exceptions with this on Windows
+    try
+      WriteLn(stderr, message);
+    except
+    end;
     
     {$IFDEF Trace}
       TraceIf(tlWarning, '', 'WARN', '** Warning Raised **', message);

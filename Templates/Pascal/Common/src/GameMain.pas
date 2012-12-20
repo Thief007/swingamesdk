@@ -7,6 +7,7 @@ begin
   
   OpenGraphicsWindow('Hello World', 800, 600);
   LoadDefaultColors();
+  ShowSwinGameSplashScreen();
   
   repeat // The game loop...
     ProcessEvents();

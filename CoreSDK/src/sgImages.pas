@@ -1181,6 +1181,9 @@ function BitmapNamed(name: String): Bitmap;
 var
   tmp : TObject;
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapNamed', 'name = ' + name);
+  {$ENDIF}
   tmp := _Images.values[name];
   if assigned(tmp) then
     result := Bitmap(tResourceContainer(tmp).Resource)
@@ -1189,6 +1192,9 @@ begin
     RaiseWarning('Unable to find bitmap named: ' + name);
     result := nil;
   end;
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapNamed = ' + HexStr(result));
+  {$ENDIF}
 end;
 
 procedure ReleaseBitmap(name: String);
@@ -1362,12 +1368,18 @@ var
   offset: Rectangle;
 begin
   if (not assigned(dest)) or (not assigned(src)) then exit;
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'DrawBitmap', 'src = ' + HexStr(src));
+  {$ENDIF}
   
   //TODO: Check if this is right
   // Offset was previously 0 width 0 height which caused a bitmap from a simple draw 
   // bitmap method to not draw (because of the dimensions)
   offset := RectangleFrom(x, y, src^.width, src^.height);
   ImagesDriver.BlitSurface(src, dest, nil, @offset);
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'DrawBitmap');
+  {$ENDIF}
 end;
 
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
@@ -1376,7 +1388,6 @@ var
 begin
   if (not assigned(dest)) or (not assigned(src)) then begin {RaiseException('No bitmap supplied');} exit; end;
   if (srcW <= 0) or (srcH <= 0) then begin {RaiseException('Width and Height must be >= 0');} exit; end;
-  
   
   offset := RectangleFrom(x, y, srcW, srcH);
   source := RectangleFrom(srcX, srcY, srcW, srcH);
@@ -1451,7 +1462,15 @@ end;
 
 procedure DrawBitmap(name: String; x, y : Single); overload;
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'DrawBitmap', 'name = ' + name);
+  {$ENDIF}
+  
   DrawBitmap(BitmapNamed(name), x, y);
+  
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'DrawBitmap');
+  {$ENDIF}
 end;
 
 procedure DrawBitmap(name: String; const position : Point2D); overload;
