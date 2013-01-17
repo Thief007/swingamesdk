@@ -117,7 +117,7 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     sgSavePNG, sgShared, sgTrace, sgInputBackend, //SwinGame shared library code
-    sgResources, sgGeometry, sgImages, sgGraphics, sgDriverTimer; //SwinGame
+    sgResources, sgGeometry, sgImages, sgGraphics, sgDriverTimer, sgInput; //SwinGame
 //=============================================================================
 
 
@@ -208,11 +208,29 @@ implementation
 //----------------------------------------------------------------------------
 
   procedure Delay(time: Longword);
+  var
+    t: Longword;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'Delay');
     {$ENDIF}
-    if time > 0 then TimerDriver.Delay(time);
+
+    if time > 0 then
+    begin
+      if time < 50 then TimerDriver.Delay(time)
+      else 
+      begin
+        for t := 1 to time div 50 do 
+        begin
+          ProcessEvents();
+          if WindowCloseRequested() then exit;
+          TimerDriver.Delay(50);
+        end;
+        t := time mod 50;
+        if t > 0 then TimerDriver.Delay(t);
+      end;
+    end;
+
     {$IFDEF TRACE}
       TraceExit('sgUtils', 'Delay');
     {$ENDIF}
