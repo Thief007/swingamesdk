@@ -88,6 +88,9 @@
         </ccTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/projecttemplate</output>
+          <linkerLibItems>
+            <linkerOptionItem>${SWINGAME_LINK_FLAGS}</linkerOptionItem>
+          </linkerLibItems>
         </linkerTool>
       </compileType>
     </conf>
