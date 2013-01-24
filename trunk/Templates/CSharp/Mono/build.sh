@@ -37,7 +37,7 @@ SG_INC="-I${APP_PATH}/lib/"
 GMCS_BIN=`which csc 2>> /dev/null`
 if [ -z "$GMCS_BIN" ]; then
     #try locating gmcs
-    GMCS_BIN=`which gmcs`
+    GMCS_BIN=`which gmcs 2>> /dev/null`
     
     if [ -z "$GMCS_BIN" ]; then
         #no compiler found :(
@@ -46,7 +46,11 @@ if [ -z "$GMCS_BIN" ]; then
     fi
 fi
 
-ICON=SwinGame
+if [ "$OS" = "$MAC" ]; then
+    ICON="SwinGame.icns"
+else
+    ICON="SwinGame"
+fi
 
 CLEAN="N"
 
