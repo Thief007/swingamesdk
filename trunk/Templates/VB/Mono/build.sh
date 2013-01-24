@@ -16,14 +16,19 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+GAME_NAME=${APP_PATH##*/}
+
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 BIN_DIR="${APP_PATH}/bin"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-GAME_NAME=${APP_PATH##*/}
 if [ "$OS" = "$MAC" ]; then
     ICON="SwinGame.icns"
 else
@@ -33,7 +38,7 @@ fi
 CLEAN="N"
 RELEASE=""
 
-VBNC_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll -rootnamespace:${GAME_NAME} -imports:System,Color=System.Drawing.Color,SwinGame,System,System.Reflection" #" -r:Microsoft.VisualBasic"
+VBNC_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll -imports:System,Color=System.Drawing.Color,SwinGame,System,System.Reflection" #" -r:Microsoft.VisualBasic"
 VB_FLAGS="-optimize+ -debug-"
 SG_INC="-I${APP_PATH}/lib/"
 
@@ -140,10 +145,16 @@ fi
 #
 if [ -n "${RELEASE}" ]; then
     OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
 else
     VB_FLAGS="-debug:full -define:DEBUG"
     OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
 fi
+
+#
+# Remove old log file
+#
 
 if [ -f "${LOG_FILE}" ]
 then
@@ -153,7 +164,7 @@ fi
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ] 
     then
         echo "  ... Removing old application"
@@ -175,7 +186,7 @@ doMacPackage()
     # ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
     # popd >> /dev/null
     
-    cp ${LIB_DIR}/libSGSDK.dylib ${GAMEAPP_PATH}/Contents/Resources/libSGSDK.dylib
+    cp "${LIB_DIR}/libSGSDK.dylib" "${GAMEAPP_PATH}/Contents/Resources/libSGSDK.dylib"
     cp -R -p "./lib/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
 
     rm -f "${OUT_DIR}/${GAME_NAME}.exe"
@@ -254,7 +265,7 @@ copyWithoutSVN()
     # Create directory structure
     find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
     # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p "{}" "${TO_DIR}/{}"  \;
 }
 
 #
@@ -264,7 +275,7 @@ doCopyResources()
 {
     echo "  ... Copying Resources into $GAME_NAME"
     
-    copyWithoutSVN "${APP_PATH}/Resources" "${RESOURCE_DIR}"
+    copyWithoutSVN "${FULL_APP_PATH}/Resources" "${RESOURCE_DIR}"
 }
 
 
