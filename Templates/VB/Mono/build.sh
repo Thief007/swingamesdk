@@ -31,16 +31,31 @@ else
 fi
 
 CLEAN="N"
+RELEASE=""
 
 VBNC_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll -rootnamespace:${GAME_NAME} -imports:System,Color=System.Drawing.Color,SwinGame,System,System.Reflection" #" -r:Microsoft.VisualBasic"
 VB_FLAGS="-optimize+ -debug-"
 SG_INC="-I${APP_PATH}/lib/"
 
-if [ -d "/c/Windows" ]; then
-    VBNC_BIN=`which vbc`
-else
-    VBNC_BIN=`which vbnc`
+#Locate the compiler...
+VBNC_BIN=`which vbc 2>> /dev/null`
+if [ -z "$VBNC_BIN" ]; then
+    #try locating gmcs
+    VBNC_BIN=`which vbnc 2>> /dev/null`
+    
+    if [ -z "$VBNC_BIN" ]; then
+        #no compiler found :(
+        echo "Unable to find a Visual Basic compiler. Install either vbc or vbnc."
+        exit -1
+    fi
 fi
+
+#
+# Library versions
+#
+OPENGL=false
+SDL_13=true
+SDL_12=false
 
 Usage()
 {
@@ -57,12 +72,30 @@ Usage()
     exit 0
 }
 
-while getopts chdi: o
+while getopts chri:g:b:s: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
+    s)  if [ "${OPTARG}" = "dl12" ]; then
+            SDL_12=true
+            SDL_13=false
+            OPENGL=false
+        fi 
+        ;;
+    b)  if [ "${OPTARG}" = "adass" ]; then
+            SDL_12=false
+            SDL_13=true
+            OPENGL=false
+        fi 
+        ;;
     h)  Usage ;;
-    d)  DEBUG="Y" ;;
+    g)  if [ "${OPTARG}" = "odly" ]; then
+            SDL_12=false
+            SDL_13=false
+            OPENGL=true
+        fi 
+        ;;
+    d)  RELEASE="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -74,14 +107,42 @@ if [ "a$1a" != "aa" ]; then
     GAME_NAME=$1
 fi
 
+if [ "$OS" = "$MAC" ]; then
+    if [ ${SDL_13} = true ]; then
+      TMP_DIR="${TMP_DIR}/badass"
+      LIB_DIR="${APP_PATH}/lib/sdl13"
+    elif [ ${OPENGL} = true ]; then
+        TMP_DIR="${TMP_DIR}/godly"
+      LIB_DIR="${APP_PATH}/lib/godly"
+    else
+      TMP_DIR="${TMP_DIR}/sdl12"
+      LIB_DIR="${APP_PATH}/lib/mac"
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    #
+    # This needs 1.3 versions of SDL for Windows...
+    # along with function sdl_gfx, sdl_ttf, sdl_image, sdl_mixer
+    #
+    
+    # if [ ${SDL_13} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # elif [ ${OPENGL} = true ]; then
+    #   LIB_DIR="${APP_PATH}/lib/sdl13/win"
+    # else
+    SDL_13=false
+    OPENGL=false
+    LIB_DIR="${APP_PATH}/lib/win"
+    # fi
+fi
+
 #
 # Change directories based on release or debug builds
 #
-if [ "a${DEBUG}a" != "aa" ]; then
+if [ -n "${RELEASE}" ]; then
+    OUT_DIR="${OUT_DIR}/Release"
+else
     VB_FLAGS="-debug:full -define:DEBUG"
     OUT_DIR="${OUT_DIR}/Debug"
-else
-    OUT_DIR="${OUT_DIR}/Release"
 fi
 
 if [ -f "${LOG_FILE}" ]
@@ -102,18 +163,21 @@ doMacPackage()
     echo "  ... Creating Application Bundle"
     
     macpack -m winforms -n "${GAME_NAME}" -o "${OUT_DIR}" "${OUT_DIR}/${GAME_NAME}.exe"
-    mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
+    # mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
     
-    echo "  ... Adding Private Frameworks"
-    cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
-    cp -R -p "${LIB_DIR}/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
+    # echo "  ... Adding Private Frameworks"
+    # cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    # cp -R -p "${LIB_DIR}/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
     
-    pushd . >> /dev/null
-    cd "${GAMEAPP_PATH}/Contents/Resources"
-    ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
-    ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
-    popd >> /dev/null
+    # pushd . >> /dev/null
+    # cd "${GAMEAPP_PATH}/Contents/Resources"
+    # ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
+    # ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
+    # popd >> /dev/null
     
+    cp ${LIB_DIR}/libSGSDK.dylib ${GAMEAPP_PATH}/Contents/Resources/libSGSDK.dylib
+    cp -R -p "./lib/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
+
     rm -f "${OUT_DIR}/${GAME_NAME}.exe"
     
     if [ -f "${EXECUTABLE_NAME}.mdb" ]
