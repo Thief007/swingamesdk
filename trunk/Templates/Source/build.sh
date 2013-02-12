@@ -28,8 +28,8 @@ APP_PATH="."
 # Step 3: Setup options
 #
 EXTRA_OPTS="-O3 -fPIC -Sewn -vwn -dSWINGAME_LIB"
-VERSION_NO=3.01
-VERSION=3.01
+VERSION_NO=3.0
+VERSION=3.0
 CLEAN="N"
 INSTALL="N"
 
@@ -140,12 +140,12 @@ if [ ${OPENGL} = true ]; then
 fi
 
 if [ ${IOS} = true ]; then
-  IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk"
+  IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk"
   
   if [ ! -d ${IPHONE_SDK_ARM} ]; then
     IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
     if [ ! -d ${IPHONE_SDK_ARM} ]; then
-      IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+      IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk"
       if [ ! -d ${IPHONE_SDK_ARM} ]; then
         IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
         if [ ! -d ${IPHONE_SDK_ARM} ]; then
@@ -156,12 +156,12 @@ if [ ${IOS} = true ]; then
     fi
   fi
   
-  IPHONE_SDK_SIM="/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk"
+  IPHONE_SDK_SIM="/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk"
   
   if [ ! -d ${IPHONE_SDK_SIM} ]; then
     IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
     if [ ! -d ${IPHONE_SDK_SIM} ]; then
-      IPHONE_SDK_SIM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
+      IPHONE_SDK_SIM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk"
       if [ ! -d ${IPHONE_SDK_SIM} ]; then
         IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
         if [ ! -d ${IPHONE_SDK_SIM} ]; then
