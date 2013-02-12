@@ -148,8 +148,13 @@ def assemble_dist(language, dist_dict, use_sgsdk, part_from, use_dylib):
                     os.remove('Current')
                     os.symlink('./%sgodly' % sg_version, 'Current')
                     os.chdir(cur)
+
     if dist_dict.has_key('post_copy'):
-        dist_dict['post_copy'](specificdist_folder, dist_dict)
+        if isinstance(dist_dict['post_copy'], list):
+            for proc in dist_dict['post_copy']:
+                proc(specificdist_folder, dist_dict)
+        else:
+            dist_dict['post_copy'](specificdist_folder, dist_dict)
 
 def main():
     output_header(['Packaging SwinGame Templates'])
