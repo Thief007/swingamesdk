@@ -5,7 +5,7 @@ import subprocess
 import swin_shutil
 
 # IMPORTANT: When changing version, remember to change it here and in Template/Source/build.sh
-sg_version         ="3.01"
+sg_version         ="3.02"
 
 script_path        = os.path.dirname(os.path.realpath(__file__)) + '/'
 swingame_path      = os.path.realpath(script_path + '../..') + '/'
@@ -121,6 +121,11 @@ def flat_copy_without_svn(src, dest):
 # ======================================================================
 # = Language specific function called within the Template details dict =
 # ======================================================================
+
+def make_sh_exec(specificdist_folder, dist_dict):
+  for filename in os.listdir(specificdist_folder):
+    if filename[-3:] == ".sh":
+      run_bash("chmod", ["a+x", specificdist_folder + filename])
 
 def rename_c_to_cpp(specificdist_folder, dist_dict):
     """Rename the C files CPP."""
@@ -267,6 +272,7 @@ template_details = {
                                         ('staticlib/sdl13/mac','lib/sdl13'),
                                         ('lib/win','lib/win'),
                                       ],
+                    'post_copy':        make_sh_exec
                   },
                   {
                     'target':     'iOS',
@@ -287,6 +293,14 @@ template_details = {
                     'lang':          'CPP',
                     'target':        'gpp',
                     'os':            ['Mac OS X', 'Windows', 'Linux'],
+                    'lib':           'lib',
+                    'staticsgsdk':    False,
+                    'post_copy':      [make_sh_exec, rename_c_to_cpp]
+                  },
+                  { 
+                    'lang':          'CPP',
+                    'target':        'NetBeans',
+                    'os':            ['Linux','Mac OS X','Windows'],
                     'lib':           'lib',
                     'staticsgsdk':    False,
                     'post_copy':      rename_c_to_cpp
@@ -352,6 +366,7 @@ template_details = {
                     'os':         ['Mac OS X', 'Windows', 'Linux'],
                     'lib':        'lib',
                     'staticsgsdk':    False,
+                    'post_copy':      make_sh_exec
                   },
                   { 
                     'target':     'xcode 3',
@@ -386,6 +401,7 @@ template_details = {
                       'os':           [ 'Mac OS X' ],
                       'lib':          'lib',
                       'staticsgsdk':  False,
+                      'post_copy':    make_sh_exec
                   },
                   {
                       'target':       'xcode 3',
@@ -413,6 +429,7 @@ template_details = {
                   'os':             [ 'Mac OS X', 'Linux' ],
                   'lib':            'lib',
                   'staticsgsdk':    False,
+                  'post_copy':      make_sh_exec
                 },
                 { 
                   'source':         'MonoDevelop',
@@ -466,6 +483,7 @@ template_details = {
                   'os':             [ 'Mac OS X', 'Linux' ],
                   'lib':            'lib',
                   'staticsgsdk':    False,
+                  'post_copy':      make_sh_exec
                 },
                 { 
                   'lang':           'VB',
