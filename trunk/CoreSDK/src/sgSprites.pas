@@ -2559,7 +2559,7 @@ implementation
     {$ENDIF}
   end;
   
-  function SpriteCollisionRectangle(s: Sprite): Rectangle; overload;
+  function SpriteCollisionRectangle(s: Sprite): Rectangle;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgSprites', 'SpriteCollisionRectangle(s: Sprite): Rectangle', '');

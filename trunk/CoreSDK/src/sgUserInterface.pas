@@ -228,7 +228,7 @@ interface
   /// @class Panel
   /// @self 2
   /// @method PointInRegion
-  function PointInRegion(const pt: Point2D; p: Panel): Boolean;
+  function PointInRegion(const pt: Point2D; p: Panel): Boolean; overload;
   
   /// Disposes of all panels
   ///
@@ -903,7 +903,7 @@ function ActiveTextBoxParent() : Panel;
 /// Returns the alignment of the text in textbox passed in as region
 ///
 /// @lib TextBoxAlignmentFromRegion
-function TextboxAlignment(r: Region): FontAlignment;
+function TextboxAlignment(r: Region): FontAlignment; overload;
 
 /// Gets the textbox alignmnet of the textbox
 ///
@@ -911,7 +911,7 @@ function TextboxAlignment(r: Region): FontAlignment;
 ///
 /// @class Textbox
 /// @getter Alignmnet
-function TextboxAlignment(tb: GUITextbox): FontAlignment;
+function TextboxAlignment(tb: GUITextbox): FontAlignment; overload;
 
 /// Set the textbox alignment of the textbox
 ///
@@ -1066,12 +1066,12 @@ function ListActiveItemText(r: Region): String; overload;
 ///
 /// @lib ListActiveItemTextOnPanelWithId
 /// @sn listActiveItemTextOnPanel:%s withId:%s
-function ListActiveItemText(pnl: Panel; ID: String): String;
+function ListActiveItemText(pnl: Panel; ID: String): String; overload;
 
 /// Returns the active item text of the List in with ID
 ///
 /// @lib ListWithIdActiveItemText
-function ListActiveItemText(ID: String): String;
+function ListActiveItemText(ID: String): String; overload;
                             
 /// Returns the number of items in the list of the region
 ///
@@ -1114,19 +1114,19 @@ function ListActiveItemIndex(r: Region): Longint; overload;
 ///
 /// @class GUIList
 /// @getter ActiveItemIndex
-function ListActiveItemIndex(lst: GUIList): Longint;
+function ListActiveItemIndex(lst: GUIList): Longint; overload;
 
 /// Returns active item's index from the list
 ///
 /// @lib ListActiveItemIndexWithId
 ///
-function ListActiveItemIndex(id : String): Longint;
+function ListActiveItemIndex(id: String): Longint; overload;
 
 /// Returns active item's index from the list
 ///
 /// @lib ListActiveItemIndexOnPanelWithId
 /// @sn listActiveItemIndexOnPanel:%s withId:%s
-function ListActiveItemIndex(pnl : Panel; id : String): Longint;
+function ListActiveItemIndex(pnl : Panel; id: String): Longint; overload;
 
 
 /// Removes item at index idx from the list
@@ -1360,7 +1360,7 @@ procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
 ///
 /// @class GUIList
 /// @method BitmapItemIndex
-function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
+function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint; overload;
 
 /// Returns the index of the item with the bitmap and cell.
 ///
@@ -1369,7 +1369,7 @@ function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 ///
 /// @class GUIList
 /// @method CellItemIndex
-function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint; overload;
 
 /// returns the id of a value in the list.
 ///
@@ -1420,7 +1420,7 @@ procedure ListSetStartAt(r: Region; idx: Longint);
 ///
 /// @class Region
 /// @getter ListFontAlignment
-function ListFontAlignment(r: Region): FontAlignment;
+function ListFontAlignment(r: Region): FontAlignment; overload;
 
 /// Returns the font alignment of a list
 ///
@@ -1428,7 +1428,7 @@ function ListFontAlignment(r: Region): FontAlignment;
 ///
 /// @class GUIList
 /// @getter FontAlignment
-function ListFontAlignment(lst: GUIList): FontAlignment;
+function ListFontAlignment(lst: GUIList): FontAlignment; overload;
 
 /// Returns the font alignment of a list from region
 ///
@@ -1437,7 +1437,7 @@ function ListFontAlignment(lst: GUIList): FontAlignment;
 ///
 /// @class Region
 /// @setter ListFontAlignment
-procedure ListSetFontAlignment(r: Region; align: FontAlignment);
+procedure ListSetFontAlignment(r: Region; align: FontAlignment); overload;
 
 /// Returns the font alignment of a list
 ///
@@ -1446,7 +1446,7 @@ procedure ListSetFontAlignment(r: Region; align: FontAlignment);
 ///
 /// @class GUIList
 /// @setter FontAlignment
-procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
+procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment); overload;
 
 /// Returns the largest index that startingAt should be set to.
 ///
@@ -2633,7 +2633,7 @@ begin
   result := RadioGroupFromRegion(RegionWithID(id));
 end;
 
-function LabelFromRegion(r: Region): GUILabel; overload;
+function LabelFromRegion(r: Region): GUILabel;
 begin
   result := nil;
   
@@ -3425,7 +3425,7 @@ begin
   result := ListActiveItemIndex(RegionWithID(id));
 end;
 
-function ListActiveItemIndex(pnl : Panel; id: string): Longint; overload;
+function ListActiveItemIndex(pnl: Panel; id: string): Longint; overload;
 begin
   result := ListActiveItemIndex(RegionWithID(pnl, id));
 end;

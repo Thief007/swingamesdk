@@ -1104,7 +1104,7 @@ interface
   ///
   /// @lib
   /// @sn draw:%s horizontalLineOnScreenY:%s x1:%s x2:%s
-  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: Longint);
+  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: Longint); overload;
   
   /// Draw a vertical line on the screen between y1 and y2.
   ///
@@ -1659,7 +1659,7 @@ implementation
     DrawHorizontalLine(screen, clr, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
-  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: Longint); overload;
+  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: Longint);
   begin
     DrawVerticalLine(screen, clr, x, y1, y2);
   end;
@@ -2654,7 +2654,7 @@ implementation
     {$ENDIF}
   end;
   
-  function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
+  function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   var
     r,g,b,a: Byte;
   begin
@@ -2675,7 +2675,7 @@ implementation
     {$ENDIF}
   end;
 
-  function RGBAColor(red, green, blue, alpha: Byte): Color; overload;
+  function RGBAColor(red, green, blue, alpha: Byte): Color;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'RGBAColor');
