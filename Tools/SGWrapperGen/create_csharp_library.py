@@ -20,6 +20,10 @@ from sg.sg_parameter import SGParameter
 
 _out_path="../../Generated/CSharp/Code"
 
+#writer for SwinGame.cs file
+_swingame_writer = None
+_swingame_class_header = ''
+
 #templates for adapter
 _header = ''
 _method_wrapper = ''
@@ -880,6 +884,7 @@ def load_data():
     global _property_class, _property_class_property, _property_class_field
     global _property_class_indexer
     global _struct_property
+    global _swingame_class_header 
     
     f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/lib_header.txt')
     _header = f.read()
@@ -941,6 +946,9 @@ def load_data():
     _struct_property = f.read()
     f.close()
     
+    f = open(os.path.dirname(os.path.realpath(__file__)) + '/cs_lib/swingame_class_header.txt')
+    _swingame_class_header = f.read()
+    f.close()
 
 def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
@@ -1421,8 +1429,14 @@ def write_cs_methods_for_module(member, other):
     writer.writeln(_class_header % details)
     
     writer.indent(2)
-    
+
+    # Also write all module methods to the SwinGame class
+    global _swingame_writer
+    writer.echo_to = _swingame_writer
+
     member.visit_methods(method_visitor, other)
+    
+    writer.echo_to = None    
     
     writer.outdent(2)
     
@@ -1440,7 +1454,7 @@ def write_sg_class(member, other):
         })
     
     file_writer.indent(2)
-    
+
     details = member.to_keyed_dict(doc_transform=doc_transform)
     
     if member.is_no_free_pointer_wrapper:
@@ -1571,6 +1585,7 @@ def write_cs_type_for(member, other):
 
 def write_cs_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
+
     file_writer = FileWriter('%s/%s.cs'% (_out_path, the_file.name))
     logger.info('%s/%s.cs'% (_out_path, the_file.name))
     
@@ -1591,7 +1606,7 @@ def write_cs_lib_module(the_file):
         }
     
     file_writer.indent(2)
-    
+
     #process all types first so they appear at the top of the header files
     for member in the_file.members:
         if member.is_module or member.is_header or (member.is_type and not member.data_type.is_procedure):
@@ -1601,7 +1616,7 @@ def write_cs_lib_module(the_file):
         else:
             print member.module_kind, member
             assert False
-    
+
     #process all methods
     for member in the_file.members:
         if member.is_module:
@@ -1757,9 +1772,29 @@ def file_visitor(the_file, other):
 
 def main():
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
-    
+
     load_data()
+
+    global _swingame_writer
+
+    logger.info('Creating %s/SwinGame.cs'% (_out_path))
+    _swingame_writer = FileWriter('%s/SwinGame.cs'% (_out_path))
+    _swingame_writer.writeln(_swingame_class_header % { 
+    'name' : 'SwinGame',
+    'pascal_name' : 'Generated SwinGame wrapper.'
+    })
+    _swingame_writer.indent(4)
+
+
     parser_runner.run_for_all_units(file_visitor)
+
+    if _swingame_writer:
+        _swingame_writer.outdent(2)
+        _swingame_writer.writeln(_class_footer)
+        _swingame_writer.outdent(2)
+        _swingame_writer.write(_module_footer)
+        _swingame_writer.close()
+
 
 if __name__ == '__main__':
     main()
