@@ -1304,7 +1304,7 @@ begin
   end;
 end;
 
-function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean; overload;
+function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean;
 var
   kind: ShapeKind;
   i: Longint;

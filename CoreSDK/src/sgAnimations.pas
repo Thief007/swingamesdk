@@ -170,7 +170,7 @@ interface
     /// @csn initAsName:%s from:%s withSound:%s
     ///
     /// @doc_details
-    function CreateAnimation(identifier: String;    script: AnimationScript; withSound: Boolean): Animation;
+    function CreateAnimation(identifier: String;    script: AnimationScript; withSound: Boolean): Animation; overload;
     
     /// Creates an animation from an `AnimationScript`. If ``withSound`` is ``true``, this may
     /// play a sound effect if the animation is set to play a sound effect on its first frame.
