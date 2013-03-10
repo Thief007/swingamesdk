@@ -100,6 +100,21 @@ fi
 # Set compiler path and options
 #
 FPC_BIN=`which fpc`
+if [ -z "${FPC_BIN}" ]; then
+    echo
+    echo "I cannot find the Free Pascal Compiler."
+    echo "Please make sure you have installed it"
+    echo " - use the default location (no spaces in path)"
+    echo " - also restarted your computer after install"
+    exit -1
+fi
+
+FPC_VER=`${FPC_BIN} -iV`
+
+FPC_MAJOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $1}'`
+FPC_MINOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $2}'`
+FPC_LESSR_VER=`echo ${FPC_VER} | awk -F'.' '{print $3}'`
+
 if [ "$OS" = "$WIN" ]; then
     PAS_FLAGS="-g -Ci -gc -Ct -dTrace"
 else
@@ -446,10 +461,6 @@ then
             HAS_LEOPARD_SDK=true
         fi
         
-        if [ $OS_VER = '10.5' ]; then
-            HAS_LEOPARD_SDK=true
-        fi
-        
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
         fi
@@ -457,31 +468,20 @@ then
         if [ $OS_VER = '10.8' ]; then
             HAS_LION=true
         fi
-        
-        if [[ $HAS_i386 = true && $HAS_PPC = true && $HAS_LEOPARD_SDK = true ]]; then
-            echo "  ... Building Universal Binary"
-            
-            if [ $OS_VER = '10.5' ]; then
-                FPC_BIN=`which ppc386`
-                doMacCompile "i386" ""
-                
-                FPC_BIN=`which ppcppc`
-                doMacCompile "ppc" ""
-            else
-                FPC_BIN=`which ppc386`
-                doMacCompile "i386" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
-                
-                FPC_BIN=`which ppcppc`
-                doMacCompile "ppc" "-k-syslibroot -k/Developer/SDKs/MacOSX10.5.sdk -k-macosx_version_min -k10.5"
-            fi
-            
-            doLipo "i386" "ppc"
-        else
-            if $HAS_LION ; then
+
+        if [ $HAS_LION = true ]; then
+            if (( ($FPC_MAJOR_VER == 2) && ($FPC_MINOR_VER == 6) && (FPC_LESSR_VER == 0) )); then
                 PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            else
+                PAS_FLAGS="$PAS_FLAGS -WM10.7"
             fi
-            doBasicMacCompile
+        else
+            PAS_FLAGS="${PAS_FLAGS} -dNO_ARC"
+            if (( ($FPC_MAJOR_VER == 2) && ($FPC_MINOR_VER == 6) && (FPC_LESSR_VER > 0) )); then
+                PAS_FLAGS="$PAS_FLAGS -WM10.5"
+            fi
         fi
+        doBasicMacCompile
         
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
