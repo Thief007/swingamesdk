@@ -177,6 +177,13 @@ DoExitCompile ()
 { 
     echo "An error occurred while compiling"; 
     cat out.log
+
+    if [ "$OS" = "$LIN" ]; then
+        echo ""
+        echo "Make sure you have the required libraries installed:"
+        echo "sudo apt-get install fpc curl libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsdl-net* libsmpeg*"
+    fi
+    
     exit 1; 
 }
 
@@ -271,7 +278,9 @@ doLinuxCompile()
     echo "  ... Compiling $GAME_MAIN"
     
     ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}" ${SRC_DIR}/${GAME_MAIN} > ${LOG_FILE}
-    if [ $? != 0 ]; then DoExitCompile; fi
+    if [ $? != 0 ]; then 
+        DoExitCompile; 
+    fi
 }
 
 doLinuxPackage()
