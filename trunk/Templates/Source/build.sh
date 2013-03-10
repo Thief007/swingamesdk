@@ -125,7 +125,26 @@ fi
 TMP_DIR="${APP_PATH}/tmp/sdl12"
 SDK_SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/tmp/out.log"
+
 FPC_BIN=`which fpc`
+if [ -z "${FPC_BIN}" ]; then
+    echo
+    echo "I cannot find the Free Pascal Compiler."
+    echo "Please make sure you have installed it"
+    echo " - use the default location (no spaces in path)"
+    echo " - also restarted your computer after install"
+    exit -1
+fi
+
+FPC_VER=`${FPC_BIN} -iV`
+
+if (( FPC_VER != "2.6.2" )); then
+    echo 'FPC needs to be 2.6.2'
+fi
+
+FPC_MAJOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $1}'`
+FPC_MINOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $2}'`
+FPC_LESSR_VER=`echo ${FPC_VER} | awk -F'.' '{print $3}'`
 
 if [ ${SDL_13} = true ]; then
   TMP_DIR="${APP_PATH}/tmp/sdl13"
@@ -517,7 +536,7 @@ then
         
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
-            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -WM10.7"
             SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
             if [ ! -d ${SDK_PATH} ]; then
                 echo "Unable to locate MacOS SDK."
@@ -528,7 +547,7 @@ then
         
         if [ $OS_VER = '10.8' ]; then
             HAS_LION=true
-            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -WM10.7"
             SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
             if [ ! -d ${SDK_PATH} ]; then
                 echo "Unable to locate MacOS SDK."

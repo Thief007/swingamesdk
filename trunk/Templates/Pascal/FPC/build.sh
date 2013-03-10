@@ -46,6 +46,21 @@ PAS_FLAGS="-O3 -vw"
 SG_INC="-Fu${APP_PATH}/lib/"
 
 FPC_BIN=`which fpc`
+if [ -z "${FPC_BIN}" ]; then
+    echo
+    echo "I cannot find the Free Pascal Compiler."
+    echo "Please make sure you have installed it"
+    echo " - use the default location (no spaces in path)"
+    echo " - also restarted your computer after install"
+    exit -1
+fi
+
+FPC_VER=`${FPC_BIN} -iV`
+
+FPC_MAJOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $1}'`
+FPC_MINOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $2}'`
+FPC_LESSR_VER=`echo ${FPC_VER} | awk -F'.' '{print $3}'`
+
 
 CLEAN="N"
 
@@ -389,8 +404,18 @@ then
         fi
         
         if [ $HAS_LION = true ]; then
-            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            if (( ($FPC_MAJOR_VER == 2) && ($FPC_MINOR_VER == 6) && (FPC_LESSR_VER == 0) )); then
+                PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -k-no_pie"
+            else
+                PAS_FLAGS="$PAS_FLAGS -WM10.7"
+            fi
+        else
+            PAS_FLAGS="${PAS_FLAGS} -dNO_ARC"
+            if (( ($FPC_MAJOR_VER == 2) && ($FPC_MINOR_VER == 6) && (FPC_LESSR_VER > 0) )); then
+                PAS_FLAGS="$PAS_FLAGS -WM10.5"
+            fi
         fi
+        
         doBasicMacCompile
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
