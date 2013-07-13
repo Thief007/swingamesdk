@@ -374,11 +374,11 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgInput', 'ProcessEvents');
     {$ENDIF}
-    // $ifdef DARWIN}
-    //     {$IFNDEF IOS}
-    //         CyclePool();
-    //     {$ENDIF}
-    // {$endif
+    {$ifdef DARWIN}
+        {$IFDEF NO_ARC}
+            CyclePool();
+        {$ENDIF}
+    {$endif}
     InputDriver.GetRelativeMouseState(x, y);
     InputBackendProcessEvents();
     {$IFDEF TRACE}
