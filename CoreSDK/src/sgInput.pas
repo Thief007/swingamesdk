@@ -580,17 +580,18 @@ end;
   //---------------------------------------------------------------------------
   
   function MousePositionAsVector(): Vector;
+  {$IFNDEF IOS}
   var
     x, y: Longint;
+  {$ENDIF}
   begin
-    x := 0; y := 0;
     {$IFNDEF IOS}
+    x := 0; y := 0;
     InputDriver.GetMouseState(x, y);
     result := VectorTo(x, y);
     {$ELSE}
-     result := VectorTo( LastFingerPosition().x, LastFingerPosition().y);
+     result := Vector(LastFingerPosition());
     {$ENDIF}
-    
   end;
 
   procedure ShowMouse(); overload;
@@ -631,15 +632,17 @@ end;
   end;
   
   function MousePosition(): Point2D;
+  {$IFNDEF IOS}
   var
     x, y: Longint;
+  {$ENDIF}
   begin
-    x := 0; y := 0;
     {$IFNDEF IOS}
+    x := 0; y := 0;
     InputDriver.GetMouseState(x, y);
     result := PointAt(x, y);
     {$ELSE}
-     result := PointAt( LastFingerPosition().x, LastFingerPosition().y);
+    result := LastFingerPosition(); 
     {$ENDIF} 
   end;
   
@@ -672,11 +675,13 @@ end;
   end;
   
   function MouseDown(button: MouseButton): Boolean;
+  {$IFNDEF IOS}
   var
     x, y: Longint;
+  {$ENDIF}
   begin
-    x := 0; y := 0;
     {$IFNDEF IOS}
+      x := 0; y := 0;
       result := (InputDriver.GetMouseState(x, y) and InputDriver.Button(Longint(button))) > 0;
     {$ELSE}
       result := MouseClicked(button);

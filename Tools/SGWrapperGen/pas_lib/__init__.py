@@ -85,6 +85,7 @@ _type_switcher = {
 
     'messageptr'        :   'MessagePtr',
     'connection'        :   'Connection',
+    'arduinodevice'     :   'ArduinoDevice',
 }
  
 

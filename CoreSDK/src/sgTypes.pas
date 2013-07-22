@@ -1091,7 +1091,26 @@ interface
     /// @field pointer : ^ConnectionData
     Connection  = ^ConnectionData;
 
+    ///@struct ArduinoData
+    ///@via_pointer
+    ArduinoData = record
+      name: String;
+      ptr: Pointer;
+      
+      port: String;
+      baud: LongInt;
+      
+      open: Boolean;
+      hasError: Boolean;
+      errorMessage: String;
+    end;
 
+    /// A connection to an Arduino device.
+    ///
+    /// @class ArduinoDevice
+    /// @pointer_wrapper
+    /// @field pointer : ^ArduinoData
+    ArduinoDevice = ^ArduinoData;
 
     
 //=============================================================================

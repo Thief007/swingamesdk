@@ -36,6 +36,7 @@ namespace SwinGame
         GUITextbox,           
         GUILabel,
         Connection,
+        ArduinoDevice,
         Copy,
 		
     }

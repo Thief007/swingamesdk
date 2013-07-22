@@ -112,6 +112,7 @@ _type_dictionary_creation_data = [
             ('shapeprototype',  'shape_prototype'),
             ('shape',           'shape'),
             ('connection',      'connection'),
+            ('arduinodevice',      'arduino_device'),
         ],
         '_type_switcher': {
             None:       '#2# ',

@@ -34,6 +34,7 @@ all_units = [
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
     ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
     ('sgUserInterface', 'UserInterface', '../../CoreSDK/src/sgUserInterface.pas'),
+    ('sgArduino', 'Arduino', '../../CoreSDK/src/sgArduino.pas'),
 ]
 
 
