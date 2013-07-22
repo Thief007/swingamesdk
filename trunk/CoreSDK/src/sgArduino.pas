@@ -177,7 +177,8 @@ uses
 		if assigned(dev) then
 		begin
 			ser := TBlockSerial(dev^.ptr);
-			result := ser.CanRead(0);
+			// result := ser.CanRead(0);
+			result := ser.WaitingData() > 0;
 		end;
 	end;
 
