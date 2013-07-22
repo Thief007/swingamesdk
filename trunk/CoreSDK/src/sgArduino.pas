@@ -57,16 +57,6 @@ interface
 	/// @dispose
 	procedure FreeArduinoDevice(var dev: ArduinoDevice);
 
-	/// Connect the game to the Arduino device.
-	///
-	/// @lib
-	/// @sn connectToDevice:%s
-	/// 
-	/// @class ArduinoDevice
-	/// @method Connect
-	/// @csn connect
-	procedure ArduinoConnectToDevice(dev: ArduinoDevice);
-
 	/// Reads a line of text from the ArduinoDevice. This
 	/// returns an empty string if nothing is read within a
 	/// few milliseconds.
@@ -136,6 +126,7 @@ uses
 	function CreateArduinoDevice(name, port: String; baud: LongInt) : ArduinoDevice;
     var
         obj: tResourceContainer;
+	    ser: TBlockSerial;	
 	begin
         if HasArduinoDevice(name) then
         begin
@@ -159,29 +150,22 @@ uses
             result := nil;
             exit;
         end;
-	end;
 
-	procedure ArduinoConnectToDevice(dev: ArduinoDevice);
-	var
-	    ser: TBlockSerial;	
-	begin
-		if assigned(dev) then
+		if assigned(result) then
 		begin
-			ser := TBlockSerial(dev^.ptr);
+			ser := TBlockSerial(result^.ptr);
 		    // WriteLn('Connecting...');
-		    ser.Connect(dev^.port);	
+		    ser.Connect(port);	
 
 		    // WriteLn('Configure...');
-		    ser.Config(dev^.baud, 8, 'N', SB1, False, False);
+		    ser.Config(baud, 8, 'N', SB1, False, False);
 		    if ser.LastError <> sOK then
 		    begin
     		    RaiseWarning('Error configuring connection to Arduino: ' + IntToStr(ser.LastError) + ' ' + ser.LastErrorDesc);
-		    	dev^.hasError := true;
-		    	dev^.errorMessage := ser.LastErrorDesc;
+		    	result^.hasError := true;
+		    	result^.errorMessage := ser.LastErrorDesc;
 		    	exit;
 		    end;
-
-    		ArduinoReadLine(dev, 15);
 	    end;
 	end;
 

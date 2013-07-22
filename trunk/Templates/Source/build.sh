@@ -140,11 +140,6 @@ fi
 
 FPC_VER=`${FPC_BIN} -iV`
 
-if [ "$FPC_VER" != "2.6.2" ]; then
-    echo 'FPC needs to be 2.6.2'
-    exit
-fi
-
 FPC_MAJOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $1}'`
 FPC_MINOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $2}'`
 FPC_LESSR_VER=`echo ${FPC_VER} | awk -F'.' '{print $3}'`
@@ -220,6 +215,11 @@ if [ ${IOS} = true ]; then
   LIB_DIR="${APP_PATH}/staticlib/godly/ios"
 
 elif [ "$OS" = "$MAC" ]; then
+    if [ "$FPC_VER" != "2.6.2" ]; then
+        echo 'FPC needs to be 2.6.2'
+        exit
+    fi
+
     OUT_DIR="${APP_PATH}/bin/mac"
     FULL_OUT_DIR="${FULL_APP_PATH}/bin/mac"
     VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
