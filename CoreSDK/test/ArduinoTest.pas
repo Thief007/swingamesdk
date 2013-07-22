@@ -7,7 +7,6 @@ var
 	i: Integer;
 begin
 	dev := CreateArduinoDevice('/dev/tty.usbmodem1d21', 9600);
-	ArduinoConnectToDevice(dev);
 
 	i := 0;
 	while i < 10 do
