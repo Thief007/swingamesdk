@@ -433,6 +433,7 @@ _type_dictionary_creation_data = [
                 ('guitextbox',      'SGGUITextbox'      ),
                 ('guicheckbox',     'SGGUICheckbox'     ),
                 ('connection',      'SGConnection'      ),
+                ('arduinodevice',   'SGArduinoDevice'   ),
             ],
         '_type_switcher': {
                 None:       '#2# *',

@@ -28,10 +28,12 @@ APP_PATH="."
 # Step 3: Setup options
 #
 EXTRA_OPTS="-O3 -fPIC -Sewn -vwn -dSWINGAME_LIB"
-VERSION_NO=3.0
-VERSION=3.0
+VERSION_NO=3.022
+VERSION=3.022
 CLEAN="N"
 INSTALL="N"
+
+PAS_FLAGS=""
 
 #
 # Library versions
@@ -138,8 +140,9 @@ fi
 
 FPC_VER=`${FPC_BIN} -iV`
 
-if (( FPC_VER != "2.6.2" )); then
+if [ "$FPC_VER" != "2.6.2" ]; then
     echo 'FPC needs to be 2.6.2'
+    exit
 fi
 
 FPC_MAJOR_VER=`echo ${FPC_VER} | awk -F'.' '{print $1}'`
@@ -367,7 +370,7 @@ doMacCompile()
     fi
     
     # Compile...
-    "${FPC_BIN}" -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lbz2" -k"-lstdc++" -k"-install_name '${INSTALL_NAME}'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
+    "${FPC_BIN}" ${PAS_FLAGS} -S2 -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -k"$LINK_OPTS -L'${TMP_DIR}' -F'${LIB_DIR}' -current_version '${VERSION_NO}'" -k"-lbz2" -k"-lstdc++" -k"-install_name '${INSTALL_NAME}'" -k"-rpath @loader_path/../Frameworks -rpath @executable_path/../Frameworks -rpath ../Frameworks -rpath ." -k"-L ${LIB_DIR}" -k"${STATIC_LIBS}" -k" ${FRAMEWORKS} -framework Cocoa" "${SDK_SRC_DIR}/SGSDK.pas"  >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
@@ -543,7 +546,7 @@ then
         
         if [ $OS_VER = '10.7' ]; then
             HAS_LION=true
-            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -WM10.7"
+            PAS_FLAGS="$PAS_FLAGS -WM10.7"
             SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
             if [ ! -d ${SDK_PATH} ]; then
                 echo "Unable to locate MacOS SDK."
@@ -554,7 +557,7 @@ then
         
         if [ $OS_VER = '10.8' ]; then
             HAS_LION=true
-            PAS_FLAGS="$PAS_FLAGS -k-macosx_version_min -k10.7 -WM10.7"
+            PAS_FLAGS="$PAS_FLAGS -WM10.7"
             SDK_PATH="${XCODE_PREFIX}/Developer/SDKs/MacOSX10.7.sdk"
             if [ ! -d ${SDK_PATH} ]; then
                 echo "Unable to locate MacOS SDK."

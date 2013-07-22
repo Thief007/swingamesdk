@@ -197,7 +197,8 @@ implementation
 				{$endif}
 			 {$endif}
              sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers, sgUtils,
-             sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps, sgNetworking; // Swingame
+             sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps, sgNetworking,
+             sgArduino; // Swingame
 
 //----------------------------------------------------------------------------
 // Global variables for resource management.
@@ -384,6 +385,7 @@ implementation
         ReleaseAllAnimationScripts();
         ReleaseAllSoundEffects();
         ReleaseAllBitmaps();
+        ReleaseAllArduinoDevices();
         _Bundles.deleteAll();
     end;
     

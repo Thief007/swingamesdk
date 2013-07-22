@@ -158,7 +158,8 @@ _type_switcher = {
         'guicheckbox':          'GUICheckbox %s',
         'guitextbox':           'GUITextbox %s',
         'guilabel':             'GUILabel %s',
-        'connection':           'Connection %s',    
+        'connection':           'Connection %s',
+        'arduinodevice':        'ArduinoDevice %s',
         
         
         'resourcekind':     'ResourceKind %s',
@@ -256,7 +257,8 @@ _type_switcher = {
         'guitextbox':              'GUITextbox %s',
         'guilabel':              'GUILabel %s',
         'connection':           'Connection %s', 
-        
+        'arduinodevice':        'ArduinoDevice %s',
+
         'string':       'ref string %s',
         'longint':      'ref int %s',
         'single':       'ref float %s',
@@ -323,7 +325,7 @@ _type_switcher = {
         'guitextbox':    'GUITextbox %s',
         'guilabel':      'GUILabel %s',
         'connection':   'Connection %s',  
-        
+        'arduinodevice':        'ArduinoDevice %s',
         
         #Enum
         'collisionside':        'CollisionSide %s',
@@ -391,7 +393,7 @@ _data_switcher = {
         'guitextbox':              'GUITextbox.Create( %s)',
         'guilabel':              'GUILabel.Create( %s)',
         'connection':           'Connection.Create(%s)',  
-        
+        'arduinodevice':        'ArduinoDevice.Create(%s)',
         
         
         
@@ -468,6 +470,7 @@ _adapter_type_switcher = {
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',        
         'connection':           'IntPtr %s',  
+        'arduinodevice':        'IntPtr %s',
         
         #Structs
         'triangle':     'Triangle %s',
@@ -539,6 +542,7 @@ _adapter_type_switcher = {
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',    
         'connection':           'IntPtr %s',  
+        'arduinodevice':        'IntPtr %s',
         
               
         'resourcekind': 'int %s',
@@ -644,6 +648,7 @@ _adapter_type_switcher = {
         'guitextbox':           'ref IntPtr %s',
         'guilabel':             'ref IntPtr %s',    
         'connection':           'ref IntPtr %s',  
+        'arduinodevice':        'ref IntPtr %s',
         
         
         
@@ -683,6 +688,7 @@ _adapter_type_switcher = {
         'guitextbox':           'ref IntPtr %s',
         'guilabel':             'ref IntPtr %s',    
         'connection':           'ref IntPtr %s',  
+        'arduinodevice':        'ref IntPtr %s',
               
         
         'single':               'ref float %s',
@@ -768,6 +774,7 @@ _adapter_type_switcher = {
         'guitextbox':           'IntPtr %s',
         'guilabel':             'IntPtr %s',    
         'connection':           'IntPtr %s',  
+        'arduinodevice':        'IntPtr %s',
         
         
         'maptile':              'MapTile %s',
