@@ -78,25 +78,54 @@ interface
 	/// @csn readLineWithTimeout:%s
 	function ArduinoReadLine(dev: ArduinoDevice; timeout: LongInt): String;
 
-	/// Read an Integer from the ArduinoDevice. Has a short
-	/// timeout and returns 0 if no integer is read within the given time.
+	/// Read a Byte from the ArduinoDevice. Has a short
+	/// timeout and returns 0 if no byte is read within the given time.
 	/// 
 	/// @lib
 	///
 	/// @class ArduinoDevice
-	/// @method ReadInteger
-	function ArduinoReadInteger(dev: ArduinoDevice): LongInt;
+	/// @method ReadByte
+	function ArduinoReadByte(dev: ArduinoDevice): Byte; overload;
 
-	/// Reads an integer from the ArduinoDevice, with the given timeout in milliseconds.
-	/// Returns 0 if no integer is read within the given time.
+	/// Reads a byte from the ArduinoDevice, with the given timeout in milliseconds.
+	/// Returns 0 if no byte is read within the given time.
 	/// 
-	/// @lib ArduinoReadIntegerTimeout
-	/// @sn arduinoReadInteger:%s timeout:%s
+	/// @lib ArduinoReadByteTimeout
+	/// @sn arduinoReadByte:%s timeout:%s
 	///
 	/// @class ArduinoDevice
-	/// @overload ReadInteger ReadIntegerTimeout
-	/// @csn readIntegerWithTimeout:%s
-	function ArduinoReadInteger(dev: ArduinoDevice; timeout: LongInt): LongInt;
+	/// @overload ReadByte ReadByteTimeout
+	/// @csn readByteWithTimeout:%s
+	function ArduinoReadByte(dev: ArduinoDevice; timeout: LongInt): Byte; overload;
+
+
+	/// Send a byte value to the arduino device.
+	///
+	/// @lib
+	/// @sn arduinoSendByte:%s value:%s
+	///
+	/// @class ArduinoDevice
+	/// @method SendByte
+	procedure ArduinoSendByte(dev: ArduinoDevice; value: Byte); overload;
+
+	/// Send a string value to the arduino device.
+	///
+	/// @lib
+	/// @sn arduinoSendString:%s value:%s
+	///
+	/// @class ArduinoDevice
+	/// @method SendString
+	procedure ArduinoSendString(dev: ArduinoDevice; value: String);
+
+	/// Send a string value to the arduino device, along with a newline
+	/// so the arduino can identify the end of the sent data.
+	///
+	/// @lib
+	/// @sn arduinoSendStringLine:%s value:%s
+	///
+	/// @class ArduinoDevice
+	/// @method SendStringLine
+	procedure ArduinoSendStringLine(dev: ArduinoDevice; value: String);
 
 	/// Returns true if there is data waiting to be read from the device.
 	///
@@ -155,7 +184,7 @@ uses
 		begin
 			ser := TBlockSerial(result^.ptr);
 		    // WriteLn('Connecting...');
-		    ser.Connect(port);	
+		    ser.Connect(port);
 
 		    // WriteLn('Configure...');
 		    ser.Config(baud, 8, 'N', SB1, False, False);
@@ -199,12 +228,12 @@ uses
 		end;
 	end;
 
-	function ArduinoReadInteger(dev: ArduinoDevice): LongInt;
+	function ArduinoReadByte(dev: ArduinoDevice): Byte; overload;
 	begin
-		result := ArduinoReadInteger(dev, 10);
+		result := ArduinoReadByte(dev, 10);
 	end;
 
-	function ArduinoReadInteger(dev: ArduinoDevice; timeout: LongInt): LongInt;
+	function ArduinoReadByte(dev: ArduinoDevice; timeout: LongInt): Byte; overload;
 	var
 	    ser: TBlockSerial;	
 	begin
@@ -212,9 +241,44 @@ uses
 		if assigned(dev) then
 		begin
 			ser := TBlockSerial(dev^.ptr);
-			result := ser.RecvInteger(timeout)
+			result := ser.RecvByte(timeout);
 		end;
 	end;
+
+    procedure ArduinoSendByte(dev: ArduinoDevice; value: Byte); overload;
+	var
+	    ser: TBlockSerial;	
+	begin
+		if assigned(dev) then
+		begin
+			ser := TBlockSerial(dev^.ptr);
+			ser.SendByte(value);
+		end;
+	end;
+
+    procedure ArduinoSendStringLine(dev: ArduinoDevice; value: String);
+	var
+	    ser: TBlockSerial;	
+	begin
+		if assigned(dev) then
+		begin
+			ser := TBlockSerial(dev^.ptr);
+			ser.SendString(value);
+			ser.SendString(#13#10);
+		end;
+	end;
+
+    procedure ArduinoSendString(dev: ArduinoDevice; value: String);
+	var
+	    ser: TBlockSerial;	
+	begin
+		if assigned(dev) then
+		begin
+			ser := TBlockSerial(dev^.ptr);
+			ser.SendString(value);
+		end;
+	end;
+
 
 	// ========================
 	// = Resource Management Routines
@@ -280,7 +344,6 @@ uses
         	result := ArduinoDevice(tResourceContainer(tmp).Resource)
         else result := nil;
     end;
-
 
 initialization
     begin
