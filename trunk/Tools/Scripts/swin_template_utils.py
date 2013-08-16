@@ -439,6 +439,13 @@ template_details = {
                   'staticsgsdk':    False,
                 },
                 { 
+                  'source':         'XamarianStudio',
+                  'target':         'XamarianStudio',
+                  'os':             [ 'Mac OS X', 'Windows', 'Linux' ],
+                  'lib':            'lib',
+                  'staticsgsdk':    False,
+                },
+                { 
                   'target':         'vs08',
                   'source':         'VS08',
                   'os':             [ 'Windows' ],
