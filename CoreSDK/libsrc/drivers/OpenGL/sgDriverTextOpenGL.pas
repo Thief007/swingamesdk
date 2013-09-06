@@ -49,7 +49,7 @@ interface
 implementation
   uses 
     SysUtils, math,
-    sdl13,  
+    SDL2,  
     sgTypes, sgShared, sgDriverText, GLDriverUtils, sgDriverGraphics, sgFontData;
 
   var

@@ -170,7 +170,7 @@ uses
 {$ENDIF}  
 {$ENDIF}
 {$ENDIF}
-  sdl13;
+  SDL2;
 
 const
 {$IFDEF WINDOWS}

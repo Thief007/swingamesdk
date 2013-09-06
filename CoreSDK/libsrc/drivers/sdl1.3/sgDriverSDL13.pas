@@ -16,7 +16,7 @@ unit sgDriverSDL13;
 //=============================================================================
 interface
 uses
-  sgTypes, sdl13;
+  sgTypes, SDL2;
   
   procedure LoadSDL13Driver();
 

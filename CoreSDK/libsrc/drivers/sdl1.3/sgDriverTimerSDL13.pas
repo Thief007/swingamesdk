@@ -13,7 +13,7 @@ unit sgDriverTimerSDL13;
 //=============================================================================
 
 interface 
-	uses SDL13;
+	uses SDL2;
 	procedure LoadSDL13TimerDriver();
 	
 implementation

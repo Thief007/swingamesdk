@@ -3,7 +3,7 @@
 unit sgSDL13Utils;
 
 interface
-uses sgTypes, sdl13;
+uses sgTypes, SDL2;
 
   type	  
     SDL13Surface = record
@@ -20,10 +20,11 @@ uses sgTypes, sdl13;
     PSDL13Screen = ^SDL13Screen;
     PSDL13Surface = ^SDL13Surface;
   
-  function  GetSurface(bmp: Bitmap): PSDL_Surface;
-  
+	function  GetSurface(bmp: Bitmap): PSDL_Surface;
+
 	procedure RecreateTexture(bmp: Bitmap);
 	procedure RenderTempSurface(bmp: Bitmap; srcRect, destRect: PSDL_Rect);
+	function SDL_Swap32(D: Uint32): Uint32;
 
 implementation
 uses sgShared, sgDriverSDL13;
@@ -62,6 +63,11 @@ uses sgShared, sgDriverSDL13;
 		SDL_RenderCopy(renderer, texture, srcRect, destRect);
 		
 		SDL_DestroyTexture(texture);
+	end;
+
+	function SDL_Swap32(D: Uint32): Uint32;
+	begin
+  	Result := ((D shl 24) or ((D shl 8) and $00FF0000) or ((D shr 8) and $0000FF00) or (D shr 24));
 	end;
 
 end.

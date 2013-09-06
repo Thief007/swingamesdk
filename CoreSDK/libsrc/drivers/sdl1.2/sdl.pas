@@ -4176,12 +4176,20 @@ end;
 
 function SDL_LockMutex(mutex: PSDL_mutex): Integer;
 begin
+  {$IFNDEF SWINGAME_OPENGL}
   Result := SDL_mutexP(mutex);
+  {$ELSE}
+  Result := 0;
+  {$ENDIF}
 end;
 
 function SDL_UnlockMutex(mutex: PSDL_mutex): Integer;
 begin
+  {$IFNDEF SWINGAME_OPENGL}
   Result := SDL_mutexV(mutex);
+  {$ELSE}
+  Result := 0;
+  {$ENDIF}
 end;
 
 {$IFDEF WINDOWS}

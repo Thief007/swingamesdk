@@ -1,7 +1,7 @@
 unit sgSDLUtils;
 
 interface
-	uses {$IFDEF SWINGAME_SDL13}sdl13{$ELSE}sdl{$ENDIF}, sgTypes;
+	uses {$IFDEF SWINGAME_SDL13}SDL2{$ELSE}sdl{$ENDIF}, sgTypes;
 
 
 procedure PutSurfacePixel(surf : PSDL_Surface; clr: Color; x, y: Longint);
@@ -10,6 +10,7 @@ function GetSurfacePixel(surface: PSDL_Surface; x, y: Longint): Color;
 
 procedure SetNonAlphaPixels(bmp : Bitmap; surface: PSDL_Surface); 
 
+function SDL_Swap32(D: Uint32): Uint32;
 
 
 implementation
@@ -91,4 +92,9 @@ implementation
 		  end;
 		end;
 	end;
+
+  function SDL_Swap32(D: Uint32): Uint32;
+  begin
+    Result := ((D shl 24) or ((D shl 8) and $00FF0000) or ((D shr 8) and $0000FF00) or (D shr 24));
+  end;
 end.

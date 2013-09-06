@@ -10,7 +10,7 @@ unit sgDriveriOSSDL13;
 //=============================================================================
 
 interface 
-	uses SDL13, sgTypes, sgShared, sgGraphics, sgDriverGraphicsOpenGL;
+	uses SDL2, sgTypes, sgShared, sgGraphics, sgDriverGraphicsOpenGL;
 	procedure LoadSDL13iOSDriver();
 	
 	//iphone max g force.
