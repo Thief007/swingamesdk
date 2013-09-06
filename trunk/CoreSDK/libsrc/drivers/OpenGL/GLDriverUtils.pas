@@ -1,7 +1,7 @@
 unit GLDriverUtils;
 
 interface
-  uses sgTypes, sgShared, sdl13;
+  uses sgTypes, sgShared, SDL2;
   
   type
     SGOpenGLSurface = record

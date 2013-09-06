@@ -19,7 +19,7 @@ interface
 		
 //=============================================================================		
 implementation
-	uses sgSDL13Utils, sgDriverText, sdl13_ttf, sgTypes, sgGeometry, sgShared, sdl13, sgGraphics, sgImages, sdl13_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgDriverImages;
+	uses sgSDL13Utils, sgDriverText, sdl13_ttf, sgTypes, sgGeometry, sgShared, SDL2, sgGraphics, sgImages, sdl13_gfx, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, sgDriverImages;
 	
 	const EOL = LineEnding; // from sgShared
 

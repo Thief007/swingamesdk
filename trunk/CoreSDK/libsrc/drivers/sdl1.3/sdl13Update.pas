@@ -1,7 +1,7 @@
 unit sdl13Update;
 
 interface
-  uses SDL13;
+  uses SDL2;
 
   function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
   function SDL_Swap32(D: Uint32): Uint32;

@@ -140,7 +140,7 @@ uses
 {$IFDEF __GPC__}
   gpc,
 {$ENDIF}
-  sdl13;
+  SDL2;
 
 const
 {$IFDEF WINDOWS}

@@ -15,12 +15,12 @@ unit sgDriverGraphicsOpenGL;
 //
 //=============================================================================
 interface
-uses sgTypes, sdl13, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl, glext;{$ENDIF}
+uses sgTypes, SDL2, SysUtils {$IFDEF IOS},gles11;{$ELSE},gl, glext;{$ENDIF}
 
   type
     OpenGLWindow = record
         window  : PSDL_window;
-        context : SDL_GLContext;  
+        context : PSDL_GLContext;  
     end;
     
     POpenGLWindow = ^OpenGLWindow;

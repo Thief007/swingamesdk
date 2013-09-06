@@ -15,7 +15,7 @@ unit sgDriverGraphicsSDL13;
 //
 //=============================================================================
 interface
-uses sgTypes, SDL13;
+uses sgTypes, SDL2;
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
   function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
 	

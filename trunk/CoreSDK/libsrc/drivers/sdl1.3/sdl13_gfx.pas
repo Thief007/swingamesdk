@@ -23,7 +23,7 @@ unit sdl13_gfx;
 interface
 
 uses
-  sdl13;
+  SDL2;
 
 const
 {$IFDEF WINDOWS}

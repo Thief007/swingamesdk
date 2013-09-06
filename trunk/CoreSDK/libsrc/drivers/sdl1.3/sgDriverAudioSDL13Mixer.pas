@@ -17,7 +17,7 @@ interface
   procedure LoadSDL13MixerAudioDriver();
   
 implementation
-  uses sgDriverAudio, sgTypes, sgShared, SDL13, SDL13_Mixer, sysUtils;
+  uses sgDriverAudio, sgTypes, sgShared, SDL2, SDL13_Mixer, sysUtils;
   
   var
         // Contains the sound channels used to determine if a sound is currently

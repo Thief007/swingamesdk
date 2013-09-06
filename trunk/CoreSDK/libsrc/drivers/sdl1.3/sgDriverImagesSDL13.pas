@@ -20,7 +20,7 @@ interface
 		
 implementation
 	uses sgDriverImages, sgShared, sgTypes, SysUtils, sgGraphics, sgDriver, sgSharedUtils,
-	     SDL13_gfx, SDL13, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, 
+	     SDL13_gfx, SDL2, SDL13_Image, sgDriverGraphics, sgDriverGraphicsSDL13, sgDriverSDL13, 
        sgTrace, sgSDLUtils, sgSDL13Utils; // sdl;
 		
 	procedure InitBitmapColorsProcedure(bmp : Bitmap);

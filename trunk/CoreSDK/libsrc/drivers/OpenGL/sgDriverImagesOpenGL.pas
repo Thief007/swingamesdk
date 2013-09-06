@@ -21,7 +21,7 @@ interface
     
 implementation
   uses sgTypes,
-       sgDriverGraphics, sdl13, sgShared, sgDriverImages, sdl13_image, SysUtils, sgSharedUtils, 
+       sgDriverGraphics, SDL2, sgShared, sgDriverImages, sdl13_image, SysUtils, sgSharedUtils, 
        GLDriverUtils, sgSDLUtils; // sdl;
   const
     // PixelFormat
