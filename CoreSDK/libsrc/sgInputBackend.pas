@@ -457,7 +457,7 @@ implementation
               ' lx: ' + FloatToStr(finger.lastPosition.x) +
               ' ly: ' + FloatToStr(finger.lastPosition.y) +
               ' p: ' + FloatToStr(finger.pressure) + 
-              ' lp: ' + FloatToStr(finger.lastPressure) +
+              // ' lp: ' + FloatToStr(finger.lastPressure) +
               ' d: ' + BoolToStr(finger.down);
   end;
   

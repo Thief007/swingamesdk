@@ -17,7 +17,7 @@ interface
 		InitProcedure										= procedure();
 		ProcessAxisMotionEventProcedure	= function() : AccelerometerMotion;
 		AxisToGProcedure								= function( value : LongInt ) : Single;
-		ProcessTouchEventProcedure			= function (touchID : Int64) : FingerArray;
+		ProcessTouchEventProcedure			= function (touch: Pointer) : FingerArray;
 
 	iOSDriverRecord = record
 		
@@ -82,10 +82,10 @@ implementation
 		result := iOSDriver.ProcessAxisMotionEvent();
 	end;
 
-	function DefaultProcessTouchEventProcedure(touchID : Int64): FingerArray;
+	function DefaultProcessTouchEventProcedure(touch : Pointer): FingerArray;
 	begin
 		LoadDefaultiOSDriver();
-		result := iOSDriver.ProcessTouchEvent(touchID);
+		result := iOSDriver.ProcessTouchEvent(touch);
 	end;
 
 	function DefaultAxisToGProcedure(value : LongInt): Single;

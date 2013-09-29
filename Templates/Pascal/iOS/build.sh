@@ -28,36 +28,93 @@ LOG_FILE="${APP_PATH}/out.log"
 
 SG_INC="-Fi${APP_PATH}/lib -Fu${APP_PATH}/lib -Fu${APP_PATH}/src"
 
-IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk"
+locateIOSSDK()
+{
+  BASE_XCODE_PLATFORMS="/Applications/Xcode.app/Contents/Developer/Platforms"
+  BASE_IOS_SIM="${BASE_XCODE_PLATFORMS}/iPhoneSimulator.platform/Developer/SDKs"
+  BASE_IOS_DEV="${BASE_XCODE_PLATFORMS}/iPhoneOS.platform/Developer/SDKs"
+
+  if [ ! -d "$BASE_XCODE_PLATFORMS" ]; then
+    echo "Unable to locate XCode SDKs. Ensure you have XCode 4+ at ${BASE_XCODE_PLATFORMS}"
+    exit -1
+  fi
+
+  if [ ! -d "$BASE_IOS_SIM" ]; then
+    echo "Unable to locate XCode iPhoneSimulator. Ensure you have XCode 4+ at ${BASE_IOS_SIM}"
+    exit -1
+  fi
+  if [ ! -d "$BASE_IOS_DEV" ]; then
+    echo "Unable to locate XCode iPhoneSimulator. Ensure you have XCode 4+ at ${BASE_IOS_DEV}"
+    exit -1
+  fi
+
+  #
+  # Find the iOS Simulator
+  #
+  pushd "${BASE_IOS_SIM}" >> /dev/null
+
+  fileList=$(find "." -maxdepth 1 -type d -name iPhoneSimulator\*.sdk)
+  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  
+  if [ ${FILE_COUNT} = 1 ]; then
+    IOS_SIM_SDK_DIR="${BASE_IOS_SIM}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
+  else
+    echo "Select the iOS Simulator to use"
+    PS3="File number: "
+  
+    select fileName in $fileList; do
+        if [ -n "$fileName" ]; then
+            IOS_SIM_SDK_DIR="${BASE_IOS_SIM}${fileName}"
+        fi      
+        break
+    done
+  fi
+
+  popd >> /dev/null
+
+  #
+  # Find the iOS Simulator
+  #
+  pushd "${BASE_IOS_DEV}" >> /dev/null
+
+  fileList=$(find "." -maxdepth 1 -type d -name iPhone\*.sdk)
+  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  
+  if [ ${FILE_COUNT} = 1 ]; then
+    IOS_DEV_SDK_DIR="${BASE_IOS_DEV}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
+  else
+    echo "Select the iOS version to use"
+    PS3="File number: "
+  
+    select fileName in $fileList; do
+        if [ -n "$fileName" ]; then
+            IOS_DEV_SDK_DIR="${BASE_IOS_DEV}${fileName}"
+        fi      
+        break
+    done
+  fi
+
+  popd >> /dev/null
+
+  # echo ${IOS_SIM_SDK_DIR}
+  # echo ${IOS_DEV_SDK_DIR}
+}
+
+locateIOSSDK
+
+
+IPHONE_SDK_ARM=${IOS_DEV_SDK_DIR}
 
 if [ ! -d ${IPHONE_SDK_ARM} ]; then
-  IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
-  if [ ! -d ${IPHONE_SDK_ARM} ]; then
-    IPHONE_SDK_ARM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
-    if [ ! -d ${IPHONE_SDK_ARM} ]; then
-      IPHONE_SDK_ARM="/Applications/Xcode.app/Contents${IPHONE_SDK_ARM}"
-      if [ ! -d ${IPHONE_SDK_ARM} ]; then
-        echo "Unable to find iOS SDK"
-        exit -1
-      fi
-    fi
-  fi
+  echo "Unable to find iOS SDK"
+  exit -1
 fi
 
-IPHONE_SDK_SIM="/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk"
+IPHONE_SDK_SIM=${IOS_SIM_SDK_DIR}
 
 if [ ! -d ${IPHONE_SDK_SIM} ]; then
-  IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
-  if [ ! -d ${IPHONE_SDK_SIM} ]; then
-    IPHONE_SDK_SIM="/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk"
-    if [ ! -d ${IPHONE_SDK_SIM} ]; then
-      IPHONE_SDK_SIM="/Applications/Xcode.app/Contents${IPHONE_SDK_SIM}"
-      if [ ! -d ${IPHONE_SDK_SIM} ]; then
-        echo "Unable to find iOS Simulator SDK"
-        exit -1
-      fi
-    fi
-  fi
+  echo "Unable to find iOS Simulator SDK"
+  exit -1
 fi
 
 
