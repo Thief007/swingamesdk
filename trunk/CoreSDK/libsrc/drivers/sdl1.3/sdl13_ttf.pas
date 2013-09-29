@@ -496,7 +496,7 @@ end;
 function TTF_RenderText_Solid( font : PTTF_Font;
   const text : PChar; fg : SDL_Color ): PSDL_Surface;
 const
-  Black: SDL_Color = (r: 0; g: 0; b: 0; unused: 0);
+  Black: SDL_Color = (r: 0; g: 0; b: 0; a: 0);
 begin
   Result := TTF_RenderText_Shaded(font, text, fg, Black);
 end;

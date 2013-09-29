@@ -102,8 +102,8 @@ interface
       position : Point2D;
       positionDelta : Point2D;
       lastPosition : Point2D;
-      pressure : Word; //unknown unit guessing that it uses the size of the contact point on the screen. not much documentation from SDL.
-      lastPressure :Word;
+      pressure : Single; //unknown unit guessing that it uses the size of the contact point on the screen. not much documentation from SDL.
+      // lastPressure :Word;
       down : Boolean;
     end;
 

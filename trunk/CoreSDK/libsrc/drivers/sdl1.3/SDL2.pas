@@ -30,6 +30,13 @@ interface
 
 {$packrecords c}
 
+const
+  SDL_SRCCOLORKEY = $00001000; // Blit uses a source color key
+  {$EXTERNALSYM SDL_SRCCOLORKEY}
+  SDL_HWSURFACE = $00000001; // Surface is in video memory
+  {$EXTERNALSYM SDL_HWSURFACE}
+
+
 type
   HModule = Pointer;
 
@@ -38,6 +45,7 @@ type
   PUint8 = ^Uint8;
   Uint16 = Word;
   PUint16 = ^Uint16;
+  PSInt16 = ^SInt16;
   Sint16 = SmallInt;
   Uint32 = LongWord;
   Sint32 = LongInt;
@@ -365,17 +373,17 @@ function SDL_SetSurfaceAlphaMod(surface: PSDL_Surface; alpha: Uint8): LongInt; c
 function SDL_GetSurfaceAlphaMod(surface: PSDL_Surface; out alpha: Uint8): LongInt; cdecl; external;
 function SDL_SetSurfaceBlendMode(surface: PSDL_Surface; blendMode: LongInt): LongInt; cdecl; external;
 function SDL_GetSurfaceBlendMode(surface: PSDL_Surface; out blendMode: LongInt): LongInt; cdecl; external;
-function SDL_SetSurfaceClipRect(surface: PSDL_Surface; constref rect: TSDL_Rect): LongInt; cdecl; external;
-function SDL_GetSurfaceClipRect(surface: PSDL_Surface; out rect: TSDL_Rect): LongInt; cdecl; external;
+function SDL_SetClipRect(surface: PSDL_Surface; rect: PSDL_Rect): LongInt; cdecl; external;
+function SDL_GetClipRect(surface: PSDL_Surface; rect: PSDL_Rect): LongInt; cdecl; external;
 function SDL_ConvertSurface(src: PSDL_Surface; fmt: PSDL_PixelFormat; flags: Uint32): PSDL_Surface; cdecl; external;
 function SDL_ConvertSurfaceFormat(src: PSDL_Surface; pixel_format: Uint32; flags: Uint32): PSDL_Surface; cdecl; external;
 function SDL_ConvertPixels(width, height: LongInt; src_format: Uint32; src: Pointer;
   src_pitch: LongInt; dst_format: Uint32; dst: Pointer; dst_pitch: LongInt): LongInt; cdecl; external;
-function SDL_FillRect(dst: PSDL_Surface; constref rect: TSDL_Rect; color: Uint32): LongInt; cdecl; external;
+function SDL_FillRect(dst: PSDL_Surface; rect: PSDL_Rect; color: Uint32): LongInt; cdecl; external;
 function SDL_FillRects(dst: PSDL_Surface; var rects: TSDL_Rect; count: LongInt; color: Uint32): LongInt; cdecl; external;
 { These functions might need to be reviewed as SDL_surface.h currently mixes
   const and var rect arguments. I suspect the final version may fix this }
-function SDL_UpperBlit(src: PSDL_Surface; constref srcrect: TSDL_Rect; dst: PSDL_Surface; var dstrect: TSDL_Rect): LongInt; cdecl; external;
+function SDL_UpperBlit(src: PSDL_Surface; srcrect: PSDL_Rect; dst: PSDL_Surface; dstrect: PSDL_Rect): LongInt; cdecl; external;
 function SDL_LowerBlit(src: PSDL_Surface; var srcrect: TSDL_Rect; dst: PSDL_Surface; var dstrect: TSDL_Rect): LongInt; cdecl; external;
 function SDL_SoftStretch(src: PSDL_Surface; constref srcrect: TSDL_Rect; dst: PSDL_Surface; constref dstrect: TSDL_Rect): LongInt; cdecl; external;
 function SDL_UpperBlitScaled(src: PSDL_Surface; var srcrect: TSDL_Rect; dst: PSDL_Surface; var dstrect: TSDL_Rect): LongInt; cdecl; external;
@@ -2359,6 +2367,8 @@ const
   IMG_INIT_TIF = $00000004;
   IMG_INIT_WEBP = $0000000;
 
+function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
+
 implementation
 
 {$ifdef static}
@@ -2453,5 +2463,11 @@ function SDL_BITSPERPIXEL(X: Uint32): Uint32;
 begin
   Result := (X shr 8) and $FF;
 end;
+
+function SDL_SaveBMP(surface: PSDL_Surface; filename: PChar): Integer;
+begin
+  Result := SDL_SaveBMP_RW(surface, SDL_RWFromFile(filename, 'wb'), 1);
+end;
+
 
 end.

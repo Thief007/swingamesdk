@@ -58,7 +58,7 @@ implementation
       exit;
     end;
 
-    SDL_GetRGB(color, GetSurface(screen)^.format, @result.r, @result.g, @result.b);
+    SDL_GetRGB(color, GetSurface(screen)^.format, result.r, result.g, result.b);
   end;
 	
 	procedure CloseFontProcedure(fontToClose : font);

@@ -50,7 +50,7 @@ implementation
     rMask, gMask, bMask, aMask, format : Uint32;
   begin
     format := SDL_GetWindowPixelFormat(PSDL13Screen(_screen)^.window);
-    SDL_PixelFormatEnumToMasks(format, @bpp, @rMask, @gMask, @bMask, @aMask);
+    SDL_PixelFormatEnumToMasks(format, bpp, rMask, gMask, bMask, aMask);
     result := SDL_CreateRGBSurface(SDL_HWSURFACE, width, height, 32, 
                                    rMask, gMask, bMask, 
                                    $ffffffff and not RMask and not GMask and not BMask);
@@ -149,7 +149,7 @@ implementation
   procedure ColorComponentsProcedure(c: Color; var r, g, b, a: byte);
   begin  
     if not Assigned(GetSurface(screen)) then begin RaiseWarning('SDL1.3 Graphics Driver - ColorComponentsProcedure Screen is not Initialised'); exit; end;
-    SDL_GetRGBA(c, GetSurface(screen)^.format, @r, @g, @b, @a);
+    SDL_GetRGBA(c, GetSurface(screen)^.format, r, g, b, a);
   end;
   
   function ToGfxColorProcedure(val : Color): Color; 
@@ -365,7 +365,7 @@ implementation
     end else begin
       sdlrect := NewSDLRect(rect);
   	  SetRenderDrawColor(clr);
-      SDL_RenderFillRect(PSDL13Screen(_screen)^.renderer, @sdlrect);
+      SDL_RenderFillRect(PSDL13Screen(_screen)^.renderer, sdlrect);
 	  end;
 	end;
 	
@@ -383,7 +383,7 @@ implementation
     end else begin
   	  sdlrect := NewSDLRect(rect);
   	  SetRenderDrawColor(clr);
-  	  SDL_RenderDrawRect(PSDL13Screen(_screen)^.renderer, @sdlrect);
+  	  SDL_RenderDrawRect(PSDL13Screen(_screen)^.renderer, sdlrect);
 	  end;
 	end;
 	
@@ -439,14 +439,14 @@ implementation
 
   procedure SetVideoModeFullScreenProcedure();
   var
-    fullScreen : SDL_Bool = SDL_True;
+    fullScreen : SDL_Bool = true;
     flags : Uint32;
     //noFrame : Boolean;
   begin    
     flags := SDL_GetWindowFlags(PSDL13Screen(_screen)^.window);
 
     if (flags and Uint32(SDL_WINDOW_FULLSCREEN)) = Uint32(SDL_WINDOW_FULLSCREEN) then
-      fullScreen := SDL_False;
+      fullScreen := false;
     SDL_SetWindowFullScreen(PSDL13Screen(_screen)^.window, fullScreen);
   end;
   
@@ -599,14 +599,14 @@ implementation
     fmt : PSDL_Surface;
   begin
     fmt := GetSurface(screen);
-    SDL_GetRGB(pixel,fmt^.format, @r,@g,@b);    
+    SDL_GetRGB(pixel,fmt^.format, r,g,b);    
   end;
 
   function GetScreenWidthProcedure(): LongInt; 
   var
     w, h : LongInt;
   begin
-    SDL_GetWindowSize(PSDL13Screen(_screen)^.window,@w, @h);
+    SDL_GetWindowSize(PSDL13Screen(_screen)^.window, w, h);
     result := w;
   end;
   
@@ -614,7 +614,7 @@ implementation
   var
     w, h : LongInt;
   begin
-    SDL_GetWindowSize(PSDL13Screen(_screen)^.window,@w, @h);
+    SDL_GetWindowSize(PSDL13Screen(_screen)^.window, w, h);
     result := h;
   end;
   
