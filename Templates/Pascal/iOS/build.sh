@@ -20,7 +20,7 @@ APP_PATH="."
 GAME_NAME=${FULL_APP_PATH##*/}
 
 OUT_DIR="${APP_PATH}/bin"
-LIB_DIR="${APP_PATH}/lib/godly/mac"
+LIB_DIR="${APP_PATH}/lib/godly/ios"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 
@@ -54,21 +54,21 @@ locateIOSSDK()
   pushd "${BASE_IOS_SIM}" >> /dev/null
 
   fileList=$(find "." -maxdepth 1 -type d -name iPhoneSimulator\*.sdk)
-  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  # FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
-  if [ ${FILE_COUNT} = 1 ]; then
-    IOS_SIM_SDK_DIR="${BASE_IOS_SIM}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
-  else
-    echo "Select the iOS Simulator to use"
-    PS3="File number: "
+  # if [ ${FILE_COUNT} = 1 ]; then
+    IOS_SIM_SDK_DIR="${BASE_IOS_SIM}"`echo ${fileList[0]} | awk '{split($0,names," "); idx=1; while(names[idx+1] != "") { idx++ } printf("%s",names[idx])}' | sed "s|[.]/|/|"`
+  # else
+  #   echo "Select the iOS Simulator to use"
+  #   PS3="File number: "
   
-    select fileName in $fileList; do
-        if [ -n "$fileName" ]; then
-            IOS_SIM_SDK_DIR="${BASE_IOS_SIM}${fileName}"
-        fi      
-        break
-    done
-  fi
+  #   select fileName in $fileList; do
+  #       if [ -n "$fileName" ]; then
+  #           IOS_SIM_SDK_DIR="${BASE_IOS_SIM}${fileName}"
+  #       fi      
+  #       break
+  #   done
+  # fi
 
   popd >> /dev/null
 
@@ -78,21 +78,21 @@ locateIOSSDK()
   pushd "${BASE_IOS_DEV}" >> /dev/null
 
   fileList=$(find "." -maxdepth 1 -type d -name iPhone\*.sdk)
-  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  # FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
-  if [ ${FILE_COUNT} = 1 ]; then
-    IOS_DEV_SDK_DIR="${BASE_IOS_DEV}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
-  else
-    echo "Select the iOS version to use"
-    PS3="File number: "
+  # if [ ${FILE_COUNT} = 1 ]; then
+    IOS_DEV_SDK_DIR="${BASE_IOS_DEV}"`echo ${fileList[0]} | awk '{split($0,names," "); idx=1; while(names[idx+1] != "") { idx++ } printf("%s",names[idx])}' | sed "s|[.]/|/|"`
+  # else
+  #   echo "Select the iOS version to use"
+  #   PS3="File number: "
   
-    select fileName in $fileList; do
-        if [ -n "$fileName" ]; then
-            IOS_DEV_SDK_DIR="${BASE_IOS_DEV}${fileName}"
-        fi      
-        break
-    done
-  fi
+  #   select fileName in $fileList; do
+  #       if [ -n "$fileName" ]; then
+  #           IOS_DEV_SDK_DIR="${BASE_IOS_DEV}${fileName}"
+  #       fi      
+  #       break
+  #   done
+  # fi
 
   popd >> /dev/null
 
@@ -201,21 +201,21 @@ if [ ! -d ${OUT_DIR} ]; then
     mkdir "${OUT_DIR}"
 fi
 
-ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_ARM}" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" > ${LOG_FILE} 2> ${LOG_FILE}
+ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_ARM}" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" -k"-lstdc++" -XMSDL_main > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile; 
 fi
 
-ppc386 -Tiphonesim -WP7.0 -gw -S2 -Sew -Sh ${SG_INC} -XX -XR"${IPHONE_SDK_SIM}" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "src/${GAME_MAIN}" -k"-framework AudioToolbox" -k"-framework QuartzCore" -k"-framework OpenGLES" -k"-framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit" -k"-framework Foundation" -k"-framework CoreAudio" -k-no_order_inits -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
+ppc386 -Tiphonesim -WP7.0 -gw -S2 -Sew -Sh ${SG_INC} -XX -XR"${IPHONE_SDK_SIM}" -gltw -FE"tmp/i386" -FU"tmp/i386" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -o"${TMP_DIR}/${GAME_NAME}.i386" "src/${GAME_MAIN}" -k"-framework AudioToolbox" -k"-framework QuartzCore" -k"-framework OpenGLES" -k"-framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit" -k"-framework Foundation" -k"-framework CoreAudio" -k"-lstdc++" -XMSDL_main -k-no_order_inits -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile;
 fi
 
 # exit
 
-lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
+# lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
 
-# mv "${TMP_DIR}/${GAME_NAME}.i386" "${OUT_DIR}/${GAME_NAME}"
+mv "${TMP_DIR}/${GAME_NAME}.i386" "${OUT_DIR}/${GAME_NAME}"
 
 dsymutil --verbose "${OUT_DIR}/${GAME_NAME}" -o "${OUT_DIR}/${GAME_NAME}.app.dSYM" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
