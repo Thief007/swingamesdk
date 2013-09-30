@@ -28,8 +28,8 @@ APP_PATH="."
 # Step 3: Setup options
 #
 EXTRA_OPTS="-O3 -fPIC -Sewn -vwn -dSWINGAME_LIB"
-VERSION_NO=3.03
-VERSION=3.03
+VERSION_NO=3.033
+VERSION=3.033
 CLEAN="N"
 INSTALL="N"
 
@@ -104,21 +104,22 @@ locateIOSSDK()
   pushd "${BASE_IOS_SIM}" >> /dev/null
 
   fileList=$(find "." -maxdepth 1 -type d -name iPhoneSimulator\*.sdk)
-  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  # FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
-  if [ ${FILE_COUNT} = 1 ]; then
-    IOS_SIM_SDK_DIR="${BASE_IOS_SIM}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
-  else
-    echo "Select the iOS Simulator to use"
-    PS3="File number: "
+  # if [ ${FILE_COUNT} = 1 ]; then
+  IOS_SIM_SDK_DIR="${BASE_IOS_SIM}"`echo $fileList | awk '{split($0,names," "); idx=1; while(names[idx+1] != "") { idx++ } printf("%s",names[idx])}' | sed "s|[.]/|/|"`
+  # else
+  #   echo "Select the iOS Simulator to use"
+  #   PS3="File number: "
   
-    select fileName in $fileList; do
-        if [ -n "$fileName" ]; then
-            IOS_SIM_SDK_DIR="${BASE_IOS_SIM}${fileName}"
-        fi      
-        break
-    done
-  fi
+  #   select fileName in $fileList; do
+  #       if [ -n "$fileName" ]; then
+  #           IOS_SIM_SDK_DIR="${BASE_IOS_SIM}${fileName}"
+  #       fi      
+  #       break
+  #   done
+  # fi
+  # echo $IOS_SIM_SDK_DIR
 
   popd >> /dev/null
 
@@ -128,21 +129,21 @@ locateIOSSDK()
   pushd "${BASE_IOS_DEV}" >> /dev/null
 
   fileList=$(find "." -maxdepth 1 -type d -name iPhone\*.sdk)
-  FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
+  # FILE_COUNT=$(echo "$fileList" | tr " " "\n" | wc -l)
   
-  if [ ${FILE_COUNT} = 1 ]; then
-    IOS_DEV_SDK_DIR="${BASE_IOS_DEV}"`echo ${fileList[0]} | sed "s|[.]/|/|"`
-  else
-    echo "Select the iOS version to use"
-    PS3="File number: "
+  # if [ ${FILE_COUNT} = 1 ]; then
+  IOS_DEV_SDK_DIR="${BASE_IOS_DEV}"`echo ${fileList[0]} | awk '{split($0,names," "); idx=1; while(names[idx+1] != "") { idx++ } printf("%s",names[idx])}' | sed "s|[.]/|/|"`
+  # else
+  #   echo "Select the iOS version to use"
+  #   PS3="File number: "
   
-    select fileName in $fileList; do
-        if [ -n "$fileName" ]; then
-            IOS_DEV_SDK_DIR="${BASE_IOS_DEV}${fileName}"
-        fi      
-        break
-    done
-  fi
+  #   select fileName in $fileList; do
+  #       if [ -n "$fileName" ]; then
+  #           IOS_DEV_SDK_DIR="${BASE_IOS_DEV}${fileName}"
+  #       fi      
+  #       break
+  #   done
+  # fi
 
   popd >> /dev/null
 
