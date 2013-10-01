@@ -27,7 +27,7 @@ interface
     function TextEntryWasCancelled: Boolean; 
     function WasKeyDown(kyCode : LongInt) : Boolean;
     function WasKeyJustTyped(kyCode : LongInt) : Boolean;
-    procedure HandleTouchEvent(const finger : FingerArray; down: Boolean);
+    procedure HandleTouchEvent(const fingers : FingerArray; down, up: Boolean);
     procedure HandleAxisMotionEvent(Accelerometer :  AccelerometerMotion);
     function GetDeltaXAxis():LongInt;
     function GetDeltaYAxis():LongInt;
@@ -91,6 +91,7 @@ implementation
     _LastFingerPosition.x :=0;
     _LastFingerPosition.y :=0;
     SetLength(_KeyDown, 0);
+    SetLength(_fingers, 0);
   end;
   
   function EnteredString: String; 
@@ -461,16 +462,86 @@ implementation
               ' d: ' + BoolToStr(finger.down);
   end;
   
-  procedure HandleTouchEvent(const finger : FingerArray; down: Boolean);
-  // var
-  //   i: Integer;
+  function FingerInArray(const f: Finger; const fingers: FingerArray): Boolean;
+  var
+    i: Integer;
+  begin
+    result := false;
+
+    for i := 0 to High(fingers) do
+    begin
+      if f.id = fingers[i].id then
+      begin
+        result := true;
+        exit;
+      end;
+    end;
+  end;
+
+  procedure AddToFingers(const finger: Finger; var fingers: FingerArray);
+  begin
+    SetLength(fingers, Length(fingers) + 1);
+    fingers[High(fingers)] := finger;
+  end;
+
+  procedure RemoveFinger(const f: Finger; var fingers: FingerArray);
+  var
+    i: Integer;
+  begin
+    for i := 0 to High(fingers) do
+    begin
+      if f.id = fingers[i].id then
+      begin
+        fingers[i] := fingers[High(fingers)];
+        SetLength(fingers, Length(fingers) - 1);
+        exit;
+      end;
+    end;
+  end;
+
+  function UpdateFingerInArray(const f: Finger; var fingers: FingerArray): Boolean;
+  var
+    i: Integer;
+  begin
+    for i := 0 to High(fingers) do
+    begin
+      if f.id = fingers[i].id then
+      begin
+        fingers[i] := f;
+        result := true;
+        exit;
+      end;
+    end;
+
+    result := false;
+  end;
+
+  procedure HandleTouchEvent(const fingers : FingerArray; down, up: Boolean);
+  var
+    i, toRemoveIdx: Integer;
   begin
     _justTouched := _justTouched or down;
-    _fingers := finger;
-    
+    for i := 0 to High(fingers) do
+    begin
+
+      if fingers[i].down then
+      begin
+        if not UpdateFingerInArray(fingers[i], _fingers) then
+        begin
+          // WriteLn('Adding');
+          AddToFingers(fingers[i], _fingers);
+        end;
+      end
+      else // finger is UP
+      begin
+        // WriteLn('Removing');
+        RemoveFinger(fingers[i], _fingers);
+      end;
+    end;
+
     // WriteLn('HandleTouchEvent');
     // for i := 0 to High(finger) do
-    //   WriteLn('Touch event', down, ' ', FingerToString(finger[i]));
+    //    WriteLn('Touch event', down, ' ', FingerToString(finger[i]));
     
     if length(_fingers) > 0 then
     begin

@@ -100,8 +100,9 @@ implementation
           SDL_KEYUP                        :HandleKeyupEvent(event.key.keysym.sym);
           SDL_MOUSEBUTTONUP                :ProcessMouseEvent(event.button.button); 
           {$IFDEF IOS}
-          SDL_FINGERDOWN                   :HandleTouchEvent(iOSDriver.ProcessTouchEvent(@event.tfinger), true);
-          SDL_FINGERMOTION                 :HandleTouchEvent(iOSDriver.ProcessTouchEvent(@event.tfinger), false);
+          SDL_FINGERDOWN                   :HandleTouchEvent(iOSDriver.ProcessTouchEvent(@event.tfinger), true, false);
+          SDL_FINGERUP                     :HandleTouchEvent(iOSDriver.ProcessTouchEvent(@event.tfinger), false, true);
+          SDL_FINGERMOTION                 :HandleTouchEvent(iOSDriver.ProcessTouchEvent(@event.tfinger), false, false);
           SDL_JOYAXISMOTION                :HandleAxisMotionEvent(iOSDriver.ProcessAxisMotionEvent());
           {$ENDIF}
         end;

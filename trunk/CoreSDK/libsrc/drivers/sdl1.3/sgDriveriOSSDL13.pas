@@ -70,8 +70,9 @@ implementation
     end;
 
     function SDLFingerToFinger(sdlFinger : PSDL_Finger; touchState : PSDL_TouchFingerEvent ): Finger;
-
     begin
+        result.id   := touchState^.fingerId;
+        result.down := false;
 
         if not assigned(sdlFinger) then exit;
         
@@ -84,23 +85,33 @@ implementation
         result.lastPosition.y   := result.position.y - result.positionDelta.y;
         result.pressure         := touchState^.pressure;
         // result.lastPressure     := sdlFinger^.last_pressure;
-        result.down             := result.pressure > 0;
+        result.down             := touchState^.type_ <> Uint32(SDL_FINGERUP);
     end;
 
     function ProcessTouchEventProcedure(touch : Pointer): FingerArray; 
     var
         sdlTouch : PSDL_TouchFingerEvent;
         numberOfFingers, count : LongInt;
+        fptr: PSDL_Finger;
     begin
+        SetLength(result, 0);
         sdlTouch := PSDL_TouchFingerEvent(touch);
         if (touch = nil) then exit;
 
+        if sdlTouch^.type_ <> Uint32(SDL_FINGERMOTION) then
+            WriteLn('Touch: ', sdlTouch^.type_, ' ', Uint32(SDL_FINGERUP), ' ', sdlTouch^.fingerId);
+
         numberOfFingers := SDL_GetNumTouchFingers(sdlTouch^.touchID);
-        SetLength(result, numberOfFingers);
+
+        SetLength(result, 1);
+        result[0].id    := sdlTouch^.fingerId;
+        result[0].down  := false;
 
         for count := 0 to numberOfFingers - 1 do
         begin
-            result[count] := SDLFingerToFinger(SDL_GetTouchFinger(sdlTouch^.touchID, count), sdlTouch);
+            fptr := SDL_GetTouchFinger(sdlTouch^.touchID, count);
+            if Assigned(fptr) and (fptr^.id = sdlTouch^.fingerId) then
+                result[0] := SDLFingerToFinger(fptr, sdlTouch);
         end;
     end;
 
