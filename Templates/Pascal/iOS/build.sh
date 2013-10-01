@@ -201,7 +201,7 @@ if [ ! -d ${OUT_DIR} ]; then
     mkdir "${OUT_DIR}"
 fi
 
-ppcarm -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -k-ios_version_min -k5.0 -XR"${IPHONE_SDK_ARM}" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" -k"-lstdc++" -XMSDL_main > ${LOG_FILE} 2> ${LOG_FILE}
+ppcarm -Tdarwin -WP7.0 -gw -S2 -Sew -Cparmv7 -Cfvfpv2 -Sh ${SG_INC} -XX -XR"${IPHONE_SDK_ARM}" -gltw -FE"tmp/arm" -FU"tmp/arm" -Fi"src" -Fu"${LIB_DIR}" -k"/usr/lib/libbz2.dylib" -k"${LIB_DIR}/*.a" -k"-framework AudioToolbox -framework QuartzCore -framework OpenGLES -framework CoreGraphics" -k"-framework MobileCoreServices" -k"-framework ImageIO" -k"-framework UIKit -framework Foundation -framework CoreAudio" -k-no_order_inits -XMSDL_main -dIOS -dSWINGAME_OPENGL -dSWINGAME_SDL13 -o"${TMP_DIR}/${GAME_NAME}.arm" "src/${GAME_MAIN}" -k"-lstdc++" -XMSDL_main > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
    DoExitCompile; 
 fi
@@ -213,9 +213,9 @@ fi
 
 # exit
 
-# lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
+lipo -create -output "${OUT_DIR}/${GAME_NAME}" "${TMP_DIR}/${GAME_NAME}.i386" "${TMP_DIR}/${GAME_NAME}.arm" > ${LOG_FILE} 2> ${LOG_FILE}
 
-mv "${TMP_DIR}/${GAME_NAME}.i386" "${OUT_DIR}/${GAME_NAME}"
+# mv "${TMP_DIR}/${GAME_NAME}.i386" "${OUT_DIR}/${GAME_NAME}"
 
 dsymutil --verbose "${OUT_DIR}/${GAME_NAME}" -o "${OUT_DIR}/${GAME_NAME}.app.dSYM" > ${LOG_FILE} 2> ${LOG_FILE}
 if [ $? != 0 ]; then
