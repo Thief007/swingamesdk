@@ -98,8 +98,8 @@ implementation
         sdlTouch := PSDL_TouchFingerEvent(touch);
         if (touch = nil) then exit;
 
-        if sdlTouch^.type_ <> Uint32(SDL_FINGERMOTION) then
-            WriteLn('Touch: ', sdlTouch^.type_, ' ', Uint32(SDL_FINGERUP), ' ', sdlTouch^.fingerId);
+        // if sdlTouch^.type_ <> Uint32(SDL_FINGERMOTION) then
+        //     WriteLn('Touch: ', sdlTouch^.type_, ' ', Uint32(SDL_FINGERUP), ' ', sdlTouch^.fingerId);
 
         numberOfFingers := SDL_GetNumTouchFingers(sdlTouch^.touchID);
 
