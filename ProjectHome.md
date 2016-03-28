@@ -1,0 +1,1 @@
+It is a software development kit which allows beginner programmers to create a simple game very easily.
